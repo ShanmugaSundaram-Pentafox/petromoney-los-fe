@@ -1,4 +1,4 @@
-import { IconButton,Grid } from '@material-ui/core'
+import { IconButton, Grid } from '@material-ui/core'
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -20,6 +20,7 @@ import DealerCreditInfoForm from './DealerCreditInfoForm';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import { getSignedUrl } from '../../../services/common.service';
 import { getCibilReport } from '../../../services/creditreport.service';
 import { getCreditInfo, updateCreditInfo } from '../../../services/dealers.service';
 
@@ -27,8 +28,8 @@ const useStyles = makeStyles(theme => ({
   sidePanelTitle: {
     textAlign: 'center',
     padding: '12px 16px',
-    display:'flex',
-    justifyContent:'space-between',
+    display: 'flex',
+    justifyContent: 'space-between',
     alignItems: 'center',
     zIndex: 0,
     boxShadow: '0 1px 4px -3px #333'
@@ -137,7 +138,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
         user_id: currentUser?.id,
         dealer_id: data?.id
       }
-      
+
       updateCreditInfo(body, dealershipId)
         .then(res => {
           setLoading(false)
@@ -158,43 +159,55 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
   });
 
   const handleDownload = () => {
-    if(apiData?.cibil_file_url){
-      window.open(apiData?.cibil_file_url, '_blank')
+    if (apiData?.cibil_file_url) {
+      getSignedUrl(apiData?.cibil_file_url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        })
     }
   }
 
   return (
     <div className={classes.sidePanelFormWrapper}>
       <div className={classes.sidePanelTitle}>
-        <Typography  variant="h4">Credit Information ({data?.pan || '-'})</Typography>
-        <IconButton onClick={onClose}  size='small'>
+        <Typography variant="h4">Credit Information ({data?.pan || '-'})</Typography>
+        <IconButton onClick={onClose} size='small'>
           <CloseRoundedIcon />
         </IconButton>
       </div>
       <div className={classes.sidePanelFormContentWrapper}>
         {
-          !editMode ? 
-            <div style={{margin: 10}}>
+          !editMode ?
+            <div style={{ margin: 10 }}>
               <Grid container spacing={2}>
                 <Grid item md={6}>
-                  <ViewData title='Name' value={data?.first_name +' '+ data?.last_name} style={{marginBottom: 0}} />
+                  <ViewData title='Name' value={data?.first_name + ' ' + data?.last_name} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Mobile' value={data?.mobile} style={{marginBottom: 0}} />
+                  <ViewData title='Mobile' value={data?.mobile} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='User Type' value={data?.category} style={{marginBottom: 0}} />
+                  <ViewData title='User Type' value={data?.category} style={{ marginBottom: 0 }} />
                 </Grid>
               </Grid>
-              <Grid container spacing={2} style={{marginTop: 10}}>
-                <Grid item md={12} style={{display: 'flex', justifyContent: 'space-between'}}>
-                  <div style={{display: 'flex', alignItems: 'center'}}>
+              <Grid container spacing={2} style={{ marginTop: 10 }}>
+                <Grid item md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Typography variant='h6'>CIBIL Extract</Typography>
                     <UserCan
                       role={currentUser.role_name}
                       perform={rulesList.credit_refresh}
                       yes={() => (
-                        <Button variant='text' color='primary' startIcon={<RotateLeftOutlinedIcon />} style={{marginLeft: 8}} onClick={CIBILReport}>Refresh CIBIL Report</Button>
+                        <Button variant='text' color='primary' startIcon={<RotateLeftOutlinedIcon />} style={{ marginLeft: 8 }} onClick={CIBILReport}>Refresh CIBIL Report</Button>
                       )}
                       no={() => (
                         <Alert severity='info'>
@@ -203,49 +216,49 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
                       )}
                     />
                   </div>
-                  { apiData?.cibil_file_url && <div><Button size='small' variant='outlined' color='primary' onClick={handleDownload} startIcon={<DownloadOutlined/>}>Download Report</Button></div> }
+                  {apiData?.cibil_file_url && <div><Button size='small' variant='outlined' color='primary' onClick={handleDownload} startIcon={<DownloadOutlined />}>Download Report</Button></div>}
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='CIBIL Score' value={apiData?.cibil_score} style={{marginBottom: 0}} />
+                  <ViewData title='CIBIL Score' value={apiData?.cibil_score} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Updated on' value={apiData?.modified_date} style={{marginBottom: 0}} />
+                  <ViewData title='Updated on' value={apiData?.modified_date} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Total no.of loans' value={apiData?.loans_count} style={{marginBottom: 0}} />
+                  <ViewData title='Total no.of loans' value={apiData?.loans_count} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='No of closed loans' value={apiData?.closed_loans_count} style={{marginBottom: 0}} />
+                  <ViewData title='No of closed loans' value={apiData?.closed_loans_count} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='No of overdue accounts' value={apiData?.od_accounts_count} style={{marginBottom: 0}} />
+                  <ViewData title='No of overdue accounts' value={apiData?.od_accounts_count} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Overdue amount' value={apiData?.od_amount} style={{marginBottom: 0}} />
+                  <ViewData title='Overdue amount' value={apiData?.od_amount} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Current O/S amount' value={apiData?.current_os_amount} style={{marginBottom: 0}} />
+                  <ViewData title='Current O/S amount' value={apiData?.current_os_amount} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Vintage with CIBIL bureau' value={apiData?.cibil_vintage} style={{marginBottom: 0}} />
+                  <ViewData title='Vintage with CIBIL bureau' value={apiData?.cibil_vintage} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='No of enquiries last 6 months' value={apiData?.no_of_enquiries} style={{marginBottom: 0}} />
+                  <ViewData title='No of enquiries last 6 months' value={apiData?.no_of_enquiries} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Loans in Bureau Report' value={apiData?.is_loan_in_bureau === 1 ? 'Yes' : 'No'} style={{marginBottom: 0}} />
+                  <ViewData title='Loans in Bureau Report' value={apiData?.is_loan_in_bureau === 1 ? 'Yes' : 'No'} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='No of times of highest DPD' value={apiData?.highest_dpd === 4 ? '>3 times' : apiData?.highest_dpd === 1 ? `${apiData?.highest_dpd} time` : `${apiData?.highest_dpd} times`} style={{marginBottom: 0}} />
+                  <ViewData title='No of times of highest DPD' value={apiData?.highest_dpd === 4 ? '>3 times' : apiData?.highest_dpd === 1 ? `${apiData?.highest_dpd} time` : `${apiData?.highest_dpd} times`} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Highest DPD bracket' value={apiData?.highest_dpd_bracket} style={{marginBottom: 0}} />
+                  <ViewData title='Highest DPD bracket' value={apiData?.highest_dpd_bracket} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Credit Card in Bureau Report' value={apiData?.is_cc_in_cibil === 1 ? 'Yes' : 'No'} style={{marginBottom: 0}} />
+                  <ViewData title='Credit Card in Bureau Report' value={apiData?.is_cc_in_cibil === 1 ? 'Yes' : 'No'} style={{ marginBottom: 0 }} />
                 </Grid>
                 <Grid item md={6}>
-                  <ViewData title='Status - For Loans &amp; Credit Cards' value={apiData?.status} style={{marginBottom: 0}} />
+                  <ViewData title='Status - For Loans &amp; Credit Cards' value={apiData?.status} style={{ marginBottom: 0 }} />
                 </Grid>
               </Grid>
             </div>

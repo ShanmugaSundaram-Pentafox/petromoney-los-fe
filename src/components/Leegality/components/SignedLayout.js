@@ -1,6 +1,6 @@
 import { DialogContent, Grid, makeStyles } from '@material-ui/core';
 import React from 'react';
-import PdfViewer from '../../CommonComponents/PdfViewer/PdfViewer';
+import FilePreview from '../../CommonComponents/FilePreview';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -15,7 +15,7 @@ const SignedLayout = ({ loansData }) => {
       <Grid container spacing={2}>
         <Grid item sm={12}>
           {loansData?.document_url ? (
-            <PdfViewer file={loansData?.document_url} />
+            <FilePreview data={{ image: loansData?.document_url, type: loansData?.document_url?.endsWith('.pdf') }} />
           ) : null}
         </Grid>
       </Grid>

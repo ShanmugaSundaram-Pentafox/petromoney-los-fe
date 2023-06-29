@@ -6,11 +6,13 @@ import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../../components/Number/Currency';
+import { getSignedUrl } from '../../../services/common.service';
 import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 
@@ -37,6 +39,8 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [page, setPage] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+
 
   const pageDetailsQuery = useQuery({
     queryKey: ['renewal_draftRecordCount', filterQry, search],
@@ -58,9 +62,29 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const onDownloadClick = () => {
     downloadRenewalData('draft', filterQry)
       .then(data => {
-        window.open(data[0]?.url, '_blank')
+        getSignedUrl(data[0]?.url)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e =>{
+            enqueueSnackbar(e, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          })
       })
-      .catch(e => console.log('Download error >>>', e))
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
   }
 
   const columns = useMemo(() => {

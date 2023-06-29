@@ -1,9 +1,10 @@
 import { Box, Avatar, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/styles';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import FormDialog from './FormDialog/FormDialog';
+import { getSignedUrl } from '../../services/common.service';
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -41,7 +42,7 @@ const PreviewWrapper = styled.div`
         height:72vh;
         overflow: hidden;
         padding-top: 45%;
-        position: relative;
+        // position: relative;
     }
     .iframe-container iframe {
         width:100%;
@@ -52,7 +53,7 @@ const PreviewWrapper = styled.div`
     }
 `;
 
-export const ViewData = ({ title, value, style={marginBottom: 8}, endIcon }) => {
+export const ViewData = ({ title, value, style = { marginBottom: 8 }, endIcon }) => {
   const classes = useStyles()
   return (
     <Box className={classes.details} style={style}>
@@ -88,22 +89,23 @@ export const AvatarCard = ({ file, title, tooltip }) => {
 
 
 const FilePreview = ({ data }) => {
+  const [signedUrl, setSignedUrl] = useState()
+  useEffect(() => {
+    getSignedUrl(data?.image)
+      .then((res) => {
+        setSignedUrl(res?.url)
+      })
+      .catch((err) => console.log('err >>>>>', err))
+
+  }, [data?.image])
   return (
     <PreviewWrapper>
-      {/* {
-                ['jpg', 'png', 'jpeg'].includes(data.type) ?
-                    <img className="image" src={data.image} alt="image-viewer" /> :
-                    <div className="iframe-container">
-                        <PdfViewer file={data.image} /> 
-                        <iframe src={data.image} frameBorder="0" ></iframe>
-                    </div>
-            } */}
       {
-        data.type == true || data.type == 'pdf' ?
+        data?.type == true || data?.type == 'pdf' ?
           <div className="iframe-container">
-            <iframe title='File Preview' src={data.image} frameBorder="0" ></iframe>
+            <iframe title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
           </div> :
-          <img className="image" src={data.image} alt='viewer' />
+          <img className="image" src={signedUrl} alt='viewer' />
       }
     </PreviewWrapper>
   )

@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
@@ -19,6 +20,7 @@ import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../../icons/loan_agreement.svg';
+import { getSignedUrl } from '../../../services/common.service';
 import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 
@@ -51,6 +53,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
   const actionable = !permissionCheck(currentUser?.role_name, rulesList?.external_view);
+  const { enqueueSnackbar } = useSnackbar();
 
   const pageDetailsQuery = useQuery(
     ['renewal_approvedRecordCount', filterQry, search],
@@ -72,9 +75,29 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const onDownloadClick = () => {
     downloadRenewalData('approved', filterQry)
       .then(data => {
-        window.open(data[0]?.url, '_blank')
+        getSignedUrl(data[0]?.url)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e => {
+            enqueueSnackbar(e, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          })
       })
-      .catch(e => console.log('Download error >>>', e))
+      .catch(e => {
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
   }
 
   const columns = useMemo(() => {

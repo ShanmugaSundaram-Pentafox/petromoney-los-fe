@@ -110,8 +110,8 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
         </TableHead>
         <TableBody>
           {data.map((row, index) => (
-            <TableRow className={classes.tableRow} style={{ backgroundColor: row?.is_main_applicant == 1 ? '#EAFAF1' : null }} key={row.id} onClick={e => dealersClickRow(e, row, 'DEALER')}>
-              <TableCell >
+            <TableRow className={classes.tableRow} style={{ backgroundColor: row?.is_main_applicant == 1 ? '#EAFAF1' : null }} key={row.id}>
+              <TableCell onClick={e => dealersClickRow(e, row, 'DEALER')} >
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Typography>{row.first_name}&nbsp;&nbsp;</Typography>
                   {
@@ -120,7 +120,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
                   }
                 </div>
               </TableCell>
-              <TableCell align="center">{row.mobile}</TableCell>
+              <TableCell onClick={e => dealersClickRow(e, row, 'DEALER')} align="center">{row.mobile}</TableCell>
               <TableCell align="center">
                 {
                   row.aadhar_file_url && (

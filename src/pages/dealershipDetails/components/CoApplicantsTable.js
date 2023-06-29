@@ -113,11 +113,11 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
               </TableHead>
               <TableBody>
                 {coApplicantsData.map((row, index) => (
-                  <TableRow className={classes.tableRow} key={row.id} onClick={e => dealersClickRow(e, row, 'COAPPLICANT')}>
-                    <TableCell>
+                  <TableRow className={classes.tableRow} key={row.id} >
+                    <TableCell onClick={e => dealersClickRow(e, row, 'COAPPLICANT')}>
                       {row.first_name}&nbsp;&nbsp;
                     </TableCell>
-                    <TableCell align="center">{row.mobile}</TableCell>
+                    <TableCell onClick={e => dealersClickRow(e, row, 'COAPPLICANT')} align="center">{row.mobile}</TableCell>
                     <TableCell align="center">
                       {
                         row.aadhar_file_url && (

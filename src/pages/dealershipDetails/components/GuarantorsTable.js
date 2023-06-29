@@ -121,13 +121,11 @@ const GuarantorsTable = ({
               <TableRow
                 className={classes.tableRow}
                 key={row.id}
-                onClick={(e) => dealersClickRow(e, row, 'GUARANTOR')}>
-                <TableCell>{row.first_name}&nbsp;&nbsp;</TableCell>
+              >
+                <TableCell onClick={(e) => dealersClickRow(e, row, 'GUARANTOR')}>{row.first_name}&nbsp;&nbsp;</TableCell>
                 <TableCell
                   align="center"
-                  onClick={(e) =>
-                    editable || (dealersClickRow(e, row, 'GUARANTOR'))
-                  }
+                  onClick={(e) => (dealersClickRow(e, row, 'GUARANTOR'))}
                 >
                   {row.mobile}
                 </TableCell>

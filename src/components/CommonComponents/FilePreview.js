@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
 }))
 
 const PreviewWrapper = styled.div`
-    width:40vw;
+    width:45vw;
     .image {
         width: 100%;
         object-fit: contain;
@@ -42,7 +42,7 @@ const PreviewWrapper = styled.div`
         height:72vh;
         overflow: hidden;
         padding-top: 45%;
-        position: relative;
+        // position: relative;
     }
     .iframe-container iframe {
         width:100%;
@@ -101,7 +101,7 @@ const FilePreview = ({ data }) => {
   return (
     <PreviewWrapper>
       {
-        data.type == true || data.type == 'pdf' ?
+        data?.type == true || data?.type == 'pdf' ?
           <div className="iframe-container">
             <iframe title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
           </div> :

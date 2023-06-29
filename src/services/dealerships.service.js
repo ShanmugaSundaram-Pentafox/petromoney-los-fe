@@ -168,7 +168,12 @@ export const downloadAccountStatement = (id, from_date, to_date) => {
     apiCall(`dealership/${id}/soa?from_date=${from_date}&to_date=${to_date}`)
       .then(res => {
         if (res.status === 'SUCCESS') {
-          resolve(res)
+          if(res?.file) {
+            resolve(res)
+          }
+          else {
+            reject(res.message)
+          }
         } else {
           reject(res.message)
         }

@@ -1,5 +1,6 @@
 import { Grid, Typography, Drawer } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
+import AccountBalanceWalletOutlinedIcon from '@material-ui/icons/AccountBalanceWalletOutlined';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -36,6 +37,7 @@ import AddNewOutletDetailsForm from '../PDRForms/AddNewOutletDetailsForm';
 import AddOmcDetailsForm from '../PDRForms/AddOmcDetailsForm';
 import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
+import Cheque from '../PDRForms/Cheque';
 import VoiceCall from '../PDRForms/VoiceCall';
 
 const useStyles = makeStyles((theme) => ({
@@ -129,6 +131,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const [openDialog, setOpenDialog] = useState(false)
   const [dealershipData, setDealershipData] = useState()
   const [openPhonecall, setOpenPhonecall] = useState(false)
+  const [openChequeDrawer, setOpenChequeDrawer] = useState(false)
 
   const handleEdit = () => {
     setOpenOmcForm(false)
@@ -378,6 +381,14 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
               </Tooltip>
             </CheckAllowed>
           </Grid>
+          <Grid item md={2}>
+            <Tooltip title="click to add cheque">
+              <div className={classes.content} onClick={() => setOpenChequeDrawer(true)}>
+                <AccountBalanceWalletOutlinedIcon fontSize='large' width={36} className={classes.icons} />
+                <Typography variant="h5" align='center' className={classes.title} >Cheque</Typography>
+              </div>
+            </Tooltip>
+          </Grid>
         </Grid>
       </div>
 
@@ -488,11 +499,17 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       <Drawer
         anchor="right"
         open={openPhonecall}
-        // onClose={() => setOpenPhonecall(false)}
         variant="temporary"
       >
         <VoiceCall id={id} callback={handleEdit} currentUser={currentUser} />
-        {/* <AddPhoneCall dealer_id={id} data={dealershipData} callback={handleEdit} currentUser={currentUser} editable={externalView} /> */}
+      </Drawer>
+      <Drawer
+        anchor="right"
+        open={openChequeDrawer}
+        onClose={() => setOpenChequeDrawer(false)}
+        variant="temporary"
+      >
+        <Cheque dealershipId={id} callback={() => setOpenChequeDrawer(false)} currentUser={currentUser} dealershipData={dealershipData} />
       </Drawer>
     </div >
   );

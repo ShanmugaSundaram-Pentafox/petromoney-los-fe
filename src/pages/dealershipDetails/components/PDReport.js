@@ -1,5 +1,4 @@
 import { Grid, Typography, Drawer } from '@material-ui/core';
-import DialogContent from '@material-ui/core/DialogContent';
 import Tooltip from '@material-ui/core/Tooltip';
 import AccountBalanceWalletOutlinedIcon from '@material-ui/icons/AccountBalanceWalletOutlined';
 import { makeStyles } from '@material-ui/styles';
@@ -8,7 +7,6 @@ import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import EmptySidewrapper from '../../../components/CommonComponents/EmptySidewrapper';
-import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
@@ -24,6 +22,7 @@ import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
 import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
 import { ReactComponent as OutletIcon } from '../../../icons/outlet.svg';
 import { ReactComponent as ReferenceIcon } from '../../../icons/reference.svg';
+import { getSignedUrl } from '../../../services/common.service';
 import { getDealershipById } from '../../../services/dealerships.service';
 import { downloadPDReport, getAssetDetailsById, getBusinessDetailsbyID, getInfrastructureDetailsById, getOmcDetailsById, getOtherDetailsbyID, getOutletDetailsById, getReferenceDetailsbyID } from '../../../services/PDReport.services';
 import CheckAllowed from '../../rbac/CheckAllowed';
@@ -213,7 +212,21 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
     setLoading(true)
     downloadPDReport(id)
       .then(res => {
-        setFileCode(res.file)
+        if (res?.file) {
+          getSignedUrl(res?.file)
+            .then((res) => {
+              window.open(res?.url, '_blank');
+            })
+            .catch(e => {
+              enqueueSnackbar(e, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+              });
+            })
+        }
         setOpenDialog(true)
         setLoading(false)
       })
@@ -246,17 +259,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
           </CheckAllowed>
         </div>
 
-        <FormDialog
-          open={openDialog}
-          title={'Personal Discussion Report'}
-          onClose={() => { setOpenDialog(false) }}
-        >
-          <div className={classes.dialogBox} >
-            <DialogContent className={classes.frame}>
-              <iframe title="Report" src={fileCode} height="900" width="500" frameBorder="0" />
-            </DialogContent>
-          </div>
-        </FormDialog>
 
         <Grid container spacing={1} className={classes.root}>
           <Grid item md={2}>

@@ -5,11 +5,13 @@ import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
+import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../../components/Number/Currency';
+import { getSignedUrl } from '../../../services/common.service';
 import { getDpdPageDetails, getDpdReportData, } from '../../../services/report.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 
@@ -37,6 +39,7 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
   const [download, setDownload] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const pageDetailsQuery = useQuery({
     queryKey: ['dpd_pageCount', filterQry,page, search],
@@ -49,7 +52,19 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
       .then(({ data, report_url }) => {
         setLoans(data);
         if (report_url) {
-          window.open(report_url, '_blank')
+          getSignedUrl(report_url)
+            .then((res) => {
+              window.open(res?.url, '_blank');
+            })
+            .catch(e => {
+              enqueueSnackbar(e, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+              });
+            })
         }
         setDownload(false);
         setLoading(false);

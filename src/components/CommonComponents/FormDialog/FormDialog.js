@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import CloudDownloadOutlinedIcon from '@material-ui/icons/CloudDownloadOutlined';
 import React from 'react';
+import { getSignedUrl } from '../../../services/common.service';
 
 const styles = (theme) => ({
   root: {
@@ -30,16 +31,24 @@ const styles = (theme) => ({
 
 const DialogTitle = withStyles(styles)((props) => {
   const { children, classes, onClose, onDownload, ...other } = props;
+
+  const handleClick = () => {
+    if (onDownload) {
+      getSignedUrl(onDownload)
+        .then(res => {
+          window.open(res?.url)
+        })
+        .catch(err => console.log(' getSignedUrl err >>>', err))
+    }
+  }
   return (
     <MuiDialogTitle disableTypography className={classes.root} {...other}>
       <Typography variant="h5">{children}</Typography>
       {
         onDownload ? (
-          <a href={onDownload} target="_blank" rel="noreferrer">
-            <IconButton aria-label="close" className={classes.downloadButton} onClick={onDownload}>
-              <CloudDownloadOutlinedIcon />
-            </IconButton>
-          </a>
+          <IconButton aria-label="close" className={classes.downloadButton} onClick={handleClick}>
+            <CloudDownloadOutlinedIcon />
+          </IconButton>
         ) : null
       }
       {onClose ? (

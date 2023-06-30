@@ -11,6 +11,7 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import usePageTitle from '../../../hooks/usePageTitle';
+import { getSignedUrl } from '../../../services/common.service';
 import { downloadAccountStatement } from '../../../services/dealerships.service';
 
 
@@ -170,9 +171,21 @@ const AccountStatement = ({ id, currentUser }) => {
     if (from_date && to_date) {
       downloadAccountStatement(id, from_date, to_date)
         .then(res => {
-          setFileCode(res?.file)
-          setOpenDialog(true)
-          setLoading(false)
+          getSignedUrl(res?.file)
+            .then(data => {
+              setFileCode(data?.url)
+              setOpenDialog(true)
+              setLoading(false)
+            })
+            .catch(err => {
+              enqueueSnackbar(err, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+              });
+            })
         })
         .catch(e => {
           setLoading(false)

@@ -1,16 +1,16 @@
 import { Typography, makeStyles, Button, Tabs, Tab, Box, CircularProgress, AppBar, Backdrop, IconButton, Tooltip } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import PublishIcon from '@material-ui/icons/Publish';
-import head  from 'lodash-es/head';
+import head from 'lodash-es/head';
 import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
+import FilePreview from '../../../components/CommonComponents/FilePreview';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
-import { rulesList } from '../../../config/userRules';
-import { getScoreCard } from '../../../services/common.service';
+import { getScoreCard, getSignedUrl } from '../../../services/common.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 import BankingInputsTable from '../ScoreCardTables/BankingInputsTable';
 import BureauInputTable from '../ScoreCardTables/BureauInputTable';
@@ -41,14 +41,14 @@ const useStyles = makeStyles(() => ({
   buttonRipple: {
     borderRadius: '10px 10px 0px 0px',
   },
-  backdrop: {zIndex: '2', position: 'absolute', margin: '-16px'},
-  backdropRoot: {display: 'flex', justifyContent: 'space-around', alignItems: 'center'},
-  caption: {color: 'rgb(0,0,0,0.3)'}
+  backdrop: { zIndex: '2', position: 'absolute', margin: '-16px' },
+  backdropRoot: { display: 'flex', justifyContent: 'space-around', alignItems: 'center' },
+  caption: { color: 'rgb(0,0,0,0.3)' }
 }))
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
-  
+
   return (
     <div
       role="tabpanel"
@@ -73,22 +73,22 @@ TabPanel.propTypes = {
 };
 
 const a11yProps = (index) => {
-  return{
+  return {
     id: `scrollable-auto-tab-${index}`,
     'aria-controls': `scrollable-auto-tabpanel-${index}`
   }
 }
 
-const ScoreCard = ({currentUser, dealership_id}) => {
+const ScoreCard = ({ currentUser, dealership_id }) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const [tabValue, setTabValue] = useState(0)
   const [loading, setLoading] = useState(false)
   const [notification, setNotification] = useState('Uploading score card')
   const { enqueueSnackbar } = useSnackbar();
-  const { data: scoreCardData = [] } = useQuery('scorecard', () => getScoreCard(dealership_id), {refetchOnWindowFocus: false})
+  const [openModal, setOpenModal] = useState();
+  const { data: scoreCardData = [] } = useQuery('scorecard', () => getScoreCard(dealership_id), { refetchOnWindowFocus: false })
   const metaData = head(scoreCardData?.metadata?.scorecard_meta)
-  const external = !permissionCheck(currentUser.role_name, rulesList.external_view)
 
   const scoreCardTabs = [
     'OMC Sale Data',
@@ -116,21 +116,25 @@ const ScoreCard = ({currentUser, dealership_id}) => {
     'Almost done!'
   ]
 
-  let cardData = scoreCardData?.co_app_sheet?.co_app_summary_data?.find(d => {
-    d.type === 'co_app_1' && scoreCardTabs.push('Bureau-Ind Co-app 1')
-    d.type === 'co_app_2' && scoreCardTabs.push('Bureau-Ind Co-app 2')
-    d.type === 'co_app_3' && scoreCardTabs.push('Bureau-Ind Co-app 3')
-    d.type === 'co_app_4' && scoreCardTabs.push('Bureau-Ind Co-app 4')
-    d.type === 'co_app_5' && scoreCardTabs.push('Bureau-Ind Co-app 5')
-  })
-
   const handleChange = (event, newValue) => {
     setTabValue(newValue)
   }
 
   const handleDownload = () => {
-    if(metaData?.file_url){
-      window.open(metaData?.file_url, '_blank')
+    if (metaData?.file_url) {
+      getSignedUrl(metaData?.file_url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          enqueueSnackbar(e, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
+        })
     }
   }
 
@@ -150,12 +154,12 @@ const ScoreCard = ({currentUser, dealership_id}) => {
       .then(res => {
         return res.json()
       })
-      .then(({status, message}) => {
-        if(status === 'SUCCESS'){
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
           const notify = async () => {
             for (let i = 0; i < loaderNotifications.length; i++) {
               setNotification(loaderNotifications[i])
-              if (i+1 == loaderNotifications?.length){
+              if (i + 1 == loaderNotifications?.length) {
                 setLoading(false)
                 queryClient.invalidateQueries('scorecard')
                 enqueueSnackbar(message, {
@@ -196,9 +200,9 @@ const ScoreCard = ({currentUser, dealership_id}) => {
   };
 
   return (
-    <div style={{position: 'relative'}}>
+    <div style={{ position: 'relative' }}>
       <div className={classes.title}>
-        <div style={{display: 'flex', flexDirection: 'column'}}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           <Typography variant="h5">Eligibility Score Card</Typography>
           {
             metaData?.uploaded_date &&
@@ -213,7 +217,7 @@ const ScoreCard = ({currentUser, dealership_id}) => {
           {
             metaData?.file_url &&
               <Tooltip title="Download Score Card">
-                <IconButton size="small" style={{marginRight: 12}} onClick={handleDownload}>
+                <IconButton size="small" style={{ marginRight: 12 }} onClick={handleDownload}>
                   <GetAppIcon />
                 </IconButton>
               </Tooltip>
@@ -240,7 +244,7 @@ const ScoreCard = ({currentUser, dealership_id}) => {
         </div>
       </div>
       <div className={classes.tabsRoot}>
-        <AppBar position='static' color='default' style={{zIndex: '0'}}>
+        <AppBar position='static' color='default' style={{ zIndex: '0' }}>
           <Tabs
             value={tabValue}
             onChange={handleChange}
@@ -251,8 +255,8 @@ const ScoreCard = ({currentUser, dealership_id}) => {
           >
             {
               scoreCardTabs?.map((title, i) => {
-                return(
-                  <Tab label={title} key={i} style={{margin:0}} {...a11yProps(i)} TouchRippleProps={{ classes: {root: classes.buttonRipple } }} />
+                return (
+                  <Tab label={title} key={i} style={{ margin: 0 }} {...a11yProps(i)} TouchRippleProps={{ classes: { root: classes.buttonRipple } }} />
                 )
               })
             }
@@ -306,10 +310,13 @@ const ScoreCard = ({currentUser, dealership_id}) => {
       </div>
       <Backdrop open={loading} className={classes.backdrop} >
         <div className={classes.backdropRoot}>
-          <CircularProgress style={{color: 'white'}} size={25} />
-          <Typography variant='body1' style={{color: 'white', marginLeft: 16}}>{notification}</Typography>
+          <CircularProgress style={{ color: 'white' }} size={25} />
+          <Typography variant='body1' style={{ color: 'white', marginLeft: 16 }}>{notification}</Typography>
         </div>
       </Backdrop>
+      <FormDialog maxWidth={'xl'} title={'Score card'} open={openModal?.open} onClose={() => setOpenModal({ open: false })}>
+        <FilePreview data={openModal} />
+      </FormDialog>
     </div>
   )
 }

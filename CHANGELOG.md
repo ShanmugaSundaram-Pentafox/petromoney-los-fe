@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.33.1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.33.0...v2.33.1) (2023-06-29)
+
+
+### Bug Fixes
+
+* **CRR:** udated default filter value and removed logs ([0741032](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/07410329f5c3ba1191ad9b0f77211de5a323c97f))
+* **CRR:** updated get API call ([34808ab](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/34808ab67194b791b8da4fe2030403b802ec1219))
+* **report-download-view:** updated signed url for viewing documents ([c8dd60a](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/c8dd60a975b4ffd910dafad4e4a6e1b348857991))
+* **signed-url:** fix updated signed url for download ([bb4e20d](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/bb4e20d7eb11d827ae7f5dc121c3fef224bdb309))
+* **SOA:** updated signed URL call for SOA ([6ce9a67](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/6ce9a674836fd6d0d47851468250fb13581a487f))
+
 ## [2.33.0](///compare/v2.32.0...v2.33.0) (2023-06-13)
 
 

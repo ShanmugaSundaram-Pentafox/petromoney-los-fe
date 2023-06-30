@@ -876,3 +876,24 @@ export const getScoreCard = (dealership_id) => {
       });
   });
 };
+
+export const getSignedUrl = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall('cloudfront/signed', {
+      method: 'POST',
+      body: {
+        url: data
+      },
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

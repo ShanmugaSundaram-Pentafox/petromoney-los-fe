@@ -29,10 +29,9 @@ import moment from 'moment';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import ActivityBox from './components/ActivityBox';
 import { deleteRequestUrl } from '../../services/leegality.service';
 import apiCall from '../../utils/api.util';
-import PdfViewer from '../CommonComponents/PdfViewer/PdfViewer';
+import FilePreview from '../CommonComponents/FilePreview';
 
 const Card = styled.div`
   background-color: #fff;
@@ -74,14 +73,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
-  const [auditTrails, setAuditTrails] = useState([]);
   const [docDetails, setDocDetails] = useState({});
-  const [successStatus, setSuccessStatus] = useState(false);
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItemData, setSelectedItemData] = useState({});
   const [open, setOpen] = useState(false);
-  // const [signUrl, setSignUrl] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
@@ -121,22 +117,6 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
           variant: 'error',
         });
         setDocDetails();
-      });
-
-    apiCall(`document/trail/${docId}`)
-      .then((res) => {
-        if (res.status === 'SUCCESS') {
-          if (res.data?.status) {
-            setAuditTrails(res?.data?.data.auditTrails);
-          }
-        } else {
-          console.log('>> Document Trail Status error >> ', res);
-          setAuditTrails();
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setAuditTrails();
       });
   }, []);
 
@@ -220,11 +200,11 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
   return (
     <Box bgcolor="#fbfbfb">
       <Grid container spacing={2}>
-        <Grid item sm={6} style={{ position: 'relative' }}>
+        <Grid item md={6} style={{ position: 'relative' }}>
           {docId && docDetails?.file && (
-            <PdfViewer
-              title="Some Random File"
-              file={docDetails?.file}
+            <FilePreview
+              title="Leegality"
+              data={{ image: docDetails?.file, type: docDetails?.file?.endsWith('.pdf') }}
               showDownload
             />
           )}
@@ -236,7 +216,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
           </Backdrop>
         </Grid>
         {docDetails?.file ? (
-          <Grid item sm={3}>
+          <Grid item md={4}>
             <Box pt={2}>
               <TableContainer>
                 <Table aria-label="leegality table">
@@ -477,19 +457,6 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
             </Box >
           </Grid >
         ) : null}
-
-        <Grid item sm={3}>
-          <Box>
-            {auditTrails?.map((item, i) => (
-              <ActivityBox key={'act-' + i} {...item} />
-            ))}
-            {successStatus && (
-              <Box pt={2} pl={3} color="success.main">
-                {successStatus}
-              </Box>
-            )}
-          </Box>
-        </Grid>
       </Grid >
     </Box >
   );

@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React from 'react';
+import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -48,8 +49,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const AddBankAndChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser, editable }) => {
+const AddBankAndChequeDetailsForm = ({collectionId, callback }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient()
   const classes = useStyles();
 
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues, setFieldValue } = useFormik({
@@ -65,7 +67,7 @@ const AddBankAndChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser,
     }),
     onSubmit: finalValues => {
       let v = { ...finalValues };
-      addPdcBank(v, dealer_id)
+      addPdcBank(v, collectionId)
         .then((res) => {
           enqueueSnackbar(res, {
             anchorOrigin: {
@@ -74,6 +76,7 @@ const AddBankAndChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser,
             },
             variant: 'success',
           });
+          queryClient.invalidateQueries(['pdc-bank-data'])
           callback()
         })
         .catch((err) => {
@@ -120,7 +123,7 @@ const AddBankAndChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser,
   }
   return (
     <div>
-      <Typography variant='h6' style={{marginBottom:12}}>Add Bank Details</Typography>
+      <Typography variant='h6' style={{ marginBottom: 12 }}>Add Bank Details</Typography>
       <Grid container spacing={2}>
         <Grid item md={6}>
           <TextInput
@@ -168,6 +171,20 @@ const AddBankAndChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser,
             helperText={errors.ifsc_code}
             onChange={(e) => { onChangeIFSC(e); handleChange(e) }}
           />
+          {
+            values?.ifsc_code && (
+              <>
+                <div style={{ display: 'flex' }}>
+                  <p style={{ fontSize: 10 }}><b>Bank name : </b></p>
+                  <p style={{ fontSize: 12, color: '#888' }}>{values?.bank_name}</p>
+                </div>
+                <div style={{ display: 'flex' }}>
+                  <p style={{ fontSize: 10 }}><b>Bank City: </b></p>
+                  <p style={{ fontSize: 12, color: '#888' }}>{values?.bank_city}</p>
+                </div>
+              </>
+            )
+          }
         </Grid>
       </Grid>
       <div style={{ marginTop: 10, display: 'flex', justifyContent: 'flex-end' }}>

@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import toInteger from 'lodash-es/toInteger';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
@@ -51,13 +51,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const AddChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser, editable }) => {
+const AddChequeDetailsForm = ({ collectionId, callback, currentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const [isBlankCheque, setIsBlankCheque] = useState(false);
-  const { data: bankData = [] } = useQuery('pdc-bank-data', () => getPdcBank(dealer_id), {
+  const { data: bankData = [] } = useQuery(['pdc-bank-data', collectionId], () => getPdcBank(collectionId), {
     refetchOnWindowFocus: false,
   })
+
+  useEffect(() => {
+    if(!bankData) {
+      if(bankData?.length == 0) {
+        callback()
+        enqueueSnackbar('Add bank before adding cheque', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      }
+    }
+    
+  }, [bankData])
 
   const { values, errors, handleChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: {},
@@ -66,56 +82,68 @@ const AddChequeDetailsForm = ({ dealer_id, isEdit, callback, currentUser, editab
     validationSchema: Yup.object().shape({
       applicant_type: Yup.string('Enter valid applicant type').nullable('Enter valid applicant type').required('Enter valid applicant type'),
       pdc_bank_details_id: Yup.number('select valid bank details').nullable('select valid bank details').required('select valid bank details'),
-      amount_filled: Yup.string().nullable('Enter filled amount in cheque').required('Enter filled amount in cheque'),
+      // amount_filled: Yup.string().nullable('Enter filled amount in cheque').required('Enter filled amount in cheque'),
       cheque_number: Yup.number('Enter valid cheque number').nullable('Enter valid cheque number').required('Enter valid cheque number'),
     }),
     onSubmit: values => {
-      let obj = { ...values, cheque_type: isBlankCheque ? 'blank' : 'filled', pdc_bank_details_id: toInteger(values.pdc_bank_details_id) };
-      const formData = new FormData();
-      Object.keys(obj).forEach(key => {
-        formData.append(key, obj[key]);
-      })
-      fetch(`${URL.base}pdc-cheque-details/${dealer_id}`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${currentUser.token}`,
-        },
-      })
-        .then((res) => {
-          return res.json();
+      if (isBlankCheque || values?.amount_filled) {
+        let obj = { ...values, cheque_type: isBlankCheque ? 'blank' : 'filled', pdc_bank_details_id: toInteger(values.pdc_bank_details_id) };
+        const formData = new FormData();
+        Object.keys(obj).forEach(key => {
+          formData.append(key, obj[key]);
         })
-        .then(res => {
-          if (res?.status == 'SUCCESS') {
-            enqueueSnackbar(res.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'success',
-            });
-            callback();
-          }
-          else {
-            enqueueSnackbar(res.message, {
+        fetch(`${URL.base}pdc-cheque-details/${collectionId}`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${currentUser.token}`,
+          },
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then(res => {
+            if (res?.status == 'SUCCESS') {
+              enqueueSnackbar(res.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'success',
+              });
+              callback();
+            }
+            else {
+              enqueueSnackbar(res.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+              });
+            }
+          })
+          .catch(e => {
+            enqueueSnackbar(e.message, {
               anchorOrigin: {
                 vertical: 'top',
                 horizontal: 'right',
               },
               variant: 'error',
             });
-          }
-        })
-        .catch(e => {
-          enqueueSnackbar(e.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          });
-        })
+          })
+      } else {
+        enqueueSnackbar('Enter amount to continue', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+
+      }
     }
+
   });
 
   const inputProps = {

@@ -127,6 +127,22 @@ export const getOmcDetailsById = (id) => {
   });
 };
 
+export const getTransitDetailsById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`pdc-collection-events/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+};
+
 export const updatePdcCollection = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`pdc-collection/${id}`, {

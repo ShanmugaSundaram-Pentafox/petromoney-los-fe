@@ -8,11 +8,13 @@ import Modal from '@material-ui/core/Modal';
 import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
+import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import AddBankAndChequeDetailsForm from './AddBankAndChequeDetailsForm';
 import AddChequeCountForm from './AddChequeCountForm';
 import AddChequeDetailsForm from './AddChequeDetailsForm';
 import ShowChequeListTable from './ShowChequeListTable';
+import ViewTransitDetails from './ViewTransitDetails';
 import { getPdcCollectionDetails } from '../../../services/pdc.service';
 
 
@@ -31,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
-    width: '55vw'
+    width: '60vw'
   },
   sidePanelFormContentWrapper: {
     backgroundColor: '#FAFAFA',
@@ -76,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
   const classes = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const [openModal, setOpenModal] = useState(false);
   const [openBankModal, setOpenBankModal] = useState(false)
   const [tableData, setTableData] = useState([])
@@ -116,6 +119,42 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
     callback();
   };
 
+  const handleFetch = () => {
+    getData()
+  }
+
+
+  const handleOpenChequeForm = () => {
+    getData()
+    console.log('hndle open')
+    if (collectionDetails?.id) {
+      setOpenModal(true)
+    } else {
+      enqueueSnackbar('Add DPN details before adding cheque', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      })
+    }
+  }
+
+  const handleOpenBankForm = () => {
+    if (collectionDetails?.id) {
+      setOpenBankModal(true)
+    } else {
+      enqueueSnackbar('Add DPN details before adding bank', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      })
+    }
+
+  }
+
   return (
     <>
       <div className={classes.sidePanelFormWrapper}>
@@ -128,11 +167,19 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
             <div style={{ display: 'flex' }}>
               <Typography variant='h6'>{dealershipData?.name} ({dealershipId})</Typography>
             </div>
-            <AddChequeCountForm initData={collectionDetails} dealershipId={dealershipId} dealershipData={dealershipData} />
+            <AddChequeCountForm handleFetch={handleFetch} initData={collectionDetails} dealershipId={dealershipId} dealershipData={dealershipData} />
             <Divider className={classes.divider} />
             <Typography variant='h6' style={{ marginBottom: 12 }}>Cheque Details</Typography>
-            <ShowChequeListTable data={tableData} dealershipId={dealershipId} />
+            {
+              (tableData?.length > 0) ? (
+                <ShowChequeListTable data={tableData} dealershipId={dealershipId} currentUser={currentUser} />
+              ) : (
+                <Typography variant='h6' style={{ fontSize: 11, color: '#888', marginRight: 20, alignItems: 'center' }}>No Cheque details found</Typography>
+              )
+            }
             <Divider />
+            <ViewTransitDetails dealershipId={dealershipId} />
+
 
           </div>
         </div>
@@ -150,7 +197,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
               <Button
                 color='primary'
                 variant="contained"
-                onClick={() => setOpenBankModal(true)}
+                onClick={handleOpenBankForm}
               >
                 Add Bank
               </Button>
@@ -158,7 +205,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
                 color='primary'
                 variant="contained"
                 style={{ marginLeft: 20 }}
-                onClick={() => setOpenModal(true)}
+                onClick={handleOpenChequeForm}
               >
                 Add Cheque
               </Button>
@@ -177,7 +224,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
         }}
       >
         <div className={classes.paper}>
-          <AddChequeDetailsForm callback={() => { getData(); setOpenModal(false); }} dealer_id={dealershipId} currentUser={currentUser} />
+          <AddChequeDetailsForm callback={() => { getData(); setOpenModal(false); }} collectionId={collectionDetails?.id} dealer_id={dealershipId} currentUser={currentUser} />
         </div>
       </Modal>
       <Modal
@@ -191,7 +238,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
         }}
       >
         <div className={classes.paper}>
-          <AddBankAndChequeDetailsForm callback={() => setOpenBankModal(false)} dealer_id={dealershipId} currentUser={currentUser} />
+          <AddBankAndChequeDetailsForm collectionId={collectionDetails?.id} callback={() => setOpenBankModal(false)} dealer_id={dealershipId} currentUser={currentUser} />
         </div>
       </Modal>
     </>

@@ -7,18 +7,21 @@ import {
 } from '@material-ui/core';
 import toInteger from 'lodash-es/toInteger'
 import { useSnackbar } from 'notistack';
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import TextInput from '../../../components/TextInput/TextInput';
 import { addPdcCollection, updatePdcCollection } from '../../../services/pdc.service';
 
-const AddChequeCountForm = ({ dealershipId, initData }) => {
+const AddChequeCountForm = ({ dealershipId, initData,handleFetch }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const [allowEdit, setAllowEdit] = useState(false);
+  const [allowEdit, setAllowEdit] = useState(true);
   const [data, setData] = useState();
   useEffect(() => {
-    if (initData)
+    if (initData?.id) {
       setData(initData)
+      setAllowEdit(false)
+    }
   }, [initData])
+
   const addPdcData = () => {
     let d = {
       dpn: data?.dpn,
@@ -28,6 +31,7 @@ const AddChequeCountForm = ({ dealershipId, initData }) => {
       updatePdcCollection(d, dealershipId)
         .then((res) => {
           setAllowEdit(false)
+          handleFetch()
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -49,6 +53,7 @@ const AddChequeCountForm = ({ dealershipId, initData }) => {
     else {
       addPdcCollection(d, dealershipId)
         .then((res) => {
+          handleFetch()
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -79,17 +84,19 @@ const AddChequeCountForm = ({ dealershipId, initData }) => {
               <RadioGroup
                 row
                 disabled={!allowEdit}
-                defaultValue="yes"
+                defaultValue={data?.dpn}
                 value={data?.dpn}
-                onChange={(event) => setData({ ...data, dpn: event?.target?.value })}
+                onChange={(event) => setData({ ...data, dpn: event?.target?.value == 'yes' ? 1 : 0 })}
               >
                 <FormControlLabel
                   value="yes"
+                  disabled={!allowEdit}
                   control={<Radio size="small" />}
                   label="Yes"
                 />
                 <FormControlLabel
                   value="no"
+                  disabled={!allowEdit}
                   control={<Radio size="small" />}
                   label="No"
                 />

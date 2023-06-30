@@ -32,12 +32,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const ShowChequeListTable = ({ dealershipId, data }) => {
+const ShowChequeListTable = ({ dealershipId, data, currentUser }) => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
-      <ShowChequeDetailsUnderbank data={data} />
+      <ShowChequeDetailsUnderbank data={data} dealershipId={dealershipId} currentUser={currentUser} />
     </div>
   )
 }

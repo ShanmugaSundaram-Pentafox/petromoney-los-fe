@@ -42,7 +42,7 @@ const PreviewWrapper = styled.div`
         height:72vh;
         overflow: hidden;
         padding-top: 45%;
-        // position: relative;
+        position: relative;
     }
     .iframe-container iframe {
         width:100%;

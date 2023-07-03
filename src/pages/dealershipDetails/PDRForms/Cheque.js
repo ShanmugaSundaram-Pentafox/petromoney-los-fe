@@ -15,6 +15,8 @@ import AddChequeCountForm from './AddChequeCountForm';
 import AddChequeDetailsForm from './AddChequeDetailsForm';
 import ShowChequeListTable from './ShowChequeListTable';
 import ViewTransitDetails from './ViewTransitDetails';
+import { action_id, resources_id } from '../../../config/accessControl';
+import CheckAllowed from '../../../pages/rbac/CheckAllowed'
 import { getPdcCollectionDetails } from '../../../services/pdc.service';
 
 
@@ -25,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     zIndex: 0,
+    cursor:'pointer',
     boxShadow: '0 1px 4px -3px #333'
   },
   sidePanelFormWrapper: {
@@ -158,7 +161,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
   return (
     <>
       <div className={classes.sidePanelFormWrapper}>
-        <Typography className={classes.sidePanelTitle} variant="h4">
+        <Typography className={classes.sidePanelTitle} onClick={handleClose} variant="h4">
           <div>Cheques</div>
           <CloseIcon />
         </Typography>
@@ -167,7 +170,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
             <div style={{ display: 'flex' }}>
               <Typography variant='h6'>{dealershipData?.name} ({dealershipId})</Typography>
             </div>
-            <AddChequeCountForm handleFetch={handleFetch} initData={collectionDetails} dealershipId={dealershipId} dealershipData={dealershipData} />
+            <AddChequeCountForm handleFetch={handleFetch} initData={collectionDetails} dealershipId={dealershipId} currentUser={currentUser} dealershipData={dealershipData} />
             <Divider className={classes.divider} />
             <Typography variant='h6' style={{ marginBottom: 12 }}>Cheque Details</Typography>
             {
@@ -194,25 +197,29 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
               Back
             </Button>
             <div>
-              <Button
-                color='primary'
-                variant="contained"
-                onClick={handleOpenBankForm}
-              >
-                Add Bank
-              </Button>
-              <Button
-                color='primary'
-                variant="contained"
-                style={{ marginLeft: 20 }}
-                onClick={handleOpenChequeForm}
-              >
-                Add Cheque
-              </Button>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.PdcModule} action={action_id?.PdcModule?.createBank}>
+                <Button
+                  color='primary'
+                  variant="contained"
+                  onClick={handleOpenBankForm}
+                >
+                  Add Bank
+                </Button>
+              </CheckAllowed>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.PdcModule} action={action_id?.PdcModule?.createCheque}>
+                <Button
+                  color='primary'
+                  variant="contained"
+                  style={{ marginLeft: 20 }}
+                  onClick={handleOpenChequeForm}
+                >
+                  Add Cheque
+                </Button>
+              </CheckAllowed>
             </div>
           </div>
         </div>
-      </div>
+      </div >
       <Modal
         className={classes.modal}
         open={openModal}

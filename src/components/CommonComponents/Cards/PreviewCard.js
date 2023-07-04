@@ -1,11 +1,14 @@
-import { Button, Typography } from '@material-ui/core';
+import { Button, Tooltip, Typography } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/styles';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import styled from 'styled-components'
 import { action_id, resources_id } from '../../../config/accessControl';
 import CheckAllowed from '../../../pages/rbac/CheckAllowed';
+import { syncBankDetailsWithLMS } from '../../../services/PDReport.services';
 import DeleteButton from '../Button/DeleteButton';
 
 const Card = styled.div`
@@ -48,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
 const PreviewCard = ({ children, action = true, onEdit, onDelete, onCustom, customButton = false, customIcon, token = false, tokenLabel, tokenIcon, variant }) => {
   const classes = useStyles()
   const [deleteModal, setDeleteModal] = useState(false)
+
   return (
     <Card style={{ marginBottom: 0 }}>
       <div className="card-body">
@@ -93,9 +97,32 @@ const PreviewCard = ({ children, action = true, onEdit, onDelete, onCustom, cust
 }
 export default PreviewCard;
 
-export const PreviewCardBank = ({ children, onEdit, action = true, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate, currentUser }) => {
+export const PreviewCardBank = ({ id, children, onEdit, action = true, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate, currentUser }) => {
   const classes = useStyles()
   const [deleteModal, setDeleteModal] = useState(false)
+  const { enqueueSnackbar } = useSnackbar();
+
+  const handleSync = () => {
+    syncBankDetailsWithLMS(id)
+      .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+      })
+      .catch((err) => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+      })
+  }
   return (
     <Card style={{ marginBottom: 0 }}>
       <div className="card-body">
@@ -120,6 +147,28 @@ export const PreviewCardBank = ({ children, onEdit, action = true, onDelete, onC
                 {tokenLabel}
               </Button>
             </CheckAllowed>
+        }
+        {
+          verified ? (
+            <Tooltip title={'click to sync bank to LMS'}>
+              <div>
+                <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankSync}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="success"
+                    style={{ margin: 4 }}
+                    className={classes.btnSuccess}
+                    startIcon={<SyncIcon color="primary" />}
+                    onClick={handleSync}
+                    // onClick={onCustom}
+                  >
+                    Sync bank
+                  </Button>
+                </CheckAllowed>
+              </div>
+            </Tooltip>
+          ) : null
         }
         {
           !verified && (

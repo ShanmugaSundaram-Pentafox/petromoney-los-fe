@@ -91,15 +91,16 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
   const queryClient = useQueryClient()
   const [imageModal, setImageModal] = useState({});
   const classes = usePreviewStyles();
-  const [deleteModal, setDeleteModal] = useState({ open: false })
+  const [deleteModal, setDeleteModal] = useState({ open: false, loading: false })
   const [editModal, setEditModal] = useState({ open: false })
   const { enqueueSnackbar } = useSnackbar();
 
   const handleDocDelete = (fileId) => {
+    setDeleteModal({ ...deleteModal, loading: true })
     deleteDocsImage([fileId], dealershipId)
       .then((res) => {
         queryClient.invalidateQueries(['doc-checklist', dealershipId])
-        setDeleteModal({ open: false })
+        setDeleteModal({ ...deleteModal, open: false, loading: false })
       })
       .catch((err) => {
         console.log(err);
@@ -194,7 +195,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
       </FormDialog>
       <Dialog
         open={deleteModal?.open}
-        onClose={() => setDeleteModal({ open: false })}
+        onClose={() => setDeleteModal({ loading: false, open: false })}
         maxWidth='xs'
         fullWidth
       >
@@ -206,9 +207,9 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
           <DialogContentText style={{ textAlign: 'center' }}>Do you really want to delete this document? This process cannot be undone!</DialogContentText>
         </DialogContent>
         <div className={classes.deleteModal}>
-          <Button size='medium' variant='outlined' onClick={() => setDeleteModal({ open: false })}>Cancel</Button>
-          <Button variant='contained' size='medium' style={{ backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 15 }} onClick={() => handleDocDelete(deleteModal?.fileId)}>
-            Delete
+          <Button size='medium' variant='outlined' onClick={() => setDeleteModal({ open: false, loading: true })}>Cancel</Button>
+          <Button variant='contained' size='medium' disabled={deleteModal?.loading} style={{ backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 15 }} onClick={() => !deleteModal?.loading ? handleDocDelete(deleteModal?.fileId) : null}>
+            {deleteModal?.loading ? 'Deleting..' : 'Delete'}
           </Button>
         </div>
       </Dialog>

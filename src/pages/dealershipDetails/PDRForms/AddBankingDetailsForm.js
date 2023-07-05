@@ -134,7 +134,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
       ifsc: Yup.string().required('Enter IFSC code').nullable('Enter IFSC code').matches(/^[A-Za-z]{4}0[A-Z0-9]{6}$/, 'Enter valid IFSC'),
       account_name: Yup.string('Enter valid name').nullable('Enter Account Holder name').required('Enter Account holder name'),
       bank_name: Yup.string('Enter valid name').nullable('Enter bank name').required('Enter name'),
-      account_no: Yup.string().nullable('Enter account number').required('Enter account number').matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]*$/,'Enter valid account number'),
+      account_no: Yup.string().nullable('Enter account number').required('Enter account number').matches(/^(?=.*\d)[a-zA-Z0-9]+$/,'Enter valid account number'),
       bank_branch: Yup.string('Enter valid branch name').nullable('Enter branch name').required('Enter branch name'),
       account_type: Yup.string('Enter valid type').nullable('Enter account type').required('Enter account type'),
     }),

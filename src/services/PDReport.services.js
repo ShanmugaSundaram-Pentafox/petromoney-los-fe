@@ -781,4 +781,21 @@ export const bankAccValidate = (AccId, IFSC) => {
       })
   });
 }
+export const syncBankDetailsWithLMS = (bankId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/bank/${bankId}/sync`, {
+      method: 'POST',
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
 

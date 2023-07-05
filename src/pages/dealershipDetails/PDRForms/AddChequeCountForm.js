@@ -9,9 +9,11 @@ import toInteger from 'lodash-es/toInteger'
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import TextInput from '../../../components/TextInput/TextInput';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { addPdcCollection, updatePdcCollection } from '../../../services/pdc.service';
+import CheckAllowed from '../../rbac/CheckAllowed';
 
-const AddChequeCountForm = ({ dealershipId, initData,handleFetch }) => {
+const AddChequeCountForm = ({ dealershipId, initData, handleFetch,currentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [allowEdit, setAllowEdit] = useState(true);
   const [data, setData] = useState();
@@ -114,11 +116,13 @@ const AddChequeCountForm = ({ dealershipId, initData,handleFetch }) => {
             />
           </div>
           <div style={{ marginLeft: 32, marginTop: 16 }}>
-            {
-              allowEdit ?
-                <Button variant='contained' color='primary' onClick={addPdcData}>{'Save & Continue'}</Button> :
-                <Button variant='contained' color='primary' onClick={() => setAllowEdit(true)}>{'Edit'}</Button>
-            }
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.PdcModule} action={action_id?.PdcModule?.addDpn}>
+              {
+                allowEdit ?
+                  <Button variant='contained' color='primary' onClick={addPdcData}>{'Save & Continue'}</Button> :
+                  <Button variant='contained' color='primary' onClick={() => setAllowEdit(true)}>{'Edit'}</Button>
+              }
+            </CheckAllowed>
           </div>
         </div>
       </div>

@@ -7,6 +7,8 @@ import TableRow from '@material-ui/core/TableRow';
 import { makeStyles } from '@material-ui/styles';
 import toInteger from 'lodash-es/toInteger'
 import React, { useEffect, useState } from 'react'
+import AddBankAndChequeDetailsForm from './AddBankAndChequeDetailsForm';
+import AddChequeDetailsForm from './AddChequeDetailsForm';
 import AddTransitDetailsForm from './AddTransitDetailsForm';
 import Button from '../../../components/CommonComponents/Button/Button';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
@@ -44,13 +46,16 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ShowChequeListTable = ({ data, dealershipId, currentUser }) => {
+const ShowChequeListTable = ({ data, dealershipId, collectionId, currentUser, refetch }) => {
   const classes = useStyles();
   const [openModal, setOpenModal] = useState(false)
   const [imageModal, setImageModal] = useState({})
   const [selectedItem, setSelectedItem] = useState([])
   const [selectAll, setSelectAll] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
+  const [rowData, setRowData] = useState();
+  const [openChequeModal, setOpenChequeModal] = useState(false);
+  const [openBankModal,setOpenBankModal] = useState(false);
   let allId = data?.map(obj => obj.id)
 
   const handleChange = (e) => {
@@ -81,7 +86,7 @@ const ShowChequeListTable = ({ data, dealershipId, currentUser }) => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
         {
-          selectedItem?.length > 0 && (
+          (selectedItem?.length > 0) && (
             <CheckAllowed currentUser={currentUser} resource={resources_id?.PdcModule} action={action_id?.PdcModule?.addTransit}>
               <Button onClick={() => setOpenDialog(true)} variant='outlined' color='primary' size='small'>Add transit details</Button>
             </CheckAllowed>
@@ -97,23 +102,45 @@ const ShowChequeListTable = ({ data, dealershipId, currentUser }) => {
             <TableCell>Account Details</TableCell>
             <TableCell>Amount</TableCell>
             <TableCell>Cheque number</TableCell>
-            {/* <TableCell>File</TableCell> */}
+            <TableCell align='center'>Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody style={{ backgroundColor: '#FFFFFF' }}>
           {data?.map(row => (
-            <TableRow className={classes.tableRow} key={row.id} onClick={e => null}>
-              <TableCell>{<Checkbox checked={selectedItem.includes(row.id)} color="primary" value={row.id} onChange={(e) => handleChange(e)} />}</TableCell>
-              <TableCell>{row?.id}</TableCell>
+            <TableRow className={classes.tableRow} key={row.cheque_id}>
+              <TableCell>{<Checkbox checked={selectedItem.includes(row.cheque_id)} color="primary" value={row.cheque_id} onChange={(e) => handleChange(e)} />}</TableCell>
+              <TableCell>{row?.cheque_id}</TableCell>
               <TableCell>{row?.applicant_type.toUpperCase()}&nbsp;&nbsp;</TableCell>
               <TableCell>{row.account_name.toUpperCase()} <br /><b>{row.account_number}</b><br /><p style={{ fontSize: 10, color: '#888' }}>{row.bank_name}, {row?.branch_name}</p></TableCell>
               <TableCell align='right'>{row.amount_filled ? <Currency value={row.amount_filled} /> : 'BLANK'}</TableCell>
-              <TableCell onClick={() => { setImageModal({ image: row.soft_copy_url, type: row?.soft_copy_url?.endsWith('.pdf'), cheque_number: row?.cheque_number }); setOpenModal(true) }}>
-                <Tooltip title={'Click to view cheque'}>
-                  <p style={{color:'#259bf4'}}>
-                    {row.cheque_number}
-                  </p>
-                </Tooltip>
+              {
+                row?.soft_copy_url ? (
+                  <TableCell onClick={() => { setImageModal({ image: row.soft_copy_url, type: row?.soft_copy_url?.endsWith('.pdf'), cheque_number: row?.cheque_number }); setOpenModal(true) }}>
+                    <Tooltip title={'Click to view cheque'}>
+                      <p style={{ color: '#259bf4' }}>
+                        {row.cheque_number}
+                      </p>
+                    </Tooltip>
+                  </TableCell>
+                ) : (
+                  <TableCell>
+                    <Tooltip title={'No cheque uploaded'}><p>{row.cheque_number}</p></Tooltip>
+                  </TableCell>
+                )
+              }
+              <TableCell>
+                <div>
+                  <Tooltip title='Click to edit bank'>
+                    <div onClick={() => { setOpenBankModal(true);  setRowData(row) }} style={{marginTop:4,marginRight:10}}>
+                      <Button variant='outlined' color='primary' size='small'>&nbsp;&nbsp;Edit bank&nbsp;&nbsp;</Button>
+                    </div>
+                  </Tooltip>
+                  <Tooltip title='Click to edit cheque'>
+                    <div style={{marginTop:4}} onClick={() => {setOpenChequeModal(true); setRowData(row) }}>
+                      <Button variant='outlined' color='primary' size='small'>Edit cheque</Button>
+                    </div>
+                  </Tooltip>
+                </div>
               </TableCell>
             </TableRow>
           ))}
@@ -136,6 +163,34 @@ const ShowChequeListTable = ({ data, dealershipId, currentUser }) => {
       >
         <div className={classes.paper}>
           <AddTransitDetailsForm callback={() => setOpenDialog(false)} currentUser={currentUser} data={selectedItem} dealershipId={dealershipId} />
+        </div>
+      </Modal>
+      <Modal
+        className={classes.modal}
+        open={openChequeModal}
+        onClose={() => setOpenChequeModal(false)}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 300,
+        }}
+      >
+        <div className={classes.paper}>
+          <AddChequeDetailsForm title={'Edit Cheque details'} callback={() => { refetch(); setOpenChequeModal(false); }} data={rowData} collectionId={collectionId} dealer_id={dealershipId} currentUser={currentUser} />
+        </div>
+      </Modal>
+      <Modal
+        className={classes.modal}
+        open={openBankModal}
+        onClose={() => setOpenBankModal(false)}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 300,
+        }}
+      >
+        <div className={classes.paper}>
+          <AddBankAndChequeDetailsForm title={'Edit Bank details'} collectionId={collectionId} data={rowData} callback={() => {refetch(); setOpenBankModal(false)}} dealer_id={dealershipId} currentUser={currentUser} />
         </div>
       </Modal>
     </div>

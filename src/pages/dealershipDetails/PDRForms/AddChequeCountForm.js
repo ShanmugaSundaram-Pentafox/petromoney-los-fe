@@ -86,8 +86,7 @@ const AddChequeCountForm = ({ dealershipId, initData, handleFetch,currentUser })
               <RadioGroup
                 row
                 disabled={!allowEdit}
-                defaultValue={data?.dpn}
-                value={data?.dpn}
+                value={data?.dpn==1 ? 'yes' : 'no'}
                 onChange={(event) => setData({ ...data, dpn: event?.target?.value == 'yes' ? 1 : 0 })}
               >
                 <FormControlLabel

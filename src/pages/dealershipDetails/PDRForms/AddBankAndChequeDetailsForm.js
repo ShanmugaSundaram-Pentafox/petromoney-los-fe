@@ -49,13 +49,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const AddBankAndChequeDetailsForm = ({collectionId, callback }) => {
+const AddBankAndChequeDetailsForm = ({ collectionId, callback, data, title }) => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient()
   const classes = useStyles();
-
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues, setFieldValue } = useFormik({
-    initialValues: {},
+    initialValues: {
+      id:data?.bank_id,
+      applicant_type:data?.applicant_type,
+      ifsc_code: data?.ifsc_code,
+      account_name: data?.account_name,
+      account_number: data?.account_number,
+      bank_name: data?.bank_name,
+      branch_name: data?.branch_name,
+    },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
@@ -65,9 +72,9 @@ const AddBankAndChequeDetailsForm = ({collectionId, callback }) => {
       account_number: Yup.string().nullable('Enter account number').required('Enter account number'),
       branch_name: Yup.string('Enter valid branch name').nullable('Enter branch name').required('Enter branch name'),
     }),
-    onSubmit: finalValues => {
-      let v = { ...finalValues };
-      addPdcBank(v, collectionId)
+    onSubmit: values => {
+      let v = { ...values };
+      addPdcBank(v, collectionId, values?.id)
         .then((res) => {
           enqueueSnackbar(res, {
             anchorOrigin: {
@@ -110,7 +117,7 @@ const AddBankAndChequeDetailsForm = ({collectionId, callback }) => {
               ifsc_code: data.IFSC,
               bank_name: data.BANK,
               branch_name: data.BRANCH,
-              bank_city: data.CITY
+              // bank_city: data.CITY
             })
           } else {
             console.log(data)
@@ -123,7 +130,7 @@ const AddBankAndChequeDetailsForm = ({collectionId, callback }) => {
   }
   return (
     <div>
-      <Typography variant='h6' style={{ marginBottom: 12 }}>Add Bank Details</Typography>
+      <Typography variant='h6' style={{ marginBottom: 12 }}>{title}</Typography>
       <Grid container spacing={2}>
         <Grid item md={6}>
           <TextInput
@@ -175,13 +182,17 @@ const AddBankAndChequeDetailsForm = ({collectionId, callback }) => {
             values?.ifsc_code && (
               <>
                 <div style={{ display: 'flex' }}>
-                  <p style={{ fontSize: 10 }}><b>Bank name : </b></p>
+                  <p style={{ fontSize: 10 }}><b>Bank name : &nbsp;</b></p>
                   <p style={{ fontSize: 12, color: '#888' }}>{values?.bank_name}</p>
                 </div>
-                <div style={{ display: 'flex' }}>
-                  <p style={{ fontSize: 10 }}><b>Bank City: </b></p>
-                  <p style={{ fontSize: 12, color: '#888' }}>{values?.bank_city}</p>
-                </div>
+                {
+                  values?.branch_name && (
+                    <div style={{ display: 'flex' }}>
+                      <p style={{ fontSize: 10 }}><b>Bank City: </b></p>
+                      <p style={{ fontSize: 12, color: '#888' }}>{values?.branch_name}</p>
+                    </div>
+                  )
+                }
               </>
             )
           }

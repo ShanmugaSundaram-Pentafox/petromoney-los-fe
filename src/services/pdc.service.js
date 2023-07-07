@@ -19,12 +19,13 @@ export const addPdcCollection = (data, id) => {
   });
 };
 
-export const addPdcBank = (data, id) => {
+export const addPdcBank = (data, collectionId, bankId) => {
   return new Promise((resolve, reject) => {
-    apiCall(`pdc-bank-details/${id}`, {
-      method: 'POST',
-      body: {
-        banks:[
+    let url = bankId ? `pdc-bank-details/${bankId}` : `pdc-bank-details/${collectionId}`
+    apiCall(url, {
+      method: bankId ? 'PATCH' : 'POST',
+      body: bankId ? data : {
+        banks: [
           data,
         ]
       },
@@ -43,7 +44,7 @@ export const addPdcBank = (data, id) => {
 };
 
 export const addPdcCheque = (data, id) => {
-  console.log('data >>>>>>>>>>>>>>>>',data)
+  console.log('data >>>>>>>>>>>>>>>>', data)
   return new Promise((resolve, reject) => {
     apiCall(`pdc-cheque-details/${id}`, {
       method: 'POST',

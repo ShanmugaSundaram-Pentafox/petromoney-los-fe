@@ -99,13 +99,14 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
             item.cheque_details.forEach((cheque) => {
               finalData.push({
                 ...cheque,
+                cheque_id: cheque?.id,
                 account_name: item.account_name,
                 account_number: item.account_number,
                 applicant_type: item.applicant_type,
                 bank_name: item.bank_name,
                 branch_name: item.branch_name,
                 created_by: item.created_by,
-                id: item.id,
+                bank_id: item.id,
                 ifsc_code: item.ifsc_code,
                 verified: item.verified,
               });
@@ -129,7 +130,6 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
 
   const handleOpenChequeForm = () => {
     getData()
-    console.log('hndle open')
     if (collectionDetails?.id) {
       setOpenModal(true)
     } else {
@@ -170,12 +170,16 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
             <div style={{ display: 'flex' }}>
               <Typography variant='h6'>{dealershipData?.name} ({dealershipId})</Typography>
             </div>
-            <AddChequeCountForm handleFetch={handleFetch} initData={collectionDetails} dealershipId={dealershipId} currentUser={currentUser} dealershipData={dealershipData} />
+            {
+              collectionDetails && (
+                <AddChequeCountForm handleFetch={handleFetch} initData={collectionDetails} dealershipId={dealershipId} currentUser={currentUser} dealershipData={dealershipData} />
+              )
+            }
             <Divider className={classes.divider} />
             <Typography variant='h6' style={{ marginBottom: 12 }}>Cheque Details</Typography>
             {
               (tableData?.length > 0) ? (
-                <ShowChequeListTable data={tableData} dealershipId={dealershipId} currentUser={currentUser} />
+                <ShowChequeListTable collectionId={collectionDetails?.id} refetch={handleFetch}  data={tableData} dealershipId={dealershipId} currentUser={currentUser} />
               ) : (
                 <Typography variant='h6' style={{ fontSize: 11, color: '#888', marginRight: 20, alignItems: 'center' }}>No Cheque details found</Typography>
               )
@@ -231,7 +235,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
         }}
       >
         <div className={classes.paper}>
-          <AddChequeDetailsForm callback={() => { getData(); setOpenModal(false); }} collectionId={collectionDetails?.id} dealer_id={dealershipId} currentUser={currentUser} />
+          <AddChequeDetailsForm title={'Add Cheque details'} callback={() => { getData(); setOpenModal(false); }} collectionId={collectionDetails?.id} dealer_id={dealershipId} currentUser={currentUser} />
         </div>
       </Modal>
       <Modal
@@ -245,7 +249,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
         }}
       >
         <div className={classes.paper}>
-          <AddBankAndChequeDetailsForm collectionId={collectionDetails?.id} callback={() => setOpenBankModal(false)} dealer_id={dealershipId} currentUser={currentUser} />
+          <AddBankAndChequeDetailsForm title={'Add Bank details'} collectionId={collectionDetails?.id} callback={() => setOpenBankModal(false)} dealer_id={dealershipId} currentUser={currentUser} />
         </div>
       </Modal>
     </>

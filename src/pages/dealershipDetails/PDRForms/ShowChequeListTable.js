@@ -99,10 +99,10 @@ const ShowChequeListTable = ({ data, dealershipId, collectionId, currentUser, re
             <TableCell><Checkbox checked={selectAll} color="primary" value={selectAll} onChange={() => handleSelectAll(allId, selectAll)} /></TableCell>
             <TableCell>ID</TableCell>
             <TableCell>Applicant Type</TableCell>
-            <TableCell>Account Details</TableCell>
-            <TableCell>Amount</TableCell>
-            <TableCell>Cheque number</TableCell>
-            <TableCell align='center'>Action</TableCell>
+            <TableCell style={{minWidth:120}}>Account Details</TableCell>
+            <TableCell align='right' style={{minWidth:120}}>Amount</TableCell>
+            <TableCell style={{minWidth:120}}>Cheque number</TableCell>
+            <TableCell align='center' style={{minWidth:120}}>Action</TableCell>
           </TableRow>
         </TableHead>
         <TableBody style={{ backgroundColor: '#FFFFFF' }}>
@@ -110,12 +110,12 @@ const ShowChequeListTable = ({ data, dealershipId, collectionId, currentUser, re
             <TableRow className={classes.tableRow} key={row.cheque_id}>
               <TableCell>{<Checkbox checked={selectedItem.includes(row.cheque_id)} color="primary" value={row.cheque_id} onChange={(e) => handleChange(e)} />}</TableCell>
               <TableCell>{row?.cheque_id}</TableCell>
-              <TableCell>{row?.applicant_type.toUpperCase()}&nbsp;&nbsp;</TableCell>
-              <TableCell>{row.account_name.toUpperCase()} <br /><b>{row.account_number}</b><br /><p style={{ fontSize: 10, color: '#888' }}>{row.bank_name}, {row?.branch_name}</p></TableCell>
-              <TableCell align='right'>{row.amount_filled ? <Currency value={row.amount_filled} /> : 'BLANK'}</TableCell>
+              <TableCell style={{minWidth:120}}>{row?.applicant_type.toUpperCase()}&nbsp;&nbsp;</TableCell>
+              <TableCell style={{minWidth:120}}>{row.account_name.toUpperCase()} <br /><b>{row.account_number}</b><br /><p style={{ fontSize: 10, color: '#888' }}>{row.bank_name}, {row?.branch_name}</p></TableCell>
+              <TableCell style={{minWidth:120}} align='right'>{row.amount_filled ? <Currency value={row.amount_filled} /> : 'BLANK'}</TableCell>
               {
                 row?.soft_copy_url ? (
-                  <TableCell onClick={() => { setImageModal({ image: row.soft_copy_url, type: row?.soft_copy_url?.endsWith('.pdf'), cheque_number: row?.cheque_number }); setOpenModal(true) }}>
+                  <TableCell style={{minWidth:120}} onClick={() => { setImageModal({ image: row.soft_copy_url, type: row?.soft_copy_url?.endsWith('.pdf'), cheque_number: row?.cheque_number }); setOpenModal(true) }}>
                     <Tooltip title={'Click to view cheque'}>
                       <p style={{ color: '#259bf4' }}>
                         {row.cheque_number}

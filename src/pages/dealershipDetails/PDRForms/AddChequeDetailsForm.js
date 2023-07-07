@@ -79,7 +79,7 @@ const AddChequeDetailsForm = ({ data, collectionId, callback, currentUser, title
       applicant_type:data?.applicant_type,
       amount_filled:data?.amount_filled,
       id:data?.cheque_id,
-      pdc_bank_details_id:data?.cheque_id,
+      pdc_bank_details_id:data?.bank_id,
       cheque_number:data?.cheque_number,
     },
     validateOnChange: false,

@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const AddChequeDetailsForm = ({ collectionId, callback, currentUser }) => {
+const AddChequeDetailsForm = ({ data, collectionId, callback, currentUser, title }) => {
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
   const [isBlankCheque, setIsBlankCheque] = useState(false);
@@ -60,8 +60,8 @@ const AddChequeDetailsForm = ({ collectionId, callback, currentUser }) => {
   })
 
   useEffect(() => {
-    if(!bankData) {
-      if(bankData?.length == 0) {
+    if (!bankData) {
+      if (bankData?.length == 0) {
         callback()
         enqueueSnackbar('Add bank before adding cheque', {
           anchorOrigin: {
@@ -72,28 +72,36 @@ const AddChequeDetailsForm = ({ collectionId, callback, currentUser }) => {
         })
       }
     }
-    
-  }, [bankData])
 
+  }, [bankData])
   const { values, errors, handleChange, handleSubmit, setFieldValue } = useFormik({
-    initialValues: {},
+    initialValues: {
+      applicant_type:data?.applicant_type,
+      amount_filled:data?.amount_filled,
+      id:data?.cheque_id,
+      pdc_bank_details_id:data?.bank_id,
+      cheque_number:data?.cheque_number,
+    },
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
       applicant_type: Yup.string('Enter valid applicant type').nullable('Enter valid applicant type').required('Enter valid applicant type'),
       pdc_bank_details_id: Yup.number('select valid bank details').nullable('select valid bank details').required('select valid bank details'),
-      // amount_filled: Yup.string().nullable('Enter filled amount in cheque').required('Enter filled amount in cheque'),
       cheque_number: Yup.number('Enter valid cheque number').nullable('Enter valid cheque number').required('Enter valid cheque number'),
     }),
     onSubmit: values => {
       if (isBlankCheque || values?.amount_filled) {
         let obj = { ...values, cheque_type: isBlankCheque ? 'blank' : 'filled', pdc_bank_details_id: toInteger(values.pdc_bank_details_id) };
+        if (values?.created_by) {
+          delete obj.created_by;
+        }
         const formData = new FormData();
         Object.keys(obj).forEach(key => {
           formData.append(key, obj[key]);
         })
-        fetch(`${URL.base}pdc-cheque-details/${collectionId}`, {
-          method: 'POST',
+        let url = values?.id ? `${URL.base}pdc-cheque-details/${values?.id}` : `${URL.base}pdc-cheque-details/${collectionId}`
+        fetch(url, {
+          method: values?.id ? 'PATCH' : 'POST',
           body: formData,
           headers: {
             Authorization: `Bearer ${currentUser.token}`,
@@ -154,10 +162,9 @@ const AddChequeDetailsForm = ({ collectionId, callback, currentUser }) => {
   const onChangeHandler = (e) => {
     setFieldValue('file', e.target.files[0])
   }
-
   return (
     <div>
-      <Typography variant='h6' style={{ marginBottom: 12 }}>Add cheque</Typography>
+      <Typography variant='h6' style={{ marginBottom: 12 }}>{title}</Typography>
       <Grid container style={{ margin: 0 }} spacing={2}>
         <Grid item md={6}>
           <TextInput
@@ -195,7 +202,7 @@ const AddChequeDetailsForm = ({ collectionId, callback, currentUser }) => {
         <Grid item md={6}>
           <TextInput
             {...inputProps}
-            number
+            // number
             labelText="Cheque Number"
             name="cheque_number"
             value={values.cheque_number}

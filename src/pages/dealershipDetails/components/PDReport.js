@@ -1,6 +1,5 @@
 import { Grid, Typography, Drawer } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
-import AccountBalanceWalletOutlinedIcon from '@material-ui/icons/AccountBalanceWalletOutlined';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -11,6 +10,7 @@ import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
+import { ReactComponent as ChequeIcon } from '../../../icons/BankChequeIcon.svg';
 import { ReactComponent as BankIcon } from '../../../icons/bankIcon.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
@@ -384,7 +384,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
           <Grid item md={2}>
             <Tooltip title="click to add cheque">
               <div className={classes.content} onClick={() => setOpenChequeDrawer(true)}>
-                <AccountBalanceWalletOutlinedIcon fontSize='large' width={36} className={classes.icons} />
+                <ChequeIcon width={40} className={classes.icons} />
                 <Typography variant="h5" align='center' className={classes.title} >Cheque</Typography>
               </div>
             </Tooltip>

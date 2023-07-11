@@ -127,6 +127,14 @@ const WorkingSheetTable = ({ data }) => {
                 </>
               ) : null
             }
+            {
+              data?.ws_sanction_condition_data?.length ? (
+                <>
+                  <Typography variant='h6' className={classes.title}>Sanction Details</Typography>
+                  <SanctionConditionTable data={data} />
+                </>
+              ) : null
+            }
           </TableContainer> : <Typography className={classes.subtitle} variant='body2'>No data found!</Typography>
       }
     </>
@@ -495,6 +503,30 @@ export const DeviationTable = ({ data }) => {
               <TableCell>{item?.deviation}</TableCell>
               <TableCell>{item?.nature_of_deviation}</TableCell>
               <TableCell>{item?.mitigents}</TableCell>
+            </TableRow>
+          ))
+        }
+      </TableBody>
+    </Table>
+  )
+}
+
+export const SanctionConditionTable = ({ data }) => {
+  return (
+    <Table>
+      <TableHead>
+        <TableRow />
+        <TableRow>
+          <TableCell>Sanction Condition</TableCell>
+          <TableCell>Description</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {
+          data?.ws_sanction_condition_data?.map((item, i) => (
+            <TableRow key={i}>
+              <TableCell>{item?.sanction_condition}</TableCell>
+              <TableCell>{item?.description}</TableCell>
             </TableRow>
           ))
         }

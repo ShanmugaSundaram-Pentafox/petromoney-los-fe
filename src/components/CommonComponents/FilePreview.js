@@ -33,7 +33,7 @@ const useStyles = makeStyles(() => ({
 }))
 
 const PreviewWrapper = styled.div`
-    width:45vw;
+    width:100%;
     .image {
         width: 100%;
         object-fit: contain;

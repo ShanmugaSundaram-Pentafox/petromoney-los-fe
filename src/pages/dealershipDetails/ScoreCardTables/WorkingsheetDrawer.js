@@ -2,7 +2,7 @@ import { Collapse, makeStyles, Paper, Typography } from '@material-ui/core';
 import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { BankDetailsTable, BunkDetailsTable, BusinessAnalysisTable, CibilAnalysisTable, DemographicsTable, DeviationTable, FacultyBankDetailsTable, FacultySalesTable, MonthlySalesTable, ReferrenceTable, RemarksTable, ShareHoldingTable, SummaryDataTable } from './WorkingSheetTable';
+import { BankDetailsTable, BunkDetailsTable, BusinessAnalysisTable, CibilAnalysisTable, DemographicsTable, DeviationTable, FacultyBankDetailsTable, FacultySalesTable, MonthlySalesTable, ReferrenceTable, RemarksTable, SanctionConditionTable, ShareHoldingTable, SummaryDataTable } from './WorkingSheetTable';
 import { getScoreCard } from '../../../services/common.service';
 
 const useStyles = makeStyles(() => ({
@@ -39,8 +39,10 @@ const WorkingSheetDrawer = ({ id }) => {
     { id: 10, name: 'Bank Statement details', component: <BankDetailsTable data={scoreCardData} /> },
     { id: 11, name: 'CIBIL Analysis', component: <CibilAnalysisTable data={scoreCardData} /> },
     { id: 12, name: 'Reference details', component: <ReferrenceTable data={scoreCardData} /> },
-    { id: 13, name: 'Deviation details', component: <DeviationTable data={scoreCardData} /> }
+    { id: 13, name: 'Deviation details', component: <DeviationTable data={scoreCardData} /> },
+    { id: 14, name: 'Sanction details', component: <SanctionConditionTable data={scoreCardData} /> },
   ]
+  console.log('data >>>>>>>>>>>',scoreCardData)
 
   const handleClick = (id) => {
     if (id == collapse)

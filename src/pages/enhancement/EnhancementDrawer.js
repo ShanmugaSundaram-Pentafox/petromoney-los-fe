@@ -185,7 +185,7 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
     },
     {
       id: 2,
-      name: 'Working Sheet',
+      name: 'PD Sheet',
       component: <WorkingSheetDrawer id={id} />
     },
 

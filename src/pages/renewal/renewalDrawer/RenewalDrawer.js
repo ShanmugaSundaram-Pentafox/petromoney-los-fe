@@ -170,7 +170,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
     },
     {
       id: 1,
-      name: 'Working Sheet',
+      name: 'PD Sheet',
       component: <WorkingSheetDrawer id={id} />
     }  
   ]

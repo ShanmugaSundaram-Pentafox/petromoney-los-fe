@@ -100,7 +100,7 @@ const ScoreCard = ({ currentUser, dealership_id }) => {
     'Deviations',
     'CAM',
     'Score Card',
-    'Working sheet',
+    'PD sheet',
   ]
 
   const delay = async (ms = 1000) =>

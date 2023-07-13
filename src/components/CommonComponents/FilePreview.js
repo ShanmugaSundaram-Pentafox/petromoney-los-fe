@@ -88,7 +88,7 @@ export const AvatarCard = ({ file, title, tooltip }) => {
 }
 
 
-const FilePreview = ({ data }) => {
+const FilePreview = ({ data, title }) => {
   const [signedUrl, setSignedUrl] = useState()
   useEffect(() => {
     if (data?.image) {
@@ -103,10 +103,17 @@ const FilePreview = ({ data }) => {
   return (
     <PreviewWrapper>
       {
-        data?.type == true || data?.type == 'pdf' ?
-          <div className="iframe-container">
-            <iframe title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
-          </div> :
+        (data?.type == true || data?.type == 'pdf') ?
+          (title == 'Leegality') ? (
+            <div className="iframe-container">
+              <iframe title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
+            </div>
+          ) : (
+            <div style={{ width: '45vw', height: '80vh',paddingTop:16 }}>
+              <iframe style={{ width: '100%', height: '100%' }} title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
+            </div>
+          )
+          :
           <img className="image" src={signedUrl} alt='viewer' />
       }
     </PreviewWrapper>

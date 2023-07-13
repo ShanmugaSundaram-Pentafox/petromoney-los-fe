@@ -13,7 +13,7 @@ import { getSignedUrl } from '../../../services/common.service';
 const styles = (theme) => ({
   root: {
     margin: 0,
-    padding: theme.spacing(2),
+    padding: theme.spacing(3),
   },
   closeButton: {
     position: 'absolute',

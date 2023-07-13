@@ -15,7 +15,7 @@ const SignedLayout = ({ loansData }) => {
       <Grid container spacing={2}>
         <Grid item sm={12}>
           {loansData?.document_url ? (
-            <FilePreview data={{ image: loansData?.document_url, type: loansData?.document_url?.endsWith('.pdf') }} />
+            <FilePreview title={'Leegality'} data={{ image: loansData?.document_url, type: loansData?.document_url?.endsWith('.pdf') }} />
           ) : null}
         </Grid>
       </Grid>

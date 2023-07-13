@@ -314,7 +314,7 @@ const ScoreCard = ({ currentUser, dealership_id }) => {
           <Typography variant='body1' style={{ color: 'white', marginLeft: 16 }}>{notification}</Typography>
         </div>
       </Backdrop>
-      <FormDialog maxWidth={'xl'} title={'Score card'} open={openModal?.open} onClose={() => setOpenModal({ open: false })}>
+      <FormDialog title={'Score card'} open={openModal?.open} onClose={() => setOpenModal({ open: false })}>
         <FilePreview data={openModal} />
       </FormDialog>
     </div>

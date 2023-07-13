@@ -190,7 +190,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
           </>
         )
       }
-      <FormDialog maxWidth={'xl'} title={DocName} onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
+      <FormDialog title={DocName} onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
         <FilePreview data={imageModal} />
       </FormDialog>
       <Dialog

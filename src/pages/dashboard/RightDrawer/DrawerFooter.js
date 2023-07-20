@@ -11,14 +11,38 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
+import Select from 'react-select';
 import { useMount } from 'react-use';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { resources_id } from '../../../config/accessControl';
 import { sendLoanForEnhancement } from '../../../services/enhancement.service';
-import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats } from '../../../services/loans.service';
+import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats, updateLoanStatusByLoanId } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
+
+
+const loanStatusList = [
+  {
+    label: 'Pre submit',
+    value: 'pre_submit'
+  }, {
+    label: 'Submitted',
+    value: 'submitted'
+  }, {
+    label: 'Pending Review',
+    value: 'loan_review'
+  }, {
+    label: 'Pending Approval',
+    value: 'loan_approval'
+  }, {
+    label: 'Approved',
+    value: 'approved'
+  }, {
+    label: 'Disbursement Approval',
+    value: 'disbursement_approval'
+  },
+]
 
 const useStyles = makeStyles(theme => ({
   actionButtonsWrapper: {
@@ -110,14 +134,6 @@ const DrawerFooter = ({
   const [openEnhancementModal, setEnhancementModal] = useState(false)
   const [enhancementRemarks, setEnhancementRemarks] = useState();
   const { enqueueSnackbar } = useSnackbar();
-  var pushback_condition = ['loan_approval', 'disbursement_approval', 'disbursement_approved'];
-  /* The pushback_condition array is to check the condition for the pushback button, 
-  The push back button want to show for all the user expect the Approved field, 
-  Only the admin has the permission for the Approved field. */
-  if (currentUser.role_id == '1') {
-    /* The role_id = 1 is for Admin */
-    pushback_condition.push('approved')
-  }
   useMount(() => {
     getLoanRejectReason()
       .then(data => {
@@ -166,14 +182,14 @@ const DrawerFooter = ({
   }
   const handlePushBack = () => {
     let reqBody = {
-      user_id: currentUser.id,
-      pushback_remarks: pushbackRemarks,
+      ...pushback?.data,
+      status: pushbackRemarks,
     }
-    if (pushbackRemarks?.length) {
+    if (reqBody?.remarks) {
       setLoading(true)
-      updateLoanApprovalStatusById(id, loanData.id, 'pushback', reqBody)
+      updateLoanStatusByLoanId(loanData.id, reqBody)
         .then(res => {
-          enqueueSnackbar(res.message, {
+          enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
               horizontal: 'right',
@@ -295,6 +311,18 @@ const DrawerFooter = ({
             onClick={onClose}>
             Back
           </Button>
+          {
+            [1]?.includes(currentUser?.role_id) && (
+              <Button
+                variant="outlined"
+                color='primary'
+                onClick={() => setPushback({ ...pushback, open: true })}
+                style={{ marginLeft: 12 }}
+              >
+                Pushback
+              </Button>
+            )
+          }
           {
             isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected'].includes(status.toLowerCase()) &&
               <LoaderButton
@@ -490,20 +518,42 @@ const DrawerFooter = ({
         </DialogActions>
       </Dialog>
       <Dialog
-        open={pushback}
-        onClose={() => setPushback(false)}
+        open={pushback?.open}
+        onClose={() => setPushback({})}
       >
         <DialogContent>
+          <div style={{ marginBottom: 12 }}>
+            <DialogContentText>
+              Please choose status where you want to push back.
+            </DialogContentText>
+            <Select
+              isClearable
+              onChange={(e) => setPushbackRemarks(e?.value)}
+              options={loanStatusList}
+              menuPlacement='bottom'
+              menuPosition='fixed'
+              maxMenuHeight='200px'
+            />
+          </div>
           <DialogContentText>
             Please Enter the reason for Push back.
           </DialogContentText>
-          <TextEditor setJSON={setPushbackRemarks} toolBar={true} />
+          <TextEditor
+            setJSON={(data) => setPushback({
+              ...pushback,
+              data: {
+                ...pushback.data,
+                remarks: data
+              }
+            })}
+            toolBar={true}
+          />
           {
             errorMsg &&
               <Alert severity="error" style={{ padding: '0px 16px' }}>{errorMsg}</Alert>
           }
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button variant='outlined' style={{ marginRight: 8 }} onClick={() => setPushback(false)}>Cancel</Button>
+            <Button variant='outlined' style={{ marginRight: 8 }} onClick={() => setPushback({ ...pushback, open: false })}>Cancel</Button>
             <LoaderButton
               color='primary'
               variant='contained'

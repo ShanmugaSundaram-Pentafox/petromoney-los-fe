@@ -185,34 +185,39 @@ const DrawerFooter = ({
       ...pushback?.data,
       status: pushbackRemarks,
     }
-    if (reqBody?.remarks) {
-      setLoading(true)
-      updateLoanStatusByLoanId(loanData.id, reqBody)
-        .then(res => {
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
+    if(reqBody?.status) {
+      if (reqBody?.remarks) {
+        setLoading(true)
+        updateLoanStatusByLoanId(loanData.id, reqBody)
+          .then(res => {
+            enqueueSnackbar(res, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'success',
+            })
+            setTimeout(() => {
+              window.location.reload();
+              setLoading(false)
+            }, 1500)
           })
-          setTimeout(() => {
-            window.location.reload();
+          .catch(err => {
             setLoading(false)
-          }, 1500)
-        })
-        .catch(err => {
-          setLoading(false)
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
+            enqueueSnackbar(err, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            })
           })
-        })
-    } else {
-      setErrorMsg('Please enter the Remarks')
+      } else {
+        setErrorMsg('Please enter the Remarks')
+      }
+    }
+    else {
+      setErrorMsg('Please choose status')
     }
   }
   const removeItem = (item) => {

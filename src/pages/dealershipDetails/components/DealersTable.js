@@ -80,7 +80,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
   const [openDialog, setOpenDialog] = useState({ open: false });
-  const [openChangeTypeDialog, setopenChangeTypeDialog] = useState()
+  const [openChangeTypeDialog, setopenChangeTypeDialog] = useState(false)
   const [openFilePreview, setOpenFilePreview] = useState();
   const [updatedApplicantType, setUpdatedApplicantType] = useState();
 

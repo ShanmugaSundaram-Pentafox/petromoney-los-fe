@@ -68,7 +68,7 @@ const GuarantorsTable = ({
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
   const [openDialog, setOpenDialog] = useState({ open: false });
-  const [openChangeTypeDialog, setopenChangeTypeDialog] = useState()
+  const [openChangeTypeDialog, setopenChangeTypeDialog] = useState(false)
   const [updatedApplicantType, setUpdatedApplicantType] = useState();
   const [openFilePreview, setOpenFilePreview] = useState({ open: false });
 

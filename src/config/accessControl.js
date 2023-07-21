@@ -131,6 +131,7 @@ export const action_id = {
     guarantorStatus: 'guarantor:status',
     Vkyc: 'vkyc',
     applicantSwap: 'dealer_applicantSwap',
+    applicantTypeChange:'applicant_type_change',
   },
   scoreCard: {
     upload: 'scorecard:upload',

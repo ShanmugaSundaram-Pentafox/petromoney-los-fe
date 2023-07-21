@@ -132,6 +132,25 @@ export const getLoanDocumentHistoryById = (loanId, type) => {
   });
 }
 
+export const updateLoanStatusByLoanId = (loanId,body) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`loan/${loanId}/change-status`, {
+      method: 'PUT',
+      body,
+    })
+      .then(async ({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const updateLoanApprovalStatusById = (dealershipId, loanId, status, body) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/loan/${loanId}/${status}`, {

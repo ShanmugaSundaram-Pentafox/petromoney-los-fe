@@ -44,7 +44,6 @@ export const addPdcBank = (data, collectionId, bankId) => {
 };
 
 export const addPdcCheque = (data, id) => {
-  console.log('data >>>>>>>>>>>>>>>>', data)
   return new Promise((resolve, reject) => {
     apiCall(`pdc-cheque-details/${id}`, {
       method: 'POST',

@@ -184,7 +184,8 @@ export const action_id = {
     callInitiate: 'call:initiate',
     callLogDelete: 'call_log:delete',
     pdReport: 'pd:report',
-    bankSync:'bank_sync'
+    bankSync:'bank_sync',
+    manualBankVerify:'manual_bank_verify'
   },
   docChecklist: {
     upload: 'doc:upload',

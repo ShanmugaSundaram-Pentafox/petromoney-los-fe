@@ -172,7 +172,7 @@ export const PreviewCardBank = ({ id, data, children, onEdit, action = true, onD
                     startIcon={customIcon ? customIcon : <InfoOutlinedIcon color="primary" />}
                     onClick={onCustom}
                   >
-                    {tokenLabel}
+                    &nbsp;{tokenLabel} &nbsp;
                   </Button>
                 </CheckAllowed>
                 <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.manualBankVerify}>
@@ -185,7 +185,7 @@ export const PreviewCardBank = ({ id, data, children, onEdit, action = true, onD
                     className={classes.btnSuccess}
                     onClick={() => handleManualVerify()}
                   >
-                    Auto verify
+                    Manual verify
                   </Button>
                 </CheckAllowed>
               </div>

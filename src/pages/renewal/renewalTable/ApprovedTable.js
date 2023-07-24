@@ -4,7 +4,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -13,12 +12,12 @@ import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
+import CustomToken from '../../../components/CommonComponents/CustomToken';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import SignRequestLayout from '../../../components/Leegality/SignRequestLayout';
 import Currency from '../../../components/Number/Currency';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import { ReactComponent as ESignIcon } from '../../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../../icons/loan_agreement.svg';
 import { getSignedUrl } from '../../../services/common.service';
 import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
@@ -193,24 +192,17 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           }),
           customBodyRender: (value, r) => {
             return (
-              <div style={{ minWidth: 70 }}>
-                <Tooltip title="Sanction Letter">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
-                    <DescriptionIcon style={{ width: 19 }} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Loan Agreement">
-                  <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['approved_amount']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
-                    <LoanAgreementIcon width={12} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="eSign Application">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
-                    <ESignIcon width={17} />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            )
+              loans?.[r.rowIndex]['document_signed_status'] == 'signed' ? (
+                <CustomToken label={'Renewed'} variant="success" icon="tick" />
+              ) : (
+                <div style={{ minWidth: 70 }}>
+                  <Tooltip title="Loan Agreement">
+                    <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['approved_amount']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
+                      <LoanAgreementIcon width={12} />
+                    </IconButton>
+                  </Tooltip>
+                </div>
+              ))
           }
         }
       }

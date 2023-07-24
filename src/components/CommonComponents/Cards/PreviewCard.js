@@ -9,7 +9,7 @@ import { useQueryClient } from 'react-query';
 import styled from 'styled-components'
 import { action_id, resources_id } from '../../../config/accessControl';
 import CheckAllowed from '../../../pages/rbac/CheckAllowed';
-import { autoVerifyBankDetails, syncBankDetailsWithLMS } from '../../../services/PDReport.services';
+import { syncBankDetailsWithLMS } from '../../../services/PDReport.services';
 import DeleteButton from '../Button/DeleteButton';
 
 const Card = styled.div`
@@ -98,7 +98,7 @@ const PreviewCard = ({ children, action = true, onEdit, onDelete, onCustom, cust
 }
 export default PreviewCard;
 
-export const PreviewCardBank = ({ id, data, children, onEdit, action = true, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate, currentUser }) => {
+export const PreviewCardBank = ({ id, children, onVerify, onEdit, action = true, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate, currentUser }) => {
   const classes = useStyles()
   const [deleteModal, setDeleteModal] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
@@ -127,29 +127,6 @@ export const PreviewCardBank = ({ id, data, children, onEdit, action = true, onD
       })
   }
 
-  const handleManualVerify = () => {
-    autoVerifyBankDetails(data)
-      .then((res) => {
-        queryClient.invalidateQueries('bank-data')
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        })
-      })
-      .catch((err) => {
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
-      })
-
-  }
   return (
     <Card style={{ marginBottom: 0 }}>
       <div className="card-body">
@@ -183,7 +160,7 @@ export const PreviewCardBank = ({ id, data, children, onEdit, action = true, onD
                     style={{ margin: 4 }}
                     startIcon={customIcon ? customIcon : <InfoOutlinedIcon color="primary" />}
                     className={classes.btnSuccess}
-                    onClick={() => handleManualVerify()}
+                    onClick={onVerify}
                   >
                     Manual verify
                   </Button>

@@ -13,7 +13,7 @@ import { PreviewCardBank } from '../../../../components/CommonComponents/Cards/P
 import CustomToken from '../../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../../components/CommonComponents/FilePreview';
 import { logger } from '../../../../config/logger';
-import { bankAccValidate, deleteBankDetailsByID } from '../../../../services/PDReport.services';
+import { autoVerifyBankDetails, bankAccValidate, deleteBankDetailsByID } from '../../../../services/PDReport.services';
 
 const useStyles = makeStyles((theme) => ({
   token: {
@@ -51,6 +51,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles()
   const [bankVerify, setBankVerify] = useState()
+  const [manualBankVerify, setManualBankVerify] = useState();
   const [verificationLoading, setVerificationLoading] = useState(false)
   const [verifiedDetails, setVerifiedDetails] = useState()
 
@@ -94,6 +95,33 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
       })
   }
 
+  const handleManualVerify = () => {
+    setVerificationLoading(true)
+    autoVerifyBankDetails(manualBankVerify)
+      .then((res) => {
+        queryClient.invalidateQueries('bank-data')
+        setVerificationLoading(false)
+        setManualBankVerify()
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+      })
+      .catch((err) => {
+        setVerificationLoading(false)
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
+  }
+
   return (
     <>
       <Grid container spacing={2} style={{ marginTop: 4 }}>{
@@ -106,6 +134,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
                 onEdit={() => { editBankRow(item, i) }}
                 onDelete={() => deleteBankRow(item, i)}
                 verified={item?.bank_verified}
+                onVerify={() => setManualBankVerify(item)}
                 onCustom={() => setBankVerify(item)}
                 tokenLabel='Verify Bank'
                 customIcon={<AccountBalanceOutlinedIcon color='primary' />}
@@ -170,6 +199,27 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
             {
               !bankVerify?.bank_verified &&
                 <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>
+            }
+          </div>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        fullWidth
+        onClose={() => setManualBankVerify(false)}
+        maxWidth={'sm'}
+        open={manualBankVerify}
+      >
+        <DialogContent>
+          <Typography variant="h5" style={{ textAlign: 'center', marginBottom: 8 }}>Account Verification</Typography>
+          <Alert severity='warning' variant='outlined'>
+            <AlertTitle>Note</AlertTitle>
+            <Typography variant='body1'>As part of our manual verification process, we will not be utilizing the penny drop API to verify the bank. Instead, we will directly update the database.</Typography>
+          </Alert>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16, marginBottom: 8 }}>
+            <Button variant='outlined' onClick={() => { setManualBankVerify() }}>Cancel</Button>
+            {
+              !bankVerify?.bank_verified &&
+                <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={handleManualVerify}>Verify</Button>
             }
           </div>
         </DialogContent>

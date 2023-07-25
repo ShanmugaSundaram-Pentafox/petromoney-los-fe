@@ -5,6 +5,7 @@ import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import styled from 'styled-components'
 import { action_id, resources_id } from '../../../config/accessControl';
 import CheckAllowed from '../../../pages/rbac/CheckAllowed';
@@ -97,10 +98,12 @@ const PreviewCard = ({ children, action = true, onEdit, onDelete, onCustom, cust
 }
 export default PreviewCard;
 
-export const PreviewCardBank = ({ id, children, onEdit, action = true, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate, currentUser }) => {
+export const PreviewCardBank = ({ id, children, onVerify, onEdit, action = true, onDelete, onCustom, verified = false, customIcon, tokenLabel, verifiedDate, currentUser }) => {
   const classes = useStyles()
   const [deleteModal, setDeleteModal] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient()
+
 
   const handleSync = () => {
     syncBankDetailsWithLMS(id)
@@ -119,10 +122,11 @@ export const PreviewCardBank = ({ id, children, onEdit, action = true, onDelete,
             vertical: 'top',
             horizontal: 'right',
           },
-          variant: 'success',
+          variant: 'error',
         })
       })
   }
+
   return (
     <Card style={{ marginBottom: 0 }}>
       <div className="card-body">
@@ -133,20 +137,37 @@ export const PreviewCardBank = ({ id, children, onEdit, action = true, onDelete,
           verified ?
             <Typography variant='body2' style={{ color: 'rgb(0,0,0,0.4)', margin: '16px 0px' }}>
               {`Last Verified: ${verifiedDate || '-'}`}
-            </Typography> :
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankVerify}>
-              <Button
-                size="small"
-                variant="outlined"
-                color="success"
-                style={{ margin: 4 }}
-                className={classes.btnSuccess}
-                startIcon={customIcon ? customIcon : <InfoOutlinedIcon color="primary" />}
-                onClick={onCustom}
-              >
-                {tokenLabel}
-              </Button>
-            </CheckAllowed>
+            </Typography> : (
+              <div>
+                <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankVerify}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="success"
+                    style={{ margin: 4 }}
+                    className={classes.btnSuccess}
+                    startIcon={customIcon ? customIcon : <InfoOutlinedIcon color="primary" />}
+                    onClick={onCustom}
+                  >
+                    &nbsp;{tokenLabel} &nbsp;
+                  </Button>
+                </CheckAllowed>
+                <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.manualBankVerify}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    color="success"
+                    style={{ margin: 4 }}
+                    startIcon={customIcon ? customIcon : <InfoOutlinedIcon color="primary" />}
+                    className={classes.btnSuccess}
+                    onClick={onVerify}
+                  >
+                    Manual verify
+                  </Button>
+                </CheckAllowed>
+              </div>
+            )
+
         }
         {
           verified ? (
@@ -161,7 +182,6 @@ export const PreviewCardBank = ({ id, children, onEdit, action = true, onDelete,
                     className={classes.btnSuccess}
                     startIcon={<SyncIcon color="primary" />}
                     onClick={handleSync}
-                    // onClick={onCustom}
                   >
                     Sync bank
                   </Button>

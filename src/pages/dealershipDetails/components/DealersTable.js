@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, Drawer, Tooltip } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, Drawer, Tooltip } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { green, grey } from '@material-ui/core/colors';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,17 +10,33 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
+import UpdateSharpIcon from '@material-ui/icons/UpdateSharp';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
+import Select from 'react-select';
 import CreditInfoSideWrapper from './CreditInfoSideWrapper';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { action_id, resources_id } from '../../../config/accessControl';
+import { updateApplicantType } from '../../../services/dealers.service';
 import { addApplicants } from '../../../services/fileUpload.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
+
+export const applicantTypes = [
+  {
+    label: 'Dealer',
+    value: 'dealer'
+  }, {
+    label: 'Co-applicant',
+    value: 'coapplicant'
+  }, {
+    label: 'Guarantor',
+    value: 'guarantor'
+  }
+]
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -64,7 +80,9 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
   const [openDialog, setOpenDialog] = useState({ open: false });
+  const [openChangeTypeDialog, setopenChangeTypeDialog] = useState(false)
   const [openFilePreview, setOpenFilePreview] = useState();
+  const [updatedApplicantType, setUpdatedApplicantType] = useState();
 
   const deleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
@@ -91,6 +109,48 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
           variant: 'error',
         });
         setOpenDialog({ open: false })
+      })
+  }
+  const handleUpdate = (data) => {
+    if (data?.is_main_applicant) {
+      enqueueSnackbar('Do not change the main applicant. Instead, select someone else to be the main applicant for the dealership.', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      })
+
+    }
+    else {
+      setRowData(data)
+      setopenChangeTypeDialog(true)
+    }
+  }
+  const saveApplicantTypeUpdate = () => {
+    updateApplicantType(rowData?.id, { applicant_type: updatedApplicantType.toUpperCase() })
+      .then((res) => {
+        setRowData()
+        setopenChangeTypeDialog(false)
+        queryClient.invalidateQueries('dealership-applicants')
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch((err) => {
+        setRowData()
+        setopenChangeTypeDialog(false)
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
       })
   }
 
@@ -125,7 +185,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
                 {
                   row.aadhar_file_url && (
                     <TableCell style={{ border: 0 }} align="center">
-                      <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.aadhar_file_url,type: row?.aadhar_file_url?.endsWith('.pdf') }); }}>
+                      <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.aadhar_file_url, type: row?.aadhar_file_url?.endsWith('.pdf') }); }}>
                         <p>{'Aadhaar'}</p>
                       </div>
                     </TableCell>
@@ -134,7 +194,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
                 {
                   row.pan_file_url && (
                     <TableCell style={{ border: 0 }} align="center">
-                      <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.pan_file_url,type: row?.pan_file_url?.endsWith('.pdf') }); }}>
+                      <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.pan_file_url, type: row?.pan_file_url?.endsWith('.pdf') }); }}>
                         <p>{'PAN'}</p>
                       </div>
                     </TableCell>
@@ -173,6 +233,13 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
                       }
                     </div>
                   </CheckAllowed>
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.applicantTypeChange}>
+                    <div style={{ marginLeft: 12 }} onClick={() => handleUpdate(row)}>
+                      <Tooltip title='Change type'>
+                        <UpdateSharpIcon style={{ color: grey[500] }} />
+                      </Tooltip>
+                    </div>
+                  </CheckAllowed>
                 </div>
               </TableCell>
             </TableRow>
@@ -199,9 +266,31 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
           </Button>
         </div>
       </Dialog>
+      <Dialog
+        open={openChangeTypeDialog}
+        onClose={() => { setopenChangeTypeDialog(false); setRowData() }}
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogTitle>Update applicant Type</DialogTitle>
+        <DialogContent>
+          <Select
+            isClearable
+            onChange={(e) => setUpdatedApplicantType(e?.value)}
+            options={applicantTypes}
+            menuPlacement='bottom'
+            menuPosition='fixed'
+            maxMenuHeight='200px'
+          />
+        </DialogContent>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 20, marginTop: 20 }}>
+          <Button size='medium' variant='outlined' onClick={() => setopenChangeTypeDialog(false)}>Cancel</Button>
+          <Button variant='contained' size='medium' style={{ backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => saveApplicantTypeUpdate(rowData)}>Update</Button>
+        </div>
+      </Dialog>
       <Drawer
         anchor="right"
-        open={rowData}
+        open={rowData && !openChangeTypeDialog}
         variant="temporary"
       >
         <div className={classes.sidePanelWrapper}>

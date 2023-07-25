@@ -132,6 +132,25 @@ export const deleteProfileDoc = (docType, dealership_id, dealer_id, type) => {
   });
 }
 
+export const updateApplicantType = (applicant_id, data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`applicant/${applicant_id}/change/type`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ message, status }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
 export const getCreditInfo = (dealershipId) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.dealership}/${dealershipId}/credit/info`)

@@ -799,3 +799,21 @@ export const syncBankDetailsWithLMS = (bankId) => {
   });
 }
 
+export const autoVerifyBankDetails = (data) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`bank/${data?.account_no}/${data?.ifsc}`, {
+      method: 'PUT',
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+

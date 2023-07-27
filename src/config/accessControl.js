@@ -97,7 +97,10 @@ export const action_id = {
     share: 'share_statement'
   },
   nocLetter: {
-    raiseRequest: 'noc:request'
+    raiseRequest: 'noc:request',
+    nocPreview:'noc_preview',
+    nocApprove:'noc_approve',
+    nocReject:'noc_reject',
   },
   dealershipNavigation: {
     dealership: 'dealership',

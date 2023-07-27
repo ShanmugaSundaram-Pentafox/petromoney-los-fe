@@ -13,10 +13,12 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import { ViewData } from '../../components/CommonComponents/FilePreview';
+import { action_id, resources_id } from '../../config/accessControl';
 import {
   approveNocRequestbyDealershipID,
   rejectNocRequestbyDealershipID,
 } from '../../services/noc.services';
+import CheckAllowed from '../rbac/CheckAllowed';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -170,34 +172,30 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
               </Button>
             </div>
             <div style={{ display: 'flex' }}>
-              <div>
-                {
-                  <LoaderButton
-                    variant="contained"
-                    className={clsx(classes.btn, classes.btnError)}
-                    isLoading={loading?.reject}
-                    loadingText="Rejecting..."
-                    type="submit"
-                    onClick={handleReject}
-                  >
-                    Reject
-                  </LoaderButton>
-                }
-              </div>
-              <div>
-                {
-                  <LoaderButton
-                    variant="contained"
-                    className={clsx(classes.btn, classes.editButton)}
-                    isLoading={loading?.approve}
-                    loadingText='Approving...'
-                    type="submit"
-                    onClick={handleSubmit}
-                  >
-                    Approve
-                  </LoaderButton>
-                }
-              </div>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.nocLetter} action={action_id.nocLetter?.nocReject}>
+                <LoaderButton
+                  variant="contained"
+                  className={clsx(classes.btn, classes.btnError)}
+                  isLoading={loading?.reject}
+                  loadingText="Rejecting..."
+                  type="submit"
+                  onClick={handleReject}
+                >
+                  Reject
+                </LoaderButton>
+              </CheckAllowed>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.nocLetter} action={action_id.nocLetter?.nocApprove}>
+                <LoaderButton
+                  variant="contained"
+                  className={clsx(classes.btn, classes.editButton)}
+                  isLoading={loading?.approve}
+                  loadingText='Approving...'
+                  type="submit"
+                  onClick={handleSubmit}
+                >
+                  Approve
+                </LoaderButton>
+              </CheckAllowed>
             </div>
           </div>
         </div>

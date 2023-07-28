@@ -227,7 +227,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     },
     onCellClick: (colData, cellMeta) => {
       if (cellMeta.colIndex !== 6) {
-        currentUser.role_id == 1 &&
+        isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) &&
           onRowClick(list[cellMeta.dataIndex], list[cellMeta.dataIndex]);
       }
     },
@@ -283,6 +283,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         variant="temporary"
       >
         <ApproveNocForm
+          currentUser={currentUser}
           callback={() => {
             setOpenApproveModal(false);
             setRefresh(!refresh);

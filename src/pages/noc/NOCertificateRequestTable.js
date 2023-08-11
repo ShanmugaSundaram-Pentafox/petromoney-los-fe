@@ -9,6 +9,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/styles';
+import { format, parse } from 'date-fns';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
@@ -69,7 +70,14 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     setLoading(true);
     getAllNocRequest()
       .then((data) => {
-        setList(data);
+        let d = data.map((item) => {
+          const parsedDate = parse(item?.issued_date || undefined, 'dd-MM-yyyy', new Date());
+          return {
+            ...item,
+            formated_date: format(parsedDate, 'MMM, yyyy'),
+          }
+        });
+        setList(d);
         setLoading(false);
       })
       .catch((e) => {
@@ -122,7 +130,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         label: 'Applicant code',
         name: 'applicant_code',
         options: {
-          filter: true,
+          filter: false,
           sort: true,
           customBodyRender: (value) => <span>{value}</span>,
         },
@@ -134,6 +142,15 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           filter: true,
           sort: true,
           customBodyRender: (value) => <>{value}</>,
+        },
+      },
+      {
+        label: 'Issued Month',
+        name: 'formated_date',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => <>{value ? value : '-'}</>,
         },
       },
       {
@@ -191,7 +208,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
                           ...openViewer,
                           open: true,
                           image: value,
-                          type: value?.endsWith('.pdf') 
+                          type: value?.endsWith('.pdf')
                         })
                       }
                     >

@@ -185,7 +185,7 @@ const DrawerFooter = ({
       ...pushback?.data,
       status: pushbackRemarks,
     }
-    if(reqBody?.status) {
+    if (reqBody?.status) {
       if (reqBody?.remarks) {
         setLoading(true)
         updateLoanStatusByLoanId(loanData.id, reqBody)
@@ -317,7 +317,7 @@ const DrawerFooter = ({
             Back
           </Button>
           {
-            [1]?.includes(currentUser?.role_id) && (
+            (([1]?.includes(currentUser?.role_id) && !['disbursed'].includes(status))) && (
               <Button
                 variant="outlined"
                 color='primary'

@@ -143,7 +143,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
 
       },
       {
-        label: 'Req. Amount',
+        label: 'Approved Amount',
         name: 'requested_amount',
         options: {
           filter: false,

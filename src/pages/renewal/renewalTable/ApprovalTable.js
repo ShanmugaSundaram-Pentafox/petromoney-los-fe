@@ -1,8 +1,8 @@
-import { Button, Tooltip } from '@material-ui/core';
+import { Button, Tooltip, Dialog, DialogContent, DialogContentText, makeStyles, } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import { makeStyles } from '@material-ui/styles';
+import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import clsx from 'clsx';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
@@ -13,7 +13,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../../components/Number/Currency';
 import { getSignedUrl } from '../../../services/common.service';
-import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
+import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, sendRenewalReminder } from '../../../services/renewal.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 
 const useStyles = makeStyles(theme => ({
@@ -38,6 +38,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [page, setPage] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const pageDetailsQuery = useQuery({
@@ -57,6 +58,29 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
   }, [filterQry, page, search])
 
+  const handleReminder = () => {
+    sendRenewalReminder('review')
+      .then(res => {
+        setOpenModal(false);
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        });
+      })
+      .catch(e => {
+        setOpenModal(false);
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
+      })
+  }
   const onDownloadClick = () => {
     downloadRenewalData('approval', filterQry)
       .then(data => {
@@ -209,6 +233,13 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           <Tooltip title="Download">
             <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
           </Tooltip>
+          <Button
+            color='primary'
+            variant='contained'
+            onClick={() => setOpenModal(true)}
+          >
+            Send Reminder
+          </Button>
         </>
       );
     },
@@ -225,6 +256,26 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
+      <Dialog
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        maxWidth='xs'
+        fullWidth
+      >
+        <DialogContent>
+          <div style={{ textAlign: 'center', marginBottom: 16 }}>
+            <InfoCircleOutlined style={{ fontSize: 48, color: '#f0ad4e', margin: 16, marginBottom: 20 }} />
+            <Typography variant='h3'>Are you certain?</Typography>
+          </div>
+          <DialogContentText style={{ textAlign: 'center' }}>Were you planning to inform all the regional managers, dealers, and sales teams that their loan renewal is currently in progress?</DialogContentText>
+        </DialogContent>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
+          <Button size='medium' variant='outlined' onClick={() => setOpenModal(false)}>Cancel</Button>
+          <Button variant='contained' size='medium' style={{ backgroundColor: '#f0ad4e', color: 'white', marginLeft: 16 }} onClick={handleReminder}>
+            Yes
+          </Button>
+        </div>
+      </Dialog>
     </div>
   )
 }

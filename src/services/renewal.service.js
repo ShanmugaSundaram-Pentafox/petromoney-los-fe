@@ -167,3 +167,20 @@ export const downloadRenewalData = (status, qryStr = {}) => {
       })
   });
 }
+
+export const sendRenewalReminder = (status) => {
+  return new Promise((resolve, reject) => {
+    let apiUrl = `renewal/send_reminder?status=${status}`
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

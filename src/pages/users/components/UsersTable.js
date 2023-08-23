@@ -2,13 +2,14 @@ import { Drawer, Tooltip } from '@material-ui/core';
 import { green, grey } from '@material-ui/core/colors';
 import Typography from '@material-ui/core/Typography';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
+import EditIcon from '@material-ui/icons/Edit';
 import { makeStyles } from '@material-ui/styles'
 import MUIDataTable from 'mui-datatables'
 import React, { useMemo, useState } from 'react'
+import { NavLink as RouterLink } from 'react-router-dom';
 import RightDrawer from './RightDrawer'
 import { action_id, resources_id } from '../../../config/accessControl';
 import { isAllowed } from '../../../utils/cerbos';
-
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -35,10 +36,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
   const [rowData, setRowData] = useState({});
   const [openModal, setOpenModal] = useState(false)
 
-  const onRowClick = (id, data) => {
-    setRowData(data)
-    setOpenModal(true)
-  }
+
   const columns = useMemo(() => {
     const d = [
       {
@@ -47,9 +45,6 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         options: {
           filter: false,
           sort: false,
-          // setCellProps: () => ({
-          //   align: 'center',
-          // })
         }
       },
       {
@@ -58,9 +53,6 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         options: {
           filter: false,
           sort: true,
-          // setCellProps: () => ({
-          //   align: 'center',
-          // }),
           customBodyRender: (value) => {
             return <>{value?.toUpperCase()}</>
           },
@@ -91,7 +83,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
         },
       },
     ];
-    const actionColumnData = {
+    const actionColumnData = [{
       label: 'Status',
       name: 'status',
       options: {
@@ -114,23 +106,36 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
                   </Tooltip>
                 )
               }
-              {/* <div>
-                  <Button onClick={() => handleClickOpen(value)}>
-                    <Tooltip title="deactivate" aria-label="add">
-                      <DeleteOutlinedIcon style={{ width: "20px", color: "#ff6666" }} />
-                    </Tooltip>
-                  </Button>
-                  {
-                    d?.id ?
-                      <RightDrawer key={value} checked={op} userId={value} currentUser={currentUser} data={d} />
-                      : null
-                  }
-                </div> */}
             </div>
           )
         }
       }
+    },
+    {
+      label: 'Profile',
+      name: 'id',
+      options: {
+        filter: true,
+        sort: true,
+        setCellProps: () => ({
+          style: { minWidth: '10px', maxWidth: '10px' },
+          align: 'center',
+        }),
+        customBodyRender: (value, r) => {
+          return (
+            <RouterLink to={{
+              pathname: `/user/${value}`,
+              params: data[r.rowIndex]
+            }}>
+              <div key={`vi-${value}`} style={{ cursor: 'pointer' }}>
+                <EditIcon fontSize='small' style={{ color: grey[500] }} />
+              </div>
+            </RouterLink>
+          )
+        }
+      },
     }
+    ]
     return withRole ? [
       ...d,
       {
@@ -143,7 +148,7 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
       }
     ] :
       isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userStatus) ?
-        [...d, actionColumnData] : [...d]
+        [...d, ...actionColumnData] : [...d]
   }, [withRole])
 
   const options = {
@@ -153,10 +158,10 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
     selectableRows: 'none',
     rowsPerPage: 10,
     isRowSelectable: () => false,
-    onRowClick: (rowData, { dataIndex }) => {
-      isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userEdit) &&
-      onRowClick(data[dataIndex].dealership_id, data[dataIndex])
-    }
+    // onRowClick: (rowData, { dataIndex }) => {
+    //   isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userEdit) &&
+    //     onRowClick(data[dataIndex].dealership_id, data[dataIndex])
+    // }
   }
   return (
     <div>
@@ -172,20 +177,6 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
           options={options}
         />
       ) : null}
-      {/* <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogContent>
-          <DialogContentText className={classes.text}>Are you sure to remove the user..?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} variant="contained" >Cancel</Button>
-          <Button onClick={() => deleteUserRecord(userId)} className={classes.button} >yes</Button>
-        </DialogActions>
-      </Dialog> */}
       <Drawer
         anchor="right"
         open={openModal}

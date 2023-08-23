@@ -28,10 +28,10 @@ const Option = (props) => {
   );
 };
 
-export const Selector = ({ options, isMulti = true, value, setValue, title }) => {
+export const Selector = ({ options, width, isMulti = true, isSearchable = false, value, setValue, title }) => {
   return (
     <>
-      <Box style={{ width: 180 }}>
+      <Box style={{ width: width ? width : 180 }}>
         <label style={{ color: 'hsl(0,0%,75%)' }}>{title}</label>
         <Select
           options={options}
@@ -40,7 +40,7 @@ export const Selector = ({ options, isMulti = true, value, setValue, title }) =>
           hideSelectedOptions={false}
           isClearable
           value={value}
-          isSearchable={false}
+          isSearchable={isSearchable}
           components={{
             MultiValueContainer: multiValueContainer,
             Option,
@@ -71,6 +71,73 @@ export const Selector = ({ options, isMulti = true, value, setValue, title }) =>
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               display: 'initial'
+            }),
+            menu: (provided) => ({
+              ...provided,
+              zIndex: 9999,
+            }),
+            indicatorsContainer: (provided) => ({
+              ...provided,
+              maxHeight: '29px',
+              '> div': {
+                padding: 5
+              }
+            }),
+            indicatorContainer: (provided) => ({
+              ...provided,
+            })
+          }}
+        />
+      </Box>
+    </>
+  )
+}
+
+export const PincodeSelector = ({ options, width, isMulti = true, value, setValue, title }) => {
+  console.log('options >>',options)
+  return (
+    <>
+      <Box style={{ width: width ? width : 180 }}>
+        <label style={{ color: 'hsl(0,0%,75%)' }}>{title}</label>
+        <Select
+          options={options}
+          isMulti={isMulti}
+          defaultValue={options}
+          closeMenuOnSelect={false}
+          hideSelectedOptions={false}
+          isClearable
+          value={value}
+          isSearchable
+          components={{
+            // MultiValueContainer: multiValueContainer,
+            Option,
+          }}
+          onChange={(selectedOption, triggeredAction) => {
+            if (triggeredAction?.action === 'clear') {
+              // setValue(isMulti ? [{ value: 0, label: 'ALL' }] : { value: 0, label: 'ALL' })
+              setValue(options)
+            } else {
+              setValue(isMulti ? selectedOption.filter(item => item.label !== 'ALL') : selectedOption)
+            }
+          }}
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              borderColor: 'hsl(0, 0%, 90%)',
+              minHeight: 29,
+              marginRight: 10,
+              '&:hover': {
+                boxShadow: 'none',
+                minHeight: 29,
+              },
+            }),
+            valueContainer: (provided, state) => ({
+              ...provided,
+              // maxHeight: '29px',
+              padding: '0 6px',
+              // overflow: 'hidden',
+              // textOverflow: 'ellipsis',
+              // whiteSpace: 'nowrap',
             }),
             menu: (provided) => ({
               ...provided,

@@ -103,7 +103,19 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   })
 
   const handleApprovalModal = () => {
-    setApprovalModal(!approvalModal)
+    if(info?.amount_requested > 0) {
+      setApprovalModal(!approvalModal)
+    }
+    else {
+      enqueueSnackbar('Please enter amount to proceed further', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      })
+      return null;
+    }
   }
   const updateLoanStatus = () => {
     if (user && remarks) {

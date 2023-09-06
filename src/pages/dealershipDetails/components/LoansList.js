@@ -116,7 +116,13 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       .catch(err => {
         setLoading(false);
         setDialogState({});
-        console.log('Loan Status update error - ', err)
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
       })
   }
 

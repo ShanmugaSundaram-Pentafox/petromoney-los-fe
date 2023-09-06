@@ -115,7 +115,10 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
     }
   }
   const handlePendingApprovalModal = () => {
-    if (!info.amount_approved) {
+    if (info.amount_approved > 0) {
+      setOpenModal(!openModal)
+    }
+    else {
       enqueueSnackbar('Please enter amount to approve', {
         anchorOrigin: {
           vertical: 'top',
@@ -124,9 +127,6 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
         variant: 'error',
       })
       return null;
-    }
-    else {
-      setOpenModal(!openModal)
     }
   }
   const updateNewLoanInfo = (d) => {

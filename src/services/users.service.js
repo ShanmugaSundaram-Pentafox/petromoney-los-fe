@@ -172,6 +172,26 @@ export const mapPincode = (data) => {
       })
   })
 }
+export const unmapPincode = (data) => {
+  let apiUrl = 'user/pincode';
+
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {
+      method: data?.method,
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
 
 export const regionDel = (user, region) => {
   let apiUrl = URL.regionDel + user + '/' + region;

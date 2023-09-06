@@ -157,6 +157,29 @@ export const deleteMappedRegion = (data, id) => {
   });
 };
 
+export const getAllRegionByState = (state) => {
+  return new Promise((resolve, reject) => {
+    let apiUrl = `master/pincode?state=${state}`;
+    if (state !== '') {
+      apiCall(apiUrl, {}, 'GET')
+        .then((response) => {
+          if (response?.status === 'SUCCESS') {
+            const result = response?.data.map((item) => ({
+              label: item.name,
+              value: item.id,
+            }));
+            resolve(result || []);
+          } else {
+            reject(new Error(response.message || 'Unable to get regions'));
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }
+  });
+};
+
 export const getAllCityByRegionId = (filterQry) => {
   return new Promise((resolve, reject) => {
     const { region } = filterQry
@@ -180,6 +203,32 @@ export const getAllCityByRegionId = (filterQry) => {
     }
   });
 };
+
+export const getAllUnmappedPincodeByCity = (filterQry) => {
+  return new Promise((resolve, reject) => {
+    const { city } = filterQry
+    let apiUrl = `unmapped/pincode?city=${city}`;
+    if (city !== '') {
+      apiCall(apiUrl, {}, 'GET')
+        .then((response) => {
+          if (response?.status === 'SUCCESS') {
+            const result = response?.data.map((item) => ({
+              city: item?.city,
+              label: item.pincode,
+              value: item.pincode,
+            }));
+            resolve(result || []);
+          } else {
+            reject(new Error(response.message || 'Unable to get pincode'));
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }
+  });
+
+}
 
 export const getAllPincodeByCityId = (filterQry) => {
   return new Promise((resolve, reject) => {

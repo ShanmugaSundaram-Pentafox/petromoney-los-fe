@@ -6,10 +6,11 @@ import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
+import MapPincode from './MapPincode';
 import Button from '../../../components/CommonComponents/Button/Button';
-import { PincodeSelector, Selector } from '../../../components/CommonComponents/FilterCard';
+import { PinSelector } from '../../../components/CommonComponents/FilterCard';
 import TextInput from '../../../components/TextInput/TextInput';
-import { getAllCityByRegionId, getAllMappedPincode, getAllPincodeByCityId, getAllRegionByStateId, getStates } from '../../../services/common.service';
+import { getAllCityByRegionId, getAllMappedPincode, getAllRegionByStateId, getAllUnmappedPincodeByCity, getStates } from '../../../services/common.service';
 import { mapPincode } from '../../../services/users.service';
 
 const useStyles = makeStyles(theme => ({
@@ -103,11 +104,11 @@ const PincodeMapping = ({ userId }) => {
   const [selectedState, setSelectedState] = useState();
   const [mappedPincode, setMappedPincode] = useState([])
   const [selectedRegion, setSelectedRegion] = useState([]);
+  const [mappedRegion, setMappedRegion] = useState();
   const [selectedCity, setSelectedCity] = useState([]);
   const [selectedPincode, setSelectedPincode] = useState([]);
   const [regionfilterQry, setRegionFilterQry] = useState();
   const [cityfilterQry, setCityFilterQry] = useState();
-  const [selectAll, setSelectAll] = useState(true);
   const [openModal, setOpenModal] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const { data = [], refetch } = useQuery(['mapped-pincode'], () => { return getAllMappedPincode(userId) },
@@ -115,23 +116,39 @@ const PincodeMapping = ({ userId }) => {
       refetchOnWindowFocus: false,
       retry: false,
       onSuccess: d => {
-        setSelectedState({ label: d?.state[0]?.state_name, value: d?.state[0]?.state_id })
-        setMappedPincode(d?.pincode?.map((item) => ({
-          label: item?.pincode_value,
-          value: item?.pincode_id,
-        })))
-        setSelectedPincode(d?.pincode?.map((item) => ({
-          label: item?.pincode_value,
-          value: item?.pincode_id,
-        })))
-        setSelectedRegion(d?.region?.map(item => ({
-          label: item?.region_name,
-          value: item?.region_id
-        })))
-        setSelectedCity(d?.city?.map(item => ({
-          label: item?.city_name,
-          value: item?.city_id
-        })))
+        if (d?.state) {
+          setSelectedState({ label: d?.state[0]?.state_name, value: d?.state[0]?.state_id })
+          setMappedPincode(d?.pincode?.map((item) => ({
+            label: item?.pincode_value,
+            value: item?.pincode_id,
+          })))
+          setSelectedPincode(d?.pincode?.map((item) => ({
+            label: item?.pincode_value,
+            value: item?.pincode_id,
+          })))
+          setMappedRegion(d?.region?.map(item => ({
+            label: item?.region_name,
+            value: item?.region_id
+          })))
+          setSelectedRegion(d?.region?.map(item => ({
+            label: item?.region_name,
+            value: item?.region_id
+          })))
+          setSelectedCity(d?.city?.map(item => ({
+            label: item?.city_name,
+            value: item?.city_id
+          })))
+        }
+      },
+      onError: d => {
+        setSelectedPincode([]);
+        enqueueSnackbar(d?.message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
       }
     })
   const { data: state = [] } = useQuery(['state'], () => { return getStates() }, {
@@ -157,7 +174,7 @@ const PincodeMapping = ({ userId }) => {
       enabled: regionfilterQry ? true : false,
       retry: false
     })
-  const { data: pincode = [] } = useQuery(['pincode', cityfilterQry], () => { return getAllPincodeByCityId(cityfilterQry) },
+  const { data: pincode = [], refetch: refetchUnmappedPincode } = useQuery(['pincode', cityfilterQry], () => { return getAllUnmappedPincodeByCity(cityfilterQry) },
     {
       refetchOnWindowFocus: false,
       enabled: cityfilterQry ? true : false,
@@ -169,32 +186,14 @@ const PincodeMapping = ({ userId }) => {
         else {
           setSelectedPincode(d)
         }
+      },
+      onError: d => {
+        setSelectedPincode([])
+
       }
     })
 
-
-
-  const handleSubmit = () => {
-    let reqBody = {}
-    if (mappedPincode?.length > selectedPincode?.length) {
-      let removeItem = mappedPincode.filter((element) => !selectedPincode.includes(element));
-      reqBody = {
-        id: removeItem?.map(item => item.value),
-        method: 'DELETE'
-      }
-    }
-    else {
-      let resultArray = selectedPincode?.map((item) => ({
-        city: item?.city,
-        pincode: item.value,
-      }));
-      reqBody = {
-        user_id: userId,
-        mapping: resultArray,
-        method:'POST'
-      }
-    }
-    
+  const handleTest = (reqBody) => {
     mapPincode(reqBody)
       .then((res) => {
         setIsEdit(false)
@@ -216,6 +215,57 @@ const PincodeMapping = ({ userId }) => {
           variant: 'red',
         })
       })
+  }
+
+  const handleSubmit = () => {
+    let reqBody = {}, pincodelist = {}
+    let filteredObjects = mappedPincode.filter(item => {
+      return mappedPincode.find(mappedItem => mappedItem.label === item.label) &&
+        !selectedPincode.find(selectedItem => selectedItem.label === item.label);
+    });
+    if (filteredObjects?.length > 0) {
+      pincodelist = {
+        id: filteredObjects?.map(item => item.value),
+        method: 'DELETE'
+      }
+      handleTest(pincodelist)
+
+    }
+    const updatedMapped = selectedPincode.filter(item =>
+      !mappedPincode.some(mappedItem => mappedItem.label === item.label)
+    );
+    let resultArray = updatedMapped?.map((item) => ({
+      city: item?.city,
+      pincode: item.value,
+    }));
+    reqBody = {
+      user_id: userId,
+      mapping: resultArray,
+      method: 'POST'
+    }
+    handleTest(reqBody)
+
+    // mapPincode(reqBody)
+    //   .then((res) => {
+    //     setIsEdit(false)
+    //     refetch();
+    //     enqueueSnackbar(res, {
+    //       anchorOrigin: {
+    //         vertical: 'top',
+    //         horizontal: 'right',
+    //       },
+    //       variant: 'success',
+    //     })
+    //   })
+    //   .catch((err) => {
+    //     enqueueSnackbar(err, {
+    //       anchorOrigin: {
+    //         vertical: 'top',
+    //         horizontal: 'right',
+    //       },
+    //       variant: 'red',
+    //     })
+    //   })
   }
 
   useEffect(() => {
@@ -248,10 +298,60 @@ const PincodeMapping = ({ userId }) => {
         !isEdit ? (
           <div style={{ marginTop: 20 }}>
             {
+              (data?.state?.length > 0) &&
+                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20 }}>
+                  <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>States </Typography>
+                  <div style={{ display: 'flex', minWidth: '20%', justifyContent: 'flext-start', flexWrap: 'wrap' }}>
+                    {
+                    data?.state?.map((item, index) => {
+                      return <ListItem key={index} data={item?.state_name} />
+                    })
+                    }
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: '20%', justifyContent: 'flex-end', cursor: 'pointer' }} onClick={() => setOpenModal(true)}>
+                    {/* <Typography variant='h6' color='primary' style={{ textDecoration: 'underline', marginLeft: 12 }}>View all</Typography> */}
+                  </div>
+                </div>
+            }
+            {
+              (data?.region?.length > 0) && (
+                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20 }}>
+                  <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>Region</Typography>
+                  <div style={{ display: 'flex', minWidth: '20%', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+                    {
+                      data?.region?.map((item, index) => {
+                        return <ListItem key={index} data={item?.region_name} />
+                      })
+                    }
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: '20%', justifyContent: 'flex-end', cursor: 'pointer' }} onClick={() => setOpenModal(true)}>
+                    {/* <Typography variant='h6' color='primary' style={{ textDecoration: 'underline', marginLeft: 12 }}>View all</Typography> */}
+                  </div>
+                </div>
+              )
+            }
+            {
+              (data?.city?.length > 0) && (
+                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20 }}>
+                  <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>City</Typography>
+                  <div style={{ display: 'flex', minWidth: '20%', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
+                    {
+                      data?.city?.map((item, index) => {
+                        return <ListItem key={index} data={item?.city_name} />
+                      })
+                    }
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', minWidth: '20%', justifyContent: 'flex-end', cursor: 'pointer' }} onClick={() => setOpenModal(true)}>
+                    {/* <Typography variant='h6' color='primary' style={{ textDecoration: 'underline', marginLeft: 12 }}>View all</Typography> */}
+                  </div>
+                </div>
+              )
+            }
+            {
               (mappedPincode?.length > 0) && (
                 <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>Pincodes</Typography>
-                  <div style={{ display: 'flex', minWidth: '20%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', maxWidth: '60%', justifyContent: 'flex-start', flexWrap: 'wrap' }}>
                     {
                       mappedPincode?.slice(0, 15).map((item, index) => {
                         return <ListItem key={index} data={item?.label} />
@@ -259,7 +359,7 @@ const PincodeMapping = ({ userId }) => {
                     }
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', minWidth: '20%', justifyContent: 'flex-end', cursor: 'pointer' }} onClick={() => setOpenModal(true)}>
-                    <Typography variant='h6' color='primary' style={{ textDecoration: 'underline', marginLeft: 12 }}>View all</Typography>
+                    {/* <Typography variant='h6' color='primary' style={{ textDecoration: 'underline', marginLeft: 12 }}>View all</Typography> */}
                   </div>
                 </div>
               )
@@ -282,37 +382,40 @@ const PincodeMapping = ({ userId }) => {
               <Grid item style={{ marginBottom: 20, marginRight: 20 }} mb={20} md={8}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>State</Typography>
-                  <Selector width={'100%'} options={state} value={selectedState} setValue={setSelectedState} isMulti={false} />
+                  <PinSelector width={'100%'} options={state} value={selectedState} setValue={setSelectedState} isMulti={false} />
                 </div>
               </Grid>
               <Grid item style={{ marginBottom: 20, marginRight: 20 }} md={8}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>Region</Typography>
-                  <Selector width={'100%'} options={region} value={selectedRegion} setValue={setSelectedRegion} />
+                  <PinSelector width={'100%'} options={region} value={selectedRegion} setValue={setSelectedRegion} />
                 </div>
               </Grid>
               <Grid item style={{ marginBottom: 20, marginRight: 20 }} md={8}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>City</Typography>
-                  <Selector width={'100%'} options={city} value={selectedCity} setValue={setSelectedCity} />
+                  <PinSelector width={'100%'} options={city} value={selectedCity} setValue={setSelectedCity} />
                 </div>
               </Grid>
               <Grid item style={{ marginBottom: 20, marginRight: 20 }} md={8}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>Map Pincode</Typography>
-                  <div style={{ minWidth: '80%' }}>
-                    <PincodeSelector
+                  <div style={{ minWidth: '90%' }}>
+                    <MapPincode mappedData={mappedPincode} masterData={pincode} mappedRegion={mappedRegion} selectedRegion={selectedRegion} userId={userId} callBack={() => {
+                      setIsEdit(false)
+                      refetch();
+                      refetchUnmappedPincode();
+                    }} />
+                    {/* <PincodeSelector
                       isMulti
                       isSearchable
                       isClearable
                       width={'100%'}
-                      selectAll={selectAll}
                       options={pincode}
-                      setSelectAll={setSelectAll}
                       placeholder="Select pincode"
                       value={selectedPincode}
                       setValue={setSelectedPincode}
-                    />
+                    /> */}
                   </div>
                 </div>
               </Grid>
@@ -351,7 +454,7 @@ const PincodeMapping = ({ userId }) => {
             {
               mappedPincode?.map((item, index) => {
                 return (
-                  <div key={index}  className={classes.pincodeList}>
+                  <div key={index} className={classes.pincodeList}>
                     <Typography style={{ padding: 4 }} >{item.value}</Typography>
                     <Divider />
                   </div>

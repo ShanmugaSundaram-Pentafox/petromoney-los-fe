@@ -28,6 +28,71 @@ const Option = (props) => {
   );
 };
 
+export const PinSelector = ({ options, width, isMulti = true, isSearchable = false, value, setValue, title }) => {
+  return (
+    <>
+      <Box style={{ width: width ? width : 180 }}>
+        <label style={{ color: 'hsl(0,0%,75%)' }}>{title}</label>
+        <Select
+          options={options}
+          isMulti={isMulti}
+          closeMenuOnSelect={false}
+          hideSelectedOptions={false}
+          isClearable
+          value={value}
+          isSearchable={isSearchable}
+          components={{
+            MultiValueContainer: multiValueContainer,
+            Option,
+          }}
+          onChange={(selectedOption, triggeredAction) => {
+            if (triggeredAction?.action === 'clear') {
+              setValue(isMulti ? [] : {})
+            } else {
+              setValue(isMulti ? selectedOption.filter(item => item.label !== 'ALL') : selectedOption)
+            }
+          }}
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              borderColor: 'hsl(0, 0%, 90%)',
+              minHeight: 29,
+              marginRight: 10,
+              '&:hover': {
+                boxShadow: 'none',
+                minHeight: 29,
+              },
+            }),
+            valueContainer: (provided, state) => ({
+              ...provided,
+              maxHeight: '29px',
+              padding: '0 6px',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'initial'
+            }),
+            menu: (provided) => ({
+              ...provided,
+              zIndex: 9999,
+            }),
+            indicatorsContainer: (provided) => ({
+              ...provided,
+              maxHeight: '29px',
+              '> div': {
+                padding: 5
+              }
+            }),
+            indicatorContainer: (provided) => ({
+              ...provided,
+            })
+          }}
+        />
+      </Box>
+    </>
+  )
+}
+
 export const Selector = ({ options, width, isMulti = true, isSearchable = false, value, setValue, title }) => {
   return (
     <>
@@ -94,7 +159,6 @@ export const Selector = ({ options, width, isMulti = true, isSearchable = false,
 }
 
 export const PincodeSelector = ({ options, width, isMulti = true, value, setValue, title }) => {
-  console.log('options >>',options)
   return (
     <>
       <Box style={{ width: width ? width : 180 }}>

@@ -12,7 +12,6 @@ import Typography from '@material-ui/core/Typography';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import { useSnackbar } from 'notistack';
 import React, { useState,useEffect } from 'react';
-import { updateMappedRegion } from '../../../services/common.service';
 import { mapPincode } from '../../../services/users.service';
 
 const useStyles = makeStyles((theme) => ({
@@ -35,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const MapPincode = ({ mappedData, masterData, callBack, userId, mappedRegion, selectedRegion }) => {
+const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }) => {
   const classes = useStyles();
   const [mappedPincode, setMappedPincode] = useState(mappedData);
   const [unmappedPincode, setUnmappedPincode] = useState(masterData)
@@ -55,7 +54,6 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, mappedRegion, se
     setMappedPincode(mappedData)
   }, [mappedData])
 
-  console.log('mappedRegion >>>>>>>>>>', mappedRegion)
   const handleSelectAllRegion = (list, action, func) => {
     if (func) {
       if (action === 'allPincode') {
@@ -99,34 +97,16 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, mappedRegion, se
     if (pincode.length !== 0) {
       setLoading(true);
       let resultArray = filteredObjects?.map((item) => ({
-        region: mappedRegion,
         city: item?.city,
         pincode: item.value,
       }));
-      let region = selectedRegion.filter(item => {
-        return !mappedRegion.some(selectedItem => selectedItem.value === item.value);
-      });
-
       let reqBody = {
         user_id: userId,
+        region:selectedRegion?.map(item => item?.value),
         mapping: resultArray,
         method: 'POST'
       }
-      updateMappedRegion(region?.map(item => item?.value), userId)
-        .then((res) => {
-          handleSave(reqBody);
-          console.log('map region while mapping pincode', res)
-        })
-        .catch((err) => {
-          setLoading(false);
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          })
-        });
+      handleSave(reqBody);
     }
   };
   const deleteValue = async () => {
@@ -145,6 +125,9 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, mappedRegion, se
     mapPincode(reqBody)
       .then((res) => {
         callBack();
+        if(reqBody?.method == 'DELETE') {
+          window.location.reload();
+        }
         enqueueSnackbar(res, {
           anchorOrigin: {
             vertical: 'top',

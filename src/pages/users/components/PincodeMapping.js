@@ -1,17 +1,14 @@
 import { Divider, Grid, Typography, makeStyles } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop';
 import Modal from '@material-ui/core/Modal';
-import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
-import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import MapPincode from './MapPincode';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { PinSelector } from '../../../components/CommonComponents/FilterCard';
 import TextInput from '../../../components/TextInput/TextInput';
 import { getAllCityByRegionId, getAllMappedPincode, getAllRegionByStateId, getAllUnmappedPincodeByCity, getStates } from '../../../services/common.service';
-import { mapPincode } from '../../../services/users.service';
 
 const useStyles = makeStyles(theme => ({
   passwordWrapper: {
@@ -100,57 +97,16 @@ const ListItem = ({ data }) => {
 
 const PincodeMapping = ({ userId }) => {
   const classes = useStyles();
+  const queryClient = useQueryClient();
   const [isEdit, setIsEdit] = useState(false);
   const [selectedState, setSelectedState] = useState();
   const [mappedPincode, setMappedPincode] = useState([])
   const [selectedRegion, setSelectedRegion] = useState([]);
-  const [mappedRegion, setMappedRegion] = useState();
   const [selectedCity, setSelectedCity] = useState([]);
-  const [selectedPincode, setSelectedPincode] = useState([]);
   const [regionfilterQry, setRegionFilterQry] = useState();
   const [cityfilterQry, setCityFilterQry] = useState();
   const [openModal, setOpenModal] = useState();
   const { enqueueSnackbar } = useSnackbar();
-  const { data = [], refetch } = useQuery(['mapped-pincode'], () => { return getAllMappedPincode(userId) },
-    {
-      refetchOnWindowFocus: false,
-      retry: false,
-      onSuccess: d => {
-        if (d?.state) {
-          setSelectedState({ label: d?.state[0]?.state_name, value: d?.state[0]?.state_id })
-          setMappedPincode(d?.pincode?.map((item) => ({
-            label: item?.pincode_value,
-            value: item?.pincode_id,
-          })))
-          setSelectedPincode(d?.pincode?.map((item) => ({
-            label: item?.pincode_value,
-            value: item?.pincode_id,
-          })))
-          setMappedRegion(d?.region?.map(item => ({
-            label: item?.region_name,
-            value: item?.region_id
-          })))
-          setSelectedRegion(d?.region?.map(item => ({
-            label: item?.region_name,
-            value: item?.region_id
-          })))
-          setSelectedCity(d?.city?.map(item => ({
-            label: item?.city_name,
-            value: item?.city_id
-          })))
-        }
-      },
-      onError: d => {
-        setSelectedPincode([]);
-        enqueueSnackbar(d?.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        })
-      }
-    })
   const { data: state = [] } = useQuery(['state'], () => { return getStates() }, {
     refetchOnWindowFocus: false,
     retry: false,
@@ -163,12 +119,12 @@ const PincodeMapping = ({ userId }) => {
       return result;
     }
   })
-  const { data: region = [] } = useQuery(['region', selectedState], () => getAllRegionByStateId(selectedState?.value), {
+  const { data: region = [], refetch: refetchRegion } = useQuery(['region', selectedState], () => getAllRegionByStateId(selectedState?.value), {
     refetchOnWindowFocus: false,
     enabled: selectedState ? true : false,
     retry: false
   })
-  const { data: city = [] } = useQuery(['city', regionfilterQry], () => { return getAllCityByRegionId(regionfilterQry) },
+  const { data: city = [], refetch: refetchCity } = useQuery(['city', regionfilterQry], () => { return getAllCityByRegionId(regionfilterQry) },
     {
       refetchOnWindowFocus: false,
       enabled: regionfilterQry ? true : false,
@@ -179,94 +135,50 @@ const PincodeMapping = ({ userId }) => {
       refetchOnWindowFocus: false,
       enabled: cityfilterQry ? true : false,
       retry: false,
+    })
+  const { data = [], refetch } = useQuery(['mapped-pincode'], () => { return getAllMappedPincode(userId) },
+    {
+      refetchOnWindowFocus: false,
+      retry: false,
       onSuccess: d => {
-        if (mappedPincode.length > 0) {
-          setSelectedPincode(mappedPincode)
-        }
-        else {
-          setSelectedPincode(d)
+        if (d?.state) {
+          setSelectedState({ label: d?.state[0]?.state_name, value: d?.state[0]?.state_id })
+          setMappedPincode(d?.pincode?.map((item) => ({
+            label: item?.pincode_value,
+            value: item?.pincode_id,
+          })))
+          setSelectedRegion(d?.region?.map(item => ({
+            label: item?.region_name,
+            value: item?.region_id
+          })))
+          setSelectedCity(d?.city?.map(item => ({
+            label: item?.city_name,
+            value: item?.city_id
+          })))
         }
       },
-      onError: d => {
-        setSelectedPincode([])
+      // onError: d => {
+      //   setMappedPincode([]);
+      //   setSelectedRegion([]);
+      //   setSelectedCity([]);
+      //   setSelectedState();
+      //   setRegionFilterQry();
+      //   setCityFilterQry();
+      //   setTimeout(() => {
+      //     queryClient.invalidateQueries('region');
+      //     queryClient.invalidateQueries('city');
+      //   }, [2000])
 
-      }
+      //   enqueueSnackbar(d?.message, {
+      //     anchorOrigin: {
+      //       vertical: 'top',
+      //       horizontal: 'right',
+      //     },
+      //     variant: 'error',
+      //   })
+      // }
     })
 
-  const handleTest = (reqBody) => {
-    mapPincode(reqBody)
-      .then((res) => {
-        setIsEdit(false)
-        refetch();
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        })
-      })
-      .catch((err) => {
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'red',
-        })
-      })
-  }
-
-  const handleSubmit = () => {
-    let reqBody = {}, pincodelist = {}
-    let filteredObjects = mappedPincode.filter(item => {
-      return mappedPincode.find(mappedItem => mappedItem.label === item.label) &&
-        !selectedPincode.find(selectedItem => selectedItem.label === item.label);
-    });
-    if (filteredObjects?.length > 0) {
-      pincodelist = {
-        id: filteredObjects?.map(item => item.value),
-        method: 'DELETE'
-      }
-      handleTest(pincodelist)
-
-    }
-    const updatedMapped = selectedPincode.filter(item =>
-      !mappedPincode.some(mappedItem => mappedItem.label === item.label)
-    );
-    let resultArray = updatedMapped?.map((item) => ({
-      city: item?.city,
-      pincode: item.value,
-    }));
-    reqBody = {
-      user_id: userId,
-      mapping: resultArray,
-      method: 'POST'
-    }
-    handleTest(reqBody)
-
-    // mapPincode(reqBody)
-    //   .then((res) => {
-    //     setIsEdit(false)
-    //     refetch();
-    //     enqueueSnackbar(res, {
-    //       anchorOrigin: {
-    //         vertical: 'top',
-    //         horizontal: 'right',
-    //       },
-    //       variant: 'success',
-    //     })
-    //   })
-    //   .catch((err) => {
-    //     enqueueSnackbar(err, {
-    //       anchorOrigin: {
-    //         vertical: 'top',
-    //         horizontal: 'right',
-    //       },
-    //       variant: 'red',
-    //     })
-    //   })
-  }
 
   useEffect(() => {
     let qry = {}
@@ -401,21 +313,11 @@ const PincodeMapping = ({ userId }) => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>Map Pincode</Typography>
                   <div style={{ minWidth: '90%' }}>
-                    <MapPincode mappedData={mappedPincode} masterData={pincode} mappedRegion={mappedRegion} selectedRegion={selectedRegion} userId={userId} callBack={() => {
+                    <MapPincode mappedData={mappedPincode} masterData={pincode} selectedRegion={selectedRegion} userId={userId} callBack={() => {
                       setIsEdit(false)
                       refetch();
                       refetchUnmappedPincode();
                     }} />
-                    {/* <PincodeSelector
-                      isMulti
-                      isSearchable
-                      isClearable
-                      width={'100%'}
-                      options={pincode}
-                      placeholder="Select pincode"
-                      value={selectedPincode}
-                      setValue={setSelectedPincode}
-                    /> */}
                   </div>
                 </div>
               </Grid>
@@ -423,7 +325,7 @@ const PincodeMapping = ({ userId }) => {
             <div className={classes.passwordWrapper}>
               <>
                 <Button variant='outlined' style={{ marginRight: 4 }} onClick={() => setIsEdit(false)}>Cancel</Button>
-                <Button variant='contained' startIcon={<NavigateNextRoundedIcon />} className={clsx(classes.btn, classes.editButton)} onClick={() => handleSubmit()} >Map</Button>
+                {/* <Button variant='contained' startIcon={<NavigateNextRoundedIcon />} className={clsx(classes.btn, classes.editButton)} onClick={() => handleSubmit()} >Map</Button> */}
               </>
             </div>
           </>

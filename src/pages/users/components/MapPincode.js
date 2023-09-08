@@ -102,7 +102,7 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
       }));
       let reqBody = {
         user_id: userId,
-        region:selectedRegion?.map(item => item?.value),
+        regions:selectedRegion?.map(item => item?.value),
         mapping: resultArray,
         method: 'POST'
       }

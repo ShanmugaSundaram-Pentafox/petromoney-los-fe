@@ -1,4 +1,4 @@
-import { Box, Grid, makeStyles } from '@material-ui/core';
+import { Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, Grid, makeStyles } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
@@ -7,32 +7,13 @@ import UserEditForm from './userEditForm';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import { action_id, resources_id } from '../../../config/accessControl';
+import { logger } from '../../../config/logger';
+import { updateUserDetails } from '../../../services/common.service';
+import { deleteUser } from '../../../services/users.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 
 const useStyles = makeStyles(theme => ({
-
-  sidePanelFormWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-    width: '40vw',
-    overflowX: 'hidden'
-  },
-  sidePanelTitle: {
-    padding: '8px 16px',
-    marginBottom: 6,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333'
-  },
-  list: {
-    width: '50%',
-  },
-
   box: {
     borderColor: 'grey',
 
@@ -47,38 +28,14 @@ const useStyles = makeStyles(theme => ({
   },
   actionButtonsWrapper: {
     display: 'flex',
-    justifyContent: 'space-between',
-    padding: '12px 16px'
   },
   readOnlyWrapper: {
     marginTop: 10,
     maxWidth: '100%',
   },
-  passwordWrapper: {
-    marginTop: 10,
-    marginBottom: 10,
-    display: 'flex',
-    justifyContent: 'flex-end'
-  },
-  passwordSection: {
-    marginTop: 10,
-    display: 'flex',
-    justifyContent: 'flex-start'
-
-
-  },
   stepperRoot: {
     padding: 16,
     paddingTop: 8
-  },
-  details: {
-    borderColor: 'grey',
-    minWidth: 80,
-    height: 60,
-    display: 'flex',
-    textAlign: 'left',
-    alignItems: 'left',
-    justifyContent: 'left'
   },
   text: {
     fontSize: 12
@@ -86,26 +43,6 @@ const useStyles = makeStyles(theme => ({
   title: {
     fontSize: 11,
     marginBottom: 4,
-  },
-  textFieldStyle: {
-    marginBottom: '12px',
-    display: 'block',
-
-    '& .MuiInputLabel-formControl': {
-      fontSize: '12px',
-      lineHeight: '140%',
-      color: '#909191',
-      top: '-6px',
-    },
-    '& .MuiInputBase-formControl': {
-      minWidth: '40%',
-    },
-    '& .MuiInputBase-input': {
-      fontWeight: '500',
-      fontSize: '12px',
-      lineHeight: '140%',
-      width: '100%',
-    }
   },
   editButton: {
     marginRight: '8px',
@@ -126,9 +63,6 @@ const useStyles = makeStyles(theme => ({
       backgroundColor: theme.palette.error.dark
     }
   },
-  activeBtn: {
-    color: '#128C7E'
-  }
 }));
 
 const UserProfile = ({ currentUser, data, }) => {
@@ -152,6 +86,61 @@ const UserProfile = ({ currentUser, data, }) => {
     }
     )
   }
+  const deleteUserRecord = (userId) => {
+    setOpen(false);
+    setuserLoading(true);
+    deleteUser(userId)
+      .then(({ message }) => {
+        setuserLoading(false);
+        enqueueSnackbar(message, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        }
+        )
+        setTimeout(() => {
+          window.location.reload()
+        }, 700);
+      })
+      .catch(e => {
+        setuserLoading(false);
+        logger(e);
+      })
+  }
+  const ActivateUser = (status) => {
+    setuserLoading(true)
+    updateUserDetails({ status }, data.id)
+      .then((res) => {
+        setuserLoading(false)
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        }
+        )
+        setTimeout(() => {
+          window.location.reload(false);
+          setReadOnly(true)
+        }, 2000)
+      })
+      .catch(err => {
+        setuserLoading(false)
+        console.log(err)
+      })
+  }
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+  const handleClickOpen = (value) => {
+    setOpen(true);
+  };
   return (
     <div className={classes.sidePanelFormContentWrapper}>
       <div className={classes.stepperRoot}>
@@ -176,7 +165,16 @@ const UserProfile = ({ currentUser, data, }) => {
                 </Grid>
               </>
             ) : (
-              <UserEditForm data={data} currentUser={currentUser} roleList={roleList} editProfile={editProfile} />
+              <UserEditForm
+                data={data}
+                currentUser={currentUser}
+                roleList={roleList}
+                editProfile={editProfile}
+                callback={() => {
+                  setReadOnly(false);
+                  setEditPassword(false);
+                  setEditProfile(false);
+                }} />
             )
           }
         </>
@@ -184,19 +182,61 @@ const UserProfile = ({ currentUser, data, }) => {
           !editProfile &&
             <Box className={classes.button}>
               <CheckAllowed currentUser={currentUser} resource={resources_id.users} action={action_id.users.userEdit}>
-                <Button
-                  variant="contained"
-                  size="small"
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={<EditIcon />}
-                  onClick={() => {
-                    setReadOnly(false);
-                    setEditPassword(false);
-                    data.status === 'Active' ? setEditProfile(true) : activationAlert()
-                  }}>Edit</Button>
+                <div className={classes.actionButtonsWrapper}>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    className={clsx(classes.btn, classes.editButton)}
+                    startIcon={<EditIcon />}
+                    onClick={() => {
+                      setReadOnly(false);
+                      setEditPassword(false);
+                      data.status === 'Active' ? setEditProfile(true) : activationAlert()
+                    }}>Edit</Button>
+                  {
+                    !userLoading ? (
+                      data.status === 'Active' ? (
+                        <div>
+                          <Button
+                            variant="contained"
+                            className={classes.btnError}
+                            color="primary"
+                            onClick={() => handleClickOpen(data.id)}
+                          >
+                            Deactivate user
+                          </Button>
+                        </div>
+                      ) : (
+                        <div>
+                          <Button
+                            variant="contained"
+                            className={classes.btnError}
+                            onClick={() => ActivateUser(1)}
+                          >
+                            Activate
+                          </Button>
+                        </div>
+                      )
+                    ) : <CircularProgress />
+                  }
+                </div>
               </CheckAllowed>
             </Box>
         }
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent>
+            <DialogContentText className={classes.text}>Do you want to disable the user?</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} variant="contained" >No</Button>
+            <Button onClick={() => deleteUserRecord(data.id)} className={classes.button} >Yes</Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </div>
   )

@@ -206,22 +206,6 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
           </Grid>
         </Grid>
         <Grid item xs={5} className={classes.root}>
-          {/* <div style={{ minWidth: '70%' }}>
-            <TextField
-              name='search'
-              variant='outlined'
-              style={{ margin: 10, marginLeft: 0 }}
-              placeholder='Search...'
-              onChange={handleSearch}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position='start'>
-                    <SearchOutlinedIcon />
-                  </InputAdornment>
-                )
-              }}
-            />
-          </div> */}
           {
             unmappedPincode.length != 0 ?
               unmappedPincode.map((item) => {
@@ -261,22 +245,6 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
         </Grid>
         <Grid item xs={5} className={classes.root} >
           <Paper direction="column">
-            {/* <div style={{ minWidth: '70%' }}>
-              <TextField
-                name='search'
-                variant='outlined'
-                style={{ margin: 10 }}
-                placeholder='Search...'
-                onChange={handleSearch}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position='start'>
-                      <SearchOutlinedIcon />
-                    </InputAdornment>
-                  )
-                }}
-              />
-            </div> */}
             {
               mappedPincode.length != 0 ?
                 mappedPincode.map((item) => {

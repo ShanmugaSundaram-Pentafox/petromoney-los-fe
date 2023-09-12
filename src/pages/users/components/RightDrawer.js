@@ -1,4 +1,4 @@
-import { CircularProgress, IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -9,7 +9,6 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack'
@@ -21,7 +20,6 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { logger } from '../../../config/logger';
-import { updateUserDetails } from '../../../services/common.service';
 import { deleteUser, getAllUserRoles } from '../../../services/users.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -171,29 +169,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const handleClickOpen = (value) => {
     setOpen(true);
   };
-  const ActivateUser = (status) => {
-    setuserLoading(true)
-    updateUserDetails({ status }, data.id)
-      .then((res) => {
-        setuserLoading(false)
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        }
-        )
-        setTimeout(() => {
-          window.location.reload(false);
-          setReadOnly(true)
-        }, 2000)
-      })
-      .catch(err => {
-        setuserLoading(false)
-        console.log(err)
-      })
-  }
+  
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -331,47 +307,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
           </Dialog>
         </div>
       </div>
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button
-              variant="outlined"
-              startIcon={<NavigateBeforeRoundedIcon />}
-              onClick={callback}
-            >
-              Back
-            </Button>
-          </div>
-          {
-            !userLoading ? (
-              data.status === 'Active' ? (
-                <div>
-                  <Button
-                    variant="contained"
-                    className={classes.btnError}
-                    color="primary"
-                    onClick={() => handleClickOpen(data.id)}
-                  >
-                    Deactivate user
-                  </Button>
-                </div>
-              ) : (
-                <div>
-                  <Button
-                    variant="contained"
-                    className={classes.btnError}
-                    onClick={() => ActivateUser(1)}
-                  >
-                    Activate
-                  </Button>
-                </div>
-              )
-            ) : <CircularProgress />
-          }
-
-        </div>
-      </div>
+      
     </div >
   );
 

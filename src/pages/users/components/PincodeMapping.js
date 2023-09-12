@@ -157,26 +157,6 @@ const PincodeMapping = ({ userId }) => {
           })))
         }
       },
-      // onError: d => {
-      //   setMappedPincode([]);
-      //   setSelectedRegion([]);
-      //   setSelectedCity([]);
-      //   setSelectedState();
-      //   setRegionFilterQry();
-      //   setCityFilterQry();
-      //   setTimeout(() => {
-      //     queryClient.invalidateQueries('region');
-      //     queryClient.invalidateQueries('city');
-      //   }, [2000])
-
-      //   enqueueSnackbar(d?.message, {
-      //     anchorOrigin: {
-      //       vertical: 'top',
-      //       horizontal: 'right',
-      //     },
-      //     variant: 'error',
-      //   })
-      // }
     })
 
 

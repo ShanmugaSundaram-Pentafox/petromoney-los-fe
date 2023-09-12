@@ -9,7 +9,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack'
-import React,{ useState }  from 'react';
+import React, { useState } from 'react';
 import * as Yup from 'yup';
 import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const UserEditForm = ({ data, roleList, currentUser }) => {
+const UserEditForm = ({ data, roleList, callback }) => {
 
   const classes = useStyles();
   const [submitType, setSubmitType] = useState();
@@ -178,7 +178,7 @@ const UserEditForm = ({ data, roleList, currentUser }) => {
             {
               !loading ? (
                 <>
-                  <Button variant='outlined' onClick={() => setEditProfile(false)} style={{ marginRight: 4 }}>Cancel</Button>
+                  <Button variant='outlined' onClick={() => { setEditProfile(false); callback(); }} style={{ marginRight: 4 }}>Cancel</Button>
                   <Button variant='contained' startIcon={<NavigateNextRoundedIcon />} className={clsx(classes.btn, classes.editButton)} onClick={() => { handleSubmit(); setSubmitType('Profile') }}>Save</Button>
                 </>
               ) : <CircularProgress />

@@ -176,9 +176,6 @@ const MapRegion = (data) => {
           </Box>
         )
       }
-      <Typography variant="h4" component="h3">
-        Regions Map
-      </Typography>
       <Grid container spacing={2} style={{ padding: 10 }}>
         <Grid container style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10 }}>
           <Grid item md={5}>

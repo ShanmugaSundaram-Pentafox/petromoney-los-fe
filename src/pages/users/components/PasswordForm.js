@@ -1,4 +1,4 @@
-import { CircularProgress, TextField, Box, Typography, Divider } from '@material-ui/core';
+import { CircularProgress, TextField, Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -11,9 +11,9 @@ import { updatePassword } from '../../../services/common.service';
 const useStyles = makeStyles(theme => ({
 
   passwordWrapper: {
-    marginTop: 10,
+    marginTop: 20,
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-start'
   },
   textFieldStyle: {
     marginBottom: '12px',
@@ -98,61 +98,48 @@ const PasswordForm = ({ data, callback, loading, setLoading }) => {
           }
           )
           setSubmitting(false)
-
         }
-
       }
-
     }
   });
 
   return (
-    <>
-      <Divider />
-      <Box mb={2}>
-        <Typography variant="h4" component="h3" style={{ marginTop: 4 }}>Change password</Typography>
-
+    <Box mb={2} p={2} bgcolor={'#fafafa'}>
+      <TextField
+        margin="dense"
+        name="password"
+        label="Enter New Password"
+        type="password"
+        disabled={isSubmitting}
+        value={values.password}
+        className={classes.textFieldStyle}
+        error={errors.password}
+        helperText={errors.password}
+        onChange={handleChange}
+      />
+      <TextField
+        margin="dense"
+        label="Confirm New Password"
+        type="password"
+        name="confirm_password"
+        disabled={isSubmitting}
+        value={values.confirm_password}
+        className={classes.textFieldStyle}
+        error={errors.confirm_password}
+        helperText={errors.confirm_password}
+        onChange={handleChange}
+      />
+      <div className={classes.passwordWrapper}>
         {
-          <Box mt={2} mb={2} bgcolor={'#fafafa'}>
-            <TextField
-              margin="dense"
-              name="password"
-              label="Enter New Password"
-              type="password"
-              disabled={isSubmitting}
-              value={values.password}
-              className={classes.textFieldStyle}
-              error={errors.password}
-              helperText={errors.password}
-              onChange={handleChange}
-            />
-            <TextField
-              margin="dense"
-              label="Confirm New Password"
-              type="password"
-              name="confirm_password"
-              disabled={isSubmitting}
-              value={values.confirm_password}
-              className={classes.textFieldStyle}
-              error={errors.confirm_password}
-              helperText={errors.confirm_password}
-              onChange={handleChange}
-            />
-
-            <div className={classes.passwordWrapper}>
-              {
-                !loading ? (
-                  <>
-                    <Button variant='outlined' onClick={callback} style={{ marginRight: 4 }}>Cancel</Button>
-                    <Button variant='contained' color="primary" onClick={() => { handleSubmit() }}>Save</Button>
-                  </>
-                ) : <CircularProgress />
-              }
-            </div>
-          </Box>
+          !loading ? (
+            <>
+              <Button variant='outlined' onClick={callback} style={{ marginRight: 4 }}>Cancel</Button>
+              <Button variant='contained' color="primary" onClick={() => { handleSubmit() }}>Save</Button>
+            </>
+          ) : <CircularProgress />
         }
-      </Box>
-    </>
+      </div>
+    </Box>
   )
 
 }

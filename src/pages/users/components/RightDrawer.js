@@ -1,4 +1,4 @@
-import { CircularProgress, IconButton, Tooltip, Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -9,27 +9,17 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import NavigateNextRoundedIcon from '@material-ui/icons/NavigateNextRounded';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
-import WhatsAppIcon from '@material-ui/icons/WhatsApp';
-import ToggleButton from '@material-ui/lab/ToggleButton';
 import clsx from 'clsx';
-import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack'
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
-import * as Yup from 'yup';
-import MapRegion from './MapRegion';
 import PasswordForm from './PasswordForm';
+import UserEditForm from './userEditForm';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
-import TextInput from '../../../components/TextInput/TextInput';
-import UserCan from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { logger } from '../../../config/logger';
-import { rulesList } from '../../../config/userRules';
-import { updateUserDetails } from '../../../services/common.service';
 import { deleteUser, getAllUserRoles } from '../../../services/users.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -158,15 +148,12 @@ const useStyles = makeStyles(theme => ({
 export default function TemporaryDrawer({ data, currentUser, callback }) {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
   const [userLoading, setuserLoading] = useState(false);
   const [passLoading, setpassLoading] = useState(false);
   const [roleList, setRoleList] = useState([])
   const [readOnly, setReadOnly] = useState(true)
   const [editProfile, setEditProfile] = useState(false)
   const [editPassword, setEditPassword] = useState(false)
-  const [submitType, setSubmitType] = useState();
-  const [selected, setSelected] = useState(data?.is_whatsapp);
   const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
@@ -182,29 +169,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
   const handleClickOpen = (value) => {
     setOpen(true);
   };
-  const ActivateUser = (status) => {
-    setuserLoading(true)
-    updateUserDetails({ status }, data.id)
-      .then((res) => {
-        setuserLoading(false)
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        }
-        )
-        setTimeout(() => {
-          window.location.reload(false);
-          setReadOnly(true)
-        }, 2000)
-      })
-      .catch(err => {
-        setuserLoading(false)
-        console.log(err)
-      })
-  }
+  
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -248,64 +213,6 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
     )
   }
 
-
-
-  const { values, errors, handleChange, handleSubmit, setValues, isSubmitting, setSubmitting, setFieldValue } = useFormik({
-    initialValues: {
-      ...data,
-    },
-    validateOnChange: false,
-    validateOnBlur: true,
-    validationSchema: Yup.object().shape({
-      role_id: Yup.number().required('Choose Proper User Role').nullable('Choose user role'),
-      first_name: Yup.string().required('Enter first name').nullable('Enter first name'),
-      last_name: Yup.string().required('Enter last name').nullable('Enter last name'),
-      mobile: Yup.string().matches(/^\d{10}$/, 'Enter valid mobile number').required('Enter mobile number').nullable('Enter mobile number'),
-      email: Yup.string().email('Enter valid email').nullable('Enter mail ID').required('Enter mail ID'),
-    }),
-    onSubmit: values => {
-      const { status, ...d } = values;
-      d.first_name = d.first_name.toUpperCase()
-      d.last_name = d.last_name.toUpperCase()
-      d.is_whatsapp = selected ? 1 : 0
-
-      if (submitType === 'Profile') {
-        setLoading(true);
-        updateUserDetails(d, data.id)
-          .then(res => {
-            setLoading(false);
-            enqueueSnackbar(res, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'success',
-            }
-            )
-            setTimeout(() => {
-              window.location.reload(false);
-              setReadOnly(true)
-            }, 1500)
-
-          })
-          .catch(err => {
-            setLoading(false);
-            enqueueSnackbar(err, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            })
-          })
-      }
-    }
-  });
-  const inputProps = {
-    direction: 'column',
-    alignTop: true,
-    onChange: handleChange,
-  }
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
@@ -355,98 +262,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
                   </Grid>
                 </>
               ) : (
-                <>
-                  <Box mb={2}>
-                    <form>
-                      <Grid container spacing={3}>
-                        <Grid item md={6}>
-                          <TextInput
-                            {...inputProps}
-                            name="first_name"
-                            labelText="First Name"
-                            value={values.first_name?.toUpperCase()}
-                            error={errors.first_name}
-                            helperText={errors.first_name}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <TextInput
-                            {...inputProps}
-                            name="last_name"
-                            labelText="Last Name"
-                            value={values.last_name?.toUpperCase()}
-                            error={errors.last_name}
-                            helperText={errors.last_name}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <TextInput
-                            {...inputProps}
-                            type="mobile"
-                            name="mobile"
-                            labelText="Mobile"
-                            value={values.mobile}
-                            error={errors.mobile}
-                            helperText={errors.mobile ? errors.mobile : '*please enable to recieve whatsapp notifications.'}
-                            InputProps={{ endAdornment: <Tooltip title={selected ? 'Notification Enabled' : 'Notification Disabled'}><ToggleButton value="check" size='small' selected={selected} onChange={() => setSelected(!selected)}><WhatsAppIcon fontSize='small' className={selected && classes.activeBtn} /></ToggleButton></Tooltip> }}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <TextInput
-                            {...inputProps}
-                            type="email"
-                            name="email"
-                            labelText="Email"
-                            value={values.email}
-                            error={errors.email}
-                            helperText={errors.email}
-                          />
-                        </Grid>
-                        <Grid item md={12}>
-                          <TextInput
-                            {...inputProps}
-                            select
-                            labelText="User Role"
-                            name="role_id"
-                            value={values.role_id}
-                            error={errors.role_id}
-                            helperText={errors.role_id}
-                            SelectProps={{
-                              native: true,
-                            }}
-                          >
-                            <option value="">Choose user role</option>
-                            {
-                              roleList.map(userRole => <option key={userRole.role_name} value={userRole.id}>({userRole.role_name}) - {userRole.name}</option>)
-                            }
-                          </TextInput>
-                        </Grid>
-                      </Grid>
-                    </form>
-                  </Box>
-                  {
-                    !editProfile && <Divider />
-                  }
-                  <UserCan
-                    role={currentUser.role_name}
-                    perform={rulesList.region_map}
-                    yes={() => (
-                      // [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].includes(data.role_id) ? <MapRegion data={data} /> : null
-                      <MapRegion data={data} />
-                    )}
-                    no={() => null}
-                  />
-                  <div className={classes.passwordWrapper}>
-                    {
-                      !loading ? (
-                        <>
-                          <Button variant='outlined' onClick={() => setEditProfile(false)} style={{ marginRight: 4 }}>Cancel</Button>
-                          <Button variant='contained' startIcon={<NavigateNextRoundedIcon />} className={clsx(classes.btn, classes.editButton)} onClick={() => { handleSubmit(); setSubmitType('Profile') }}>Save</Button>
-                        </>
-                      ) : <CircularProgress />
-                    }
-                  </div>
-                </>
+                <UserEditForm data={data} currentUser={currentUser} roleList={roleList} editProfile={editProfile} />
               )
             }
             {
@@ -491,47 +307,7 @@ export default function TemporaryDrawer({ data, currentUser, callback }) {
           </Dialog>
         </div>
       </div>
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button
-              variant="outlined"
-              startIcon={<NavigateBeforeRoundedIcon />}
-              onClick={callback}
-            >
-              Back
-            </Button>
-          </div>
-          {
-            !userLoading ? (
-              data.status === 'Active' ? (
-                <div>
-                  <Button
-                    variant="contained"
-                    className={classes.btnError}
-                    color="primary"
-                    onClick={() => handleClickOpen(data.id)}
-                  >
-                    Deactivate user
-                  </Button>
-                </div>
-              ) : (
-                <div>
-                  <Button
-                    variant="contained"
-                    className={classes.btnError}
-                    onClick={() => ActivateUser(1)}
-                  >
-                    Activate
-                  </Button>
-                </div>
-              )
-            ) : <CircularProgress />
-          }
-
-        </div>
-      </div>
+      
     </div >
   );
 

@@ -38,6 +38,7 @@ import VehiclesLoanTable from '../pages/transports/components/VehiclesLoanTable'
 import Transport from '../pages/transports/transports';
 import TransportsPortal from '../pages/transports/TransportsPortal';
 import TransportsDetails from '../pages/transportsDetails/transportsDetails'
+import ProfileTabs from '../pages/users/components/ProfileTabs';
 import PassbookDetails from '../pages/users/dealer/PassbookDetails';
 import Users from '../pages/users/users';
 import { selectCurrentUser } from '../store/user/user.selector';
@@ -76,6 +77,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.pre_submit)} exact path="/pre-submit" component={PresubmitLoansTable} />
       <ProtectedRoute allow exact path="/rbac" component={UserControl} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.dealer_referral)}  exact path="/referral" component={ReferralTable} />
+      <ProtectedRoute allow exact path="/user/:id?" component={ProfileTabs} />
 
       <ProtectedRoute 
         exact 

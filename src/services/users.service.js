@@ -103,7 +103,6 @@ export const getRegion = () => {
     })
       .then(({ status, data }) => {
         if (status === 'SUCCESS') {
-          console.log(data)
           resolve(data)
         } else {
           reject(data)
@@ -117,7 +116,6 @@ export const getRegion = () => {
 
 export const getRegionMap = () => {
   let apiUrl = URL.regionMap
-  console.log(apiUrl)
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
       method: 'GET'
@@ -137,7 +135,6 @@ export const getRegionMap = () => {
 
 export const regionMapUser = (s) => {
   let apiUrl = URL.regionMapUser + s
-  console.log(apiUrl)
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
       method: 'POST'
@@ -155,9 +152,49 @@ export const regionMapUser = (s) => {
   });
 }
 
+export const mapPincode = (data) => {
+  let apiUrl = 'user/pincode';
+
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {
+      method: data?.method,
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const unmapPincode = (data) => {
+  let apiUrl = 'user/pincode';
+
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {
+      method: data?.method,
+      body: data
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
 export const regionDel = (user, region) => {
   let apiUrl = URL.regionDel + user + '/' + region;
-  console.log(apiUrl)
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
       method: 'POST'
@@ -177,7 +214,6 @@ export const regionDel = (user, region) => {
 
 export const regionMapAdd = (user, region) => {
   let apiUrl = URL.regionMapAdd + user + '/' + region;
-  console.log(apiUrl, '@!)(#')
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
       method: 'POST'
@@ -197,7 +233,6 @@ export const regionMapAdd = (user, region) => {
 
 export const passReset = (password, userId) => {
   let apiUrl = URL.passReset
-  console.log(apiUrl, password, userId)
   const data = {
     password, userId
   }
@@ -482,5 +517,4 @@ export const deleteUserAccount = () => {
         reject(e.message);
       })
   });
-
 }

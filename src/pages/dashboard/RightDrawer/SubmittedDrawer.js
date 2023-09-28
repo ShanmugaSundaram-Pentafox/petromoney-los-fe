@@ -100,7 +100,19 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
     }
   })
   const handleReviewModal = () => {
-    setReviewModal(!reviewModal)
+    if(info?.amount_requested > 0) {
+      setReviewModal(!reviewModal)
+    }
+    else {
+      enqueueSnackbar('Please enter amount to proceed further', {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      })
+      return null;
+    }
   }
 
   const updateLoanStatus = () => {

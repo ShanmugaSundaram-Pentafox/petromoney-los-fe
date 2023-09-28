@@ -120,7 +120,7 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick, fil
       },
       {
         label: 'Approved Amount',
-        name: 'amount_disbursed',
+        name: 'amount_approved',
         options: {
           filter: false,
           sort: true,

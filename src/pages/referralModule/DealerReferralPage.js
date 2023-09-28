@@ -2,7 +2,8 @@ import { Badge, Box, Grid } from '@material-ui/core'
 import React, { useState } from 'react'
 import { useQuery } from 'react-query'
 import ReferralTable from './ReferralTable'
-import { getDealershipReferral } from '../../services/dealerships.service'
+import SettledListTable from './SettledListTable'
+import { getDealershipReferral, getDealershipReferralSettledList } from '../../services/dealerships.service'
 import { PaperWrapper } from '../reports/CreditReload'
 
 const DealerReferralPage = ({ currentUser }) => {
@@ -19,8 +20,8 @@ const DealerReferralPage = ({ currentUser }) => {
   );
 
   const { data: settledList = [], isLoading: settledListLoading, refetch: refetchSettledList } = useQuery(
-    ['new-request'],
-    () => getDealershipReferral(),
+    ['settled-request'],
+    () => getDealershipReferralSettledList(),
     {
       enabled: Boolean(selectedTab === 'settled'),
       refetchOnWindowFocus: false
@@ -45,7 +46,7 @@ const DealerReferralPage = ({ currentUser }) => {
       </PaperWrapper>
       {selectedTab === 'new' ?
         <ReferralTable currentUser={currentUser} loans={referralList} loading={referralListLoading} fetchData={refetchReferralList}  />
-        : null
+        : <SettledListTable loans={settledList} loading={settledListLoading} fetchData={refetchSettledList}  />
       }
     </>
   )

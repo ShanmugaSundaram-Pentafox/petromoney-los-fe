@@ -119,7 +119,7 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
         label: 'Bonus Amount',
         name: 'current_eligible_bonus',
         options: {
-          filter: true,
+          filter: false,
           sort: true,
           customBodyRender: value => <Currency value={value ? value : '-'} />
         }
@@ -128,6 +128,7 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
         label: 'Action',
         name: 'dealership_id',
         options: {
+          filter: false,
           customBodyRender: (value, tableMeta) => {
             return (
               !tableMeta?.rowData[8] ?
@@ -162,6 +163,9 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
           onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex]);
       }
     },
+    filter: false,
+    viewColumns: false,
+    print: false,
   };
 
   return (

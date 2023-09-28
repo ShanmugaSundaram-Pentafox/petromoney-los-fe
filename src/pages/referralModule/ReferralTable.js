@@ -7,11 +7,9 @@ import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { useMount } from 'react-use';
 import AddSettlementForm from './AddSettlementForm';
 import EditReferralDataForm from './EditReferralDataForm';
 import Currency from '../../components/Number/Currency';
-import { getDealershipReferral } from '../../services/dealerships.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 
 const useStyles = makeStyles(theme => ({
@@ -33,29 +31,24 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ReferralTable = ({ currentUser }) => {
+const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
-  const [loans, setLoans] = useState([]);
+  // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [rowData, setRowData] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
-  const fetchData = () => {
-    setLoading(true);
-    getDealershipReferral()
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }
-
-  useMount(() => {
-    fetchData()
-  })
+  // const fetchData = () => {
+  //   setLoading(true);
+  //   getDealershipReferral()
+  //     .then(data => {
+  //       setLoans(data);
+  //       setLoading(false);
+  //     })
+  //     .catch(e => {
+  //       setLoading(false);
+  //     })
+  // }
 
   const onRowClick = (dealershipId, rowData) => {
     if (!rowData?.settlement_type) {
@@ -176,7 +169,7 @@ const ReferralTable = ({ currentUser }) => {
       {
         Array.isArray(loans) && loans.length ? (
           <MUIDataTable
-            title={<Typography className={classes.title} variant="h4" component="h4">{'Referral List'} ({loans.length})</Typography>}
+            title={<Typography className={classes.title} variant="h4" component="h4">{'Referral List'}</Typography>}
             data={loans}
             columns={columns}
             options={options}

@@ -115,7 +115,7 @@ const DrawerFooter = ({
   handleReviewModal,
   handleApprovalModal,
   handlePendingApprovalModal,
-  updateApprovalStatus
+  updateApprovalStatus,
 }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const classes = useStyles();
@@ -317,16 +317,16 @@ const DrawerFooter = ({
             Back
           </Button>
           {
-            (([1]?.includes(currentUser?.role_id) && !['disbursed'].includes(status))) && (
+            ([1]?.includes(currentUser?.role_id) && loanData?.is_noc == 1) ? (
               <Button
                 variant="outlined"
                 color='primary'
-                onClick={() => setPushback({ ...pushback, open: true })}
+                onClick={() => {setPushback({ ...pushback, open: true }); ['disbursed'].includes(status) && setPushbackRemarks('pre_submit')}}
                 style={{ marginLeft: 12 }}
               >
                 Pushback
               </Button>
-            )
+            ) : null
           }
           {
             isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected'].includes(status.toLowerCase()) &&
@@ -534,6 +534,7 @@ const DrawerFooter = ({
             <Select
               isClearable
               onChange={(e) => setPushbackRemarks(e?.value)}
+              value={loanStatusList?.find(e => e.value === pushbackRemarks)}
               options={loanStatusList}
               menuPlacement='bottom'
               menuPosition='fixed'

@@ -87,7 +87,7 @@ const DisbursedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, 
         }
       </div>
       <div>
-        <DrawerFooter selectedLoanData={selectedLoanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} />
+        <DrawerFooter selectedLoanData={selectedLoanData} loanData={loanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} />
       </div>
     </div >
   );

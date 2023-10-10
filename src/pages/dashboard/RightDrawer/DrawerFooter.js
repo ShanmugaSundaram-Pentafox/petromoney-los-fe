@@ -317,7 +317,7 @@ const DrawerFooter = ({
             Back
           </Button>
           {
-            ([1]?.includes(currentUser?.role_id) && loanData?.is_noc == 1) ? (
+            ([1]?.includes(currentUser?.role_id) && ((['disbursed'].includes(status) && loanData?.is_noc == 1) || !['disbursed'].includes(status))) ? (
               <Button
                 variant="outlined"
                 color='primary'

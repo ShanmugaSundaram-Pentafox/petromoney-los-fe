@@ -71,7 +71,7 @@ const DisbursedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, 
         <CloseIcon className={classes.closeIcon} onClick={onClose} />
       </div>
       <div className={classes.contentWrapper}>
-        <DealershipData data={data} readOnly={true} />
+        <DealershipData data={data} loanData={loanData} readOnly={true} />
         <WorkingSheetDrawer id={id} />
         <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>

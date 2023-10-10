@@ -73,6 +73,7 @@ export const action_id = {
     vivriti: 'vivriti',
     loan_submit: 'loan_submit',
     submitted_documents: 'submitted_documents',
+    pushback: 'pushback',
   },
   creditReload: {
     create: 'request:create',

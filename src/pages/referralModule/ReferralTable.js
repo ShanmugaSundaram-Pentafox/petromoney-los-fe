@@ -39,18 +39,6 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
   const [rowData, setRowData] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
-  // const fetchData = () => {
-  //   setLoading(true);
-  //   getDealershipReferral()
-  //     .then(data => {
-  //       setLoans(data);
-  //       setLoading(false);
-  //     })
-  //     .catch(e => {
-  //       setLoading(false);
-  //     })
-  // }
-
   const onRowClick = (dealershipId, rowData) => {
     if (!rowData?.settlement_type) {
       setOpen({

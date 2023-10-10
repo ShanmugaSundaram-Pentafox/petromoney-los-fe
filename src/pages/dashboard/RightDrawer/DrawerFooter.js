@@ -15,7 +15,7 @@ import Select from 'react-select';
 import { useMount } from 'react-use';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
-import { resources_id } from '../../../config/accessControl';
+import { action_id, resources_id } from '../../../config/accessControl';
 import { sendLoanForEnhancement } from '../../../services/enhancement.service';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats, updateLoanStatusByLoanId } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
@@ -115,7 +115,7 @@ const DrawerFooter = ({
   handleReviewModal,
   handleApprovalModal,
   handlePendingApprovalModal,
-  updateApprovalStatus
+  updateApprovalStatus,
 }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const classes = useStyles();
@@ -316,18 +316,18 @@ const DrawerFooter = ({
             onClick={onClose}>
             Back
           </Button>
-          {
-            (([1]?.includes(currentUser?.role_id) && !['disbursed'].includes(status))) && (
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard.pushback}>
+            {((['disbursed'].includes(status) && loanData?.is_noc == 1) || !['disbursed'].includes(status)) ? (
               <Button
                 variant="outlined"
                 color='primary'
-                onClick={() => setPushback({ ...pushback, open: true })}
+                onClick={() => {setPushback({ ...pushback, open: true }); ['disbursed'].includes(status) && setPushbackRemarks('pre_submit')}}
                 style={{ marginLeft: 12 }}
               >
                 Pushback
               </Button>
-            )
-          }
+            ) : null}
+          </CheckAllowed>
           {
             isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected'].includes(status.toLowerCase()) &&
               <LoaderButton
@@ -534,6 +534,7 @@ const DrawerFooter = ({
             <Select
               isClearable
               onChange={(e) => setPushbackRemarks(e?.value)}
+              value={loanStatusList?.find(e => e.value === pushbackRemarks)}
               options={loanStatusList}
               menuPlacement='bottom'
               menuPosition='fixed'

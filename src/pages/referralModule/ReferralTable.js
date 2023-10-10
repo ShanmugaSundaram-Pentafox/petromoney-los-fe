@@ -3,6 +3,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
+import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react';
@@ -92,6 +93,28 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
           sort: true,
           customBodyRender: (value) => {
             return <>{value?.toUpperCase()}</>
+          },
+        }
+      },
+      {
+        label: 'Created By',
+        name: 'created_by',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>
+          },
+        }
+      },
+      {
+        label: 'Disbursed Date',
+        name: 'loan_disbursed_date',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{moment(value).format('DD/MM/YYYY')}</>
           },
         }
       },

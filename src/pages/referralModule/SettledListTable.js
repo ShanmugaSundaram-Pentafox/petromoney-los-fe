@@ -1,4 +1,5 @@
 import { CircularProgress, Paper, Typography, makeStyles } from '@material-ui/core';
+import moment from 'moment/moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
@@ -28,12 +29,34 @@ const SettledListTable = ({loans, loading}) => {
       },
       {
         label: 'Dealership Name',
-        name: 'name',
+        name: 'dealership_name',
         options: {
           filter: false,
           sort: true,
           customBodyRender: (value) => {
             return <>{value?.toUpperCase()}</>
+          },
+        }
+      },
+      {
+        label: 'Created By',
+        name: 'created_by',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>
+          },
+        }
+      },
+      {
+        label: 'Disbursed Date',
+        name: 'loan_disbursed_date',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{moment(value).format('DD/MM/YYYY')}</>
           },
         }
       },
@@ -59,7 +82,7 @@ const SettledListTable = ({loans, loading}) => {
       },
       {
         label: 'Bonus Amount',
-        name: 'current_eligible_bonus',
+        name: 'amount',
         options: {
           filter: false,
           sort: true,

@@ -3,15 +3,14 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
+import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { useMount } from 'react-use';
 import AddSettlementForm from './AddSettlementForm';
 import EditReferralDataForm from './EditReferralDataForm';
 import Currency from '../../components/Number/Currency';
-import { getDealershipReferral } from '../../services/dealerships.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 
 const useStyles = makeStyles(theme => ({
@@ -33,29 +32,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const ReferralTable = ({ currentUser }) => {
+const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
-  const [loans, setLoans] = useState([]);
+  // const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [rowData, setRowData] = useState();
   const { enqueueSnackbar } = useSnackbar();
-
-  const fetchData = () => {
-    setLoading(true);
-    getDealershipReferral()
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }
-
-  useMount(() => {
-    fetchData()
-  })
 
   const onRowClick = (dealershipId, rowData) => {
     if (!rowData?.settlement_type) {
@@ -103,6 +85,28 @@ const ReferralTable = ({ currentUser }) => {
         }
       },
       {
+        label: 'Disbursed Date',
+        name: 'loan_disbursed_date',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{moment(value).format('DD/MM/YYYY')}</>
+          },
+        }
+      },
+      {
+        label: 'Created By',
+        name: 'created_by',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>
+          },
+        }
+      },
+      {
         label: 'Referred by Id',
         name: 'referred_dealership_id',
         options: {
@@ -126,7 +130,7 @@ const ReferralTable = ({ currentUser }) => {
         label: 'Bonus Amount',
         name: 'current_eligible_bonus',
         options: {
-          filter: true,
+          filter: false,
           sort: true,
           customBodyRender: value => <Currency value={value ? value : '-'} />
         }
@@ -135,6 +139,7 @@ const ReferralTable = ({ currentUser }) => {
         label: 'Action',
         name: 'dealership_id',
         options: {
+          filter: false,
           customBodyRender: (value, tableMeta) => {
             return (
               !tableMeta?.rowData[8] ?
@@ -169,6 +174,9 @@ const ReferralTable = ({ currentUser }) => {
           onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex]);
       }
     },
+    filter: false,
+    viewColumns: false,
+    print: false,
   };
 
   return (
@@ -176,7 +184,7 @@ const ReferralTable = ({ currentUser }) => {
       {
         Array.isArray(loans) && loans.length ? (
           <MUIDataTable
-            title={<Typography className={classes.title} variant="h4" component="h4">{'Referral List'} ({loans.length})</Typography>}
+            title={<Typography className={classes.title} variant="h4" component="h4">{'Referral List'}</Typography>}
             data={loans}
             columns={columns}
             options={options}

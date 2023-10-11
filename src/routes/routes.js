@@ -24,7 +24,7 @@ import NotFound from '../pages/NotFound/NotFound';
 import RevokedAccess from '../pages/NotFound/RevokedAccess';
 import Profile from '../pages/profile/Profile';
 import UserControl from '../pages/rbac/UserControl';
-import ReferralTable from '../pages/referralModule/ReferralTable';
+import DealerReferralPage from '../pages/referralModule/DealerReferralPage';
 import RenewalList from '../pages/renewal/RenewalList';
 import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditNewRequestTable from '../pages/reports/CreditNewRequestTable';
@@ -76,7 +76,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.noc)} exact path="/noc" component={NOCertificateRequestTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.pre_submit)} exact path="/pre-submit" component={PresubmitLoansTable} />
       <ProtectedRoute allow exact path="/rbac" component={UserControl} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.dealer_referral)}  exact path="/referral" component={ReferralTable} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.dealer_referral)}  exact path="/referral" component={DealerReferralPage} />
       <ProtectedRoute allow exact path="/user/:id?" component={ProfileTabs} />
 
       <ProtectedRoute 

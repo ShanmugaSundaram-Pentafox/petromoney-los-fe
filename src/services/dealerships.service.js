@@ -219,6 +219,22 @@ export const getDealershipReferral = (id) => {
   });
 };
 
+export const getDealershipReferralSettledList = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('dealership/referral/history')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
 export const postReferralData = (dealershipID, data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${dealershipID}/referral/${id}`, {

@@ -10,7 +10,7 @@ const useStyles = makeStyles(({
 
 }))
 
-const DealershipData = ({ data }) => {
+const DealershipData = ({ data, loanData }) => {
   const classes = useStyles();
 
   const gridProps = {
@@ -34,6 +34,7 @@ const DealershipData = ({ data }) => {
               <ViewData title='Region' value={data.region_name || '-'} />
               <ViewData title='Pincode' value={data.pincode || '-'} />
               <ViewData title='GST' value={data.gst || '-'} />
+              {(loanData?.status === 'disbursed') ? <ViewData title='Status' value={loanData?.is_noc == 1 ? 'NOC Issued' : 'Active'} /> : null}
             </Grid>
           </Grid>
         )

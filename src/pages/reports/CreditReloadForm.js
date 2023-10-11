@@ -133,6 +133,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
     }
   }, [bankData, selectedValue])
 
+  const isLimit = creditLimit?.min_tranche_amount > 0 && creditLimit?.is_loan_limit_check;
   const { values, errors, handleChange, handleSubmit, setFieldValue, setFieldError } = useFormik({
     initialValues: {
       amount: amount,
@@ -140,7 +141,12 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      amount: Yup.number().nullable('Enter Amount').required('Enter Amount').moreThan(0, 'Invalid Amount').test('maxDigits', creditLimit?.available_limit ? `You can request amount from 50k to ${creditLimit?.available_limit}` : 'Enter dealership ID to check the limit', (value) => String(value) >= 50000 && String(value) <= creditLimit?.available_limit),
+      amount: Yup.number()
+        .nullable('Enter Amount')
+        .required('Enter Amount')
+        .min(isLimit ? creditLimit?.min_tranche_amount : 50000, `The minimum amount you can request is ${isLimit ? creditLimit?.min_tranche_amount : 50000}`)
+        .max(creditLimit?.available_limit, `The maximum amount you can request is ${creditLimit?.available_limit}`)
+        .test('maxDigits', creditLimit?.available_limit ? `You can request amount from 50k to ${creditLimit?.available_limit}` : 'Enter dealership ID to check the limit', (value) => String(value) >= 50000 && String(value) <= creditLimit?.available_limit),
     }),
     onSubmit: (values) => {
       const d = { ...values, request_source: 'mdm', bank_id: bankId?.value, repayment_made: repaymentType?.value }

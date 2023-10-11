@@ -85,17 +85,6 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
         }
       },
       {
-        label: 'Created By',
-        name: 'created_by',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
         label: 'Disbursed Date',
         name: 'loan_disbursed_date',
         options: {
@@ -103,6 +92,17 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
           sort: true,
           customBodyRender: (value) => {
             return <>{moment(value).format('DD/MM/YYYY')}</>
+          },
+        }
+      },
+      {
+        label: 'Created By',
+        name: 'created_by',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: (value) => {
+            return <>{value?.toUpperCase()}</>
           },
         }
       },

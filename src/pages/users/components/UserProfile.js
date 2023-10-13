@@ -3,13 +3,14 @@ import EditIcon from '@material-ui/icons/Edit';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import UserEditForm from './userEditForm';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { logger } from '../../../config/logger';
 import { updateUserDetails } from '../../../services/common.service';
-import { deleteUser } from '../../../services/users.service';
+import { deleteUser, getAllUserRoles } from '../../../services/users.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 
@@ -69,12 +70,17 @@ const UserProfile = ({ currentUser, data, }) => {
   const [open, setOpen] = useState(false);
   const classes = useStyles();
   const [userLoading, setuserLoading] = useState(false);
-  const [passLoading, setpassLoading] = useState(false);
-  const [roleList, setRoleList] = useState([])
   const [readOnly, setReadOnly] = useState(true)
   const [editProfile, setEditProfile] = useState(false)
   const [editPassword, setEditPassword] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
+
+  const getUserRolesQuery = useQuery({
+    queryKey: ['all-user-roles'],
+    queryFn: () => getAllUserRoles(),
+    enabled: Boolean(editProfile),
+  });
+
   const activationAlert = () => {
     enqueueSnackbar('Please activate the user before editing', {
       anchorOrigin: {
@@ -168,7 +174,7 @@ const UserProfile = ({ currentUser, data, }) => {
               <UserEditForm
                 data={data}
                 currentUser={currentUser}
-                roleList={roleList}
+                roleList={getUserRolesQuery?.data || []}
                 editProfile={editProfile}
                 callback={() => {
                   setReadOnly(false);

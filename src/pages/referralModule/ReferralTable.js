@@ -166,7 +166,7 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     },
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex === 5) {
+      if (cellMeta.colIndex === 7) {
         setRowData(loans[cellMeta.dataIndex])
       }
       else {

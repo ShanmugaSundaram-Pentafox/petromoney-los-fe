@@ -62,7 +62,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 const EditReferralDataForm = ({ dealershipId, rowData, callback }) => {
-  const [selectedValue, setSelectedValue] = useState(`${rowData?.referred_dealership_id} - ${rowData?.referred_dealership_name}`);
+  const [selectedValue, setSelectedValue] = useState({
+    dealership_id: rowData?.referred_dealership_id,
+    label: `${rowData?.referred_dealership_id} - ${rowData?.referred_dealership_name}`,
+    name: rowData?.referred_dealership_name,
+    region: rowData?.region,
+  });
   const classes = useStyles();
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -145,7 +150,7 @@ const EditReferralDataForm = ({ dealershipId, rowData, callback }) => {
                         styles={{
                           menu: provided => ({ ...provided, zIndex: 9999 })
                         }}
-                        defaultInputValue={selectedValue}
+                        defaultInputValue={selectedValue?.label}
                         onChange={onChangeOption}
                         loadingMessage={() => ' '}
                         loadOptions={getOptions}

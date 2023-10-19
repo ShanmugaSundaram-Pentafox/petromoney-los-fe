@@ -34,7 +34,8 @@ const LoanInfo = ({
 }) => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState({ amount_approved: newInfo?.amount_approved });
-
+  console.log('++++++++++++++', row);
+  console.log('++++++++++++++', newInfo);
   useEffect(() => {
     getProductsMaster()
       .then((data) => {
@@ -43,7 +44,8 @@ const LoanInfo = ({
           const re = data.find(d => d.product_id == row.product_id)
           setSelectedProduct({
             ...re,
-            disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' && status !== '' && status == 'approved' && status =='rejected' } || {})
+            disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' && status !== '' && status == 'approved' && status == 'rejected'
+          } || {})
         }
       })
       .catch(() => null)
@@ -136,6 +138,10 @@ const LoanInfo = ({
                         : <Currency value={newInfo?.new_loan_amount} />
                     }
                   </TableCell>
+                ) : (type === 'renewal' ? (
+                  <TableCell align="right">
+                    <Currency value={newInfo?.new_loan_amount} />
+                  </TableCell>
                 ) : (
                   <TableCell align="right">
                     {
@@ -163,7 +169,7 @@ const LoanInfo = ({
                         : <Currency value={row?.amount_requested} />
                     }
                   </TableCell>
-                )
+                ))
               }
               <TableCell align="right">
                 {

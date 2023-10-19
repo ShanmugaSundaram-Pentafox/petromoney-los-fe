@@ -112,13 +112,15 @@ export const getRenewalRemarks = (loanId, filterType) => {
   });
 }
 
-export const updateRenewalLoanStatus = ({ isReject, isPushback, ...data }) => {
+export const updateRenewalLoanStatus = ({ isReject, isPushback, isEnhancement, ...data }) => {
   return new Promise((resolve, reject) => {
     let apiUrl = '';
     if (isReject) {
       apiUrl = `renewal/${data?.loan_id}/rejected`
     } else if (isPushback) {
       apiUrl = `renewal/${data?.loan_id}/pushback`
+    } else if (isEnhancement) {
+      apiUrl = 'enhancement/submit'
     } else if (data?.status === 'draft') {
       apiUrl = 'renewal/direct_save'
     } else {
@@ -171,6 +173,23 @@ export const downloadRenewalData = (status, qryStr = {}) => {
 export const sendRenewalReminder = (status) => {
   return new Promise((resolve, reject) => {
     let apiUrl = `renewal/send_reminder?status=${status}`
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const syncRenewalData = ({renewal_application_id}) => {
+  return new Promise((resolve, reject) => {
+    let apiUrl = `renewal/${renewal_application_id}/sync`
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {

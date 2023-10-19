@@ -4,7 +4,6 @@ import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import clsx from 'clsx';
-import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
@@ -122,8 +121,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
             return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
           }
         }
-      },
-      {
+      }, {
         label: 'Name',
         name: 'dealership_name',
         options: {
@@ -133,62 +131,57 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
             return <>{value?.toUpperCase()}</>
           },
         }
-      },
-      {
-        label: 'Type',
-        name: 'product_name',
+      }, {
+        label: 'Old Scheme',
+        name: 'old_product_name',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
-      },
-      {
+      }, {
+        label: 'New Scheme',
+        name: 'new_product_name',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
+        }
+      }, {
         label: 'Region',
-        name: 'region_name',
+        name: 'region',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
-
-      },
-      {
-        label: 'Approved Amount',
-        name: 'approved_amount',
+      }, {
+        label: 'Old loan Amount',
+        name: 'old_loan_amount',
         options: {
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
-      },
-      {
-        label: 'Month of renewal',
-        name: 'renewal_month',
-        options: {
-          filter: true,
-          filterWidth: '100%',
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'Renewal Fee status',
-        name: 'renewal_fee_payment_status',
+      }, {
+        label: 'New Loan Amount',
+        name: 'new_loan_amount',
         options: {
           filter: false,
           sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
+          setCellProps: () => ({
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
+          }),
+          customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       },
     ]

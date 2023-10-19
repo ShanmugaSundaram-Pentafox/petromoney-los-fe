@@ -44,6 +44,7 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
 
     setShowPanel({ status: true, data: status, id: id, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
   }
+  
   const compProps = {
     id: showPanel?.id,
     status: showPanel?.data,

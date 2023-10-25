@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import clsx from 'clsx';
+import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
@@ -155,8 +156,8 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
       }, {
-        label: 'Old loan Amount',
-        name: 'old_loan_amount',
+        label: 'Disbursed Amount',
+        name: 'new_loan_amount',
         options: {
           filter: false,
           sort: true,
@@ -169,18 +170,18 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
       }, {
-        label: 'New Loan Amount',
-        name: 'new_loan_amount',
+        label: 'Month of renewal',
+        name: 'renewal_month',
         options: {
-          filter: false,
+          filter: true,
+          filterWidth: '100%',
           sort: true,
           setCellProps: () => ({
-            align: 'right',
+            align: 'center',
           }),
-          setCellHeaderProps: () => ({
-            align: 'right',
-          }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => {
+            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
+          } 
         }
       },
     ]

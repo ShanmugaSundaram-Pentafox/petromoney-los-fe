@@ -1,5 +1,5 @@
 import { Divider, Drawer, List, ListItem, Button } from '@material-ui/core';
-import { Repeat } from '@material-ui/icons';
+import { Repeat, Replay } from '@material-ui/icons';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import AssignmentLateRoundedIcon from '@material-ui/icons/AssignmentLateRounded';
 import CachedIcon from '@material-ui/icons/Cached';
@@ -117,6 +117,12 @@ const Sidebar = props => {
       title: 'Renewal',
       href: '/renewal',
       icon: <Repeat />
+    },
+    {
+      id: action_id?.navigation.renewal,
+      title: 'Re-onboarding',
+      href: '/re-onboarding',
+      icon: <Replay />
     },
     {
       id: action_id?.navigation.credit_reload,

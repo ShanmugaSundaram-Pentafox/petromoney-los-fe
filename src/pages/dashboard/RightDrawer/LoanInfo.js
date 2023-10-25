@@ -27,15 +27,13 @@ const LoanInfo = ({
   status,
   newInfo,
   currentUser,
-  editable,
   type,
   updateNewLoanInfo,
   viewable
 }) => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState({ amount_approved: newInfo?.amount_approved });
-  console.log('++++++++++++++', row);
-  console.log('++++++++++++++', newInfo);
+
   useEffect(() => {
     getProductsMaster()
       .then((data) => {
@@ -60,7 +58,7 @@ const LoanInfo = ({
     <>
       <LoanInfoWrapper>
         {
-          type == 'enhancement' &&
+          type === 'enhancement' || type === 're-onboarding' &&
             <div style={{ display: 'flex' }}>
               <ViewData title='Old Product' value={newInfo?.old_product_name} />
               <ViewData style={{ marginLeft: 10 }} title='Old loan Amount' value={newInfo?.old_loan_amount} />
@@ -112,7 +110,7 @@ const LoanInfo = ({
               <TableCell scope="row" component="th"><strong>{selectedProduct?.penal_interest}</strong></TableCell>
               {/* option to edit requested amount of the loan in submit and review queue */}
               {
-                type == 'enhancement' ? (
+                type === 'enhancement' || type === 're-onboarding' ? (
                   <TableCell align="right">
                     {
                       !['approved', 'rejected']?.includes(status) ? (

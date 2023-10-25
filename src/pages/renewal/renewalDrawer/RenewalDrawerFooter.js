@@ -99,7 +99,7 @@ const RenewalDrawerFooter = ({
             )
           }
           {
-            ['draft', 'submit'].includes(status.toLowerCase()) && (
+            ['draft'].includes(status.toLowerCase()) && (
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
                 <Button
                   variant="outlined"

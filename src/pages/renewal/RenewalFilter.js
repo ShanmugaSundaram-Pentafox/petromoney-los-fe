@@ -135,6 +135,9 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
     if (filters.includes('entity')) {
       qry.entity = (selectedEntity.value)?.toString()
     }
+    if (filters.includes('noc')) {
+      qry.category = true
+    }
     if (filterType != 'dpd') {
       getStats(qry)
     }

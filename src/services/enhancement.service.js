@@ -2,10 +2,11 @@ import apiCall from '../utils/api.util';
 
 export const getEnhancedLoanByStatus = (status, filterQry, page, searchText) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone } = filterQry;
+    const { region, from, to, products, zone, category } = filterQry;
     let qry = []
     let apiUrl = `enhancement/application?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (category) qry.push('category=noc')
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`old_product_id=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
@@ -28,10 +29,11 @@ export const getEnhancedLoanByStatus = (status, filterQry, page, searchText) => 
 
 export const getStatusWiseRecordCount = (filterQry) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone } = filterQry;
+    const { region, from, to, products, zone, category } = filterQry;
     let qry = []
     let apiUrl = 'enhancement/status_wise_record_count';
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (category) qry.push('category=noc')
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`old_product_id=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
@@ -69,10 +71,11 @@ export const getEnhancementStatusList = () => {
 
 export const getPageDetails = (status, filterQry) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone } = filterQry;
+    const { region, from, to, products, zone, category } = filterQry;
     let qry = []
     let apiUrl = `enhancement/record_count?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (category) qry.push('category=noc')
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`old_product_id=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
@@ -143,10 +146,11 @@ export const sendLoanForEnhancement = (data) => {
 
 export const downloadEnhancementData = (status, qryStr = {}) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone } = qryStr;
+    const { region, from, to, products, zone, category } = qryStr;
     let qry = []
     let apiUrl = `enhancement/download_as_csv?status=${status}`;
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (category) qry.push('category=noc')
     if (region && region !== '0') qry.push(`region=${region}`)
     if (products && products !== '0') qry.push(`old_product_id=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)

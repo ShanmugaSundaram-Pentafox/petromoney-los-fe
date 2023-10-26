@@ -1,9 +1,13 @@
-import { Button, Dialog } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { green } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import DescriptionIcon from '@material-ui/icons/Description';
+import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -18,9 +22,10 @@ import SignRequestLayout from '../../../components/Leegality/SignRequestLayout';
 import Currency from '../../../components/Number/Currency';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
+import { ReactComponent as ESignIcon } from '../../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../../icons/loan_agreement.svg';
 import { getSignedUrl } from '../../../services/common.service';
-import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
+import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, syncRenewalData } from '../../../services/renewal.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 
 const useStyles = makeStyles(theme => ({
@@ -52,6 +57,8 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
   const actionable = !permissionCheck(currentUser?.role_name, rulesList?.external_view);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [renewalId, setRenewalId] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
   const pageDetailsQuery = useQuery(
@@ -99,6 +106,30 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
   }
 
+  const syncData = () => {
+    syncRenewalData({renewal_application_id: renewalId})
+      .then(res => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setOpenDialog(false)
+      })
+      .catch(err => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+        setOpenDialog(false)
+      })
+  }
+
   const columns = useMemo(() => {
     return [
       {
@@ -111,8 +142,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
             return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
           }
         }
-      },
-      {
+      }, {
         label: 'Name',
         name: 'dealership_name',
         options: {
@@ -122,39 +152,45 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
             return <>{value?.toUpperCase()}</>
           },
         }
-      },
-      {
-        label: 'Type',
-        name: 'product_name',
+      }, {
+        label: 'Old Product Type',
+        name: 'old_product_name',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
-      },
-      {
+      }, {
+        label: 'New Product Type',
+        name: 'new_product_name',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
+        }
+      }, {
         label: 'Region',
-        name: 'region_name',
+        name: 'region',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
-
-      },
-      {
-        label: 'Approved Amount',
-        name: 'approved_amount',
+      }, {
+        label: 'New Loan Amount',
+        name: 'new_loan_amount',
         options: {
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
-      },
-      {
+      }, {
         label: 'Month of renewal',
         name: 'renewal_month',
         options: {
@@ -166,17 +202,26 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           }),
           customBodyRender: value => {
             return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
+          } 
         }
-      },
-      {
-        label: 'Renewal Fee status',
-        name: 'renewal_fee_payment_status',
+      }, {
+        label: 'Sync',
+        name: 'is_sync',
         options: {
           filter: false,
           sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
+          customBodyRender: (value, r) => {
+            return (
+              value == 1 ?
+                <Tooltip title='Already synced'>
+                  <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+                </Tooltip> :
+                <div>
+                  <Tooltip title="click to sync">
+                    <SyncIcon style={{ color: 'grey' }} onClick={() => { setOpenDialog(true); setRenewalId(loans?.[r.rowIndex]['loan_id']) }} />
+                  </Tooltip>
+                </div>
+            )
           },
         }
       },
@@ -192,12 +237,22 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           }),
           customBodyRender: (value, r) => {
             return (
-              loans?.[r.rowIndex]['document_signed_status'] == 'signed' ? (
+              loans?.[r.rowIndex]['is_document_signed'] == 1 ? (
                 <CustomToken label={'Renewed'} variant="success" icon="tick" />
               ) : (
                 <div style={{ minWidth: 70 }}>
+                  <Tooltip title="Sanction Letter">
+                    <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
+                      <DescriptionIcon style={{ width: 19 }} />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="eSign Application">
+                    <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setDealershipId(value); setModalVisible(true); }}>
+                      <ESignIcon width={17} />
+                    </IconButton>
+                  </Tooltip>
                   <Tooltip title="Loan Agreement">
-                    <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['approved_amount']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
+                    <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setProductTypeId(loans?.[r.rowIndex]['new_product_id']) }}>
                       <LoanAgreementIcon width={12} />
                     </IconButton>
                   </Tooltip>
@@ -235,7 +290,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       )
     },
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
+      if (cellMeta.colIndex != 8 && cellMeta.colIndex != 7) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
     },
@@ -272,10 +327,22 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           loanAmount={loanAmount}
           productId={productTypeId}
           type={type}
+          getStatus={true}
           title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}
           currentUser={currentUser}
         />
+      </Dialog>
+      <Dialog fullWidth maxWidth="xs" open={openDialog} onClose={() => setOpenDialog(true)}>
+        <DialogContent dividers>
+          <Typography>Ready to sync data with LMS?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <div>
+            <Button variant='outlined' onClick={() => setOpenDialog(false)}>Cancel</Button>
+            <Button variant='contained' color='primary' style={{ color: 'white', marginLeft: 15 }} onClick={() => syncData()}>Yes</Button>
+          </div>
+        </DialogActions>
       </Dialog>
     </div>
   )

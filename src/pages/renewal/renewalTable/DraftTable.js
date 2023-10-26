@@ -124,8 +124,7 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
             return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
           }
         }
-      },
-      {
+      }, {
         label: 'Name',
         name: 'dealership_name',
         options: {
@@ -135,34 +134,33 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
             return <>{value?.toUpperCase()}</>
           },
         }
-      },
-      {
-        label: 'Type',
-        name: 'product_name',
+      }, {
+        label: 'Scheme',
+        name: 'new_product_name',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
-      },
-      {
+      }, {
         label: 'Region',
-        name: 'region_name',
+        name: 'region',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
-
-      },
-      {
-        label: 'Approved Amount',
-        name: 'approved_amount',
+      }, {
+        label: 'Loan Amount',
+        name: 'new_loan_amount',
         options: {
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }

@@ -348,7 +348,6 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           loanId={loanId}
           loanAmount={loanAmount}
           productId={productTypeId}
-          getStatus={true}
           type={type}
           title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}

@@ -1,20 +1,19 @@
-import { Button, Tooltip, Dialog, DialogContent, DialogContentText, makeStyles, } from '@material-ui/core';
+import { Button, Tooltip } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
+import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
-import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
-import Currency from '../../../components/Number/Currency';
-import { getSignedUrl } from '../../../services/common.service';
-import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, sendRenewalReminder } from '../../../services/renewal.service';
-import { dateCustomSort } from '../../../utils/commonFunctions.util';
+import MuiTableFooter from '../../components/CommonComponents/MuiTableFooter';
+import Currency from '../../components/Number/Currency';
+import { getSignedUrl } from '../../services/common.service';
+import { downloadEnhancementData, getEnhancedLoanByStatus, getPageDetails } from '../../services/enhancement.service';
+import { dateCustomSort } from '../../utils/commonFunctions.util';
+
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -32,47 +31,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const ReviewTable = ({ title, onRowClick, filterQry }) => {
+const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
   const [loans, setLoans] = useState([]);
   const [page, setPage] = useState();
+  const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-
-  const pageDetailsQuery = useQuery({
-    queryKey: ['renewal_reviewRecordCount', filterQry, search],
-    queryFn: () => getPageDetails('review', filterQry),
-  })
-
-  const handleReminder = () => {
-    sendRenewalReminder('review')
-      .then(res => {
-        setOpenModal(false);
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        });
-      })
-      .catch(e => {
-        setOpenModal(false);
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
 
   useEffect(() => {
     setLoading(true);
-    getRenewalLoanByStatus('review', filterQry, page, search)
+    getEnhancedLoanByStatus('review', filterQry, page, search)
       .then(data => {
         setLoans(data);
         setLoading(false);
@@ -82,14 +52,23 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
       })
   }, [filterQry, page, search])
 
+  useEffect(() => {
+    getPageDetails('review', filterQry)
+      .then((res) => {
+        setPageData(res)
+      })
+      .catch((e) => console.log('getPageCountError >>>', e))
+  }, [filterQry])
+
+
   const onDownloadClick = () => {
-    downloadRenewalData('review', filterQry)
+    downloadEnhancementData('review', filterQry)
       .then(data => {
         getSignedUrl(data[0]?.url)
           .then((res) => {
             window.open(res?.url, '_blank');
           })
-          .catch(e => {
+          .catch(e =>{
             enqueueSnackbar(e, {
               anchorOrigin: {
                 vertical: 'top',
@@ -98,6 +77,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
               variant: 'error',
             });
           })
+        
       })
       .catch(e => {
         enqueueSnackbar(e, {
@@ -122,7 +102,8 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
             return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
           }
         }
-      }, {
+      },
+      {
         label: 'Name',
         name: 'dealership_name',
         options: {
@@ -132,23 +113,27 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
             return <>{value?.toUpperCase()}</>
           },
         }
-      }, {
-        label: 'Old Scheme',
+      },
+      {
+        label: 'Old Product Type',
         name: 'old_product_name',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
-      }, {
-        label: 'New Scheme',
+      },
+      
+      {
+        label: 'New Product Type',
         name: 'new_product_name',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
-      }, {
+      },
+      {
         label: 'Region',
         name: 'region',
         options: {
@@ -156,8 +141,25 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
           sort: true,
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
-      }, {
-        label: 'Disbursed Amount',
+
+      },
+      {
+        label: 'Old loan Amount',
+        name: 'old_loan_amount',
+        options: {
+          filter: false,
+          sort: true,
+          setCellProps: () => ({
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
+          }),
+          customBodyRender: value => <strong><Currency value={value} /></strong>
+        }
+      },
+      {
+        label: 'New Loan Amount',
         name: 'new_loan_amount',
         options: {
           filter: false,
@@ -170,20 +172,6 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
-      }, {
-        label: 'Month of renewal',
-        name: 'renewal_month',
-        options: {
-          filter: true,
-          filterWidth: '100%',
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          } 
-        }
       },
     ]
   }, [loans]);
@@ -195,8 +183,8 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
     rowsPerPage: 10,
     filter: false,
     print: false,
-    download: false,
     sort: false,
+    download: false,
     viewColumns: false,
     searchPlaceholder: 'Search by dealreship ID/Name',
     onSearchChange: (searchText) => {
@@ -208,21 +196,14 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
           <Tooltip title="Download">
             <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
           </Tooltip>
-          <Button
-            color='primary'
-            variant='contained'
-            onClick={() => setOpenModal(true)}
-          >
-            Send Reminder
-          </Button>
         </>
       );
     },
-    customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage, textLabels) => {
+    customFooter: () => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <MuiTableFooter
-            totalCount={pageDetailsQuery?.data?.total_number_of_pages}
+            totalCount={pageData?.total_number_of_pages}
             pageSize={10}
             onPageChange={(value) => { setPage(value) }}
           />
@@ -243,34 +224,15 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
   return (
     <div className={classes.root}>
       <MUIDataTable
-        title={title ? <Typography className={classes.title} variant="h4" component="h4">{title}</Typography> : null}
+        title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
         data={loans}
+        style={classes.tableStyle}
         columns={columns}
         options={options}
       />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
-      <Dialog
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        maxWidth='xs'
-        fullWidth
-      >
-        <DialogContent>
-          <div style={{ textAlign: 'center', marginBottom: 16 }}>
-            <InfoCircleOutlined style={{ fontSize: 48, color: '#f0ad4e', margin: 16, marginBottom: 20 }} />
-            <Typography variant='h3'>Are you certain?</Typography>
-          </div>
-          <DialogContentText style={{ textAlign: 'center' }}>Were you planning to inform all the regional managers, dealers, and sales teams that their loan renewal is currently in progress?</DialogContentText>
-        </DialogContent>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
-          <Button size='medium' variant='outlined' onClick={() => setOpenModal(false)}>Cancel</Button>
-          <Button variant='contained' size='medium' style={{ backgroundColor: '#f0ad4e', color: 'white', marginLeft: 16 }} onClick={handleReminder}>
-            Yes
-          </Button>
-        </div>
-      </Dialog>
     </div>
   )
 }

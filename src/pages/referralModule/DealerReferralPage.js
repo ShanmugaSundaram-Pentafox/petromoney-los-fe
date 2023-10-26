@@ -33,7 +33,7 @@ const DealerReferralPage = ({ currentUser }) => {
     ['settled-request'],
     () => getDealershipReferralRejectedList(),
     {
-      enabled: Boolean(selectedTab === 'settled'),
+      enabled: Boolean(selectedTab === 'rejected'),
       refetchOnWindowFocus: false
     }
   );

@@ -7,15 +7,16 @@ import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import RenewalDrawerFooter from './RenewalDrawerFooter';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import { TextEditor } from '../../../components/TextEditor/TextEditor';
-import { getDealershipById } from '../../../services/dealerships.service';
-import { getRenewalFeeStatus, updateRenewalLoanStatus } from '../../../services/renewal.service';
-import LoanInfo from '../../dashboard/RightDrawer/LoanInfo';
-import DealershipInfo from '../../dealershipDetails/components/DealershipInfo';
-import DealersList from '../../dealershipDetails/components/DealersList';
-import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
+import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
+import { TextEditor } from '../../components/TextEditor/TextEditor';
+import { getDealershipById } from '../../services/dealerships.service';
+import { updateEnhancementLoanStatus } from '../../services/enhancement.service';
+import { getLoanById } from '../../services/loans.service';
+import LoanInfo from '../dashboard/RightDrawer/LoanInfo';
+import DealershipInfo from '../dealershipDetails/components/DealershipInfo';
+import DealersList from '../dealershipDetails/components/DealersList';
+import WorkingSheetDrawer from '../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
+import RenewalDrawerFooter from '../renewal/renewalDrawer/RenewalDrawerFooter';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
   if (isReject) {
@@ -32,15 +33,12 @@ const getRemarksMessage = (status, isReject, isPushback) => {
   }
   return 'Please approve'
 }
-const getMessage = (status, isReject, isPushback, isEnhancement) => {
+const getMessage = (status, isReject, isPushback) => {
   if (isReject) {
     return 'Are you sure you want to REJECT this renewal?'
   }
   if (isPushback) {
     return 'Move to Previous Stage?'
-  }
-  if (isEnhancement) {
-    return 'Are you sure want to move your loan for Enhancement?'
   }
   if (status === 'approval') {
     return 'Are you sure you want to APPROVE this renewal?'
@@ -90,32 +88,24 @@ const useStyles = makeStyles(theme => ({
 }))
 
 
-const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClose }) => {
+const ReOnboardingDrawer = ({ id, selectedLoanData, status, currentUser, data, onClose }) => {
   const [reviewModal, setReviewModal] = useState(false);
   const [loading, setLoading] = useState(false)
   const [remarks, setRemarks] = useState();
   const [isReject, setIsReject] = useState(false);
   const [isPushback, setIsPushback] = useState(false);
-  const [isEnhancement, setIsEnhancement] = useState(false)
   const [errorStatus, setErrorStatus] = useState()
   const [collapse, setCollapse] = useState(false);
   const [info, setInfo] = useState();
   const classes = useStyles();
+  const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.loan_id))
   const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), { refetchOnWindowFocus: false })
   const { enqueueSnackbar } = useSnackbar();
-
-  const getRenewalFeeDetails = useQuery({
-    queryKey: ['renewal-fee-details', selectedLoanData?.loan_id],
-    queryFn: () => getRenewalFeeStatus({dealership_id: selectedLoanData?.loan_id}),
-    enabled: Boolean(selectedLoanData?.loan_id),
-  })
-
   const closeReviewModal = () => {
     setIsReject(false);
     setIsPushback(false);
     setReviewModal(false)
   }
-
   const openReviewModal = () => {
     setRemarks(getRemarksMessage(status, isReject, isPushback))
     setReviewModal(true)
@@ -133,28 +123,19 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
     setReviewModal(true)
   }
 
-  const handleEnhancement = () => {
-    setIsEnhancement(true)
-    setRemarks(getRemarksMessage(status, isEnhancement, true))
-    setReviewModal(true)
-  }
-
   const updateLoanStatus = () => {
     if (remarks) {
       setLoading(true)
       let reqBody = {
         remarks: remarks,
-        loan_id: selectedLoanData?.loan_id,
         product_id: info?.product_id ? parseInt(info?.product_id) : parseInt(selectedLoanData?.new_product_id),
         loan_amount: info?.loan_amount ? parseInt(info?.loan_amount) : parseInt(selectedLoanData?.new_loan_amount),
-        renewal_month: status === 'draft' && selectedLoanData?.renewal_month,
-        category: isEnhancement && 'renewal',
+        loan_id: loanData?.id || selectedLoanData?.loan_id,
         status,
         isReject,
         isPushback,
-        isEnhancement,
       }
-      updateRenewalLoanStatus(reqBody)
+      updateEnhancementLoanStatus(reqBody, selectedLoanData?.id)
         .then(res => {
           enqueueSnackbar(res, {
             anchorOrigin: {
@@ -195,7 +176,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
     {
       id: 0,
       name: 'Loan Info',
-      component: <LoanInfo type='renewal' updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={{...data, ...selectedLoanData, product_id: selectedLoanData?.new_product_id || selectedLoanData?.product_id}} newInfo={selectedLoanData} />
+      component: <LoanInfo type='re-onboarding' updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={data} newInfo={selectedLoanData} />
     },
     {
       id: 1,
@@ -206,7 +187,8 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
       id: 2,
       name: 'PD Sheet',
       component: <WorkingSheetDrawer id={id} />
-    }  
+    },
+
   ]
   const handleClick = (id) => {
     if (id == collapse)
@@ -223,7 +205,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           <CloseIcon className={classes.closeIcon} onClick={onClose} />
         </div>
         <div className={classes.contentWrapper}>
-          <DealershipInfo data={{...dealershipData?.data, ...getRenewalFeeDetails?.data?.[0]}} currentUser={currentUser} />
+          <DealershipInfo viewOnly={true} data={dealershipData?.data} currentUser={currentUser} />
           <Divider />
           <div>
             {
@@ -244,14 +226,14 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           </div>
         </div>
         <div>
-          <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleEnhancement={handleEnhancement} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
+          <RenewalDrawerFooter filterType={'enhancement'} selectedLoanData={selectedLoanData} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
       <Dialog
         open={reviewModal}
         onClose={closeReviewModal}
       >
-        <DialogTitle>{getMessage(status, isReject, isPushback, isEnhancement)}</DialogTitle>
+        <DialogTitle>{getMessage(status, isReject, isPushback)}</DialogTitle>
         <DialogContent>
           <div className={classes.dialog}>
             <DialogContentText id="approval-remarks-desc">
@@ -280,4 +262,4 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
     </>
   );
 }
-export default RenewalDrawer;
+export default ReOnboardingDrawer;

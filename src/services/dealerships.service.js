@@ -287,6 +287,22 @@ export const deleteResignDocument = (dealership_id) => {
   });
 };
 
+export const getTrancheStatusById = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${id}/tranche/status`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+
 export const getCreditReloadLimitById = (id) => {
   const url = `credit/reload/${id}/limit`;
   return new Promise((resolve, reject) => {

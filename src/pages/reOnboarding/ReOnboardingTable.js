@@ -6,13 +6,13 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import ApprovalTable from './ApprovalTable';
 import ApprovedTable from './ApprovedTable';
-import DraftTable from './DraftTable';
 import RejectedTable from './RejectedTable';
+import ReOnboardingDrawer from './ReOnboardingDrawer';
 import ReviewTable from './ReviewTable';
-import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
-import { getDealershipById } from '../../../services/dealerships.service';
-import RenewalDrawer from '../renewalDrawer/RenewalDrawer';
+import SubmittedTable from './SubmittedTable';
+import UserCan, { permissionCheck } from '../../components/UserCan/UserCan';
+import { rulesList } from '../../config/userRules';
+import { getDealershipById } from '../../services/dealerships.service';
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const RenewalTable = ({ currentUser, value, filterQry }) => {
+const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
   const classes = useStyles();
   const [showPanel, setShowPanel] = useState({
     status: false,
@@ -38,13 +38,12 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
     setLoansData(selectedLoanData);
     getDealershipById(id)
       .then(data => {
-        setDealershipData(data)
+        setDealershipData({...data, 'product_id': selectedLoanData?.new_product_id})
       })
       .catch(e => null);
 
     setShowPanel({ status: true, data: status, id: id, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
   }
-  
   const compProps = {
     id: showPanel?.id,
     status: showPanel?.data,
@@ -62,10 +61,10 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
         yes={() => (
           <Grid container spacing={2}>
             {
-              value === 'draft' ? (
+              value === 'submit' ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <DraftTable title={'Applications in draft'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
                   </Paper>
                 </Grid>
               ) : null
@@ -74,7 +73,7 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
               value === 'review' ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <ReviewTable title={'Pending for Review'} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <ReviewTable title={'Pending for Review'} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
                   </Paper>
                 </Grid>
               ) : null
@@ -83,7 +82,7 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
               value === 'approval' ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovalTable title={'Pending for Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <ApprovalTable title={'Pending for Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
                   </Paper>
                 </Grid>
               ) : null
@@ -92,7 +91,7 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
               value === 'approved' ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovedTable title={'Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <ApprovedTable title={'Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
                   </Paper>
                 </Grid>
 
@@ -102,7 +101,7 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
               value === 'rejected' ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
                   </Paper>
                 </Grid>
               ) : null
@@ -120,7 +119,7 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
       >
         <div className={classes.sidePanelWrapper}>
           {
-            showPanel.data && <RenewalDrawer {...compProps} />
+            showPanel.data && <ReOnboardingDrawer {...compProps} />
           }
         </div>
       </Drawer>
@@ -129,4 +128,4 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
 }
 
 
-export default RenewalTable;
+export default ReOnboardingTable;

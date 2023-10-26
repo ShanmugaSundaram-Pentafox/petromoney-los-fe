@@ -243,7 +243,8 @@ const DrawerFooter = ({
       loan_id: id,
       dealership_id: dealership_id,
       product_id: product_id,
-      remarks: enhancementRemarks
+      remarks: enhancementRemarks,
+      category: loanData?.is_noc ? 'noc' : 'enhancement',
     }
     sendLoanForEnhancement(reqBody)
       .then(res => {
@@ -257,7 +258,6 @@ const DrawerFooter = ({
         setLoading(false)
         onClose()
         setEnhancementModal(false)
-
       })
       .catch(err => {
         setLoading(false)
@@ -317,7 +317,7 @@ const DrawerFooter = ({
             Back
           </Button>
           <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard.pushback}>
-            {((['disbursed'].includes(status) && loanData?.is_noc == 1) || !['disbursed'].includes(status)) ? (
+            {!['disbursed'].includes(status) ? (
               <Button
                 variant="outlined"
                 color='primary'
@@ -344,7 +344,7 @@ const DrawerFooter = ({
                 className={clsx(classes.btn)}
                 isLoading={reLoader}
                 onClick={() => setEnhancementModal(true)}
-                loadingText='sending...'>{'Send for Enhancement'}</LoaderButton>
+                loadingText='sending...'>{`Send for ${loanData?.is_noc ? 'Re onboarding' : 'Enhancement'}`}</LoaderButton>
           }
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -576,7 +576,7 @@ const DrawerFooter = ({
       >
         <DialogContent>
           <DialogContentText>
-            Are you sure want to move your loan for Enhancement?
+            {`Are you sure want to move your loan for ${loanData?.is_noc ? 'Re onboarding' : 'Enhancement'}?`}
           </DialogContentText>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>
             <Button variant='outlined' style={{ marginRight: 8 }} onClick={() => setEnhancementModal(false)}>Cancel</Button>

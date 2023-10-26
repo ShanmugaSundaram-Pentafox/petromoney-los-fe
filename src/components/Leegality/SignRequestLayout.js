@@ -10,6 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect, useMemo } from 'react';
+import { useQuery } from 'react-query';
 import LeegalityAgreementTable from './components/LeegalityAgreementTable';
 import LeegalityInvitees from './components/LeegalityInvitees';
 import LeegalityPdfView from './components/LeegalityPdfView'
@@ -17,7 +18,7 @@ import SignedLayout from './components/SignedLayout';
 import LeegalityLayout from './LeegalityLayout';
 import CustomToken from '../../components/CommonComponents/CustomToken';
 import { getAllApplicantsByDealershipId } from '../../services/dealers.service';
-import { deleteResignDocument, getDealershipById, getResignList } from '../../services/dealerships.service';
+import { deleteResignDocument, getDealershipById, getResignList, getTrancheStatusById } from '../../services/dealerships.service';
 import { getPdfContent } from '../../services/leegality.service';
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
 import apiCall from '../../utils/api.util';
@@ -51,7 +52,7 @@ const useStyles = makeStyles(theme => ({
 
 }));
 
-const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callback, loanAmount, productId, currentUser }) => {
+const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callback, loanAmount, productId, currentUser, getStatus = false }) => {
   const classes = useStyles();
   const [dealership, setDealership] = useState({})
   const [applicants, setApplicants] = useState([])
@@ -69,6 +70,12 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
   const [reinitiate, setReinitiate] = useState(false)
   const [resign, setResign] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
+
+  const getTrancheStatus = useQuery({
+    queryKey: ['getTrancheStatus', dealershipId],
+    queryFn: () => getTrancheStatusById(dealershipId),
+    enabled: Boolean(getStatus),
+  })
 
   const handleResign = () => {
     deleteResignDocument(dealershipId)
@@ -270,11 +277,22 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
 
     }
   }
+
   return (
     <>
       <DialogTitle disableTypography className={classes.dTitle}>
         {
           type === 'sanction' ? (<strong>Sanction Letter</strong>) : type === 'agreement' ? <strong>Loan Agreement</strong> : <strong>{title}</strong>
+        }
+        {getTrancheStatus?.data?.[0]?.tranche_status ?
+          <div className={classes.ifSigned}>
+            <CustomToken
+              label={getTrancheStatus?.data?.[0]?.tranche_status === 'open' ? `Active (${getTrancheStatus?.data?.[0]?.open_tranche_count})` : `Closed (${getTrancheStatus?.data?.[0]?.open_tranche_count})`}
+              variant={getTrancheStatus?.data?.[0]?.tranche_status === 'open' ? 'success' : 'error'}
+              icon={getTrancheStatus?.data?.[0]?.tranche_status === 'open' ? 'tick' : 'cross'}
+            />
+          </div>
+          : null
         }
         {loansData?.is_signed == '1' ? <div className={classes.ifSigned}><CustomToken label='Signed' variant='success' icon='tick' /></div> : null}
       </DialogTitle>

@@ -18,6 +18,7 @@ import RequestNocForm from './RequestNocForm';
 import CustomToken from '../../components/CommonComponents/CustomToken';
 import FilePreview from '../../components/CommonComponents/FilePreview';
 import FormDialog from '../../components/CommonComponents/FormDialog/FormDialog';
+import Currency from '../../components/Number/Currency';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
@@ -150,7 +151,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         options: {
           filter: true,
           sort: true,
-          customBodyRender: (value) => <>{value}</>,
+          customBodyRender: (value) => <strong><Currency value={value} /></strong>,
         },
       },
       {

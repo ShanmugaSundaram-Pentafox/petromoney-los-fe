@@ -145,6 +145,24 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         },
       },
       {
+        label: 'Disbursed Amount',
+        name: 'disbursed_amount',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => <>{value}</>,
+        },
+      },
+      {
+        label: 'Product',
+        name: 'product_name',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => <>{value}</>,
+        },
+      },
+      {
         label: 'Issued Month',
         name: 'formated_date',
         options: {

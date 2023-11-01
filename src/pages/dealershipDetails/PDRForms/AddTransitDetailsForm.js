@@ -150,6 +150,16 @@ const AddTransitDetailsForm = ({ dealershipId, data, callback, currentUser }) =>
                   control={<Radio size="small" />}
                   label="Received"
                 />
+                <FormControlLabel
+                  value="deposited"
+                  control={<Radio size="small" />}
+                  label="Deposited"
+                />
+                <FormControlLabel
+                  value="return_to_dealer"
+                  control={<Radio size="small" />}
+                  label="Return to Dealer"
+                />
               </RadioGroup>
             </FormControl>
           </div>

@@ -157,11 +157,11 @@ const VoiceCall = ({ id, callback, currentUser }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [applicants, setApplicants] = useState([]);
   const [playing, setPlaying] = useState(false);
-  const [soundurl, setSoundurl] = useState(null);
+  const [soundURL, setSoundURL] = useState(null);
   const [deleteModel, setDeleteModel] = useState(false);
   const sound = new Howl({
-    urls: [soundurl],
-    src: [soundurl],
+    urls: [soundURL],
+    src: [soundURL],
     autoplay: true,
     loop: false
   })
@@ -218,15 +218,17 @@ const VoiceCall = ({ id, callback, currentUser }) => {
 
   const handleSound = (data, i, log) => {
     sound.pause();
-    setSoundurl(data)
-    if (log == 'play' && playing.playing == true) {
-      playing.playing = false;
-    }
-    else {
+    if (log == 'play' && playing.playing == true && playing.id == i) {
+      setSoundURL(null)
+      setPlaying({ id: i, playing: false });
+    } else if (log == 'play' && !playing.playing) {
+      setPlaying({ id: i, playing: true });
+      setSoundURL(data)
+    } else {
       sound.pause();
-      setPlaying({ id: i, playing: !playing.playing });
+      setPlaying(false);
+      setSoundURL(null);
     }
-    setPlaying({ id: i, playing: !playing.playing });
   }
 
   const handleDelete = (id) => {
@@ -285,17 +287,17 @@ const VoiceCall = ({ id, callback, currentUser }) => {
                       return (
                         <div key={idIndex} style={{ marginTop: '20px' }}>
                           <Typography variant='h4' style={{ marginLeft: '10px' }}>{`${appli_name[idIndex]} (${appli_number[idIndex]})`}</Typography>
-                          <Typography variant='h4' style={{ marginLeft: 10, marginBottom: 4, color: '#969696' }}>{appli_type[idIndex]}</Typography>
+                          <Typography variant='h4' style={{ marginLeft: 10, marginBottom: 4, marginTop: 8, color: '#969696' }}>{appli_type[idIndex]}</Typography>
                           <Table>
                             <TableRow>
-                              <TableCell style={{ width: '30%' }}>From</TableCell>
-                              <TableCell>Time</TableCell>
+                              <TableCell style={{ width: '30%' }}>To</TableCell>
+                              <TableCell style={{ width: '30%' }}>Time</TableCell>
                               <TableCell>Duration</TableCell>
                               <TableCell>Status</TableCell>
                               <TableCell>Origin</TableCell>
                               <TableCell>Module</TableCell>
                               <TableCell style={{ width: '12%' }}>Recordings</TableCell>
-
+                              <TableCell></TableCell>
                             </TableRow>
                             {
                               CallLogs?.map((item, itemIndex) => {
@@ -312,11 +314,11 @@ const VoiceCall = ({ id, callback, currentUser }) => {
                                       <TableCell>
                                         {
                                           item.recording_url ? (
-                                            playing.id == itemIndex && playing.playing ?
-                                              <IconButton onClick={() => handleSound(null, itemIndex, 'pause')} style={{ padding: 0 }}>
+                                            playing.id == item?.id && playing.playing ?
+                                              <IconButton onClick={() => handleSound(null, item?.id, 'pause')} style={{ padding: 0 }}>
                                                 <PauseIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Pause'}</span>
                                               </IconButton> :
-                                              <IconButton onClick={() => handleSound(item.recording_url, itemIndex, 'play')} style={{ padding: 0 }}>
+                                              <IconButton onClick={() => handleSound(item.recording_url, item?.id, 'play')} style={{ padding: 0 }}>
                                                 <PlayArrowIcon className={classes.audioIcon} /> <span className={classes.iconLabel}>{'Play'}</span>
                                               </IconButton>
                                           ) : <Typography style={{ marginLeft: 2 }}>-</Typography>
@@ -324,7 +326,16 @@ const VoiceCall = ({ id, callback, currentUser }) => {
                                       </TableCell>
                                       <TableCell className={classes.deleteicon}>
                                         <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.callLogDelete}>
-                                          <DeleteButton alertText={`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`} deleteAction={() => handleDelete(item.id)} deleteModal={deleteModel} setDeleteModal={setDeleteModel} id={itemIndex} buttonType='icon' />
+                                          <div onClick={() => handleSound(null, null, 'pause')}>
+                                            <DeleteButton
+                                              alertText={`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`}
+                                              deleteAction={() => handleDelete(item.id)}
+                                              deleteModal={deleteModel}
+                                              setDeleteModal={setDeleteModel}
+                                              id={itemIndex}
+                                              buttonType='icon'
+                                            />
+                                          </div>
                                         </CheckAllowed>
                                       </TableCell> {/* shows delete button for call logs by hovering it */}
                                     </TableRow>)

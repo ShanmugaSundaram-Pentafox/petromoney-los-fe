@@ -41,7 +41,7 @@ const ViewTransitDetails = ({ dealershipId }) => {
             return (
               <TimelineItem key={id} className={classes.timelineItem}>
                 <TimelineOppositeContent style={{ maxWidth: 100 }} color="text.secondary">
-                  <p style={{ textTransform: 'capitalize' }}>{remark?.event_type}</p>
+                  <p style={{ textTransform: 'capitalize' }}>{remark?.event_type?.replace(/_/g, ' ')}</p>
                 </TimelineOppositeContent>
                 <TimelineSeparator>
                   <TimelineDot variant="outlined" />

@@ -105,7 +105,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
   }, [reinitiate]);
 
   useMemo(() => {
-    getResignList()
+    getResignList({ dealershipId, documentId: loansData?.document_id })
       .then(res => {
         setResign(dealershipId == res[0]?.dealership_id)
       })

@@ -324,19 +324,21 @@ const VoiceCall = ({ id, callback, currentUser }) => {
                                           ) : <Typography style={{ marginLeft: 2 }}>-</Typography>
                                         }
                                       </TableCell>
-                                      <TableCell className={classes.deleteicon}>
-                                        <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.callLogDelete}>
-                                          <div onClick={() => handleSound(null, null, 'pause')}>
-                                            <DeleteButton
-                                              alertText={`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`}
-                                              deleteAction={() => handleDelete(item.id)}
-                                              deleteModal={deleteModel}
-                                              setDeleteModal={setDeleteModel}
-                                              id={itemIndex}
-                                              buttonType='icon'
-                                            />
-                                          </div>
-                                        </CheckAllowed>
+                                      <TableCell>
+                                        <div className={classes.deleteicon}>
+                                          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.callLogDelete}>
+                                            <div onClick={() => handleSound(null, null, 'pause')}>
+                                              <DeleteButton
+                                                alertText={`Do you really want to delete this call log from ${item.to_user_name} (${item.to_mobile})`}
+                                                deleteAction={() => handleDelete(item.id)}
+                                                deleteModal={deleteModel}
+                                                setDeleteModal={setDeleteModel}
+                                                id={itemIndex}
+                                                buttonType='icon'
+                                              />
+                                            </div>
+                                          </CheckAllowed>
+                                        </div>
                                       </TableCell> {/* shows delete button for call logs by hovering it */}
                                     </TableRow>)
                                 )

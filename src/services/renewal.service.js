@@ -29,9 +29,10 @@ export const getRenewalLoanByStatus = (status, filterQry, page, searchText) => {
 
 export const getStatusWiseRecordCount = (filterType, filterQry) => {
   return new Promise((resolve, reject) => {
-    const { region, from, to, products, zone, month } = filterQry;
+    const { region, from, to, products, zone, month, category } = filterQry;
     let qry = []
     let apiUrl = filterType == 'enhancement' ? 'enhancement/status_wise_record_count' : 'renewal/status_wise_record_count';
+    if (category) qry.push('category=noc')
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (region && region !== '0') qry.push(`region=${region}`)
@@ -112,13 +113,15 @@ export const getRenewalRemarks = (loanId, filterType) => {
   });
 }
 
-export const updateRenewalLoanStatus = ({ isReject, isPushback, ...data }) => {
+export const updateRenewalLoanStatus = ({ isReject, isPushback, isEnhancement, ...data }) => {
   return new Promise((resolve, reject) => {
     let apiUrl = '';
     if (isReject) {
       apiUrl = `renewal/${data?.loan_id}/rejected`
     } else if (isPushback) {
       apiUrl = `renewal/${data?.loan_id}/pushback`
+    } else if (isEnhancement) {
+      apiUrl = 'enhancement/submit'
     } else if (data?.status === 'draft') {
       apiUrl = 'renewal/direct_save'
     } else {
@@ -175,6 +178,40 @@ export const sendRenewalReminder = (status) => {
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {
           resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const syncRenewalData = ({renewal_application_id}) => {
+  return new Promise((resolve, reject) => {
+    let apiUrl = `renewal/${renewal_application_id}/sync`
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}
+
+export const getRenewalFeeStatus = ({dealership_id}) => {
+  return new Promise((resolve, reject) => {
+    let apiUrl = `renewal/${dealership_id}/fee-status`
+    apiCall(apiUrl)
+      .then(({ status, data, message }) => {
+        if (status.toUpperCase() === 'SUCCESS') {
+          resolve(data);
         } else {
           reject(message);
         }

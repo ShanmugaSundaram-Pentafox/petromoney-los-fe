@@ -121,8 +121,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
             return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
           }
         }
-      },
-      {
+      }, {
         label: 'Name',
         name: 'dealership_name',
         options: {
@@ -132,39 +131,45 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
             return <>{value?.toUpperCase()}</>
           },
         }
-      },
-      {
-        label: 'Type',
-        name: 'product_name',
+      }, {
+        label: 'Old Product Type',
+        name: 'old_product_name',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
-      },
-      {
+      }, {
+        label: 'New Product Type',
+        name: 'new_product_name',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
+        }
+      }, {
         label: 'Region',
-        name: 'region_name',
+        name: 'region',
         options: {
           filter: false,
           sort: true,
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
-
-      },
-      {
-        label: 'Approved Amount',
-        name: 'approved_amount',
+      }, {
+        label: 'Disbursed Amount',
+        name: 'new_loan_amount',
         options: {
           filter: false,
           sort: true,
           setCellProps: () => ({
-            align: 'left',
+            align: 'right',
+          }),
+          setCellHeaderProps: () => ({
+            align: 'right',
           }),
           customBodyRender: value => <strong><Currency value={value} /></strong>
         }
-      },
-      {
+      }, {
         label: 'Month of renewal',
         name: 'renewal_month',
         options: {
@@ -176,18 +181,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           }),
           customBodyRender: value => {
             return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'Renewal Fee status',
-        name: 'renewal_fee_payment_status',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
+          } 
         }
       },
     ]

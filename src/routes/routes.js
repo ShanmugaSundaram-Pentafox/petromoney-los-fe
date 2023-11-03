@@ -26,6 +26,7 @@ import Profile from '../pages/profile/Profile';
 import UserControl from '../pages/rbac/UserControl';
 import DealerReferralPage from '../pages/referralModule/DealerReferralPage';
 import RenewalList from '../pages/renewal/RenewalList';
+import ReOnboardingList from '../pages/reOnboarding/ReOnboardingList';
 import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditNewRequestTable from '../pages/reports/CreditNewRequestTable';
 import CreditProcessedTable from '../pages/reports/CreditProcessedTable';
@@ -70,6 +71,7 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.withheld)} exact path="/withheld" component={BlacklistTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.renewal)} exact path="/renewal" component={RenewalList} />
       <ProtectedRoute allow exact path="/enhancement" component={EnhancementList} />
+      <ProtectedRoute allow exact path="/re-onboarding" component={ReOnboardingList} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow exact path="/report/dpd" component={DpdReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.collection_remarks)} exact path="/reports/remarks" component={CollectionRemarks} />

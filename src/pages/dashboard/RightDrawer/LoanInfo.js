@@ -27,7 +27,6 @@ const LoanInfo = ({
   status,
   newInfo,
   currentUser,
-  editable,
   type,
   updateNewLoanInfo,
   viewable
@@ -43,7 +42,8 @@ const LoanInfo = ({
           const re = data.find(d => d.product_id == row.product_id)
           setSelectedProduct({
             ...re,
-            disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' && status !== '' && status == 'approved' && status =='rejected' } || {})
+            disabled: status !== 'loan_approval' && status !== 'submitted' && status !== 'loan_review' && status !== '' && status == 'approved' && status == 'rejected'
+          } || {})
         }
       })
       .catch(() => null)
@@ -58,7 +58,7 @@ const LoanInfo = ({
     <>
       <LoanInfoWrapper>
         {
-          type == 'enhancement' &&
+          type === 'enhancement' || type === 're-onboarding' &&
             <div style={{ display: 'flex' }}>
               <ViewData title='Old Product' value={newInfo?.old_product_name} />
               <ViewData style={{ marginLeft: 10 }} title='Old loan Amount' value={newInfo?.old_loan_amount} />
@@ -110,7 +110,7 @@ const LoanInfo = ({
               <TableCell scope="row" component="th"><strong>{selectedProduct?.penal_interest}</strong></TableCell>
               {/* option to edit requested amount of the loan in submit and review queue */}
               {
-                type == 'enhancement' ? (
+                type === 'enhancement' || type === 're-onboarding' ? (
                   <TableCell align="right">
                     {
                       !['approved', 'rejected']?.includes(status) ? (
@@ -135,6 +135,10 @@ const LoanInfo = ({
                       )
                         : <Currency value={newInfo?.new_loan_amount} />
                     }
+                  </TableCell>
+                ) : (type === 'renewal' ? (
+                  <TableCell align="right">
+                    <Currency value={newInfo?.new_loan_amount} />
                   </TableCell>
                 ) : (
                   <TableCell align="right">
@@ -163,7 +167,7 @@ const LoanInfo = ({
                         : <Currency value={row?.amount_requested} />
                     }
                   </TableCell>
-                )
+                ))
               }
               <TableCell align="right">
                 {

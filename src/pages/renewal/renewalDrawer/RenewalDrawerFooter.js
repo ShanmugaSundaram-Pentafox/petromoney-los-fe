@@ -13,7 +13,11 @@ import ViewRemarks from '../renewalTable/ViewRemarks';
 const useStyles = makeStyles(theme => ({
   actionButtonsWrapper: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+  },
+  actionButtonsWrapperLeft: {
+    display: 'flex',
     paddingTop: 16,
   },
   btn: {
@@ -33,7 +37,11 @@ const useStyles = makeStyles(theme => ({
     },
     '&.MuiButton-contained:hover': {
       backgroundColor: theme.palette.success.dark
-    }
+    },
+    '&.MuiButton-outlined': {
+      color: theme.palette.blue,
+      borderColor: theme.palette.blue,
+    },
   },
   btnError: {
     '&.MuiButton-contained': {
@@ -70,6 +78,7 @@ const RenewalDrawerFooter = ({
   filterType,
   selectedLoanData,
   handleReviewModal,
+  handleEnhancement,
   handleReject,
   handlePushBack,
 }) => {
@@ -79,7 +88,7 @@ const RenewalDrawerFooter = ({
   return (
     <div>
       <div className={classes.actionButtonsWrapper}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>          
           {
             ['review', 'approval', 'approved', 'rejected'].includes(status) && (
               <Button variant='outlined' size='small' color='primary'
@@ -89,6 +98,21 @@ const RenewalDrawerFooter = ({
               </Button>
             )
           }
+          {
+            ['draft'].includes(status.toLowerCase()) && (
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
+                <Button
+                  variant="outlined"
+                  className={clsx(classes.btn, classes.btnSuccess)}
+                  onClick={handleEnhancement}
+                >
+                  Send for Enhancement
+                </Button>
+              </CheckAllowed>
+            )
+          }
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           {
             status && ['draft', 'submit'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>

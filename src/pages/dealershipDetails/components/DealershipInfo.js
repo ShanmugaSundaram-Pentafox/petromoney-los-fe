@@ -307,6 +307,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   <ViewData title='OMC' value={omcs?.find(item => { return item?.id === values?.omc })?.name} />
                   {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.lgnm} /> : null}
                   {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
+                  {data?.renewal_fee_payment_status ? <ViewData title='Renewal Fee Status' value={data?.renewal_fee_payment_status?.toUpperCase()} /> : null}
                 </Grid>
               </Grid>
               {

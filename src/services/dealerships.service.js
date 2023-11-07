@@ -235,6 +235,41 @@ export const getDealershipReferralSettledList = () => {
   });
 };
 
+export const getDealershipReferralRejectedList = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('dealership/referral/reject')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const rejectDealerReferralById = ({id, data}) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/referral/${id}/reject`, {
+      method: 'POST',
+      body: data
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
 export const postReferralData = (dealershipID, data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${dealershipID}/referral/${id}`, {

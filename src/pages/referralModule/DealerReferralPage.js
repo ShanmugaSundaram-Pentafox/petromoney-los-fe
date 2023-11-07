@@ -30,7 +30,7 @@ const DealerReferralPage = ({ currentUser }) => {
   );
 
   const { data: rejectedList = [], isLoading: rejectedListLoading, refetch: refetchRejectedList } = useQuery(
-    ['settled-request'],
+    ['rejected-request'],
     () => getDealershipReferralRejectedList(),
     {
       enabled: Boolean(selectedTab === 'rejected'),

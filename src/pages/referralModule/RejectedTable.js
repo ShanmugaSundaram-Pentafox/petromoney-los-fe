@@ -159,7 +159,7 @@ const RejectedListTable = ({loans, loading, fetchData}) => {
     <div>
       {Array.isArray(loans) && loans.length ?
         <MUIDataTable
-          title={<Typography className={classes.title} variant="h4" component="h4">{'Settled'}</Typography>}
+          title={<Typography className={classes.title} variant="h4" component="h4">{'Rejected'}</Typography>}
           data={loans}
           columns={columns}
           options={options}

@@ -259,7 +259,7 @@ export const rejectDealerReferralById = ({id, data}) => {
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data);
+          resolve(message);
         } else {
           reject(message);
         }

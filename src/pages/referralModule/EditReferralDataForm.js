@@ -1,12 +1,14 @@
-import { Typography, Box, Grid, Button, Divider } from '@material-ui/core';
+import { Typography, Box, Grid, Button, Divider, Dialog, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
+import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { getDealershipForSearch } from '../../services/common.service';
-import { postReferralData } from '../../services/dealerships.service';
+import { postReferralData, rejectDealerReferralById } from '../../services/dealerships.service';
+
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
     position: 'relative',
@@ -44,6 +46,16 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: theme.palette.success.dark
     }
   },
+  rejectButton: {
+    '&.MuiButton-contained': {
+      backgroundColor: theme.palette.error.main,
+      color: theme.palette.white
+    },
+    '&.MuiButton-contained:hover': {
+      backgroundColor: theme.palette.error.dark
+    },
+    marginRight: 8,
+  },
   image: {
     borderRadius: 6,
     padding: 1
@@ -70,16 +82,18 @@ const EditReferralDataForm = ({ dealershipId, rowData, callback }) => {
   });
   const classes = useStyles();
   const [optionsLoading, setOptionsLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState({});
+  const [openModal, setOpenModal] = useState(false);
+  const [remarks, setRemarks] = useState();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = () => {
     if (selectedValue?.dealership_id) {
-      setLoading(true);
-      let body = { referred_dealership_id: selectedValue?.dealership_id, referred_dealership_name: selectedValue?.name}
+      setLoading({ submit: true });
+      let body = { referred_dealership_id: selectedValue?.dealership_id, referred_dealership_name: selectedValue?.name }
       postReferralData(dealershipId, body, rowData?.referral_id)
         .then((res) => {
-          setLoading(false);
+          setLoading({});
           enqueueSnackbar(res, {
             anchorOrigin: {
               vertical: 'top',
@@ -90,7 +104,7 @@ const EditReferralDataForm = ({ dealershipId, rowData, callback }) => {
           callback();
         })
         .catch((err) => {
-          setLoading(false);
+          setLoading({});
           enqueueSnackbar(err, {
             anchorOrigin: {
               vertical: 'top',
@@ -112,6 +126,30 @@ const EditReferralDataForm = ({ dealershipId, rowData, callback }) => {
     }
   }
 
+  const handleReject = () => {
+    rejectDealerReferralById({ id: dealershipId, data: { remarks, status: 'reject' } })
+      .then((res) => {
+        enqueueSnackbar(res, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
+        setOpenModal({})
+        callback();
+      })
+      .catch((err) => {
+        enqueueSnackbar(err, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
+  }
+
   const getOptions = (inputValue, callback) => {
     if (inputValue.toString().length > 2) {
       setOptionsLoading(true)
@@ -126,6 +164,7 @@ const EditReferralDataForm = ({ dealershipId, rowData, callback }) => {
         })
     }
   }
+
   const onChangeOption = (newValue) => {
     setSelectedValue(newValue)
   }
@@ -175,8 +214,17 @@ const EditReferralDataForm = ({ dealershipId, rowData, callback }) => {
               {
                 <LoaderButton
                   variant='contained'
+                  className={classes.rejectButton}
+                  loadingText='Submitting...'
+                  type='submit'
+                  onClick={() => setOpenModal(true)}
+                >Reject</LoaderButton>
+              }
+              {
+                <LoaderButton
+                  variant='contained'
                   className={classes.submitButton}
-                  isLoading={loading}
+                  isLoading={loading?.submit}
                   loadingText='Submitting...'
                   type='submit'
                   onClick={handleSubmit}
@@ -186,7 +234,33 @@ const EditReferralDataForm = ({ dealershipId, rowData, callback }) => {
           </div>
         </div>
       </>
-    </div >
+      <Dialog
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      >
+        <DialogTitle>Are you sure you want to REJECT this referral?</DialogTitle>
+        <DialogContent>
+          <div className={classes.dialog}>
+            <DialogContentText id="reject-remarks-desc">
+              Please enter your remarks.
+            </DialogContentText>
+            <TextEditor setJSON={setRemarks} toolBar={true} remarkData={remarks} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
+            <Button variant='outlined' onClick={() => setOpenModal(false)} style={{ marginRight: 8 }}>Cancel</Button>
+            <LoaderButton
+              variant='contained'
+              color='primary'
+              buttonLabel='Confirm'
+              size='medium'
+              isLoading={loading?.reject}
+              loadingText="Submitting..."
+              onClick={handleReject}
+            >Confirm</LoaderButton>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

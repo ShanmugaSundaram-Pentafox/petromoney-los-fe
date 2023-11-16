@@ -224,6 +224,14 @@ export const rulesForUserRoles = {
       rulesList.cibil_edit,
     ]
   },
+  CREDIT_MANAGER: {
+    static: [
+      rulesList.dashboard,
+      rulesList.pre_submit_view,
+      rulesList.dealership_view,
+      rulesList.dealership_edit,
+    ]
+  },
   SALES_HEAD_STATE: {
     static: [
       rulesList.dashboard,

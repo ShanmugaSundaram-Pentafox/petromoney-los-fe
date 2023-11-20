@@ -108,7 +108,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
     if (loansData?.document_id) {
       getResignList({ dealershipId, documentId: loansData?.document_id })
         .then(res => {
-          setResign(res?.[0]?.is_override === 1);
+          setResign(res?.[0]?.is_override == 1);
         })
         .catch(err => {
           console.log(err);

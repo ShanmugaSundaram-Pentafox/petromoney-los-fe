@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import LeegalityAgreementTable from './components/LeegalityAgreementTable';
 import LeegalityInvitees from './components/LeegalityInvitees';
@@ -104,22 +104,24 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
     }
   }, [reinitiate]);
 
-  useMemo(() => {
-    getResignList({ dealershipId, documentId: loansData?.document_id })
-      .then(res => {
-        setResign(dealershipId == res[0]?.dealership_id)
-      })
-      .catch(err => {
-        console.log(err);
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+  useEffect(() => {
+    if (loansData?.document_id) {
+      getResignList({ dealershipId, documentId: loansData?.document_id })
+        .then(res => {
+          setResign(res?.[0]?.is_override === 1);
+        })
+        .catch(err => {
+          console.log(err);
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
         });
-      })
-  }, [])
+    }
+  }, [loansData]);
 
   const handleDataWithOutDocID = () => {
     if (['sanction', 'application'].includes(type)) {
@@ -155,7 +157,6 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
         .catch(err => {
           console.log('getApplicantByDealershipId >> ', err)
         })
-
     }
   }
 
@@ -309,7 +310,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
                 loading ? (
                   <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
                 )
-                  : 
+                  :
                   (loansData?.document_id && !reinitiate ? (
                     <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} currentUser={currentUser} />
                   )
@@ -363,7 +364,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
           }
           {
             loansData?.is_signed == '1' && !reinitiate &&
-              <Button variant="contained" color='primary' onClick={() => setReinitiate(true)}>Re-Initiate</Button>
+              <Button variant="contained" color='primary' onClick={() => { setReinitiate(true); }}>Re-Initiate</Button>
           }
           {
             !loansData?.is_signed && loansData?.document_id && resign && type === 'agreement' ?

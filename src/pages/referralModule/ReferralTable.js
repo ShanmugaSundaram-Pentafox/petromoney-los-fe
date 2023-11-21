@@ -170,7 +170,7 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
         setRowData(loans[cellMeta.dataIndex])
       }
       else {
-        currentUser.role_id == 1 &&
+        (currentUser.role_id == 1 || currentUser.role_id == 9) &&
           onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex]);
       }
     },

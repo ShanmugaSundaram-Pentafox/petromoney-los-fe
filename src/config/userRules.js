@@ -22,13 +22,13 @@ export const rulesList = {
   'external_view': 'external:view',
   'dealership_view': 'dealership:view',
   'external_lms': 'external:lms',
-  'phone_call' : 'phonecall:pdr',
-  'ops_view' :'ops:view',
-  'pre_submit_view':'pre:submit:view',
-  'admin_edit':'admin:edit',
-  'cibil_edit':'cibil:edit',
-  'vkyc_edit':'vkyc:edit',
-  'crime_check':'crime:check:edit',
+  'phone_call': 'phonecall:pdr',
+  'ops_view': 'ops:view',
+  'pre_submit_view': 'pre:submit:view',
+  'admin_edit': 'admin:edit',
+  'cibil_edit': 'cibil:edit',
+  'vkyc_edit': 'vkyc:edit',
+  'crime_check': 'crime:check:edit',
 }
 
 export const rulesForUserRoles = {
@@ -227,6 +227,7 @@ export const rulesForUserRoles = {
   CREDIT_MANAGER: {
     static: [
       rulesList.dashboard,
+      rulesList.loan_approval,
       rulesList.pre_submit_view,
       rulesList.dealership_view,
       rulesList.dealership_edit,

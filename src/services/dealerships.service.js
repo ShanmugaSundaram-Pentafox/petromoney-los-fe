@@ -288,9 +288,9 @@ export const postReferralData = (dealershipID, data, id) => {
   });
 };
 
-export const getResignList = () => {
+export const getResignList = ({dealershipId, documentId}) => {
   return new Promise((resolve, reject) => {
-    apiCall('document/resign/list')
+    apiCall(`document/resign/list?dealership_id=${dealershipId}&document_id=${documentId}`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);

@@ -1,3 +1,4 @@
+import { Dialog, DialogContentText } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -10,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import LeegalityAgreementTable from './components/LeegalityAgreementTable';
 import LeegalityInvitees from './components/LeegalityInvitees';
 import LeegalityPdfView from './components/LeegalityPdfView'
@@ -22,6 +23,7 @@ import { deleteResignDocument, getDealershipById, getResignList, getTrancheStatu
 import { getPdfContent } from '../../services/leegality.service';
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
 import apiCall from '../../utils/api.util';
+import TextInput from '../TextInput/TextInput';
 
 
 const useStyles = makeStyles(theme => ({
@@ -59,6 +61,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
   const [selectedDealers, setSelectedDealers] = useState([])
   const [selectedCoAppicants, setSelectedCoAppicants] = useState([])
   const [selectedGuarantors, setSelectedGuarantors] = useState([])
+  const [activeState, setActiveState] = useState({});
   const [status, setStatus] = useState(false);
   const [successStatus, setSuccessStatus] = useState(false);
   const [loansData, setLoansData] = useState({});
@@ -69,6 +72,8 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
   const [pdfLoading, setPdfLoading] = useState(false)
   const [reinitiate, setReinitiate] = useState(false)
   const [resign, setResign] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
+  const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
 
   const getTrancheStatus = useQuery({
@@ -279,6 +284,45 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
     }
   }
 
+  const activateDealer = (value) => {
+    // used to extend the document expire days
+    // by default it will be 60 days
+    setLoading(true);
+    apiCall(`document/reactivate/${loansData?.document_id}/${value}`)
+      .then((res) => {
+        apiCall(`dealership/${dealershipId}/document/${loansData?.document_id}`)
+          .then((res) => {
+            console.log(res);
+            if (res.status === 'SUCCESS') {
+              if (res.data?.status) {
+                setActiveState(res?.data?.data);
+                queryClient.invalidateQueries(['getLegality-document']);
+              }
+            } else {
+              enqueueSnackbar(res?.message, {
+                anchorOrigin: {
+                  vertical: 'top',
+                  horizontal: 'right',
+                },
+                variant: 'error',
+              });
+              setActiveState();
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            setActiveState();
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+        setOpenModal(false);
+      })
+  };
+
   return (
     <>
       <DialogTitle disableTypography className={classes.dTitle}>
@@ -312,7 +356,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
                 )
                   :
                   (loansData?.document_id && !reinitiate ? (
-                    <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} currentUser={currentUser} />
+                    <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} currentUser={currentUser} setActiveState={setActiveState} />
                   )
                     : (
                       <Grid container spacing={2}>
@@ -370,8 +414,54 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
             !loansData?.is_signed && loansData?.document_id && resign && type === 'agreement' ?
               <Button variant="contained" color='primary' onClick={handleResign} style={{ marginLeft: 12 }}>Override Document</Button> : null
           }
+          {activeState?.invitations?.filter((item) => !item?.expired)?.length
+            ? (
+              <Button
+                variant="outlined"
+                color="secondary"
+                style={{ marginLeft: 12 }}
+                onClick={() => setOpenModal({ modal: true, value: 60 })}
+              >
+                Activate
+              </Button>
+            ) : null
+          }
         </Box>
       </DialogActions>
+      <Dialog
+        open={openModal?.modal || false}
+        onClose={() => {
+          setOpenModal(false);
+        }}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogContent>
+          <DialogContentText className={classes.text}>
+            Do you want to extend the expire date of this document?
+          </DialogContentText>
+          <span style={{ fontSize: '12px', color: 'gray' }}>Enter no of days to extend the expire date. By default it will be 60 Days</span>
+          <TextInput type='number' style={{ marginBottom: 12 }} value={openModal?.value} onChange={(e) => setOpenModal({ value: e.target.value, modal: true })} />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setOpenModal(false);
+            }}
+            variant='outlined'
+          >
+            No
+          </Button>
+          <Button
+            onClick={() => activateDealer(openModal?.value)}
+            variant='contained'
+            size='medium'
+            style={{ color: 'white', marginLeft: 16, backgroundColor: 'green' }}
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

@@ -27,7 +27,8 @@ import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
 import SettingsIcon from '@material-ui/icons/Settings';
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { deleteRequestUrl } from '../../services/leegality.service';
 import apiCall from '../../utils/api.util';
@@ -72,53 +73,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
-  const [docDetails, setDocDetails] = useState({});
-  const [loading, setLoading] = useState(false);
+const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState, activeState }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItemData, setSelectedItemData] = useState({});
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
+  const getLegalityDocument = useQuery({
+    queryKey: ['getLegality-document', docId, dealershipId],
+    queryFn: () => apiCall(`dealership/${dealershipId}/document/${docId}`),
+    enabled: Boolean(docId && dealershipId),
+    select: (data) => data?.data?.data,
+    onSuccess: (data) => {
+      setActiveState(data);
+    },
+    onError: (err) => {
+      enqueueSnackbar(err.message, {
+        anchorOrigin: {
+          vertical: 'top',
+          horizontal: 'right',
+        },
+        variant: 'error',
+      });
+      setActiveState();
+    }
+  })
+
   const handleClick = (event, cardData) => {
     setAnchorEl(event.currentTarget);
     setSelectedItemData(cardData)
   };
-
-  useEffect(() => {
-    setLoading(true);
-    apiCall(`dealership/${dealershipId}/document/${docId}`)
-      .then((res) => {
-        if (res.status === 'SUCCESS') {
-          if (res.data?.status) {
-            setLoading(false);
-            setDocDetails(res?.data?.data);
-          }
-        } else {
-          setLoading(false)
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          })
-          setDocDetails()
-        }
-      })
-      .catch((err) => {
-        setLoading(false);
-        enqueueSnackbar(err.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-        setDocDetails();
-      });
-  }, []);
 
   const ResendNotification = () => {
     apiCall('document/resend', {
@@ -140,7 +125,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
   };
 
   const handleDelete = () => {
-    let value = { signUrl: selectedItemData.url, document_id: docDetails?.documentId };
+    let value = { signUrl: selectedItemData.url, document_id: getLegalityDocument?.data?.documentId };
     deleteRequestUrl(value)
       .then((res) => {
         setOpen(false)
@@ -163,59 +148,25 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
       });
   };
 
-  const ActivateDealer = () => {
-    setLoading(true);
-    apiCall(`document/reactivate/${docId}`)
-      .then((res) => {
-        apiCall(`dealership/${dealershipId}/document/${docId}`)
-          .then((res) => {
-            if (res.status === 'SUCCESS') {
-              if (res.data?.status) {
-                setLoading(false);
-                setDocDetails(res?.data?.data);
-              }
-            } else {
-              setLoading(false);
-              enqueueSnackbar(res?.message, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
-                variant: 'error',
-              });
-              setDocDetails();
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading(false);
-            setDocDetails();
-          });
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.log(err);
-      });
-  };
   return (
     <Box bgcolor="#fbfbfb">
       <Grid container spacing={2}>
         <Grid item md={6} style={{ position: 'relative' }}>
-          {docId && docDetails?.file && (
+          {docId && getLegalityDocument?.data?.file && (
             <FilePreview
               title="Leegality"
-              data={{ image: docDetails?.file, type: docDetails?.file?.endsWith('.pdf') }}
+              data={{ image: getLegalityDocument?.data?.file, type: getLegalityDocument?.data?.file?.endsWith('.pdf') }}
               showDownload
             />
           )}
           <Backdrop
-            open={loading}
+            open={getLegalityDocument?.isLoading}
             style={{ position: 'absolute', zIndex: '2' }}
           >
             <CircularProgress size={25} style={{ color: 'white' }} />
           </Backdrop>
         </Grid>
-        {docDetails?.file ? (
+        {getLegalityDocument?.data?.file ? (
           <Grid item md={4}>
             <Box pt={2}>
               <TableContainer>
@@ -223,36 +174,36 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
                   <TableBody>
                     <TableRow>
                       <TableCell>Document ID</TableCell>
-                      <TableCell>{docDetails?.documentId}</TableCell>
+                      <TableCell>{getLegalityDocument?.data?.documentId}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Name</TableCell>
-                      <TableCell>{docDetails?.documentName}</TableCell>
+                      <TableCell>{getLegalityDocument?.data?.documentName}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Last Active Date</TableCell>
                       <TableCell>
-                        {docDetails?.creationDate &&
+                        {getLegalityDocument?.data?.creationDate &&
                           moment(
-                            docDetails?.creationDate?.split(' ')[0],
+                            getLegalityDocument?.data?.creationDate?.split(' ')[0],
                             'DD-MM-YYYY'
                           ).format('MMM DD, YYYY')}
                       </TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Status</TableCell>
-                      <TableCell>{docDetails?.status}</TableCell>
+                      <TableCell>{getLegalityDocument?.data?.status}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell>Internal Reference no</TableCell>
-                      <TableCell>{docDetails?.irn}</TableCell>
+                      <TableCell>{getLegalityDocument?.data?.irn}</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
               </TableContainer>
 
               <Box mt={2}>
-                {docDetails?.invitations?.map((item, i) => {
+                {getLegalityDocument?.data?.invitations?.map((item, i) => {
                   return (
                     <Card key={`inv-${i}`}>
                       <div className="card-body">
@@ -346,16 +297,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser }) => {
                           >
                             Resend Notification
                           </Button>
-                        ) : (
-                          <Button
-                            variant="outlined"
-                            color="secondary"
-                            onClick={ActivateDealer}
-                            size="small"
-                          >
-                            Activate
-                          </Button>
-                        )}
+                        ) : null}
                         {/* <Button variant="outlined" color="secondary" size="small">Details</Button> */}
                         <SettingsIcon
                           fontSize={'small'}

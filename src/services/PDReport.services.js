@@ -817,3 +817,19 @@ export const autoVerifyBankDetails = (data) => {
   });
 }
 
+export const getLegalityDoc = ({ dealershipId, docId }) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${dealershipId}/document/${docId}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
+

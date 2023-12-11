@@ -414,7 +414,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
             !loansData?.is_signed && loansData?.document_id && resign ?
               <Button variant="contained" color='primary' onClick={handleResign} style={{ marginLeft: 12 }}>Override Document</Button> : null
           }
-          {activeState?.invitations?.filter((item) => !item?.expired)?.length
+          {activeState?.invitations?.filter((item) => item?.expired)?.length > 0
             ? (
               <Button
                 variant="outlined"

@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState, activeState }) => {
+const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItemData, setSelectedItemData] = useState({});
   const [open, setOpen] = useState(false);

@@ -74,6 +74,7 @@ export const action_id = {
     loan_submit: 'loan_submit',
     submitted_documents: 'submitted_documents',
     pushback: 'pushback',
+    reactivate: 'reactivate',
   },
   creditReload: {
     create: 'request:create',
@@ -99,9 +100,9 @@ export const action_id = {
   },
   nocLetter: {
     raiseRequest: 'noc:request',
-    nocPreview:'noc_preview',
-    nocApprove:'noc_approve',
-    nocReject:'noc_reject',
+    nocPreview: 'noc_preview',
+    nocApprove: 'noc_approve',
+    nocReject: 'noc_reject',
   },
   dealershipNavigation: {
     dealership: 'dealership',
@@ -135,7 +136,7 @@ export const action_id = {
     guarantorStatus: 'guarantor:status',
     Vkyc: 'vkyc',
     applicantSwap: 'dealer_applicantSwap',
-    applicantTypeChange:'applicant_type_change',
+    applicantTypeChange: 'applicant_type_change',
   },
   scoreCard: {
     upload: 'scorecard:upload',
@@ -189,8 +190,8 @@ export const action_id = {
     callInitiate: 'call:initiate',
     callLogDelete: 'call_log:delete',
     pdReport: 'pd:report',
-    bankSync:'bank_sync',
-    manualBankVerify:'manual_bank_verify'
+    bankSync: 'bank_sync',
+    manualBankVerify: 'manual_bank_verify'
   },
   docChecklist: {
     upload: 'doc:upload',

@@ -18,6 +18,8 @@ import LeegalityPdfView from './components/LeegalityPdfView'
 import SignedLayout from './components/SignedLayout';
 import LeegalityLayout from './LeegalityLayout';
 import CustomToken from '../../components/CommonComponents/CustomToken';
+import { action_id, resources_id } from '../../config/accessControl';
+import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { getAllApplicantsByDealershipId } from '../../services/dealers.service';
 import { deleteResignDocument, getDealershipById, getResignList, getTrancheStatusById } from '../../services/dealerships.service';
 import { getPdfContent } from '../../services/leegality.service';
@@ -411,19 +413,21 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
               <Button variant="contained" color='primary' onClick={() => { setReinitiate(true); }}>Re-Initiate</Button>
           }
           {
-            !loansData?.is_signed && loansData?.document_id && resign ?
+            !loansData?.is_signed && loansData?.document_id && resign && type === 'agreement' ?
               <Button variant="contained" color='primary' onClick={handleResign} style={{ marginLeft: 12 }}>Override Document</Button> : null
           }
           {activeState?.invitations?.filter((item) => item?.expired)?.length > 0
             ? (
-              <Button
-                variant="outlined"
-                color="secondary"
-                style={{ marginLeft: 12 }}
-                onClick={() => setOpenModal({ modal: true, value: 60 })}
-              >
-                Activate
-              </Button>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard.reactivate}>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  style={{ marginLeft: 12 }}
+                  onClick={() => setOpenModal({ modal: true, value: 60 })}
+                >
+                  Activate
+                </Button>
+              </CheckAllowed>
             ) : null
           }
         </Box>

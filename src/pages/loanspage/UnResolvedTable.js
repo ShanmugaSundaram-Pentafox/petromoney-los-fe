@@ -263,12 +263,9 @@ const UnresolvedTable = ({ currentUser }) => {
         aria-describedby="alert-dialog-description"
       >
         <DialogContent>
-          <DialogContentText className={classes.text}>
-            Do you want to {withheldModal?.type === 'resolve' ? 'resolve' : 'delete'} this withheld?
-          </DialogContentText>
           <div className={classes.dialog}>
             <DialogContentText id="approval-remarks-desc">
-              Please enter your remarks.
+              Please enter remarks to {withheldModal?.type === 'resolve' ? 'resolve' : 'delete'} this withheld.
             </DialogContentText>
             <TextEditor setJSON={(e) => { setWithheldModal({ ...withheldModal, json: e }) }} toolBar={true} remarkData={withheldModal?.json} />
             {
@@ -277,7 +274,7 @@ const UnresolvedTable = ({ currentUser }) => {
             }
           </div>
         </DialogContent>
-        <DialogActions>
+        <DialogActions style={{ marginBottom: 8 }}>
           <Button
             onClick={() => {
               setWithheldModal(false);

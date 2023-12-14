@@ -429,7 +429,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
               <Button variant="contained" color='primary' onClick={() => { setReinitiate(true); }}>Re-Initiate</Button>
           }
           {
-            !loansData?.is_signed && loansData?.document_id && resign ?
+            !loansData?.is_signed && loansData?.document_id && resign && type === 'agreement' ?
               <Button variant="contained" color='primary' onClick={handleResign} style={{ marginLeft: 12 }}>Override Document</Button> : null
           }
           {activeState?.invitations?.filter((item) => item?.expired)?.length > 0

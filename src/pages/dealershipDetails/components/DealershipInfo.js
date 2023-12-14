@@ -185,9 +185,9 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               variant: 'success',
             }
             )
-            // setTimeout(() => {
-            //   window.location.reload()
-            // }, 1500);
+            setTimeout(() => {
+              window.location.reload()
+            }, 1500);
             setLoading(false);
           }
           else {
@@ -225,7 +225,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
       setUdyamQuery({ isLoading: true, data: {}, icon: true });
       getUdyamVerified({ udyam_no: values?.udyam_no })
         .then((res) => {
-          console.log(res?.[0]?.details?.profile);
           setUdyamQuery({ isLoading: false, data: res?.[0]?.details?.profile, isVerified: res?.[0]?.is_verified });
         })
         .catch((res) => {

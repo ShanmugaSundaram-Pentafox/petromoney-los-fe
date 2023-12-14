@@ -5,7 +5,7 @@ export const getAllWithheldLoans = (id) => {
     apiCall(`withheld/loans?is_resolved=${id}`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          let res=[]
+          let res = []
           data.forEach((item, i) => {
             res.push({
               ...item,
@@ -59,12 +59,13 @@ export const updateRemarks = (id, body) => {
       })
   });
 }
-export const resolveRemarks = (id) => {
+export const resolveRemarks = (id, remarks) => {
   return new Promise((resolve, reject) => {
     apiCall(`withheld/loans/${id}`, {
       method: 'POST',
       body: {
-        is_resolved: 1
+        is_resolved: 1,
+        remarks,
       }
     })
       .then(({ status, data, message }) => {
@@ -79,11 +80,13 @@ export const resolveRemarks = (id) => {
       })
   });
 }
-export const deleteRemarks = (id) => {
+export const deleteRemarks = (id, remarks) => {
   return new Promise((resolve, reject) => {
     apiCall(`withheld/loans/${id}`, {
       method: 'DELETE',
-
+      body: {
+        remarks,
+      }
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {

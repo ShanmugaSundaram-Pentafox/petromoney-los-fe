@@ -87,9 +87,25 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
   const handleResign = () => {
     deleteResignDocument(dealershipId)
       .then((data) => {
+        enqueueSnackbar('Document Override successfully', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'success',
+        })
         onClose()
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err)
+        enqueueSnackbar(err?.message || 'Document Override Failed', {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        })
+      })
   }
 
   useEffect(() => {

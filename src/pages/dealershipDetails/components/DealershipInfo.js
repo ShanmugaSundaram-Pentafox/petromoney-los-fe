@@ -358,7 +358,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   <Typography variant="title" style={{ fontSize: 16 }}><strong>Udyam Details</strong></Typography>
                 </Grid>
                 <Grid md={4}>
-                  {values?.udyam_verified ? <ViewData title='UDYAM No.' value={dataJSON?.udyam?.udyamRegistrationNo} /> : null}
+                  {values?.udyam_verified ? <ViewData title='UDYAM No.' value={dataJSON?.udyam?.udyamRegistrationNo} /> : '-'}
                 </Grid>
                 <Grid md={4}>
                   {values?.udyam_verified ? <ViewData title='Name of Enterprise' value={dataJSON?.udyam?.profile?.name} /> : null}

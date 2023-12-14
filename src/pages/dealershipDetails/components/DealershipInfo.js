@@ -3,6 +3,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
+import { Sync } from '@material-ui/icons';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import { makeStyles } from '@material-ui/styles';
@@ -20,12 +21,11 @@ import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
 import TextInput from '../../../components/TextInput/TextInput';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
+import TextInputMask from '../../../components/TextInput/TextInputMask';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
-import { rulesList } from '../../../config/userRules';
-import { getBusinessTypes, getRegionById, getActiveStates, getOmcList } from '../../../services/common.service';
+import { getBusinessTypes, getRegionById, getActiveStates, getOmcList, getUdyamVerified } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
 import { deleteDealershipDocument, validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
@@ -68,16 +68,16 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
+  const [udyamQuery, setUdyamQuery] = useState({ isLoading: false, data: {} });
   const [panValidateData, setPanValidateData] = useState({ icon: false })
   const [gstValidateData, setGstValidateData] = useState({ icon: false })
-  const [gstDetails, setGstDetails] = useState({})
+  const [dataJSON, setDataJSON] = useState({ gst: {}, udyam: {} })
   const [omcs, setOmcs] = useState([])
   const [fileType, setFileType] = useState('');
   const [crimeData, setCrimeData] = useState();
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
   const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const { enqueueSnackbar } = useSnackbar();
-  const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
 
   const handleValidate = (action, id) => {
     if (id) {
@@ -111,7 +111,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   });
   useEffect(() => {
     setValues(data)
-    setGstDetails(data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {})
+    setDataJSON({ gst: data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {}, udyam: data?.udyam_verified ? JSON.parse(data?.udyam_details) || {} : {} })
   }, [data])
   const { values, errors, handleChange: onChange, handleSubmit, setFieldValue, setValues, validateField } = useFormik({
     initialValues: { ...data },
@@ -131,6 +131,10 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         .matches(/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/, 'Invalid PAN')
         .required('Enter PAN')
         .uppercase(),
+      udyam_no: Yup.string()
+        .nullable('Enter UDYAM number')
+        .required('Enter UDYAM number')
+        .uppercase(),
       gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, 'Invalid GST').required('Enter GST').uppercase(),
 
     }),
@@ -138,11 +142,13 @@ const DealershipInfo = ({ data, className, currentUser }) => {
       values.name = values.name.toUpperCase();
       values.gst = values.gst.toUpperCase();
       values.pan = values.pan.toUpperCase();
+      values.udyam_no = values.udyam_no.toUpperCase();
       const date_values = {
         ...values,
         name: values.name.toUpperCase(),
         gst: values.gst?.toUpperCase(),
-        pan: values.pan?.toUpperCase()
+        pan: values.pan?.toUpperCase(),
+        udyam_no: values.udyam_no?.toUpperCase(),
       };
       let obj = {};
       if (date_values.id) {
@@ -179,9 +185,9 @@ const DealershipInfo = ({ data, className, currentUser }) => {
               variant: 'success',
             }
             )
-            setTimeout(() => {
-              window.location.reload()
-            }, 1500);
+            // setTimeout(() => {
+            //   window.location.reload()
+            // }, 1500);
             setLoading(false);
           }
           else {
@@ -213,6 +219,20 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     }
   });
   const getRegion = useQuery(['region', values?.state], () => getRegionById(parseInt(values?.state || 1)))
+
+  const getUDYAMDetails = () => {
+    if (values?.udyam_no) {
+      setUdyamQuery({ isLoading: true, data: {}, icon: true });
+      getUdyamVerified({ udyam_no: values?.udyam_no })
+        .then((res) => {
+          console.log(res?.[0]?.details?.profile);
+          setUdyamQuery({ isLoading: false, data: res?.[0]?.details?.profile, isVerified: res?.[0]?.is_verified });
+        })
+        .catch((res) => {
+          setUdyamQuery({ isLoading: false, data: {} });
+        });
+    }
+  }
 
   const docUpload = (val) => {
     setShowUpload(true);
@@ -276,6 +296,31 @@ const DealershipInfo = ({ data, className, currentUser }) => {
       </div>
     })
   }
+
+  const ValidateUdyamProps = (valid, verified) => {
+    if (verified && !valid?.isLoading) {
+      return ({
+        endAdornment: <div style={{ marginRight: 6, marginTop: 4, cursor: 'pointer' }}>
+          <Tooltip title={'Click to refetch the details'}>
+            <Sync onClick={getUDYAMDetails} fontSize='small' style={{ color: 'gray' }} />
+          </Tooltip>
+        </div>
+      })
+    }
+    return ({
+      endAdornment: <div style={{ marginRight: 6, marginTop: 4, cursor: 'pointer' }}>
+        {
+          valid?.icon
+            ? valid?.isLoading
+              ? <CircularProgress size={15} />
+              : valid?.data?.is_verified
+                ? <Tooltip title={`Valid ${valid.idType}`} ><CheckCircleOutlineOutlinedIcon fontSize='small' style={{ color: '#4caf50' }} /></Tooltip>
+                : <Tooltip title={`Invalid ${valid.idType}`} ><CancelOutlinedIcon fontSize='small' color='error' /></Tooltip> : null
+        }
+      </div>
+    })
+  }
+
   return (
     <Card className={clsx(classes.root, className)}>
       <div style={{ marginBottom: 20 }}>
@@ -287,8 +332,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   <ViewData title='Name' value={values?.name} />
                   <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')} />
                   <ViewData title='PAN' value={values?.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success' : 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'} />} />
-                  {values?.gst_verified ? <ViewData title='Effective Date of registration' value={gstDetails?.rgdt} /> : null}
-                  {values?.gst_verified ? <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam} /> : null}
+                  {values?.gst_verified ? <ViewData title='Effective Date of registration' value={dataJSON?.gst?.rgdt} /> : null}
+                  {values?.gst_verified ? <ViewData title='Legal Trade Name' value={dataJSON?.gst?.tradeNam} /> : null}
                 </Grid>
                 <Grid md={4}>
                   <ViewData title='State' value={(states?.data?.find(function (state, index) {
@@ -297,7 +342,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                   }))?.name} />
                   <ViewData title='Region' value={values?.region_name} />
                   <ViewData title='GST' value={values?.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success' : 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'} />} />
-                  {values?.gst_verified ? <ViewData title='Taxpayer Type' value={gstDetails?.dty} /> : null}
+                  {values?.gst_verified ? <ViewData title='Taxpayer Type' value={dataJSON?.gst?.dty} /> : null}
                 </Grid>
                 <Grid md={4}>
                   <ViewData title='Business type' value={businessTypes.data?.find(function (type, index) {
@@ -305,9 +350,27 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                       return true;
                   })?.name} />
                   <ViewData title='OMC' value={omcs?.find(item => { return item?.id === values?.omc })?.name} />
-                  {values?.gst_verified ? <ViewData title='Legal Business Name' value={gstDetails?.lgnm} /> : null}
-                  {values?.gst_verified ? <ViewData title='GSTIN Status' value={gstDetails?.sts} /> : null}
+                  {values?.gst_verified ? <ViewData title='Legal Business Name' value={dataJSON?.gst?.lgnm} /> : null}
+                  {values?.gst_verified ? <ViewData title='GSTIN Status' value={dataJSON?.gst?.sts} /> : null}
                   {data?.renewal_fee_payment_status ? <ViewData title='Renewal Fee Status' value={data?.renewal_fee_payment_status?.toUpperCase()} /> : null}
+                </Grid>
+                <Grid md={12} style={{ marginBottom: 10, marginTop: 20 }}>
+                  <Typography variant="title" style={{ fontSize: 16 }}><strong>Udyam Details</strong></Typography>
+                </Grid>
+                <Grid md={4}>
+                  {values?.udyam_verified ? <ViewData title='UDYAM No.' value={dataJSON?.udyam?.udyamRegistrationNo} /> : null}
+                </Grid>
+                <Grid md={4}>
+                  {values?.udyam_verified ? <ViewData title='Name of Enterprise' value={dataJSON?.udyam?.profile?.name} /> : null}
+                </Grid>
+                <Grid md={4}>
+                  {values?.udyam_verified ? <ViewData title='Organization Type' value={dataJSON?.udyam?.profile?.organizationType} /> : null}
+                </Grid>
+                <Grid md={4}>
+                  {values?.udyam_verified ? <ViewData title='Gender' value={dataJSON?.udyam?.profile?.gender} /> : null}
+                </Grid>
+                <Grid md={4}>
+                  {values?.udyam_verified ? <ViewData title='Date of Incorporation' value={dataJSON?.udyam?.profile?.dateOfIncorporation} /> : null}
                 </Grid>
               </Grid>
               {
@@ -318,6 +381,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                       <div style={{ marginTop: 16, display: 'flex', width: '39vw' }}>
                         {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN Card' style={{ marginRight: 10 }} />}
                         {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{ marginRight: 10 }} />}
+                        {values.udyam_file_url && <DocAttachment tooltip='View UDYAM' imgUrl={values?.udyam_file_url} docName='UDYAM' style={{ marginRight: 10 }} />}
                       </div>
                     </div>
                   ) : (
@@ -477,23 +541,68 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     {...fieldProps}
                   />
                 </Grid>
+                <Grid {...gridProps} md={6}>
+                  <TextInputMask
+                    mask={'UDYAM-aa-99-9999999'}
+                    maskChar={' '}
+                    labelText="UDYAM / UAM No."
+                    name="udyam_no"
+                    readOnly={readOnly}
+                    disabled={udyamQuery?.isLoading || values?.udyam_verified}
+                    value={values?.udyam_no?.toUpperCase()}
+                    error={errors.udyam_no}
+                    helperText={errors.udyam_no}
+                    InputProps={ValidateUdyamProps(udyamQuery, values?.udyam_verified)}
+                    {...fieldProps}
+                  />
+                  {
+                    !values?.udyam_verified || values?.udyam_no !== data?.udyam_no ?
+                      <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => { !udyamQuery?.isLoading && getUDYAMDetails() }}>Validate Udyam</Typography> : null
+                  }
+                </Grid>
                 {
-                  gstDetails?.gstin || gstValidateData?.details ?
+                  dataJSON?.gst?.gstin || gstValidateData?.details ?
                     <>
-                      <Grid item md={3}>
-                        <ViewData title='Effective Date of registration' value={gstDetails?.rgdt || gstValidateData?.details?.rgdt} />
+                      <Grid item md={12}>
+                        <Typography variant="title" style={{ fontWeight: 600 }}>GST Details</Typography>
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Taxpayer Type' value={gstDetails?.dty || gstValidateData?.details?.dty} />
+                        <ViewData title='Effective Date of registration' value={dataJSON?.gst?.rgdt || gstValidateData?.details?.rgdt} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Legal Business Name' value={gstDetails?.lgnm || gstValidateData?.details?.lgnm} />
+                        <ViewData title='Taxpayer Type' value={dataJSON?.gst?.dty || gstValidateData?.details?.dty} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='GSTIN Status' value={gstDetails?.sts || gstValidateData?.details?.sts} />
+                        <ViewData title='Legal Business Name' value={dataJSON?.gst?.lgnm || gstValidateData?.details?.lgnm} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Legal Trade Name' value={gstDetails?.tradeNam || gstValidateData?.details?.tradeNam} />
+                        <ViewData title='GSTIN Status' value={dataJSON?.gst?.sts || gstValidateData?.details?.sts} />
+                      </Grid>
+                      <Grid item md={3}>
+                        <ViewData title='Legal Trade Name' value={dataJSON?.gst?.tradeNam || gstValidateData?.details?.tradeNam} />
+                      </Grid>
+                    </> : null
+                }
+                {
+                  dataJSON?.udyam?.profile || udyamQuery?.data?.details ?
+                    <>
+                      <Grid item md={12}>
+                        <Typography variant="title"><strong>UDYAM Details</strong></Typography>
+                      </Grid>
+                      <Grid item md={3}>
+                        <ViewData title='Name of Enterprise' value={udyamQuery?.data?.details?.profile?.name || dataJSON?.udyam?.profile?.name} />
+                      </Grid>
+                      <Grid item md={3}>
+                        <ViewData title='Organization Type' value={udyamQuery?.data?.details?.profile?.organizationType || dataJSON?.udyam?.profile?.organizationType} />
+                      </Grid>
+                      <Grid item md={3}>
+                        <ViewData title='Gender' value={udyamQuery?.data?.details?.profile?.gender || dataJSON?.udyam?.profile?.gender} />
+                      </Grid>
+                      <Grid item md={3}>
+                        <ViewData title='Date Of Incorporation' value={udyamQuery?.data?.details?.profile?.dateOfIncorporation || dataJSON?.udyam?.profile?.dateOfIncorporation} />
+                      </Grid>
+                      <Grid item md={3}>
+                        <ViewData title='Major Activity' value={udyamQuery?.data?.details?.profile?.majorActivity || dataJSON?.udyam?.profile?.majorActivity} />
                       </Grid>
                     </> : null
                 }
@@ -503,6 +612,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                 <div className={classes.attachmentContainer}>
                   <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({ pan_file_url: '' })} disabled={!values?.pan_file_url} style={{ marginRight: 15 }} />
                   <DocAttachment action={true} imgUrl={values?.gst_file_url} docName='GST' onUpload={() => docUpload('GST')} onDelete={() => onDocDelete({ gst_file_url: '' })} disabled={!values?.gst_file_url} style={{ marginRight: 15 }} />
+                  <DocAttachment action={true} imgUrl={values?.udyam_file_url} docName='UDYAM' onUpload={() => docUpload('UDYAM')} onDelete={() => onDocDelete({ udyam_file_url: '' })} disabled={!values?.udyam_file_url} style={{ marginRight: 15 }} />
                 </div>
               </Grid>
             </>

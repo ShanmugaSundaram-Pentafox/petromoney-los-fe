@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 const ResolvedTable = () => {
   const [loading, setLoading] = useState(false);
   const classes = useStyles()
-  const {data=[]} = useQuery('withheld-loans', () => getAllWithheldLoans(1), {refetchOnWindowFocus: false})
+  const { data = [] } = useQuery('withheld-loans', () => getAllWithheldLoans(1), { refetchOnWindowFocus: false })
 
   const columns = useMemo(() => {
     return [
@@ -51,7 +51,7 @@ const ResolvedTable = () => {
         },
       },
       {
-        label: 'Remarks',
+        label: 'Reason',
         name: 'comments',
         options: {
           filter: false,
@@ -65,6 +65,26 @@ const ResolvedTable = () => {
                 return (
                   <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
                     <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.comment && remark.comment}</div>
+                  </div>
+                )
+              })
+            )
+          },
+        },
+      },
+      {
+        label: 'Remarks',
+        name: 'comments',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => {
+            return (
+              value?.map((remark, i) => {
+                return (
+                  <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
+                    {console.log(remark?.remarks)}
+                    <div style={{ minWidth: 250, maxWidth: 250 }} dangerouslySetInnerHTML={{ __html: remark.remarks ? remark.remarks : '<p>-</p>' }} />
                   </div>
                 )
               })

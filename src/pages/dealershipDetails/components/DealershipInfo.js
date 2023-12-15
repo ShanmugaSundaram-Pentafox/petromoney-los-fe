@@ -225,9 +225,16 @@ const DealershipInfo = ({ data, className, currentUser }) => {
       setUdyamQuery({ isLoading: true, data: {}, icon: true });
       getUdyamVerified({ udyam_no: values?.udyam_no })
         .then((res) => {
-          setUdyamQuery({ isLoading: false, data: res?.[0]?.details?.profile, isVerified: res?.[0]?.is_verified });
+          setUdyamQuery({ isLoading: false, data: res?.[0]?.details, isVerified: res?.[0]?.is_verified });
         })
-        .catch((res) => {
+        .catch((err) => {
+          enqueueSnackbar(err, {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          })
           setUdyamQuery({ isLoading: false, data: {} });
         });
     }
@@ -370,6 +377,9 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                 </Grid>
                 <Grid md={4}>
                   {values?.udyam_verified ? <ViewData title='Date of Incorporation' value={dataJSON?.udyam?.profile?.dateOfIncorporation} /> : null}
+                </Grid>
+                <Grid md={4}>
+                  {values?.udyam_verified ? <ViewData title='Classification Year' value={dataJSON?.udyam?.enterpriseType?.[0]?.classificationYear} /> : null}
                 </Grid>
               </Grid>
               {
@@ -583,25 +593,28 @@ const DealershipInfo = ({ data, className, currentUser }) => {
                     </> : null
                 }
                 {
-                  dataJSON?.udyam?.profile || udyamQuery?.data?.details ?
+                  dataJSON?.udyam?.profile || udyamQuery?.data?.profile ?
                     <>
                       <Grid item md={12}>
                         <Typography variant="title"><strong>UDYAM Details</strong></Typography>
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Name of Enterprise' value={udyamQuery?.data?.details?.profile?.name || dataJSON?.udyam?.profile?.name} />
+                        <ViewData title='Name of Enterprise' value={udyamQuery?.data?.profile?.name || dataJSON?.udyam?.profile?.name} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Organization Type' value={udyamQuery?.data?.details?.profile?.organizationType || dataJSON?.udyam?.profile?.organizationType} />
+                        <ViewData title='Organization Type' value={udyamQuery?.data?.profile?.organizationType || dataJSON?.udyam?.profile?.organizationType} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Gender' value={udyamQuery?.data?.details?.profile?.gender || dataJSON?.udyam?.profile?.gender} />
+                        <ViewData title='Gender' value={udyamQuery?.data?.profile?.gender || dataJSON?.udyam?.profile?.gender} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Date Of Incorporation' value={udyamQuery?.data?.details?.profile?.dateOfIncorporation || dataJSON?.udyam?.profile?.dateOfIncorporation} />
+                        <ViewData title='Date Of Incorporation' value={udyamQuery?.data?.profile?.dateOfIncorporation || dataJSON?.udyam?.profile?.dateOfIncorporation} />
                       </Grid>
                       <Grid item md={3}>
-                        <ViewData title='Major Activity' value={udyamQuery?.data?.details?.profile?.majorActivity || dataJSON?.udyam?.profile?.majorActivity} />
+                        <ViewData title='Major Activity' value={udyamQuery?.data?.profile?.majorActivity || dataJSON?.udyam?.profile?.majorActivity} />
+                      </Grid>
+                      <Grid item md={3}>
+                        <ViewData title='classification Year' value={udyamQuery?.data?.enterpriseType?.[0]?.classificationYear || dataJSON?.udyam?.enterpriseType?.[0]?.classificationYear} />
                       </Grid>
                     </> : null
                 }

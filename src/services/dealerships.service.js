@@ -168,7 +168,7 @@ export const downloadAccountStatement = (id, from_date, to_date) => {
     apiCall(`dealership/${id}/soa?from_date=${from_date}&to_date=${to_date}`)
       .then(res => {
         if (res.status === 'SUCCESS') {
-          if(res?.file) {
+          if (res?.file) {
             resolve(res)
           }
           else {
@@ -251,7 +251,7 @@ export const getDealershipReferralRejectedList = () => {
   });
 };
 
-export const rejectDealerReferralById = ({id, data}) => {
+export const rejectDealerReferralById = ({ id, data }) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/referral/${id}/reject`, {
       method: 'POST',
@@ -288,7 +288,7 @@ export const postReferralData = (dealershipID, data, id) => {
   });
 };
 
-export const getResignList = ({dealershipId, documentId}) => {
+export const getResignList = ({ dealershipId, documentId }) => {
   return new Promise((resolve, reject) => {
     apiCall(`document/resign/list?dealership_id=${dealershipId}&document_id=${documentId}`)
       .then(({ status, data, message }) => {
@@ -304,9 +304,9 @@ export const getResignList = ({dealershipId, documentId}) => {
   });
 };
 
-export const deleteResignDocument = (dealership_id) => {
+export const deleteResignDocument = ({ dealershipId, docId }) => {
   return new Promise((resolve, reject) => {
-    apiCall(`document/resign/list?dealership_id=${dealership_id}`, {
+    apiCall(`document/resign/list?dealership_id=${dealershipId}&document_id=${docId}`, {
       method: 'DELETE'
     })
       .then(({ status, data, message }) => {

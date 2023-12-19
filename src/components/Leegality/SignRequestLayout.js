@@ -85,7 +85,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
   })
 
   const handleResign = () => {
-    deleteResignDocument(dealershipId)
+    deleteResignDocument({ dealershipId, docId: loansData?.document_id })
       .then((data) => {
         enqueueSnackbar('Document Override successfully', {
           anchorOrigin: {

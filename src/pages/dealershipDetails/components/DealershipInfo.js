@@ -248,9 +248,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
     setShowUpload(false);
   };
   const handleSave = (value) => {
-    fileType === 'PAN'
-      ? setFieldValue('pan_file_url', value[0])
-      : setFieldValue('gst_file_url', value[0]);
+    setFieldValue(fileType === 'PAN' ? 'pan_file_url' : fileType === 'GST' ? 'gst_file_url' : 'udyam_file_url', value[0])
     onCloseUploader();
   };
   const onDocDelete = (value) => {

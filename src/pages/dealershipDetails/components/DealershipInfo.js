@@ -5,6 +5,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Grid from '@material-ui/core/Grid';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
+import { Skeleton } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
@@ -27,7 +28,7 @@ import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import { getBusinessTypes, getRegionById, getActiveStates, getOmcList } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
-import { deleteDealershipDocument, validateId } from '../../../services/dealerships.service';
+import { deleteDealershipDocument, getDealershipLoansById, validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -76,6 +77,17 @@ const DealershipInfo = ({ data, className, currentUser }) => {
   const [crimeData, setCrimeData] = useState();
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
   const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
+  const { data: loanData = [], isLoading: loanDataLoading } = useQuery(
+    ['dealership-loans', data?.id],
+    () => getDealershipLoansById(data?.id),
+    {
+      refetchOnWindowFocus: false,
+      enabled: Boolean(data?.id),
+      select: (data) => {
+        return data?.[0] || {}
+      }
+    }
+  );
   const { enqueueSnackbar } = useSnackbar();
   const credit_permission = permissionCheck(currentUser.role_name, rulesList.credit_view);
 
@@ -531,11 +543,19 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             <>
               {/* // Dealership Edit Permissions */}
               <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.edit}>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={() => { setReadOnly(false); }}>Edit Details</Button>
+                {(loanData?.status === 'disbursed' && currentUser?.role_id === 12) ?
+                  null : (
+                    loanDataLoading ? <Skeleton width={80} height={45} /> : (
+                      <Button
+                        color="primary"
+                        variant="contained"
+                        size="small"
+                        onClick={() => { setReadOnly(false); }}
+                      >
+                        Edit Details
+                      </Button>
+                    )
+                  )}
               </CheckAllowed>
               {/* // Dealership crime check access permission */}
               <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.crimeCheck}>

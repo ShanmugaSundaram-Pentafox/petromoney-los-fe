@@ -450,7 +450,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       </Drawer>
       <Drawer
         anchor="right"
-        open={openBankingForm}
+        open={true}
         onClose={() => setOpenBankingForm(false)}
         variant="temporary"
       >

@@ -124,7 +124,7 @@ export const PreviewCardBank = ({ id, children, onVerify, onEdit, action = true,
             horizontal: 'right',
           },
           variant: 'success',
-        })
+        });
       })
       .catch((err) => {
         enqueueSnackbar(err, {
@@ -151,6 +151,8 @@ export const PreviewCardBank = ({ id, children, onVerify, onEdit, action = true,
           },
           variant: 'success',
         })
+        queryClient.invalidateQueries(['bank-data']);
+        setBankStatus(false);
       })
       .catch((err) => {
         enqueueSnackbar(err, {
@@ -160,6 +162,7 @@ export const PreviewCardBank = ({ id, children, onVerify, onEdit, action = true,
           },
           variant: 'error',
         })
+        setBankStatus(false);
       });
   }
 

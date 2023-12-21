@@ -518,3 +518,20 @@ export const deleteUserAccount = () => {
       })
   });
 }
+
+// used to get the user based on pincode.
+export const getUsersByPincode = ({ pincode }) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`pincode/user-details/${pincode}`)
+      .then(res => {
+        if (res.status === 'SUCCESS') {
+          resolve(res.data);
+        } else {
+          reject(res);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

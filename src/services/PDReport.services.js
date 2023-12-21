@@ -799,6 +799,25 @@ export const syncBankDetailsWithLMS = (bankId) => {
   });
 }
 
+export const changeBankStatusById = ({ dealershipId, data }) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${dealershipId}/bank-status`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}
+
 export const autoVerifyBankDetails = (data) => {
   return new Promise((resolve, reject) => {
     apiCall(`bank/${data?.account_no}/${data?.ifsc}`, {

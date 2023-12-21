@@ -298,10 +298,10 @@ export const PreviewCardBank = ({ id, children, onVerify, onEdit, action = true,
         open={bankStatus?.modal || false}
       >
         <DialogContent>
-          <Typography variant="h5" style={{ textAlign: 'center', marginBottom: 8 }}>Bank {bankStatus?.status == 0 ? 'Activate' : 'Deactivate'}</Typography>
+          <Typography variant="h5" style={{ textAlign: 'center', marginBottom: 8 }}>{bankStatus?.status == 0 ? 'Activate ' : 'Deactivate '} Bank</Typography>
           <Alert severity='warning' variant='outlined'>
             <AlertTitle>Note</AlertTitle>
-            <Typography variant='body1'>{bankStatus?.status == 0 ? 'If this bank is activated then you can able to proceed with this bank to get the loan' : 'If this bank is deactivated then you can\'t able to proceed with this bank'}</Typography>
+            <Typography variant='body1'>{bankStatus?.status == 0 ? 'If this bank is active, you are eligible to proceed with your loan application.' : 'If this bank is deactivated, you won\'t be able to proceed with this bank for your loan.'}</Typography>
           </Alert>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16, marginBottom: 8, gap: 10 }}>
             <Button variant='outlined' onClick={() => { setBankStatus(false) }}>No</Button>

@@ -448,6 +448,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         <AddAssetDetailsForm dealer_id={id} isEdit={assetDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={assetDetails} editable={externalView} />
       </Drawer>
+
       <Drawer
         anchor="right"
         open={openBankingForm}

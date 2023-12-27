@@ -2,6 +2,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
+import InputMask from 'react-input-mask';
 import styled, { css } from 'styled-components';
 
 export const InputWrapper = styled.div`
@@ -62,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
 }))
-const TextInput = ({
+const TextInputMask = ({
   alignTop,
   direction,
   labelText,
@@ -71,29 +72,24 @@ const TextInput = ({
   placeholder,
   inputProps,
   onChange = () => null,
+  value,
   money,
   date,
   select,
   number,
+  disabled = false,
+  mask,
+  maskChar,
   ...restProps
 }) => {
   const classes = useStyles()
   return (
     <InputWrapper direction={direction} top={alignTop} labelWidth={labelWidth}>
       {labelText ? <label className="input-label">{labelText}</label> : null}
-      <TextField
-        className={classes.number}
-        fullWidth
-        size="small"
-        variant="outlined"
-        type={number ? 'number' : 'string'}
-        inputProps={{
-          className: classes.input,
-          readOnly,
-          placeholder,
-          ...inputProps
-        }}
-        back
+      <InputMask
+        mask={mask}
+        maskChar={maskChar}
+        disabled={disabled}
         onChange={e => {
           const v = e?.target?.value;
           if (number && isNaN(parseFloat(Number(v)))) {
@@ -101,16 +97,33 @@ const TextInput = ({
           }
           onChange(e);
         }}
-        InputProps={{
-          startAdornment: money && <InputAdornment position="start">₹</InputAdornment>,
-        }}
-        select={select}
-        SelectProps={{
-          native: true,
-        }}
-        {...restProps}
-      />
+        value={value}
+      >
+        {() => <TextField
+          className={classes.number}
+          disabled={disabled}
+          fullWidth
+          size="small"
+          variant="outlined"
+          type={number ? 'number' : 'string'}
+          inputProps={{
+            className: classes.input,
+            readOnly,
+            placeholder,
+            ...inputProps
+          }}
+          back
+          InputProps={{
+            startAdornment: money && <InputAdornment position="start">₹</InputAdornment>,
+          }}
+          select={select}
+          SelectProps={{
+            native: true,
+          }}
+          {...restProps}
+        />}
+      </InputMask>
     </InputWrapper>
   )
 }
-export default TextInput
+export default TextInputMask

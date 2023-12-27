@@ -1034,3 +1034,24 @@ export const getSignedUrl = (data) => {
       });
   });
 };
+
+export const getUdyamVerified = ({ udyam_no }) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`udyam/${udyam_no}`, {
+      method: 'POST',
+      body: {
+        udyam_no
+      },
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+}

@@ -1,8 +1,10 @@
-import { Button, Tooltip, Dialog, DialogContent, DialogActions } from '@material-ui/core';
+import { Button, Tooltip, Dialog, DialogContent, DialogActions, Popover } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
+import { List } from '@material-ui/icons';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import DescriptionIcon from '@material-ui/icons/Description';
@@ -56,11 +58,18 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   const [dealershipId, setDealershipId] = useState();
   const [openDialog, setOpenDialog] = useState(false)
   const { enqueueSnackbar } = useSnackbar();
+  const [anchorEl, setAnchorEl] = React.useState({});
+  const documentPopover = Boolean(anchorEl?.document);
+  const documentId = documentPopover ? 'document-popover' : undefined;
 
   useEffect(() => {
     setLoading(true);
     getEnhancementApprovedData();
   }, [filterQry, page, search])
+
+  const handleClose = () => {
+    setAnchorEl({});
+  };
 
   const getEnhancementApprovedData = () => {
     getEnhancedLoanByStatus('approved', filterQry, page, search)
@@ -255,27 +264,9 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
                 <CustomToken label={'Signed'} variant="success" icon="tick" />
               ) : (
                 <>
-                  <div style={{ minWidth: 70 }}>
-                    <Tooltip title="Sanction Letter">
-                      <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
-                        <DescriptionIcon style={{ width: 19 }} />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="eSign Application">
-                      <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setDealershipId(value); setModalVisible(true); }}>
-                        <ESignIcon width={17} />
-                      </IconButton>
-                    </Tooltip>
-                    {
-                      loans?.[r.rowIndex]['enhancement_category'] != 'decrease' && (
-                        <Tooltip title="Loan Agreement">
-                          <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setProductTypeId(loans?.[r.rowIndex]['new_product_id']) }}>
-                            <LoanAgreementIcon width={12} />
-                          </IconButton>
-                        </Tooltip>
-                      )
-                    }
-                  </div>
+                  <Tooltip title={'Click to view Documents'}>
+                    <IconButton size="small" color="primary" aria-label="application" onClick={(e) => setAnchorEl({ document: e.currentTarget, value, r })} ><List /></IconButton>
+                  </Tooltip>
                 </>
               )
             )
@@ -350,7 +341,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           productId={productTypeId}
           getStatus={true}
           type={type}
-          title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
+          title={type === 'application' ? 'eSign Application Form' : type === 'loc' ? 'Letter of Continuity' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}
           currentUser={currentUser}
         />
@@ -366,6 +357,50 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           </div>
         </DialogActions>
       </Dialog>
+
+      <Popover
+        id={documentId}
+        open={documentPopover}
+        anchorEl={anchorEl?.document}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <center>
+          <Typography style={{ marginTop: 10 }}>Documents</Typography>
+        </center>
+        <div style={{ padding: 10, display: 'flex', gap: 6 }}>
+          <Tooltip title="Sanction Letter">
+            <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
+              <DescriptionIcon style={{ width: 19 }} />
+            </IconButton>
+          </Tooltip>
+          {loans?.[anchorEl?.r?.rowIndex?.enhancement_category] != 'decrease' ?
+            <Tooltip title="Loan Agreement">
+              <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['amount_approved']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['product_id']) }}>
+                <LoanAgreementIcon width={12} />
+              </IconButton>
+            </Tooltip>
+            : null
+          }
+          <Tooltip title="eSign Application">
+            <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
+              <ESignIcon width={17} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Letter Of Continuity">
+            <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
+              <AssignmentIcon style={{ width: 19 }} />
+            </IconButton>
+          </Tooltip>
+        </div>
+      </Popover>
     </div>
   )
 }

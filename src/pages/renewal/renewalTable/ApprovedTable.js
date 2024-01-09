@@ -1,9 +1,11 @@
-import { Button, Dialog, DialogActions, DialogContent } from '@material-ui/core';
+import { Button, Dialog, DialogActions, DialogContent, Popover } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
+import { List } from '@material-ui/icons';
+import AssignmentIcon from '@material-ui/icons/Assignment';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import DescriptionIcon from '@material-ui/icons/Description';
@@ -60,6 +62,9 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [renewalId, setRenewalId] = useState();
   const { enqueueSnackbar } = useSnackbar();
+  const [anchorEl, setAnchorEl] = React.useState({});
+  const documentPopover = Boolean(anchorEl?.document);
+  const documentId = documentPopover ? 'document-popover' : undefined;
 
   const pageDetailsQuery = useQuery(
     ['renewal_approvedRecordCount', filterQry, search],
@@ -77,6 +82,10 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         setLoading(false);
       })
   }, [filterQry, page, search])
+
+  const handleClose = () => {
+    setAnchorEl({});
+  };
 
   const onDownloadClick = () => {
     downloadRenewalData('approved', filterQry)
@@ -107,7 +116,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   }
 
   const syncData = () => {
-    syncRenewalData({renewal_application_id: renewalId})
+    syncRenewalData({ renewal_application_id: renewalId })
       .then(res => {
         enqueueSnackbar(res, {
           anchorOrigin: {
@@ -202,7 +211,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           }),
           customBodyRender: value => {
             return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          } 
+          }
         }
       }, {
         label: 'Sync',
@@ -240,23 +249,11 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
               loans?.[r.rowIndex]['is_document_signed'] == 1 ? (
                 <CustomToken label={'Renewed'} variant="success" icon="tick" />
               ) : (
-                <div style={{ minWidth: 70 }}>
-                  <Tooltip title="Sanction Letter">
-                    <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
-                      <DescriptionIcon style={{ width: 19 }} />
-                    </IconButton>
+                <>
+                  <Tooltip title={'Click to view Documents'}>
+                    <IconButton size="small" color="primary" aria-label="application" onClick={(e) => setAnchorEl({ document: e.currentTarget, value, r })} ><List /></IconButton>
                   </Tooltip>
-                  <Tooltip title="eSign Application">
-                    <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setDealershipId(value); setModalVisible(true); }}>
-                      <ESignIcon width={17} />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Loan Agreement">
-                    <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['current_loan_amount']); setProductTypeId(loans?.[r.rowIndex]['new_product_id']) }}>
-                      <LoanAgreementIcon width={12} />
-                    </IconButton>
-                  </Tooltip>
-                </div>
+                </>
               ))
           }
         }
@@ -328,7 +325,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           productId={productTypeId}
           type={type}
           getStatus={true}
-          title={type === 'application' ? 'eSign Application Form' : 'Sanction Letter'}
+          title={type === 'application' ? 'eSign Application Form' : type === 'loc' ? 'Letter Of Continuity' : 'Sanction Letter'}
           onClose={() => setModalVisible(false)}
           currentUser={currentUser}
         />
@@ -344,6 +341,47 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           </div>
         </DialogActions>
       </Dialog>
+
+      <Popover
+        id={documentId}
+        open={documentPopover}
+        anchorEl={anchorEl?.document}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <center>
+          <Typography style={{ marginTop: 10 }}>Documents</Typography>
+        </center>
+        <div style={{ padding: 10, display: 'flex', gap: 6 }}>
+          <Tooltip title="Sanction Letter">
+            <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
+              <DescriptionIcon style={{ width: 19 }} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Loan Agreement">
+            <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['amount_approved']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['product_id']) }}>
+              <LoanAgreementIcon width={12} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="eSign Application">
+            <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
+              <ESignIcon width={17} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Letter Of Continuity">
+            <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
+              <AssignmentIcon style={{ width: 19 }} />
+            </IconButton>
+          </Tooltip>
+        </div>
+      </Popover>
     </div>
   )
 }

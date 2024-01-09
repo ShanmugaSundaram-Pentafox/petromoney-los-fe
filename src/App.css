@@ -15,9 +15,10 @@ html {
 }
 
 body {
-  background-color: #F3F3F3;
+  background-color: #f1f5f9 !important;
   height: 100%;
   font-size: 13px;
+  color: #222222 !important;
   font-family: 'Quicksand', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;

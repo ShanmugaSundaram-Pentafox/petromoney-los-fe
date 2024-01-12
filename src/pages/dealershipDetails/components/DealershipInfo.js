@@ -147,16 +147,16 @@ const DealershipInfo = ({ data, className, currentUser }) => {
 
     }),
     onSubmit: values => {
-      values.name = values.name.toUpperCase();
-      values.gst = values.gst.toUpperCase();
-      values.pan = values.pan.toUpperCase();
-      values.udyam_no = values.udyam_no.toUpperCase();
+      values.name = values?.name?.toUpperCase();
+      values.gst = values?.gst?.toUpperCase();
+      values.pan = values?.pan?.toUpperCase();
+      values.udyam_no = values?.udyam_no?.toUpperCase();
       const date_values = {
         ...values,
-        name: values.name.toUpperCase(),
-        gst: values.gst?.toUpperCase(),
-        pan: values.pan?.toUpperCase(),
-        udyam_no: values.udyam_no?.toUpperCase(),
+        name: values?.name?.toUpperCase(),
+        gst: values?.gst?.toUpperCase(),
+        pan: values?.pan?.toUpperCase(),
+        udyam_no: values?.udyam_no?.toUpperCase(),
       };
       let obj = {};
       if (date_values.id) {

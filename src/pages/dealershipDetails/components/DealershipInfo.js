@@ -6,7 +6,6 @@ import Grid from '@material-ui/core/Grid';
 import { Sync } from '@material-ui/icons';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
-import { Skeleton } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
@@ -657,23 +656,14 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             ) : <CircularProgress size={20} />
           ) : (
             <>
-              {/* // Dealership Edit Permissions */}
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.edit}>
-                {(loanData?.status === 'disbursed' && currentUser?.role_id === 12) ?
-                  null : (
-                    loanDataLoading ? <Skeleton width={80} height={45} /> : (
-                      <Button
-                        color="primary"
-                        variant="contained"
-                        size="small"
-                        onClick={() => { setReadOnly(false); }}
-                      >
-                        Edit Details
-                      </Button>
-                    )
-                  )}
-              </CheckAllowed>
-              {/* // Dealership crime check access permission */}
+              <Button
+                color="primary"
+                variant="contained"
+                size="small"
+                onClick={() => { setReadOnly(false); }}
+              >
+                Edit Details
+              </Button>
               <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.crimeCheck}>
                 <Button
                   color="primary"

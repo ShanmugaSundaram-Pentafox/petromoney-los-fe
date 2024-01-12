@@ -116,7 +116,7 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   // Allowed navigations inside dealership 
   for (const page in pageData) {
-    if(isAllowed(currentUser?.permissions, resources_id?.dealershipNavigation, pageData[page]?.id)) {
+    if (isAllowed(currentUser?.permissions, resources_id?.dealershipNavigation, pageData[page]?.id)) {
       tabs.push(pageData[page]?.name)
     }
   }
@@ -125,12 +125,12 @@ const DealershipDetails = ({ currentUser, match }) => {
     url,
     params: { id },
   } = match;
-  const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), {refetchOnWindowFocus: false})
+  const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), { refetchOnWindowFocus: false })
   const mainApplicant = useQuery(['main-applicant-data', id], () => getDealersByDealershipId(id), {
     select: (data) => {
       const ap = data.find(item => item.is_main_applicant);
       return ap;
-    }, 
+    },
     refetchOnWindowFocus: false
   })
   const onChangeTab = (e, newTab) => {
@@ -163,7 +163,7 @@ const DealershipDetails = ({ currentUser, match }) => {
               aria-label="Dealership Details Panel"
               className={classes.tabs}
               TabIndicatorProps={{
-                style: {display: 'none'}
+                style: { display: 'none' }
               }}
             >
               {

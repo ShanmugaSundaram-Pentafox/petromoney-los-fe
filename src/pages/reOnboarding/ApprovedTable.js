@@ -393,14 +393,14 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
         }}
       >
         <div className={classes.itemLists}>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
+          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
             <div className={classes.listIcon}>
               <DescriptionIcon style={{ width: 19, color: 'blue' }} />
             </div>
             <Typography>Sanction Letter</Typography>
           </div>
           {loans?.[anchorEl?.r?.rowIndex?.enhancement_category] != 'decrease' ?
-            <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['amount_approved']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['product_id']) }}>
+            <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['current_loan_amount']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['new_product_id']) }}>
               <div className={classes.listIcon} >
                 <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
               </div>
@@ -408,13 +408,13 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
             </div> : null
 
           }
-          <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
+          <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
             <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
               <ESignIcon width={17} style={{ color: 'blue' }} />
             </div>
             <Typography>eSign Application</Typography>
           </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
+          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['current_loan_amount']); }}>
             <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
               <AssignmentIcon style={{ width: 19, color: 'blue' }} />
             </div>

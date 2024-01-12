@@ -311,7 +311,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
             </div>
             <Typography>Sanction Letter</Typography>
           </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['amount_approved']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['new_product_id']) }}>
+          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['amount_approved']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['product_id']) }}>
             <div className={classes.listIcon} >
               <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
             </div>

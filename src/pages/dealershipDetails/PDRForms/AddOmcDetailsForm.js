@@ -118,7 +118,7 @@ const AddOmcDetailsForm = ({ data: init_data, dealer_id, isEdit, currentUser, ca
       }
       else {
         obj = { ...values }
-      } 
+      }
       const executed_date = executedDate ? format(new Date(executedDate), 'dd-MM-yyyy') : values.agreement_executed_on;
       const valid_date = validDate ? format(new Date(validDate), 'dd-MM-yyyy') : values.agreement_valid_till;
       const date = { ...obj, agreement_executed_on: executed_date, agreement_valid_till: valid_date };
@@ -126,7 +126,7 @@ const AddOmcDetailsForm = ({ data: init_data, dealer_id, isEdit, currentUser, ca
       Object.keys(date).forEach((key) => {
         data.append(key, date[key]);
       });
-      fetch(`${URL.base}dealership/${dealer_id}`, {
+      fetch(`${URL.base}dealership/${dealer_id}/omc`, {
         method: 'POST',
         body: data,
         headers: {
@@ -177,23 +177,23 @@ const AddOmcDetailsForm = ({ data: init_data, dealer_id, isEdit, currentUser, ca
         <div className={classes.stepperRoot}>
           <Box>
             {
-              readOnly ? 
-                <Grid container spacing={2} style={{marginTop: 8}}>
+              readOnly ?
+                <Grid container spacing={2} style={{ marginTop: 8 }}>
                   <Grid item md={6}>
-                    <ViewData title='Sales officer name' value={values?.sales_officer_name} style={{marginBottom: 6}} />  
-                  </Grid> 
-                  <Grid item md={6}>
-                    <ViewData title='Sales officer mobile' value={values?.sales_officer_mobile} style={{marginBottom: 6}} />  
-                  </Grid> 
-                  <Grid item md={6}>
-                    <ViewData title='Mode Call/Mail' value={values?.communication_mode} style={{marginBottom: 6}} />  
+                    <ViewData title='Sales officer name' value={values?.sales_officer_name} style={{ marginBottom: 6 }} />
                   </Grid>
                   <Grid item md={6}>
-                    <ViewData title='Dealership agreement executed on' value={values?.agreement_executed_on} style={{marginBottom: 6}} />  
-                  </Grid> 
+                    <ViewData title='Sales officer mobile' value={values?.sales_officer_mobile} style={{ marginBottom: 6 }} />
+                  </Grid>
                   <Grid item md={6}>
-                    <ViewData title='Dealership agreement valid till' value={values?.agreement_valid_till} style={{marginBottom: 6}} />  
-                  </Grid> 
+                    <ViewData title='Mode Call/Mail' value={values?.communication_mode} style={{ marginBottom: 6 }} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title='Dealership agreement executed on' value={values?.agreement_executed_on} style={{ marginBottom: 6 }} />
+                  </Grid>
+                  <Grid item md={6}>
+                    <ViewData title='Dealership agreement valid till' value={values?.agreement_valid_till} style={{ marginBottom: 6 }} />
+                  </Grid>
                 </Grid> :
                 <form onSubmit={handleSubmit}>
                   <Grid container spacing={2}>

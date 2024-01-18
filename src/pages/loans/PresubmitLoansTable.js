@@ -1,4 +1,4 @@
-import { Drawer, Fade, IconButton, Modal, Tooltip, Backdrop, Checkbox, Button } from '@material-ui/core';
+import { Drawer, Fade, IconButton, Modal, Tooltip, Backdrop, Checkbox } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
@@ -13,6 +13,7 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
+import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../components/Number/Currency';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
@@ -264,6 +265,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
         variant: 'warning',
       });
     } else {
+      setDocModal((old) => ({ ...old, isLoading: true }))
       updateDocumentChecklistById({ id: docModal?.id, data: arr })
         .then(res => {
           enqueueSnackbar('Updated Successfully', {
@@ -284,6 +286,9 @@ const PresubmitLoansTable = ({ currentUser }) => {
             },
             variant: 'error',
           })
+        })
+        .finally(() => {
+          setDocModal((old) => ({ ...old, isLoading: false }))
         })
     }
   }
@@ -358,14 +363,15 @@ const PresubmitLoansTable = ({ currentUser }) => {
                 )) : getDocChecklistQuery?.isLoading ? <center><CircularProgress /></center> : <center>No Data to display</center>}
             </div>
             <div className={classes.header} style={{ justifyContent: 'right', marginTop: '20px' }}>
-              <Button
+              <LoaderButton
                 variant='contained'
                 size='medium'
                 style={{ color: 'white', marginRight: 8, backgroundColor: 'green' }}
+                isLoading={docModal?.isLoading}
                 onClick={handleDocChecklistUpdate}
               >
                 Save
-              </Button>
+              </LoaderButton>
             </div>
           </div>
         </Fade>

@@ -1,5 +1,4 @@
-import { Grid } from '@material-ui/core'
-import { Paper } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography'
 import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/styles'
@@ -101,19 +100,19 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
           setLoading(false)
         })
     } else
-    if (!transports.length) {
-      setLoading(true)
-      getAllTransport()
-        .then((data) => {
-          setAllTransports(data)
-          setLoading(false)
-          // setData(data)
-        })
-        .catch((e) => {
-          console.log(e);
-          setLoading(false);
-        })
-    }
+      if (!transports.length) {
+        setLoading(true)
+        getAllTransport()
+          .then((data) => {
+            setAllTransports(data)
+            setLoading(false)
+            // setData(data)
+          })
+          .catch((e) => {
+            console.log(e);
+            setLoading(false);
+          })
+      }
     getOmcList()
       .then((data) => {
         setOmcs(data);

@@ -1,5 +1,4 @@
-import { Grid } from '@material-ui/core'
-import { Paper } from '@material-ui/core'
+import { Grid, Paper } from '@material-ui/core'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/styles'

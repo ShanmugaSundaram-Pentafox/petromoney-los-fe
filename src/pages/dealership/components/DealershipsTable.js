@@ -1,5 +1,4 @@
-import { Grid } from '@material-ui/core'
-import { Paper } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/styles';

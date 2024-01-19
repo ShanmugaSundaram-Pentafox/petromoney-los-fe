@@ -58,13 +58,13 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [selectedStatus, setSelectedStatus] = useState();
   const readOnly = permissionCheck(currentUser.role_name, rulesList.external_view);
   const { enqueueSnackbar } = useSnackbar();
-  const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id), {refetchOnWindowFocus: false})
-  const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id), {refetchOnWindowFocus: false})
+  const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id), { refetchOnWindowFocus: false })
+  const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id), { refetchOnWindowFocus: false })
   useEffect(() => {
     if (!isLoading) {
       if (loanData.length) {
         let val = loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1'
-        if(isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_review)) {
+        if (isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_review)) {
           getUserRoleForReview(val)
             .then(res => {
               let d = [];
@@ -198,25 +198,25 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               <TableCell align="center">
                 {
                   row?.status?.toLowerCase() !== 'disbursed' && row?.status?.toLowerCase() !== 'rejected' &&
-                    <MSelect
-                      fullWidth
-                      native
-                      placeholder={'Select status'}
-                      value={selectedStatus?.id}
-                      disabled={!isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
-                      onChange={e => {
-                        const d = status?.find(i => i.id == e.target.value)
-                        setSelectedStatus(d)
-                        updateApplicationStatus({
-                          application_state: e.target.value
-                        })
-                      }}
-                    >
-                      <option value=''>-</option>
-                      {
-                      status?.map(item => item.application_state !== row.application_state && <option value={item.id}>{item.application_state}</option>)
-                      }
-                    </MSelect>
+                  <MSelect
+                    fullWidth
+                    native
+                    placeholder={'Select status'}
+                    value={selectedStatus?.id}
+                    disabled={!isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
+                    onChange={e => {
+                      const d = status?.find(i => i.id == e.target.value)
+                      setSelectedStatus(d)
+                      updateApplicationStatus({
+                        application_state: e.target.value
+                      })
+                    }}
+                  >
+                    <option value=''>-</option>
+                    {
+                      status?.map((item, i) => item.application_state !== row.application_state && <option key={i} value={item.id}>{item.application_state}</option>)
+                    }
+                  </MSelect>
                 }
               </TableCell>
               <TableCell align="center">
@@ -278,9 +278,9 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       </Table>
       {
         loanData[0]?.status === 'disbursed' && isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.statement) &&
-          <div style={{marginTop: 18}}>
-            <AccountStatement id={id} currentUser={currentUser} />
-          </div>
+        <div style={{ marginTop: 18 }}>
+          <AccountStatement id={id} currentUser={currentUser} />
+        </div>
       }
 
       <Dialog
@@ -332,7 +332,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
             <DialogContentText id="approval-remarks-desc">
               Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}.
             </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true}/>
+            <TextEditor setJSON={setRemarks} toolBar={true} />
             {/* <TextInput
               multiline
               alignTop

@@ -79,7 +79,7 @@ const DocList = ({ id, currentUser }) => {
   const [rowData, setRowData] = useState();
   const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
-  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id), {refetchOnWindowFocus: false})
+  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id), { refetchOnWindowFocus: false })
 
   const { enqueueSnackbar } = useSnackbar();
   const onCloseUploader = () => {
@@ -101,7 +101,7 @@ const DocList = ({ id, currentUser }) => {
       formData.append('fileName', fileName);
       formData.append('id', rowData.doc_id);
     });
-    
+
     fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
       body: formData,
@@ -129,7 +129,7 @@ const DocList = ({ id, currentUser }) => {
       <Table className={classes.table} size="small" aria-label="Dealers">
         <TableBody>
           {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
-            <DocListPreview currentUser={currentUser} docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} docId={row?.doc_id} id={i + 1} dealershipId={id} editable={editable} />
+            <DocListPreview key={i} currentUser={currentUser} docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} docId={row?.doc_id} id={i + 1} dealershipId={id} editable={editable} />
           ))}
         </TableBody>
       </Table>

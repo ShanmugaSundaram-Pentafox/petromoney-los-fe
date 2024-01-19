@@ -46,7 +46,7 @@ const RenewalList = ({ currentUser }) => {
             setChartData={setChartData}
             setTotalLoans={setTotalLoans}
             filterType='renewal'
-            filters={['zone', 'region', 'product', 'period','month']}
+            filters={['zone', 'region', 'product', 'period', 'month']}
           />
         </Grid>
         <Grid item xs={12}>

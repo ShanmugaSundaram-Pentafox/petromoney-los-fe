@@ -1,6 +1,7 @@
 @import '../node_modules/react-date-range/dist/styles.css';
 @import '../node_modules/react-date-range/dist/theme/default.css';
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:ital,wght@0,500;0,600;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300&display=swap');
 
 * {
   box-sizing: border-box;
@@ -18,8 +19,8 @@ body {
   background-color: #f1f5f9 !important;
   height: 100%;
   font-size: 13px;
-  color: #222222 !important;
-  font-family: 'Quicksand', 'Roboto', 'Oxygen',
+  color: '#222222' !important;
+  font-family: 'Poppins', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
 }

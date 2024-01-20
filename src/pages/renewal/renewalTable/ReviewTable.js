@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '29px',
     padding: '3px 8px',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -168,7 +168,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
           setCellHeaderProps: () => ({
             align: 'right',
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       }, {
         label: 'Month of renewal',
@@ -182,7 +182,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
           }),
           customBodyRender: value => {
             return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          } 
+          }
         }
       },
     ]

@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '29px',
     padding: '3px 8px',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   }
@@ -132,7 +132,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
         options: {
           filter: false,
           sort: true,
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {
@@ -170,10 +170,10 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
               <>
                 <div>
                   <Tooltip title="click to view documents checklist">
-                    <LinkIcon style={{color:'grey'}} onClick={(event) => {
+                    <LinkIcon style={{ color: 'grey' }} onClick={(event) => {
                       setAnchorEl(event.currentTarget);
                       setDealershipId(value)
-                    }}/>
+                    }} />
                   </Tooltip>
                 </div>
               </>
@@ -231,7 +231,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };
-  
+
   return (
     <div className={classes.root}>
       {

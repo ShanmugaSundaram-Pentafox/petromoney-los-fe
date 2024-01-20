@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '29px',
     padding: '3px 8px',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -122,7 +122,7 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
           setCellProps: () => ({
             align: 'right',
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {

@@ -14,6 +14,7 @@ import CustomToken from '../../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../../components/CommonComponents/FilePreview';
 import { logger } from '../../../../config/logger';
 import { autoVerifyBankDetails, bankAccValidate, deleteBankDetailsByID } from '../../../../services/PDReport.services';
+import Currency from '../../../../components/Number/Currency';
 
 const useStyles = makeStyles((theme) => ({
   token: {
@@ -173,7 +174,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
           <Typography variant="h5" style={{ textAlign: 'center', marginBottom: 8 }}>Account Verification</Typography>
           <Alert severity='warning' variant='outlined'>
             <AlertTitle>Note</AlertTitle>
-            <Typography variant='body1'>As a part of account verification process an amount of ₹1 will be deposited on your account. Please do not close this window until the process is completed.</Typography>
+            <Typography variant='body1'>As a part of account verification process an amount of <Currency value={1} /> will be deposited on your account. Please do not close this window until the process is completed.</Typography>
           </Alert>
           <Collapse in={verificationLoading}>
             <Typography variant='h5' className={classes.text}>
@@ -198,7 +199,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
             <Button variant='outlined' disabled={verificationLoading} onClick={() => { setBankVerify(); setVerifiedDetails(); }}>Cancel</Button>
             {
               !bankVerify?.bank_verified &&
-                <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>
+              <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>
             }
           </div>
         </DialogContent>
@@ -219,7 +220,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
             <Button variant='outlined' onClick={() => { setManualBankVerify() }}>Cancel</Button>
             {
               !bankVerify?.bank_verified &&
-                <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={handleManualVerify}>Verify</Button>
+              <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={handleManualVerify}>Verify</Button>
             }
           </div>
         </DialogContent>

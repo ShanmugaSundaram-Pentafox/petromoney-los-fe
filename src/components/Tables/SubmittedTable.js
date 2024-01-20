@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '29px',
     padding: '3px 8px',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -129,7 +129,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
           setCellProps: () => ({
             align: 'left',
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {
@@ -189,7 +189,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
       }
     ]
   }, [loans]);
- 
+
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',

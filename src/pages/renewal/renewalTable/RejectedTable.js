@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '29px',
     padding: '3px 8px',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -142,7 +142,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           setCellHeaderProps: () => ({
             align: 'right',
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       }, {
         label: 'New Loan Amount',
@@ -156,7 +156,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           setCellHeaderProps: () => ({
             align: 'right',
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
     ]
@@ -167,11 +167,11 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     selectableRows: 'none',
     isRowSelectable: () => true,
     rowsPerPage: 10,
-    filter:false,
-    print:false,
-    sort:false,
-    download:false,
-    viewColumns:false,
+    filter: false,
+    print: false,
+    sort: false,
+    download: false,
+    viewColumns: false,
     searchPlaceholder: 'Search by dealreship ID/Name',
     onSearchChange: (searchText) => {
       setSearch(searchText)

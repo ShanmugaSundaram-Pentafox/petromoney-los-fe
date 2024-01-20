@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '29px',
     padding: '3px 8px',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
   const [dealershipId, setDealershipId] = useState();
@@ -65,7 +65,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
         setLoading(false);
       })
   }, [filterQry])
-  
+
   // useMount(() => {
   //   if (!loans || !loans.length) {
   //     setLoading(true);
@@ -131,7 +131,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
           // setCellProps: () => ({
           //   align: 'right',
           // }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {

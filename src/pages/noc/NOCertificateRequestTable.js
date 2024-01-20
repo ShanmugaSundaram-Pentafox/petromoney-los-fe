@@ -151,7 +151,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         options: {
           filter: true,
           sort: true,
-          customBodyRender: (value) => <strong><Currency value={value} /></strong>,
+          customBodyRender: (value) => <Currency value={value} />,
         },
       },
       {

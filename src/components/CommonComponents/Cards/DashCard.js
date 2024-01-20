@@ -1,7 +1,7 @@
 import { Tooltip } from '@material-ui/core';
 import React from 'react';
 import styled from 'styled-components';
-import Currency, { convertCurrencyWithUnit } from '../../Number/Currency';
+import Currency, { ConvertCurrencyWithUnit } from '../../Number/Currency';
 
 const DashCardWrapper = styled.div`
   // background-color: yellow; 
@@ -27,7 +27,7 @@ const DashCardWrapper = styled.div`
     padding: 4px 10px;
     color: #fff;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 500;
     background-color: #2d9c32;
     border-radius: 14px;
     position: absolute;
@@ -103,22 +103,19 @@ const DashCard = ({
 }) => {
   return (
     <DashCardWrapper noBorder={noBorder} style={styles} onClick={action}>
-      <div  className={selected ? 'active' : ' '}>
+      <div className={selected ? 'active' : ' '}>
         <div className="stat-number-block">
           <div className="stat-number">
             {value || '-'}
           </div>
-          {/* <div className="stat-icon">
-          {icon}
-        </div> */}
         </div>
         <div className="stat-desc">{text || ''}</div>
       </div>
-        
+
       {amount > 0 ? (
         <Tooltip title={amount ? <Currency value={amount} /> : null}>
           <div className='amount-text'>
-            ₹ {convertCurrencyWithUnit(amount)}
+            <ConvertCurrencyWithUnit amount={amount} />
           </div>
         </Tooltip>) : null}
     </DashCardWrapper>

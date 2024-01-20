@@ -31,7 +31,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData, view }) => {
       .catch(e => {
         setLoading(false);
       })
-  },[view]);
+  }, [view]);
 
   const columns = useMemo(() => {
     return [
@@ -76,7 +76,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData, view }) => {
         options: {
           filter: false,
           sort: true,
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {
@@ -132,7 +132,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData, view }) => {
         options: {
           filter: false,
           sort: true,
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {
@@ -149,7 +149,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData, view }) => {
         options: {
           filter: false,
           sort: true,
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {
@@ -158,7 +158,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData, view }) => {
         options: {
           filter: false,
           sort: true,
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {
@@ -167,7 +167,7 @@ const LoanBookTable = ({ title, loanBookData, setLoanBookData, view }) => {
         options: {
           filter: false,
           sort: true,
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {

@@ -42,8 +42,8 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const pageDetailsQuery = useQuery({
-    queryKey: ['dpd_pageCount', filterQry,page, search],
-    queryFn: () => getDpdPageDetails(filterQry,page, search),
+    queryKey: ['dpd_pageCount', filterQry, page, search],
+    queryFn: () => getDpdPageDetails(filterQry, page, search),
   })
 
   useEffect(() => {
@@ -162,7 +162,7 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
             style: { minWidth: '100px', maxWidth: '100px' },
             align: 'right'
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {
@@ -175,7 +175,7 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
             style: { minWidth: '100px', maxWidth: '100px' },
             align: 'right'
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {

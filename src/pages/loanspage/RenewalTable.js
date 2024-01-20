@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '29px',
     padding: '3px 8px',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -131,7 +131,7 @@ const RenewalTable = ({ currentUser }) => {
         options: {
           filter: false,
           sort: true,
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {
@@ -158,10 +158,10 @@ const RenewalTable = ({ currentUser }) => {
               <>
                 <div>
                   <Tooltip title="click to view documents checklist">
-                    <LinkIcon style={{color:'grey'}} onClick={(event) => {
+                    <LinkIcon style={{ color: 'grey' }} onClick={(event) => {
                       setAnchorEl(event.currentTarget);
                       setDealershipId(value)
-                    }}/>
+                    }} />
                   </Tooltip>
                 </div>
               </>
@@ -216,7 +216,7 @@ const RenewalTable = ({ currentUser }) => {
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
     }
   };
-  
+
   return (
     <div className={classes.root}>
       {

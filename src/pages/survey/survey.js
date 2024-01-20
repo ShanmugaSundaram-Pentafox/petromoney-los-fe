@@ -116,7 +116,7 @@ const textStyles = {
   }
 }
 
-const InputField = withStyles(textStyles)(({ money, ...props}) => (
+const InputField = withStyles(textStyles)(({ money, ...props }) => (
   <TextField
     type={money ? 'number' : 'text'}
     variant="outlined"
@@ -125,7 +125,7 @@ const InputField = withStyles(textStyles)(({ money, ...props}) => (
     // required
     fullWidth
     InputProps={{
-      startAdornment: money ? <InputAdornment position="start">₹</InputAdornment> : undefined,
+      startAdornment: money ? <InputAdornment position="start"><span style={{ fontFamily: 'sans-serif' }}>₹</span></InputAdornment> : undefined,
     }}
     InputLabelProps={{
       classes: {
@@ -138,7 +138,7 @@ const InputField = withStyles(textStyles)(({ money, ...props}) => (
   />
 ))
 
-const GridText = ({ className, label, value, variant='h5', variantLabel='span' }) => value ? (
+const GridText = ({ className, label, value, variant = 'h5', variantLabel = 'span' }) => value ? (
   <Grid container >
     <Grid item xs={3}>
       <Typography className={className} component="span" variant={variantLabel}>
@@ -191,27 +191,27 @@ const Survey = (props) => {
       remarks: '',
     },
     validationSchema,
-    validateOnBlur:false,
-    validateOnChange:false,
+    validateOnBlur: false,
+    validateOnChange: false,
     onSubmit: (values, { resetForm, setSubmitting }) => {
       // console.log('Form Values >> ', values);
       if (values.hp) return null;
 
       if (values.able_to_reach_dealer === 'Yes') {
         if (values.dealer_code === '') {
-          setApiStatus({ show: true, type: 'error', message: 'Please Enter Dealer Code'});
+          setApiStatus({ show: true, type: 'error', message: 'Please Enter Dealer Code' });
           return null;
         }
         if (values.amount_spend_on_all_vehicles_yr === '') {
-          setApiStatus({ show: true, type: 'error', message: 'Please fill Question 3'});
+          setApiStatus({ show: true, type: 'error', message: 'Please fill Question 3' });
           return null;
         }
         if (values.interested_in_credit === '') {
-          setApiStatus({ show: true, type: 'error', message: 'Please fill Question 5'});
+          setApiStatus({ show: true, type: 'error', message: 'Please fill Question 5' });
           return null;
         }
       }
-      
+
       setSubmitting(true);
       // const url = `https://script.google.com/macros/s/AKfycbyPfjvkTdy9vODrRhIBmUaTIbU96fak3gYH7ASr4jd_w734yoI/exec`;
       const url = 'https://script.google.com/macros/s/AKfycbxbl1ml_p4fQ5y2JYt8YLCKBBnWs7HyMUpC38W9Y271619TmppP/exec';
@@ -219,20 +219,20 @@ const Survey = (props) => {
       xhr.open('POST', url);
       // xhr.withCredentials = true;
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.onreadystatechange = function() {
+      xhr.onreadystatechange = function () {
         setSubmitting(false)
         if (xhr.readyState === 4 && xhr.status === 200) {
-          setApiStatus({ show: true, type: 'success', message: 'Thank you. Survey is submitted.'});
+          setApiStatus({ show: true, type: 'success', message: 'Thank you. Survey is submitted.' });
           resetForm();
         } else {
-          setApiStatus({ show: true, type: 'error', message: 'Unable to submit the survey!'});
+          setApiStatus({ show: true, type: 'error', message: 'Unable to submit the survey!' });
         }
       };
       // url encode form data for sending as post data
-      var encoded = Object.keys(values).map(function(k) {
+      var encoded = Object.keys(values).map(function (k) {
         return encodeURIComponent(k) + '=' + encodeURIComponent(values[k]);
       }).join('&');
-      
+
       xhr.send(encoded);
       // fetch(`https://script.google.com/macros/s/AKfycbyPfjvkTdy9vODrRhIBmUaTIbU96fak3gYH7ASr4jd_w734yoI/exec`, {
       //   method: 'POST',
@@ -258,11 +258,11 @@ const Survey = (props) => {
     apiCall(`temp/transporter/info/${values.transporter}`)
       .then(({ status, data: { data } }) => {
         console.log('>>', status, data)
-        if(Array.isArray(data) && data[0]) {
+        if (Array.isArray(data) && data[0]) {
           setTransporterInfo(data[0])
-        // return API.get(`transporters/${values.transporter}/vehicles`);
+          // return API.get(`transporters/${values.transporter}/vehicles`);
         } else {
-          setApiStatus({ show: true, type: 'error', message: 'Transporter Code not found!'});
+          setApiStatus({ show: true, type: 'error', message: 'Transporter Code not found!' });
           return { data: null };
         }
       })
@@ -276,7 +276,7 @@ const Survey = (props) => {
       //   }
       // })
       .catch(err => {
-        setApiStatus({ show: true, type: 'error', message: 'Unable to get data from server. Please try again later.'});
+        setApiStatus({ show: true, type: 'error', message: 'Unable to get data from server. Please try again later.' });
         console.log(err)
       })
   }
@@ -300,7 +300,7 @@ const Survey = (props) => {
             <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
           </Snackbar>
           <form className={classes.form} onSubmit={handleSubmit} autoComplete="off" noValidate>
-            
+
             <Grid container>
               <Grid item xs={6}>
                 <InputField
@@ -412,7 +412,7 @@ const Survey = (props) => {
 
                   <div className={classes.inputGroup}>
                     <Typography className={classes.question} component="h4" variant="h5">
-                      2. What is the total premium you pay per year for the Outlet? 
+                      2. What is the total premium you pay per year for the Outlet?
                     </Typography>
                     <Grid container direction="column">
                       <Grid item xs={6}>
@@ -425,7 +425,7 @@ const Survey = (props) => {
                           name="for_petrolium_dealer_pkg_plcy"
                         />
                       </Grid>
-                      <Grid item xs={6}>  
+                      <Grid item xs={6}>
                         <InputField
                           money
                           required={false}
@@ -437,7 +437,7 @@ const Survey = (props) => {
                       </Grid>
                     </Grid>
                   </div>
-                  
+
                   <div className={classes.inputGroup}>
                     <Typography className={classes.question} component="h4" variant="h5">
                       3. What is the amount you spend for Tyre's & automotive batteries in a year? (Tanker & all personal vehicles) *
@@ -458,7 +458,7 @@ const Survey = (props) => {
 
                   <div className={classes.inputGroup}>
                     <Typography className={classes.question} component="h4" variant="h5">
-                      4. What is your annual spend towards 
+                      4. What is your annual spend towards
                     </Typography>
                     <Grid container direction="column">
                       <Grid item xs={6}>
@@ -507,7 +507,7 @@ const Survey = (props) => {
                 </Fragment>
               ) : null
             }
-            
+
             <InputField
               multiline
               rows={4}
@@ -524,7 +524,7 @@ const Survey = (props) => {
               name="hp"
               style={{ display: 'none' }}
             />
-            
+
             <Button
               type="submit"
               variant="contained"

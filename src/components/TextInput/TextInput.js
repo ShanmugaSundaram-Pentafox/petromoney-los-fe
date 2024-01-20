@@ -102,7 +102,7 @@ const TextInput = ({
           onChange(e);
         }}
         InputProps={{
-          startAdornment: money && <InputAdornment position="start">₹</InputAdornment>,
+          startAdornment: money && <InputAdornment position="start"><span style={{ fontFamily: 'sans-serif' }}>₹</span></InputAdornment>,
         }}
         select={select}
         SelectProps={{

@@ -56,13 +56,13 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const LoanStats = ({ selectedStatsCard, handleClick, chartData, totalLoans}) => {
+const LoanStats = ({ selectedStatsCard, handleClick, chartData, totalLoans }) => {
   const classes = useStyles();
 
   return (
     <Box p={2} pt={1} borderRadius={4} bgcolor="background.paper">
       <Box pb={1} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
-        <Typography variant='h5'>Loans&apos; Statistics {totalLoans ? `(${totalLoans})` : null}</Typography>
+        <Typography variant='h5' style={{ fontWeight: 500 }}>Loans&apos; Statistics {totalLoans ? `(${totalLoans})` : null}</Typography>
       </Box>
       <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
         {

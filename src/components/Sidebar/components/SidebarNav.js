@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     letterSpacing: 0,
     width: '100%',
     fontSize: 13,
-    fontWeight: theme.typography.fontWeightMedium
+    fontWeight: 500
   },
   icon: {
     // color: theme.palette.icon,
@@ -360,16 +360,16 @@ const SidebarNav = props => {
                 >
                   {
                     permissionCheck(currentUser.role_name, rulesList.opportunity_report) &&
-                      <Button
-                        className={classes.button}
-                        activeClassName={classes.active}
-                        component={CustomRouterLink}
-                        to={'/reports/opportunities'}
-                        exact
-                      >
-                        <div className={classes.icon}><BarChartOutlinedIcon /></div>
-                        {'Opportunity Report'}
-                      </Button>
+                    <Button
+                      className={classes.button}
+                      activeClassName={classes.active}
+                      component={CustomRouterLink}
+                      to={'/reports/opportunities'}
+                      exact
+                    >
+                      <div className={classes.icon}><BarChartOutlinedIcon /></div>
+                      {'Opportunity Report'}
+                    </Button>
                   }
                 </ListItem>
                 <ListItem

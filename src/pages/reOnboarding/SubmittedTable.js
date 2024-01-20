@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '29px',
     padding: '3px 8px',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -68,7 +68,7 @@ const SubmittedTable = ({ title, onRowClick, filterQry }) => {
           .then((res) => {
             window.open(res?.url, '_blank');
           })
-          .catch(e =>{
+          .catch(e => {
             enqueueSnackbar(e, {
               anchorOrigin: {
                 vertical: 'top',
@@ -144,7 +144,7 @@ const SubmittedTable = ({ title, onRowClick, filterQry }) => {
           setCellHeaderProps: () => ({
             align: 'right',
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
     ]

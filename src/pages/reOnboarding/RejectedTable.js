@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: '29px',
     padding: '3px 8px',
     fontSize: '13px',
-    fontWeight: '600',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -68,7 +68,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
           .then((res) => {
             window.open(res?.url, '_blank');
           })
-          .catch(e =>{
+          .catch(e => {
             enqueueSnackbar(e, {
               anchorOrigin: {
                 vertical: 'top',
@@ -122,7 +122,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
           customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
         }
       },
-      
+
       {
         label: 'New Product Type',
         name: 'new_product_name',
@@ -154,7 +154,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
           setCellHeaderProps: () => ({
             align: 'right',
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
       {
@@ -169,7 +169,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
           setCellProps: () => ({
             align: 'right',
           }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
+          customBodyRender: value => <Currency value={value} />
         }
       },
     ]

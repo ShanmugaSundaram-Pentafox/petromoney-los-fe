@@ -75,7 +75,7 @@ const ReactTable = ({
                     fontSize="xs"
                     mb={10}
                     verticalSpacing="xs"
-                    sx={{ ...styles }}
+                    style={{ ...styles }}
                 >
                     <Table.Tbody>
                         {
@@ -106,7 +106,7 @@ const ReactTable = ({
                         fontSize="xs"
                         mb={10}
                         verticalSpacing="xs"
-                        sx={{ ...styles }}
+                        style={{ ...styles }}
                     >
                         <Table.Thead style={{ backgroundColor: 'rgba(228, 237, 253, 1)' }}>
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -151,7 +151,7 @@ const ReactTable = ({
             </Paper>
             <Box
                 mt="md"
-                sx={{
+                style={{
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
@@ -162,8 +162,8 @@ const ReactTable = ({
                         {totalNoOfPages ? (
                             <>
                                 <Box>
-                                    <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
-                                        <Text size="xs" sx={{ color: "rgb(0,0,0,0.5)" }}>
+                                    <Box style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                                        <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                             <strong>{`Showing Page ${page} - ${totalNoOfPages}`}</strong>
                                         </Text>
                                         {/* {totalNoOfRecords > 10 ?
@@ -190,7 +190,7 @@ const ReactTable = ({
                                         } */}
                                     </Box>
                                 </Box>
-                                <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
+                                <Box style={{ display: "flex", gap: 10, alignItems: "center" }}>
                                     {page != 1 && (
                                         <ActionIcon variant="light" onClick={() => setPage(1)}>
                                             <IconChevronsLeft size={16} />
@@ -198,21 +198,21 @@ const ReactTable = ({
                                     )}
                                     {page != 1 && (
                                         <ActionIcon variant="light" onClick={() => setPage(page - 1)}>
-                                            <Text size="xs" sx={{ color: "rgb(0,0,0,0.5)" }}>
+                                            <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                                 {page - 1}
                                             </Text>
                                         </ActionIcon>
                                     )}
                                     {page >= 1 && (
                                         <ActionIcon variant="light" color="blue">
-                                            <Text size="xs" sx={{ color: "rgb(0,0,0,0.5)" }}>
+                                            <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                                 {page}
                                             </Text>
                                         </ActionIcon>
                                     )}
                                     {totalNoOfPages != 1 && totalNoOfPages != page && (
                                         <ActionIcon variant='light' onClick={() => setPage(page + 1)}>
-                                            <Text size='xs' sx={{ color: 'rgb(0,0,0,0.5)' }}>
+                                            <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
                                                 {page + 1}
                                             </Text>
                                         </ActionIcon>
@@ -224,7 +224,7 @@ const ReactTable = ({
                                     )}
                                     {totalNoOfRecords ? (
                                         <Box>
-                                            <Text size="xs" sx={{ color: "rgb(0,0,0,0.5)" }}>
+                                            <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                                 {totalNoOfRecords} Records
                                             </Text>
                                         </Box>
@@ -236,12 +236,12 @@ const ReactTable = ({
                     :
                     <>
                         <Box>
-                            <Text size="xs" sx={{ color: "rgb(0,0,0,0.5)" }}>
+                            <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                 <strong>{`Showing Page ${table.getState().pagination.pageIndex + 1
                                     } - ${table.getPageCount()}`}</strong>
                             </Text>
                         </Box>
-                        <Box sx={{ display: "flex", gap: 10, alignItems: "center" }}>
+                        <Box style={{ display: "flex", gap: 10, alignItems: "center" }}>
                             {table.getState().pagination.pageIndex != 0 && (
                                 <ActionIcon
                                     variant="light"
@@ -255,14 +255,14 @@ const ReactTable = ({
                                     variant="light"
                                     onClick={() => table.previousPage()}
                                 >
-                                    <Text size="xs" sx={{ color: "rgb(0,0,0,0.5)" }}>
+                                    <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                         {table.getState().pagination.pageIndex}
                                     </Text>
                                 </ActionIcon>
                             )}
                             {table.getState().pagination.pageIndex >= 0 && (
                                 <ActionIcon variant="light" color="blue">
-                                    <Text size="xs" sx={{ color: "rgb(0,0,0,0.5)" }}>
+                                    <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                         {table.getState().pagination.pageIndex + 1}
                                     </Text>
                                 </ActionIcon>
@@ -271,7 +271,7 @@ const ReactTable = ({
                                 table.getPageCount() !=
                                 table.getState().pagination.pageIndex + 1 && (
                                     <ActionIcon variant="light" onClick={() => table.nextPage()}>
-                                        <Text size="xs" sx={{ color: "rgb(0,0,0,0.5)" }}>
+                                        <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                             {table.getState().pagination.pageIndex + 2}
                                         </Text>
                                     </ActionIcon>
@@ -288,7 +288,7 @@ const ReactTable = ({
                                 )}
                             {data?.length ? (
                                 <Box>
-                                    <Text size="xs" sx={{ color: "rgb(0,0,0,0.5)" }}>
+                                    <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                         {data?.length} Records
                                     </Text>
                                 </Box>

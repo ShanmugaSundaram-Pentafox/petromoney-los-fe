@@ -230,7 +230,9 @@ export const rulesForUserRoles = {
       rulesList.loan_approval,
       rulesList.pre_submit_view,
       rulesList.dealership_view,
+      rulesList.credit_refresh,
       rulesList.dealership_edit,
+      rulesList.credit_refresh,
     ]
   },
   SALES_HEAD_STATE: {

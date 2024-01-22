@@ -1,23 +1,27 @@
 import { ActionIcon, Box, Paper, ScrollArea, Skeleton, Table, Text } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconChevronsRight } from "@tabler/icons-react";
-import { IconChevronsLeft } from "@tabler/icons-react";
+import { IconChevronsRight, IconChevronsLeft } from "@tabler/icons-react";
 import { rankItem } from "@tanstack/match-sorter-utils";
 import {
+    flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    getFacetedUniqueValues,
+    getFacetedRowModel,
     useReactTable
 } from "@tanstack/react-table";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // render the table view 
 // using the mantine and react table.
 const ReactTable = ({
-    rowData,
+    rowData = [],
     columnData,
     onRowClick = () => null,
+    setFilterHeader,
+    filterHeader,
     search,
     setSearch,
     allowSorting = false,
@@ -28,12 +32,13 @@ const ReactTable = ({
     totalNoOfRecords,
     totalNoOfPages,
     sorting,
-    setSorting,
+    setSortingValue,
     apiSorting = false,
     isSortingRemoval = true,
     styles,
 }) => {
     const [data, setData] = useState([]);
+    const [columnFilter, setColumnFilter] = useState([]);
     const [debounce] = useDebouncedValue(search, 400);
 
     const fuzzyFilter = (row, columnId, value, addMeta) => {
@@ -44,7 +49,6 @@ const ReactTable = ({
         return itemRank.passed;
     };
 
-
     useEffect(() => {
         setData([...rowData]);
     }, [rowData]);
@@ -52,20 +56,41 @@ const ReactTable = ({
     const table = useReactTable({
         data,
         columns: columnData,
+        filterFns: {
+            fuzzy: fuzzyFilter,
+        },
         state: {
             globalFilter: debounce,
             sorting: sorting,
+            columnFilters: columnFilter,
         },
+        onColumnFiltersChange: setColumnFilter,
         onGlobalFilterChange: setSearch,
         manualSorting: apiSorting ? true : false,
-        onSortingChange: setSorting,
+        onSortingChange: setSortingValue,
         globalFilterFn: fuzzyFilter,
         getSortedRowModel: getSortedRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
+        getFacetedUniqueValues: getFacetedUniqueValues(),
+        getFacetedRowModel: getFacetedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         enableSortingRemoval: isSortingRemoval,
     });
+
+    useEffect(() => {
+        if (rowData?.length) {
+            setFilterHeader(table);
+        }
+    }, [rowData])
+
+    useEffect(() => {
+        if (table.getState().columnFilter?.[0]?.id) {
+            if (table.getState().sorting?.[0]?.id) {
+                table.setSorting([{ id: columnFilter?.[0]?.id, desc: false }])
+            }
+        }
+    }, [table.getState().columnFilter?.[0]?.id])
 
     if (loading) {
         return (
@@ -99,16 +124,15 @@ const ReactTable = ({
 
     return (
         <>
-            <Paper mt={10}>
+            <Paper>
                 <ScrollArea>
                     <Table
                         highlightOnHover
-                        fontSize="xs"
                         mb={10}
                         verticalSpacing="xs"
                         style={{ ...styles }}
                     >
-                        <Table.Thead style={{ backgroundColor: 'rgba(228, 237, 253, 1)' }}>
+                        <Table.Thead style={{ backgroundColor: 'rgba(228, 237, 253, 1)', fontSize: '12px' }}>
                             {table.getHeaderGroups().map((headerGroup) => (
                                 <Table.Tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header, index) => (
@@ -124,13 +148,14 @@ const ReactTable = ({
                                                         desc: " 🔽",
                                                     }[header.column.getIsSorted()] ?? null}
                                                 </div>
+
                                             )}
                                         </Table.Th>
                                     ))}
                                 </Table.Tr>
                             ))}
                         </Table.Thead>
-                        <Table.Tbody>
+                        <Table.Tbody style={{ fontSize: '12px' }}>
                             {
                                 table.getRowModel().rows.map((row) => (
                                     <Table.Tr style={{ cursor: typeof onRowClick === 'function' ? 'pointer' : 'default' }} onClick={() => { typeof onRowClick === 'function' && onRowClick(row?.original) }} key={row.id}>
@@ -155,6 +180,7 @@ const ReactTable = ({
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    padding: '0 12px 12px 12px'
                 }}
             >
                 {useApiPagination ?
@@ -289,7 +315,7 @@ const ReactTable = ({
                             {data?.length ? (
                                 <Box>
                                     <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
-                                        {data?.length} Records
+                                        {table.getPrePaginationRowModel().rows.length} Records
                                     </Text>
                                 </Box>
                             ) : null}

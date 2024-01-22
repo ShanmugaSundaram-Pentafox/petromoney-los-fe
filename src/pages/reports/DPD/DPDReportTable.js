@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
     display: 'inline-block',
     borderRadius: '29px',
     padding: '3px 8px',
-    fontSize: '13px',
+    fontSize: '12px',
     fontWeight: '600',
     minWidth: '30px',
     textAlign: 'center',

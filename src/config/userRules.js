@@ -231,6 +231,7 @@ export const rulesForUserRoles = {
       rulesList.pre_submit_view,
       rulesList.dealership_view,
       rulesList.dealership_edit,
+      rulesList.credit_refresh,
     ]
   },
   SALES_HEAD_STATE: {

@@ -79,14 +79,6 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
         }
       },
       {
-        label: 'Sales Area',
-        name: 'sales_area',
-        options: {
-          filter: true,
-          sort: true
-        }
-      },
-      {
         label: 'Region',
         name: 'region',
         options: {

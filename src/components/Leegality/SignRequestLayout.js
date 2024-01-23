@@ -389,6 +389,7 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
                               applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')}
                               guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')}
                               productId={productId}
+                              type={type}
                             />
                           )
                         }

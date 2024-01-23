@@ -158,9 +158,9 @@ const ReactTable = ({
                         <Table.Tbody style={{ fontSize: '12px' }}>
                             {
                                 table.getRowModel().rows.map((row) => (
-                                    <Table.Tr style={{ cursor: typeof onRowClick === 'function' ? 'pointer' : 'default' }} onClick={() => { typeof onRowClick === 'function' && onRowClick(row?.original) }} key={row.id}>
+                                    <Table.Tr style={{ cursor: typeof onRowClick === 'function' ? 'pointer' : 'default' }} key={row.id}>
                                         {row.getVisibleCells().map((cell) => (
-                                            <Table.Td key={cell.id}>
+                                            <Table.Td key={cell.id} onClick={(event) => { ((typeof onRowClick === 'function') && (cell?.column?.id != 'action')) && (onRowClick(row?.original), event.stopPropagation()) }}>
                                                 {flexRender(
                                                     cell.column.columnDef.cell,
                                                     cell.getContext()

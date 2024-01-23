@@ -100,7 +100,7 @@ const DealershipDetails = ({ currentUser, match }) => {
     },
     {
       id: action_id?.dealershipNavigation?.docChecklist,
-      name: 'Document Checklist',
+      name: 'Documents',
     },
     {
       id: action_id?.dealershipNavigation?.transporters,
@@ -203,9 +203,9 @@ const DealershipDetails = ({ currentUser, match }) => {
               <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
           }
         </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Document Checklist')}>
+        <TabPanel activeTab={activeTab} index={tabs.indexOf('Documents')}>
           {
-            activeTab == tabs.indexOf('Document Checklist') &&
+            activeTab == tabs.indexOf('Documents') &&
               <DealershipDoc id={id} currentUser={currentUser} />
           }
         </TabPanel>

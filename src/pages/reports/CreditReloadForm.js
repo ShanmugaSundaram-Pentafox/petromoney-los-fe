@@ -1,5 +1,8 @@
 import { Typography, Box, Grid, Button, Divider, FormHelperText } from '@material-ui/core';
+import Checkbox from '@material-ui/core/Checkbox';
 import { green } from '@material-ui/core/colors';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CloseIcon from '@material-ui/icons/Close';
 import { Alert } from '@material-ui/lab';
@@ -21,6 +24,7 @@ import { addCreditReport } from '../../services/creditreport.service';
 import { getCreditReloadLimitById } from '../../services/dealerships.service';
 import { getBankDetailsbyID } from '../../services/PDReport.services';
 import { isAllowed } from '../../utils/cerbos';
+
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
     position: 'relative',
@@ -100,6 +104,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [expressCRR, setExpressCRR] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [bankId, setBankId] = useState();
   const { data: bankData = [] } = useQuery(['bank-data', selectedValue], () => getBankDetailsbyID(selectedValue), {
@@ -150,6 +155,8 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
     }),
     onSubmit: (values) => {
       const d = { ...values, request_source: 'mdm', bank_id: bankId?.value, repayment_made: repaymentType?.value }
+      // handling the express crr
+      if (expressCRR) d.reload_type = 'express';
       const formData = new FormData();
       Object.keys(d).forEach((key) => {
         formData.append(key, d[key]);
@@ -301,11 +308,24 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                             <div>
                               <h3 style={{ color: 'black' }}>Available Limit: < Currency value={creditLimit?.available_limit} /></h3>
                               {
-                                typeof(creditLimit?.available_tranche_limit) == 'number' &&
+                                typeof (creditLimit?.available_tranche_limit) == 'number' &&
                                   <h3 style={{ color: 'black', marginTop: 10 }}>Available tranche count: {creditLimit?.available_tranche_limit}</h3>
                               }
                             </div>
                           </FormHelperText>
+                        </Grid>
+                      </Grid>
+                      <Grid container spacing={2}>
+                        <Grid item md={8}>
+                          <div style={{ display: 'flex', alignItems: 'center', }}>
+                            <label>Do you need to proceed with express CRR</label>
+                            <Checkbox
+                              color='blue'
+                              checked={expressCRR}
+                              onChange={(e) => setExpressCRR(e.target.checked)}
+                              icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
+                              checkedIcon={<CheckBoxIcon fontSize="small" />} />
+                          </div>
                         </Grid>
                       </Grid>
                       <Grid container spacing={2} style={{ marginTop: 11 }}>

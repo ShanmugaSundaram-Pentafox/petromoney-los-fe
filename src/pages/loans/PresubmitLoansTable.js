@@ -270,6 +270,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
             variant: 'success',
           });
           setDocModal({});
+          setChecklistData([]);
         })
         .catch(e => {
           console.log(e);
@@ -338,7 +339,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
         aria-describedby="spring-modal-description"
         className={classes.modal}
         open={docModal?.modal}
-        onClose={() => setDocModal({})}
+        onClose={() => { setDocModal({}); setChecklistData([]); }}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -350,7 +351,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
             <div>
               <div className={classes.header} style={{ height: '30px' }}>
                 <h2 id="modal-title">Document Checklist</h2>
-                <IconButton style={{ padding: '8px' }} onClick={() => setDocModal({})}>
+                <IconButton style={{ padding: '8px' }} onClick={() => { setDocModal({}); setChecklistData([]); }}>
                   <Clear />
                 </IconButton>
               </div>
@@ -386,7 +387,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
                     {Object.entries(item)?.[0]?.[0] == 'Other documents' ? (
                       <div className={classes.header} style={{ marginLeft: '10px' }}>
                         <div className={classes.content} style={{ alignItems: 'center' }}>
-                          <TextInput onChange={(e) => setNewValue(e.target.value)} value={newValue} />
+                          <TextInput onChange={(e) => setNewValue(e.target.value)} value={newValue} placeholder={'Doc Name'} />
                           <Tooltip title={'Click to add'}>
                             <Add style={{ color: 'green', cursor: 'pointer' }} onClick={() => handleOthersAddition(index, item)} />
                           </Tooltip>

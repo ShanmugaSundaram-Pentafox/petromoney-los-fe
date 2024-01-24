@@ -103,6 +103,14 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
 
       },
       {
+        label: 'Field Officer',
+        name: 'field_officer',
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
         label: 'Req. Amount',
         name: 'amount_requested',
         options: {

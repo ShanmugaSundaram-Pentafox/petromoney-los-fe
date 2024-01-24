@@ -121,6 +121,14 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
 
       },
       {
+        label: 'Field Officer',
+        name: 'field_officer',
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
         label: 'Req. Amount',
         name: 'amount_requested',
         options: {
@@ -189,7 +197,7 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
       }
     ]
   }, [loans]);
- 
+
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',

@@ -124,6 +124,14 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
 
       },
       {
+        label: 'Field Officer',
+        name: 'field_officer',
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
         label: 'Sanctioned Amount',
         name: 'amount_approved',
         options: {

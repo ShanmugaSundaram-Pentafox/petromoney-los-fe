@@ -114,6 +114,14 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
         }
       },
       {
+        label: 'Field Officer',
+        name: 'field_officer',
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
         label: 'Approved Amount',
         name: 'amount_approved',
         options: {

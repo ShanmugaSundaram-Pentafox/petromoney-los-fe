@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
   const [dealershipId, setDealershipId] = useState();
@@ -65,7 +65,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
         setLoading(false);
       })
   }, [filterQry])
-  
+
   // useMount(() => {
   //   if (!loans || !loans.length) {
   //     setLoading(true);
@@ -121,6 +121,14 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
 
+      },
+      {
+        label: 'Field Officer',
+        name: 'field_officer',
+        options: {
+          filter: true,
+          sort: true,
+        }
       },
       {
         label: 'Req. Amount',

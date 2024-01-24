@@ -152,6 +152,14 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
 
       },
       {
+        label: 'Field Officer',
+        name: 'field_officer',
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
         label: 'Approved Amount',
         name: 'amount_approved',
         options: {

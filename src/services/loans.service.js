@@ -7,11 +7,11 @@ export const getLoanStats = (qryStr = {}) => {
     const { region, from, to, products, zone } = qryStr;
     let qry = []
     let apiUrl = 'metrics/loan/stats';
-    if (zone && zone !=='0') qry.push(`zone=${zone}`)
-    if (region && region !=='0') qry.push(`region=${region}`)
-    if (products && products !=='0') qry.push(`product=${products}`)
+    if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (region && region !== '0') qry.push(`region=${region}`)
+    if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
-    if(qry.length) apiUrl += '?' + qry.join('&')
+    if (qry.length) apiUrl += '?' + qry.join('&')
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -45,7 +45,7 @@ export const getAllLoans = () => {
 export const getLoanBookData = (view) => {
   return new Promise((resolve, reject) => {
     let apiUrl = URL.loanBook
-    if(view === 'External') apiUrl += '?external=1'
+    if (view === 'External') apiUrl += '?external=1'
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -81,11 +81,11 @@ export const getLoansByStatus = (status, filterQry) => {
     const { region, from, to, products, zone } = filterQry;
     let qry = []
     let apiUrl = `${URL.loans}?status=${status}`;
-    if (zone && zone !=='0') qry.push(`zone=${zone}`)
-    if (region && region !=='0') qry.push(`region=${region}`)
-    if (products && products !=='0') qry.push(`product=${products}`)
+    if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (region && region !== '0') qry.push(`region=${region}`)
+    if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
-    if(qry.length) apiUrl += '&'+ qry.join('&')
+    if (qry.length) apiUrl += '&' + qry.join('&')
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
@@ -132,7 +132,7 @@ export const getLoanDocumentHistoryById = (loanId, type) => {
   });
 }
 
-export const updateLoanStatusByLoanId = (loanId,body) => {
+export const updateLoanStatusByLoanId = (loanId, body) => {
   return new Promise((resolve, reject) => {
     apiCall(`loan/${loanId}/change-status`, {
       method: 'PUT',
@@ -225,8 +225,8 @@ export const getPotentialOpportunity = (view, body) => {
   let qry = []
   let apiUrl = 'potential/opportunities';
   qry.push(`conversion_ratio=${body?.conversion_ratio || 30}&ticket_size=${body?.ticket_size || 15}`)
-  if(view) qry.push(`view=${view}`)
-  if(qry.length) apiUrl += '?' + qry.join('&')
+  if (view) qry.push(`view=${view}`)
+  if (qry.length) apiUrl += '?' + qry.join('&')
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
@@ -240,4 +240,39 @@ export const getPotentialOpportunity = (view, body) => {
         reject(e.message);
       })
   });
+}
+
+export const getDocumentsChecklistById = ({ id }) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`pre_submit/${id}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e?.message || e);
+      })
+  })
+}
+
+export const updateDocumentChecklistById = ({ id, data }) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`pre_submit/${id}`, {
+      method: 'POST',
+      body: data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e?.message || e);
+      })
+  })
 }

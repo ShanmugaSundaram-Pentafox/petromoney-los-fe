@@ -94,6 +94,13 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 4,
     marginRight: 4,
     marginTop: 2
+  },
+  alert: {
+    display: 'flex',
+    flexDirection: 'column',
+    border: '1px solid #ccc',
+    padding: 4,
+    borderRadius: 4,
   }
 }));
 const CreditReloadForm = ({ callback, currentUser, view }) => {
@@ -317,14 +324,19 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                       </Grid>
                       <Grid container spacing={2}>
                         <Grid item md={8}>
-                          <div style={{ display: 'flex', alignItems: 'center', }}>
-                            <label>Do you need to proceed with express CRR</label>
+                          <div>
+                            <label>Do you want proceed with express reload</label>
                             <Checkbox
                               color='blue'
                               checked={expressCRR}
                               onChange={(e) => setExpressCRR(e.target.checked)}
                               icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                              checkedIcon={<CheckBoxIcon fontSize="small" />} />
+                              checkedIcon={<CheckBoxIcon fontSize="small" />}
+                            />
+                          </div>
+                          <div className={classes.alert}>
+                            <span style={{ fontWeight: 600 }}>Note</span>
+                            <span style={{ fontSize: 11, color: 'gray' }}>Express Reload will charge Rs. 590 (including GST) will be deducted, and your request will be processed.</span>
                           </div>
                         </Grid>
                       </Grid>

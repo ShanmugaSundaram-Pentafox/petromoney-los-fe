@@ -119,6 +119,14 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick, fil
 
       },
       {
+        label: 'Field Officer',
+        name: 'field_officer',
+        options: {
+          filter: true,
+          sort: true,
+        }
+      },
+      {
         label: 'Approved Amount',
         name: 'amount_approved',
         options: {

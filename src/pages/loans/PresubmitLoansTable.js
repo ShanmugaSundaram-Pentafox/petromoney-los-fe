@@ -2,7 +2,7 @@ import { Drawer, Fade, IconButton, Modal, Tooltip, Backdrop, Checkbox } from '@m
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import { Clear } from '@material-ui/icons';
+import { Add, Clear } from '@material-ui/icons';
 import LinkIcon from '@material-ui/icons/Link';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -15,6 +15,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../components/Number/Currency';
+import TextInput from '../../components/TextInput/TextInput';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
@@ -77,6 +78,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
   const [showPanel, setShowPanel] = useState({ status: false, data: '' });
   const [docModal, setDocModal] = useState({ modal: false });
   const [checklistData, setChecklistData] = useState([]);
+  const [newValue, setNewValue] = useState('');
   const { enqueueSnackbar } = useSnackbar();
 
   // getting the list of doc based on the id
@@ -87,10 +89,6 @@ const PresubmitLoansTable = ({ currentUser }) => {
     onSuccess: (data) => {
       setChecklistData(data);
     },
-    select: (data) => {
-      // sorting the data
-      return data.sort((a, b) => (a.document_checklist_id > b.document_checklist_id) ? 1 : ((b.document_checklist_id > a.document_checklist_id) ? -1 : 0));
-    }
   })
 
   useMount(() => {
@@ -242,22 +240,18 @@ const PresubmitLoansTable = ({ currentUser }) => {
   };
 
   // used to check and uncheck the checkbox
-  const handleChecked = (i, data) => {
+  const handleChecked = ({ index, insideIndex, title, value, key }) => {
     const result = [...checklistData];
-    result.splice(i, 1, { ...data, is_verified: data?.is_verified == 1 ? 0 : 1 });
+    const changedData = result?.[index]?.[title];
+    changedData.splice(insideIndex, 1, { [key]: value == 1 ? 0 : 1 });
     setChecklistData(result);
   }
 
   // used to update the checkbox
   const handleDocChecklistUpdate = () => {
-    let arr = [];
-    // used to get the changed the data
-    checklistData.forEach((i, index) => {
-      i !== getDocChecklistQuery?.data?.[index] && arr.push(i);
-    })
-    if (!arr?.length) {
+    if (!checklistData?.length) {
       // if there is no data update it will throw warning
-      enqueueSnackbar('Nothing to update', {
+      enqueueSnackbar('Something went wrong', {
         anchorOrigin: {
           vertical: 'top',
           horizontal: 'right',
@@ -266,7 +260,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
       });
     } else {
       setDocModal((old) => ({ ...old, isLoading: true }))
-      updateDocumentChecklistById({ id: docModal?.id, data: arr })
+      updateDocumentChecklistById({ id: docModal?.id, data: checklistData })
         .then(res => {
           enqueueSnackbar('Updated Successfully', {
             anchorOrigin: {
@@ -291,6 +285,26 @@ const PresubmitLoansTable = ({ currentUser }) => {
           setDocModal((old) => ({ ...old, isLoading: false }))
         })
     }
+  }
+
+  // used to handle the others addition in checklist
+  const handleOthersAddition = (index, arr) => {
+    if (newValue?.length) {
+      let result = [...checklistData];
+      let othersArr = result?.[index]?.['Other documents'];
+      othersArr.push({ [newValue]: 0 });
+      result.splice(index, 1, { 'Other documents': othersArr });
+      setChecklistData(result);
+      setNewValue('');
+      return;
+    }
+    enqueueSnackbar('Please enter value to add', {
+      anchorOrigin: {
+        vertical: 'top',
+        horizontal: 'right',
+      },
+      variant: 'warning',
+    });
   }
 
   return (
@@ -343,22 +357,42 @@ const PresubmitLoansTable = ({ currentUser }) => {
               <p id="modal-description">List of documents that need to collect</p>
             </div>
             <div style={{ marginTop: '10px' }} className={classes.outerContent}>
-              {getDocChecklistQuery?.data?.length
-                ? getDocChecklistQuery?.data?.map((item, index) => (
-                  <div key={index} className={classes.header}>
-                    <div className={classes.content}>
-                      <p>{item?.document_checklist_id + '). '}</p>
-                      <p style={{ maxWidth: '400px' }}>{item?.document_title}</p>
+              {checklistData?.length
+                ? checklistData?.map((item, index) => (
+                  <div key={item}>
+                    <div className={classes.content} style={{ margin: '10px 0', fontWeight: '700', fontSize: '14px' }}>
+                      <p>{(index + 1) + '). '}</p>
+                      <div>{Object.entries(item)?.[0]?.[0]}</div>
                     </div>
-                    <div>
-                      <Checkbox
-                        checked={Boolean(checklistData?.find(val => val?.document_checklist_id === item?.document_checklist_id)?.is_verified)}
-                        size='small'
-                        color="primary"
-                        inputProps={{ 'aria-label': 'secondary checkbox' }}
-                        onChange={() => handleChecked(index, checklistData?.find(val => val?.document_checklist_id === item?.document_checklist_id))}
-                      />
-                    </div>
+                    {Object.entries(item)?.[0]?.[1]?.map((value, i) => (
+                      <>
+                        <div key={i} className={classes.header} style={{ marginLeft: '10px' }}>
+                          <div className={classes.content}>
+                            <p>{(index + 1) + '.' + (i + 1) + '). '}</p>
+                            <p style={{ maxWidth: '400px' }}>{Object.entries(value)?.[0]?.[0]}</p>
+                          </div>
+                          <div>
+                            <Checkbox
+                              checked={Boolean(Object.entries(value)?.[0]?.[1])}
+                              size='small'
+                              color="primary"
+                              inputProps={{ 'aria-label': 'secondary checkbox' }}
+                              onChange={() => handleChecked({ index: index, insideIndex: i, title: Object.entries(item)?.[0]?.[0], value: Object.entries(value)?.[0]?.[1], key: Object.entries(value)?.[0]?.[0] })}
+                            />
+                          </div>
+                        </div>
+                      </>
+                    ))}
+                    {Object.entries(item)?.[0]?.[0] == 'Other documents' ? (
+                      <div className={classes.header} style={{ marginLeft: '10px' }}>
+                        <div className={classes.content} style={{ alignItems: 'center' }}>
+                          <TextInput onChange={(e) => setNewValue(e.target.value)} value={newValue} />
+                          <Tooltip title={'Click to add'}>
+                            <Add style={{ color: 'green', cursor: 'pointer' }} onClick={() => handleOthersAddition(index, item)} />
+                          </Tooltip>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 )) : getDocChecklistQuery?.isLoading ? <center><CircularProgress /></center> : <center>No Data to display</center>}
             </div>

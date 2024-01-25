@@ -145,6 +145,9 @@ const CreditNewRequestTable = ({ currentUser }) => {
       if (row[12]) {
         return { style: { backgroundColor: '#ffec9bba' } }
       }
+      if (tableData?.data?.[dataIndex]?.reload_type === 'express') {
+        return { style: { backgroundColor: '#ff21161a' } }
+      }
     },
     customToolbar: () => {
       return (
@@ -171,6 +174,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
       }
     },
   };
+  console.log(filterQry);
   return (
     <div style={{ marginTop: 20 }}>
       {loading ? (
@@ -179,7 +183,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
         </Grid>
       ) : (
         <>
-          <CreditReload refetch={refetch} currentUser={currentUser} filterQry={setFilterQry} filterList={['zone', 'region', 'product', 'period']} filterType={'new'} stats={tableData?.stats} />
+          <CreditReload refetch={refetch} currentUser={currentUser} filterQry={setFilterQry} filterList={['zone', 'region', 'product', 'type', 'period']} filterType={'new'} stats={tableData?.stats} />
           <MUIDataTable
             title={'New Request'}
             columns={columns}

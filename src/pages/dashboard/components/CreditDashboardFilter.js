@@ -20,8 +20,9 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
-  const [selectedPeriodType, setSelectedPeriodType] = useState(filterType == 'processed' ? 'D' : 'W');
-  const [selectedPeriod, setSelectedPeriod] = useState({ from: new Date(), to: new Date() });
+  const [selectedType, setSelectedType] = useState(null)
+  const [selectedPeriodType, setSelectedPeriodType] = useState(filterType == 'processed' ? 'D' : 'UTD');
+  const [selectedPeriod, setSelectedPeriod] = useState(filterType == 'processed' ? { from: new Date(), to: new Date() } : null);
   const [showPicker, setShowPicker] = useState();
   const [selectedDealership, setSelectedDealership] = useState({});
   const { enqueueSnackbar } = useSnackbar();
@@ -57,6 +58,9 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
         from: new Date(new Date().getFullYear(), new Date().getMonth()),
         to: new Date(),
       })
+      break;
+    case 'UTD':
+      setSelectedPeriod({})
       break;
     case 'Custom':
       setShowPicker(event.currentTarget)
@@ -108,12 +112,15 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
       qry.from = format(selectedPeriod?.from || new Date(), 'yyyy-MM-dd');
       qry.to = format(selectedPeriod?.to || new Date(), 'yyyy-MM-dd');
     }
+    if (selectedType) {
+      qry.type = selectedType
+    }
     if (selectedDealership?.id) {
       qry.dealership_id = selectedDealership?.id
     }
     filterQry(qry)
 
-  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedDealership?.id])
+  }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedType, selectedDealership?.id])
 
   const onDateRangeClose = () => {
     setSelectedPeriod({
@@ -177,6 +184,17 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
               <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
           }
           {
+            filters.includes('type') &&
+              <Box style={{ marginRight: '10px' }}>
+                <label style={{ color: 'hsl(0,0%,75%)' }}>Type</label>
+                <div className={classes.filterWrapper}>
+                  <div role="button" className={`${classes.filterItem} ${selectedType === null && 'active'}`} onClick={() => setSelectedType(null)} onKeyDown>All</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedType === 'regular' && 'active'}`} onClick={() => setSelectedType('regular')} onKeyDown>Regular</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedType === 'express' && 'active'}`} onClick={() => setSelectedType('express')} onKeyDown>Express</div>
+                </div>
+              </Box>
+          }
+          {
             filters.includes('period') &&
               <Box>
                 <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
@@ -184,6 +202,9 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                  <Tooltip title='Up to Date'>
+                    <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
+                  </Tooltip>
                   <Tooltip title='Choose custom dates'>
                     <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
                       {

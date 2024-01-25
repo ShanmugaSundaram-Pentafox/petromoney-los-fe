@@ -2,7 +2,6 @@ import { Paper, Grid } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/styles';
-import { format } from 'date-fns';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
@@ -88,15 +87,15 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
           display: false,
         }
       },
-      {
-        label: 'Submitted Date',
-        name: 'loan_application_submitted_date',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => format(new Date(value), 'dd-MMM-yyyy')
-        }
-      },
+      // {
+      //   label: 'Submitted Date',
+      //   name: 'loan_application_submitted_date',
+      //   options: {
+      //     filter: true,
+      //     sort: true,
+      //     customBodyRender: (value) => value ? format(new Date(value), 'dd-MMM-yyyy') : ''
+      //   }
+      // },
       {
         label: 'Region',
         name: 'region',

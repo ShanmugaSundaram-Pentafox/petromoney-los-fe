@@ -88,6 +88,11 @@ const BankingInputsTable = ({ data, header }) => {
                     <TableCell>Balance on 15th</TableCell>
                     <TableCell>Balance on 25th</TableCell>
                     <TableCell>Average Monthly Balance</TableCell>
+                    <TableCell>NO. OF DEBITS</TableCell>
+                    <TableCell>SUM OF DEBITS</TableCell>
+                    <TableCell>NO. OF CREDITS</TableCell>
+                    <TableCell>SUM OF CREDITS</TableCell>
+                    <TableCell>OMC TRANSACTION</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -128,6 +133,21 @@ const BankingInputsTable = ({ data, header }) => {
                           </TableCell>
                           <TableCell>
                             <Currency value={row?.avg_mon_bal} />
+                          </TableCell>
+                          <TableCell>
+                            <Currency value={row?.no_of_debits} />
+                          </TableCell>
+                          <TableCell>
+                            <Currency value={row?.sum_of_debits} />
+                          </TableCell>
+                          <TableCell>
+                            <Currency value={row?.no_of_debits} />
+                          </TableCell>
+                          <TableCell>
+                            <Currency value={row?.sum_of_debits} />
+                          </TableCell>
+                          <TableCell>
+                            <Currency value={row?.omc_transaction} />
                           </TableCell>
                         </TableRow>
                       );
@@ -173,6 +193,46 @@ const BankingInputsTable = ({ data, header }) => {
             No banking details found!
           </Typography>
         )}
+        {data?.banks_consolidated_transactions?.length ? (
+          <Table>
+            <TableHead>
+              <TableCell></TableCell>
+              <TableCell colSpan={4}>Consolidated banking</TableCell>
+            </TableHead>
+            <TableHead>
+              <TableCell>Months</TableCell>
+              <TableCell>NO. OF DEBITS</TableCell>
+              <TableCell>SUM OF DEBITS</TableCell>
+              <TableCell>NO. OF CREDITS</TableCell>
+              <TableCell>SUM OF CREDITS</TableCell>
+              <TableCell>OMC TRANSACTION</TableCell>
+            </TableHead>
+            <TableBody>
+              {data?.banks_consolidated_transactions?.map((item, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    {monthData.find((month) => {
+                      return month.value == item.month;
+                    })?.label}{' '} - {item.year}
+                  </TableCell>
+                  <TableCell>{item?.no_of_debits}</TableCell>
+                  <TableCell><Currency value={item?.sum_of_debits} /></TableCell>
+                  <TableCell>{item?.no_of_credits}</TableCell>
+                  <TableCell><Currency value={item?.sum_of_credits} /></TableCell>
+                  <TableCell><Currency value={item?.omc_transaction} /></TableCell>
+                </TableRow>
+              ))}
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>{data?.banks_consolidated_aggregation?.[0]?.no_of_debits}</TableCell>
+                <TableCell><Currency value={data?.banks_consolidated_aggregation?.[0]?.sum_of_debits} /></TableCell>
+                <TableCell>{data?.banks_consolidated_aggregation?.[0]?.no_of_credits}</TableCell>
+                <TableCell><Currency value={data?.banks_consolidated_aggregation?.[0]?.sum_of_credits} /></TableCell>
+                <TableCell><Currency value={data?.banks_consolidated_aggregation?.[0]?.omc_transaction} /></TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        ) : null}
         {data?.bank_metadata?.length ? (
           <Table className={classes.tableStyle}>
             <TableHead>

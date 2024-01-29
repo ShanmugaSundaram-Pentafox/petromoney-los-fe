@@ -140,6 +140,7 @@ export const particulars = [
   { key: 'product', label: 'Product' },
   { key: 'fuel_credit_category', label: 'Fuel Credit Category' },
   { key: 'omc_name', label: 'OMC Name' },
+  { key: 'outlet_land_ownership', label: 'Outlet Land Ownership' },
   { key: 'loan_application_id', label: 'Loan Application ID' },
   { key: 'fuel_credit_amount_req', label: 'Fuel Credit Amount Required (Rs)' },
   { key: 'existing_exposure_with_petromoney', label: 'Existing exposure with PetroMoney (Rs)' },

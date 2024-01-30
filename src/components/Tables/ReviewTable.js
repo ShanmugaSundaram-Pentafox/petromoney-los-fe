@@ -13,6 +13,8 @@ import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import Currency from '../Number/Currency';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../ReactTable/DataTableViewer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -44,6 +46,7 @@ const useStyles = makeStyles(theme => ({
 const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
   const [loading, setLoading] = useState(false);
   const classes = useStyles();
+  const columnHelper = createColumnHelper();
 
   useEffect(() => {
     // if (!loans || !loans.length) {
@@ -58,92 +61,37 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
       })
     // }
   }, [filterQry]);
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
 
-      },
-      {
-        label: 'Type',
-        name: 'type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
-
-      },
-      {
-        label: 'Req. Amount',
-        name: 'amount_requested',
-        options: {
-          filter: false,
-          sort: true,
-          // setCellProps: () => ({
-          //   align: 'right',
-          // }),
-          customBodyRender: value => <Currency value={value} />
-        }
-      },
-      {
-        label: 'Req. Date',
-        name: 'modified_date',
-        options: {
-          filter: false,
-          sort: true,
-          // setCellProps: () => ({
-          //   align: 'left',
-          // }),
-          customBodyRender: value => {
-            return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-              {/* {value ? value : '-'} */}
-            </div>
-          }
-        }
-      },
-      {
-        label: 'Reviewer',
-        name: 'reviewer',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <>{value?.toUpperCase() || '-'}</>
-          }
-        }
-      }
-    ]
-  }, []);
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('type', {
+      header: 'Type',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }),
+    columnHelper.accessor('amount_requested', {
+      header: 'Req. Amount',
+      cell: (value) => <Currency value={value} />
+    }),
+    columnHelper.accessor('modified_date', {
+      header: 'Req. Date',
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+    }),
+    columnHelper.accessor('reviewer', {
+      header: 'Reviewer',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    })
+  ];
 
   const options = {
     // filterType: 'checkbox',
@@ -163,11 +111,11 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
     <div className={classes.root}>
       {
         Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
-            data={loans}
-            columns={columns}
-            options={options}
+          <DataTableViewer
+            rowData={loans}
+            column={column}
+            title={`${title} (${loans?.length})`}
+            onRowClick={(i) => onRowClick(i.dealership_id, i, 'loan_review')}
           />
         ) : (!loading && <Paper style={{ padding: 10 }} >No Pending loans for Review</Paper>)
       }

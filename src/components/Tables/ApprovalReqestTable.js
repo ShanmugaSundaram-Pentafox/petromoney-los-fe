@@ -17,6 +17,8 @@ import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 import { permissionCheck } from '../UserCan/UserCan';
+import { createColumnHelper } from '@tanstack/table-core';
+import DataTableViewer from '../ReactTable/DataTableViewer';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,6 +48,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {
+  const columnHelper = createColumnHelper();
   const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
@@ -66,161 +69,62 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
       })
   }, [filterQry])
 
-  // useMount(() => {
-  //   if (!loans || !loans.length) {
-  //     setLoading(true);
-  //     getLoansByStatus('loan_approval', filterQry)
-  //       .then(data => {
-  //         setLoansData('loan_approval', data);
-  //         setLoading(false);
-  //       })
-  //       .catch(e => {
-  //         setLoading(false);
-  //       })
-  //   }
-  // });
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Type',
-        name: 'type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
-
-      },
-      {
-        label: 'Req. Amount',
-        name: 'amount_requested',
-        options: {
-          filter: false,
-          sort: true,
-          // setCellProps: () => ({
-          //   align: 'right',
-          // }),
-          customBodyRender: value => <Currency value={value} />
-        }
-      },
-      {
-        label: 'Req. Date',
-        name: 'modified_date',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-              {/* {value ? value : '-'} */}
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('type', {
+      header: 'Type',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }),
+    columnHelper.accessor('amount_request', {
+      header: 'Req. Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('modified_date', {
+      header: 'Req. Amount',
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+    }),
+    columnHelper.accessor('reviewer', {
+      header: 'Reviewed By',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('approver', {
+      header: 'Approver',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('action', {
+      header: 'Document',
+      cell: ({ row }) => (
+        <Tooltip title="eSign Application">
+          <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(row?.['id']); setType('application'); setDealershipId(row?.dealership_id); setModalVisible(true); }}>
+            <div>
+              <ESignIcon width={24} />
             </div>
-          }
-        }
-      },
-      {
-        label: 'Reviewed by',
-        name: 'reviewer',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase() || '-'}</>
-          },
-        }
-      },
-      {
-        label: 'Approver',
-        name: 'approver',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase() || '-'}</>
-          },
-        }
-      },
-      {
-        label: 'Documents',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: false,
-          display: actionable ? true : 'excluded',
-          customBodyRender: (value, r) => {
-            return (
-              <Tooltip title="eSign Application">
-                <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
-                  <div>
-                    <ESignIcon width={24} />
-                  </div>
-                </IconButton>
-              </Tooltip>
-            )
-          }
-        }
-      }
-    ]
-  }, [loans]);
-
-  const options = {
-    // filterType: 'checkbox',
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 8) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'loan_approval')
-      }
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+          </IconButton>
+        </Tooltip>
+      )
+    }),
+  ]
 
   return (
     <div className={classes.root}>
       {
         Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
-            data={loans}
-            columns={columns}
-            options={options}
+          <DataTableViewer
+            column={column}
+            rowData={loans}
+            title={`${title} (${loans.length})`}
+            onRowClick={(e) => onRowClick(e.dealership_id, e, 'loan_approval')}
           />
         ) : (!loading && <Paper style={{ padding: 10 }} >No Pending Initial Approvals</Paper>)
       }

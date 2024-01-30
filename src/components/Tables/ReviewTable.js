@@ -79,6 +79,9 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
     }),
+    columnHelper.accessor('field_officer', {
+      header: 'Field Officer',
+    }),
     columnHelper.accessor('amount_requested', {
       header: 'Req. Amount',
       cell: (value) => <Currency value={value} />

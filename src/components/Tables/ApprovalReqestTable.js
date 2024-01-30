@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
-// import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
@@ -85,6 +84,9 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
     columnHelper.accessor('region', {
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }),
+    columnHelper.accessor('field_officer', {
+      header: 'Field Officer',
     }),
     columnHelper.accessor('amount_request', {
       header: 'Req. Amount',

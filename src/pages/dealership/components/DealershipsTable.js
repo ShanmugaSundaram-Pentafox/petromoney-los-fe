@@ -79,6 +79,24 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
         }
       },
       {
+        label: 'Sales Area',
+        name: 'sales_area',
+        options: {
+          filter: true,
+          sort: true,
+          display: false,
+        }
+      },
+      // {
+      //   label: 'Submitted Date',
+      //   name: 'loan_application_submitted_date',
+      //   options: {
+      //     filter: true,
+      //     sort: true,
+      //     customBodyRender: (value) => value ? format(new Date(value), 'dd-MMM-yyyy') : ''
+      //   }
+      // },
+      {
         label: 'Region',
         name: 'region',
         options: {

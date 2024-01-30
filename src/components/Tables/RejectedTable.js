@@ -76,6 +76,9 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
       header: 'Region',
       cell: (value) => <>{value.getValue() ? value.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>,
     }),
+    columnHelper.accessor('field_officer', {
+      header: 'Field Officer',
+    }),
     columnHelper.accessor('amount_approved', {
       header: 'Approved Amount',
       cell: (value) => <Currency value={value?.getValue()} />

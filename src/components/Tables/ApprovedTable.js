@@ -127,6 +127,9 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
     }),
+    columnHelper.accessor('field_officer', {
+      header: 'Field Officer',
+    }),
     columnHelper.accessor('approved_amount', {
       header: 'Approved Amount',
       cell: (value) => <Currency value={value.getValue()} />

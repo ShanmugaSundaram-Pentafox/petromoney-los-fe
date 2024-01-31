@@ -174,7 +174,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
       }
     },
   };
-  console.log(filterQry);
+
   return (
     <div style={{ marginTop: 20 }}>
       {loading ? (

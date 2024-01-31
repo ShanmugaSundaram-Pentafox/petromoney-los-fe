@@ -31,7 +31,7 @@ const CreditProcessedTable = ({ currentUser }) => {
   usePageTitle('Credit Reload');
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
-  const { data = [], refetch, error, isLoading: searchLoading } = useQuery(['processed-request', offset], () => getCreditReload({ processed: 1, filterQry: filterQry, dealershipId: currentUser?.dealership_id, offset: offset,category: (filterQry?.dealership_id || currentUser?.dealership_id) ? undefined : 'today' }), { refetchOnWindowFocus: false, enabled: true })
+  const { data = [], refetch, error, isLoading: searchLoading } = useQuery(['processed-request', offset], () => getCreditReload({ processed: 1, filterQry: filterQry, dealershipId: currentUser?.dealership_id, offset: offset, category: (filterQry?.dealership_id || currentUser?.dealership_id) ? undefined : 'today' }), { refetchOnWindowFocus: false, enabled: true })
   const { data: fileData } = useQuery(['view-credit-report'], () => getCreditReportById(filterQry, 'view=1'), { refetchOnWindowFocus: false })
 
 
@@ -198,6 +198,9 @@ const CreditProcessedTable = ({ currentUser }) => {
       if (row[12]) {
         return { style: { backgroundColor: '#ffb99b69' } }
       }
+      if (data?.data?.[dataIndex]?.reload_type === 'express') {
+        return { style: { backgroundColor: '#ff21161a' } }
+      }
     },
     customToolbar: () => {
       return (
@@ -234,7 +237,7 @@ const CreditProcessedTable = ({ currentUser }) => {
             currentUser={currentUser}
             filterQry={setFilterQry}
             refetch={refetch}
-            filterList={['period']}
+            filterList={['period', 'type']}
             filterType={'processed'}
             handleDownload={handleDownload}
             fileData={fileData?.data[0]}

@@ -2,7 +2,6 @@ import { Drawer, IconButton, makeStyles, Table, TableBody, TableCell as TableCel
 import CloseIcon from '@material-ui/icons/Close';
 import head from 'lodash-es/head'
 import sumBy from 'lodash-es/sumBy'
-import moment from 'moment';
 import React, { useState } from 'react'
 import Currency from '../../../components/Number/Currency'
 
@@ -256,62 +255,6 @@ const FcEligibilityTable = ({ data }) => {
           </Table>
         </>
       </Drawer>
-      <Drawer
-        anchor="right"
-        open={tableView === 'fc_LFR_charges_calculation_data'}
-        onClose={() => setTableView()}
-        variant="temporary"
-      >
-        <>
-          <div style={{ margin: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant='h5'>Salary Workings</Typography>
-            <IconButton onClick={() => setTableView()} size='small'><CloseIcon fontSize='small' /></IconButton>
-          </div>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Sr. No</TableCell>
-                <TableCell>Month</TableCell>
-                <TableCell>LFR Charges (Rs)</TableCell>
-                <TableCell>Total MS + HSD sales (KL)</TableCell>
-                <TableCell>LFR Charges per KL (Rs)</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {
-                data?.fc_LFR_charges_calculation_data?.map((field, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{moment(new Date(field?.month)).format('MMM')}</TableCell>
-                    <TableCell>{field?.lfr_charges}</TableCell>
-                    <TableCell>{field?.total_msd_hsd_sales}</TableCell>
-                    <TableCell>{field?.lfr_charges_kl}</TableCell>
-
-                  </TableRow>
-                ))
-              }
-            </TableBody>
-            <TableFooter>
-              <TableRow>
-                <TableCell colSpan={4} align={'right'}>Average LFR Charges per KL</TableCell>
-                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.lfr_charges_kl)))) / data?.fc_LFR_charges_calculation_data?.length).toFixed(2)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={4} align={'right'}>Annual MS + HSD sales (KL)  </TableCell>
-                <TableCell>{(sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.total_msd_hsd_sales))))}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={4} align={'right'}>LF Charges Calculated</TableCell>
-                <TableCell>{((sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.lfr_charges_kl)))) / data?.fc_LFR_charges_calculation_data?.length) * (sumBy(data?.fc_LFR_charges_calculation_data, item => Number((item.total_msd_hsd_sales))))}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell colSpan={4} align={'right'}>LF charges override if any</TableCell>
-                <TableCell>{data?.fc_eligibility_LFR_tot_data[0]?.lfr_charges_considered_if_any}</TableCell>
-              </TableRow>
-            </TableFooter>
-          </Table>
-        </>
-      </Drawer>
     </div>
   )
 }
@@ -350,7 +293,7 @@ export const eligibilityFuelCredit = [
   { item: null, label: 'Fuel Transportation Expenses (From Financials / PD Report)', key: 'annual_exp_fuel_transport', input: null },
   { item: null, label: 'Loss of Fuel during Transportation', key: 'loss_of_fuel_during_transportation', input: 'loss_of_fuel_in_transportation' },
   { item: null, label: 'Insurance Premium (Annual)', key: 'annual_exp_insuracne_premium', input: null },
-  { item: null, label: 'License Fee Recovery (LFR) Charges', key: 'annual_exp_license_fee_recovery', input: 'fc_LFR_charges_calculation_data' },
+  { item: null, label: 'License Fee Recovery (LFR) Charges', key: 'annual_exp_license_fee_recovery', input: null },
   { item: null, label: 'Other running expenses (From Financials / PD Report)', key: 'annual_exp_other_runnings', input: null },
   { item: null, label: 'Total Expenses other than Depreciation, Interest & Tax', key: 'tot_expenses_other_than_depreciation_interest_tax', input: null },
   { item: 'E', label: 'EBIDTA (C-D)', key: 'ebidta', input: '' },

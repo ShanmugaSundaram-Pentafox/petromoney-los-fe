@@ -1,14 +1,4 @@
-import { Button, Divider, Drawer, Flex, Grid, TextInput, Textarea, Checkbox } from '@mantine/core';
-import {
-  Collapse,
-  IconButton,
-  List,
-  ListSubheader,
-  Paper,
-  Tooltip,
-  Typography,
-} from '@material-ui/core';
-import { Check, Edit } from '@material-ui/icons';
+import { Button, Divider, Drawer, Flex, Grid, TextInput, Textarea, Checkbox, Accordion, Text, ActionIcon } from '@mantine/core';
 import { Formik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -32,7 +22,7 @@ const formValidationSchema = Yup.object().shape({
 })
 
 const ExternalApi = ({ callback }) => {
-  const [collapsed, setCollapsed] = useState([]);
+  // const [collapsed, setCollapsed] = useState([]);
   const [addForm, setAddForm] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const { data: externalApiData = [] } = useQuery(
@@ -41,13 +31,13 @@ const ExternalApi = ({ callback }) => {
     { refetchOnWindowFocus: false }
   );
 
-  const handleCollapse = (category) => {
-    if (collapsed.includes(category)) {
-      setCollapsed(collapsed.filter((c) => c !== category));
-    } else {
-      setCollapsed([...collapsed, category]);
-    }
-  };
+  // const handleCollapse = (category) => {
+  //   if (collapsed.includes(category)) {
+  //     setCollapsed(collapsed.filter((c) => c !== category));
+  //   } else {
+  //     setCollapsed([...collapsed, category]);
+  //   }
+  // };
 
   const categories = [...new Set(externalApiData?.map((d) => d?.type))];
 
@@ -55,53 +45,61 @@ const ExternalApi = ({ callback }) => {
     <>
       <div style={{ flexGrow: 1, overflowY: 'auto' }}>
         {/* Drawer content */}
-
         {categories.map((category, i) => (
-          <List
-            key={i}
-            dense
-            subheader={
-              <ListSubheader
-                component={Paper}
-                style={{
-                  fontFamily: 'Inter !important',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  backgroundColor: '#FFF',
-                }}
-                onClick={() => handleCollapse(category)}
-              >
-                {category}
-              </ListSubheader>
-            }
+          <Accordion 
+            key={i} 
+            multiple 
+            defaultValue={category}
+            styles={{
+              item: {
+                borderColor: '#F1F3F5',
+              }
+            }}  
           >
-            <Collapse in={!collapsed.includes(category)}>
-              {externalApiData?.map(
-                (d, index) =>
-                  d?.type === category && (
-                    <div key={index}>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <Typography>{`${d?.usage_desc} (${d?.group_name})`}</Typography>
-                        {
-                          d?.is_current ?
+            <Accordion.Item value={category}>
+              <Accordion.Control>
+                {category}
+              </Accordion.Control>
+              
+              <Accordion.Panel>
+                {externalApiData?.map(
+                  (d, index) =>
+                    d?.type === category && (
+                      <Flex key={index} gap="8">
+                        <Flex align="center">
+                          <Text>{`${d?.usage_desc} (${d?.group_name})`}</Text>
+                          
+                          {/* {d?.is_current && (
                             <Tooltip title="In Use">
                               <Check style={{ fontSize: 13, color: '#2cae66e6', marginLeft: 20 }} />
-                            </Tooltip> : null
-                        }
-                      </div>
-                      <Tooltip title="Edit">
-                        <IconButton
-                          size="small"
+                            </Tooltip>
+                          )} */}
+                        </Flex>
+
+                        <ActionIcon
+                          variant="transparent" 
+                          aria-label="Edit" 
                           onClick={() => setAddForm(d)}
                         >
-                          <Edit fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-                  )
-              )}
-            </Collapse>
-          </List>
+                          <svg 
+                            style={{ 
+                              color: '#868E96',
+                              width: 20, 
+                              height: 20
+                            }} 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            viewBox="0 0 20 20" 
+                            fill="currentColor"
+                          >
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                          </svg>
+                        </ActionIcon>
+                      </Flex>
+                    )
+                )}
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
         ))}
       </div>
 

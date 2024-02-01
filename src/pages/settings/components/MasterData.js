@@ -1,5 +1,4 @@
-import { Box, Paper, SimpleGrid, Text, em } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import { Box, Paper, SimpleGrid, Text } from '@mantine/core';
 import { Drawer, makeStyles } from '@material-ui/core';
 import React, {useState} from 'react';
 import AssignProducts from './AssignProducts';
@@ -44,14 +43,13 @@ const useStyles = makeStyles({
 })
 
 function MasterData({currentUser}) {
-  const isMobile = useMediaQuery(`(max-width: ${em(639 )})`);
   const classes = useStyles();
   const [openForm, setOpenForm] = useState()
   const [customForm, setCustomForm] = useState()
 
   return (
     <Paper p="lg">
-      <SimpleGrid cols={isMobile ? 3 : 6} spacing="lg">
+      <SimpleGrid cols={{ base: 3, sm: 4, md: 5, lg: 6 }} spacing="lg">
         <div>
           <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.zones}>
             <Box className={classes.content} onClick={() => setCustomForm('Zone')}>

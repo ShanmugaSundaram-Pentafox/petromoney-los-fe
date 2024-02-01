@@ -1,5 +1,4 @@
-import { Box, Paper, SimpleGrid, Text, em } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
+import { Box, Paper, SimpleGrid, Text } from '@mantine/core';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import ExternalApi from './components/ExternalApi';
@@ -27,13 +26,12 @@ const useStyles = makeStyles({
 });
 
 function ConfigurationsMaster({ currentUser }) {
-  const isMobile = useMediaQuery(`(max-width: ${em(639 )})`);
   const classes = useStyles();
   const [openConfig, setOpenConfig] = useState();
 
   return (
     <Paper p="lg">
-      <SimpleGrid cols={isMobile ? 3 : 6} spacing="lg">
+      <SimpleGrid cols={{ base: 3, sm: 4, md: 5, lg: 6 }} spacing="lg">
         <div>
           <Box component="a" href="/rbac" className={classes.content}>
             <AccessIcon className={classes.icons} />

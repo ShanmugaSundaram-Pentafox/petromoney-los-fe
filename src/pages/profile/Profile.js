@@ -1,6 +1,5 @@
-import { Avatar, Center, Container, Paper, SimpleGrid, Stack, Title, TextInput, Flex, em } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
-import { Button, Dialog, DialogContent, DialogContentText, Typography, InputAdornment, IconButton, InputLabel, FormHelperText, Input, Grid } from '@material-ui/core'
+import { Avatar, Center, Container, Paper, SimpleGrid, Stack, Title, TextInput, Flex } from '@mantine/core';
+import { Button, Dialog, DialogContent, DialogContentText, Typography, InputAdornment, IconButton, InputLabel, FormHelperText, Input } from '@material-ui/core'
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import VisibilityOffOutlinedIcon from '@material-ui/icons/VisibilityOffOutlined';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
@@ -24,7 +23,6 @@ const Profile = (props) => {
   const [password, setPassword] = useState({});
   const [showPassword, setShowPassword] = useState();
   const { enqueueSnackbar } = useSnackbar();
-  const isMobile = useMediaQuery(`(max-width: ${em(639 )})`);
 
 
   let disabledInput = true;
@@ -105,7 +103,7 @@ const Profile = (props) => {
             </Stack>
           </Center>   
 
-          <SimpleGrid cols={isMobile ? 1 : 2} spacing="lg">
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
             <div>
               <TextInput
                 label="First Name"

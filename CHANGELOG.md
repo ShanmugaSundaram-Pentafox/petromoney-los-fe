@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.35.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.34.0...v2.35.0) (2024-02-01)
+
+
+### Features
+
+* **CreditProcessedTable:** displayed the disbursed and declined date ([f5f4f80](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f5f4f80cde41b39cb60e8381569ca4f33c69b05a))
+* **ScoreCard:** score card changes ([819b47f](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/819b47fc7e2d1b33866e520c30b0bc1e84579cbe))
+
 ## [2.34.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.33.0...v2.34.0) (2024-01-31)
 
 

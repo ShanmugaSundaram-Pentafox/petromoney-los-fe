@@ -180,6 +180,13 @@ const CreditProcessedTable = ({ currentUser }) => {
           }
         }
       },
+      {
+        name: 'disbursed_declined_date',
+        label: 'Disbursed / Declined date',
+        options: {
+          filter: false,
+        }
+      },
       { name: 'remarks', options: { display: 'excluded', filter: false } },
       { name: 'role_name', options: { display: 'excluded', filter: false } },
       { name: 'is_withheld', options: { display: 'excluded', filter: false } }

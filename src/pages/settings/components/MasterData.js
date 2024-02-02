@@ -8,6 +8,7 @@ import Contain from './MasterDataTable';
 import MasterEmailGroup from './MasterEmailGroup';
 import Products from './Products';
 import Zones from './Zones';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import {resources_id, action_id} from '../../../config/accessControl';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
@@ -159,14 +160,20 @@ function MasterData({currentUser}) {
         </div>
       </SimpleGrid>
 
-      <Drawer
-        anchor="right"
-        open={openForm}
+      <RightSideDrawer
+        title={openForm} 
+        opened={openForm}
         onClose={() => setOpenForm()}
-        variant="temporary"
       >
-        <Contain title={openForm} label={'name'} setStateBtn={openForm === 'State' ? true : false} regionForm={openForm === 'Region' ? true : false} assetForm={openForm === 'Asset Type' ? true : false} callback={() => setOpenForm()}/>
-      </Drawer>
+        <Contain 
+          title={openForm} 
+          label={'name'} 
+          setStateBtn={openForm === 'State' ? true : false} 
+          regionForm={openForm === 'Region' ? true : false} 
+          assetForm={openForm === 'Asset Type' ? true : false} 
+          callback={() => setOpenForm()}
+        />
+      </RightSideDrawer>
       <Drawer
         anchor="right"
         open={customForm === 'Products'}

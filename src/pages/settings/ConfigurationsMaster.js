@@ -51,6 +51,7 @@ function ConfigurationsMaster({ currentUser }) {
         title="External APIs"
         opened={openConfig}
         onClose={() => setOpenConfig()}
+        size="480"
       >
         <ExternalApi callback={setOpenConfig} />
       </RightSideDrawer>

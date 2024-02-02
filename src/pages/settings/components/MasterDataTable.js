@@ -1,16 +1,7 @@
-import { Tooltip, Grid, Button, Typography } from '@material-ui/core';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Paper from '@material-ui/core/Paper';
+import { Flex, Button, Text, ActionIcon, Divider, Tooltip, Input } from '@mantine/core';
+import { Grid, Typography } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
-import AddIcon from '@material-ui/icons/Add';
-import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
-import CloseIcon from '@material-ui/icons/Close';
-import DeleteIcon from '@material-ui/icons/Delete';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import EditIcon from '@material-ui/icons/Edit';
-import SearchIcon from '@material-ui/icons/Search';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -134,7 +125,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 6,
     boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
   },
-  formFooter :{
+  formFooter: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
@@ -188,13 +179,13 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   const [deactivateId, setDeactivateId] = useState();
   const [openRegionForm, setOpenRegionForm] = useState(false);
   const [openAssetForm, setOpenAssetForm] = useState(false);
-  const [assetValue, setAssetValue] = useState([{label: '', type: ''}]);
+  const [assetValue, setAssetValue] = useState([{ label: '', type: '' }]);
   const [states, setStates] = useState();
   const [selectedItem, setSelectedItem] = useState([])
-  const {enqueueSnackbar} = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
   const updateMapping = (action) => {
-    let body = {region_id: selectedItem}
+    let body = { region_id: selectedItem }
     updateRegionMapById(rowData?.id, body, action)
       .then(res => {
         setSelectedItem([])
@@ -211,14 +202,14 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
       .catch(e => logger(e))
   }
 
-  useMount(() => {  
-    if(title === 'OMCs'){
+  useMount(() => {
+    if (title === 'OMCs') {
       getOmcList()
         .then(setData)
         .catch((e) => {
           console.log(e)
         });
-    } else if(title === 'Region'){
+    } else if (title === 'Region') {
       getAllRegion()
         .then(setData)
         .catch((e) => {
@@ -229,30 +220,30 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
         .catch((e) => {
           console.log(e)
         })
-    } else if(title === 'State'){
+    } else if (title === 'State') {
       getStates()
         .then(setData)
         .catch((e) => {
           console.log(e)
           // setLoading(false)
         });
-    } else if(title === 'Business Type'){
+    } else if (title === 'Business Type') {
       getBusinessTypes()
-        .then(setData) 
+        .then(setData)
         .catch((e) => {
           console.log(e)
           // setLoading(false)
         });
-    } else if(title === 'Loan Type'){
+    } else if (title === 'Loan Type') {
       getLoanTypes()
-        .then(setData) 
+        .then(setData)
         .catch((e) => {
           console.log(e)
           // setLoading(false)
         });
-    } else if(title === 'Asset Type'){
+    } else if (title === 'Asset Type') {
       getAssetType()
-        .then(setData) 
+        .then(setData)
         .catch((e) => {
           console.log(e)
           // setLoading(false)
@@ -271,7 +262,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   };
 
   const handleStateDeactivate = () => {
-    const test = {is_active: 0}
+    const test = { is_active: 0 }
     updateStateById(test, deactivateId)
       .then((res) => {
         enqueueSnackbar(res, {
@@ -317,7 +308,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   };
 
   const handleInputChange = (e, index) => {
-    const {id, value} = e.target;
+    const { id, value } = e.target;
     const list = [...assetValue];
     list[index][id] = value;
     setAssetValue(list)
@@ -335,11 +326,11 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   }
 
   const handleAdd = (event) => {
-    setAddData({...AddData, name: event.target.value.toUpperCase()})
+    setAddData({ ...AddData, name: event.target.value.toUpperCase() })
   }
 
   const handleStateAdd = (event) => {
-    setAddData({...AddData, state_id: parseInt(event.target.value)})
+    setAddData({ ...AddData, state_id: parseInt(event.target.value) })
   }
 
   const handleSubmit = () => {
@@ -422,7 +413,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           })
         });
     }
-    
+
     if (status === 'Business Type') {
       updateBusinessById(rowData, rowData.id)
         .then((res) => {
@@ -451,7 +442,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
     }
 
     if (status === 'Asset Type') {
-      const AssetUpdateData = {name: rowData?.name , details: assetValue}
+      const AssetUpdateData = { name: rowData?.name, details: assetValue }
       updateAssetById(AssetUpdateData, rowData.asset_id)
         .then((res) => {
           handleClose()
@@ -477,7 +468,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           })
         });
     }
-    
+
     if (status === 'Loan Type') {
       updateLoanById(rowData, rowData.loan_id)
         .then((res) => {
@@ -508,8 +499,8 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
 
   const submitAdd = () => {
     console.log('adding...');
-    if(AddData){
-      if(status === 'OMCs'){
+    if (AddData) {
+      if (status === 'OMCs') {
         addOmcs(AddData)
           .then((res) => {
             handleClose()
@@ -520,7 +511,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               },
               variant: 'success',
             })
-            setTimeout(() => {  
+            setTimeout(() => {
               window.location.reload(false);
             }, 1500);
           })
@@ -535,7 +526,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             })
           })
       }
-      if(status === 'Region'){
+      if (status === 'Region') {
         addRegion(AddData)
           .then((res) => {
             handleClose()
@@ -561,7 +552,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             })
           })
       }
-      if(status === 'State'){
+      if (status === 'State') {
         addState(AddData)
           .then((res) => {
             handleClose()
@@ -587,7 +578,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             })
           })
       }
-      if(status === 'Business Type'){
+      if (status === 'Business Type') {
         addBusinessType(AddData)
           .then((res) => {
             handleClose()
@@ -614,7 +605,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           })
       }
 
-      if(status === 'Loan Type'){
+      if (status === 'Loan Type') {
         addLoanType(AddData)
           .then((res) => {
             handleClose()
@@ -640,9 +631,9 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             })
           })
       }
-      
-      if(status === 'Asset Type'){
-        const assetData = {name: AddData.name, details: assetValue}
+
+      if (status === 'Asset Type') {
+        const assetData = { name: AddData.name, details: assetValue }
         addAssetType(assetData)
           .then((res) => {
             handleClose()
@@ -672,7 +663,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   }
 
   const handleDelete = () => {
-    if(status === 'OMCs'){
+    if (status === 'OMCs') {
       deleteOmcs(rowData, rowData.id)
         .then((res) => {
           handleClose()
@@ -698,7 +689,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           })
         });
     }
-    if(status === 'Region'){
+    if (status === 'Region') {
       deleteRegion(rowData, rowData.region)
         .then((res) => {
           handleClose()
@@ -724,7 +715,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           })
         });
     }
-    if(status === 'State'){
+    if (status === 'State') {
       deleteState(rowData, rowData.id)
         .then((res) => {
           handleClose()
@@ -750,7 +741,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           })
         });
     }
-    if(status === 'Asset Type'){
+    if (status === 'Asset Type') {
       deleteAsset(rowData, rowData.asset_id)
         .then((res) => {
           handleClose()
@@ -776,7 +767,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           })
         });
     }
-    if(status === 'Loan Type'){
+    if (status === 'Loan Type') {
       deleteLoan(rowData, rowData.loan_id)
         .then((res) => {
           handleClose()
@@ -802,7 +793,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           })
         });
     }
-    if(status === 'Business Type'){
+    if (status === 'Business Type') {
       deleteBusiness(rowData, rowData.id)
         .then((res) => {
           handleClose()
@@ -832,120 +823,118 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
 
   return (
     <>
-      <Typography className={classes.sidePanelTitle} variant='h4'>
-        <div>{title}</div>
-        <IconButton onClick={callback} size='small'>
-          <CloseIcon />
-        </IconButton>
-      </Typography>
-      <Paper className={classes.root}>
-        <form className={classes.search} noValidate autoComplete='off'>
-          <TextField
-            id='search'
-            variant='outlined'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position='start'>
-                  <SearchIcon fontSize='small' />
-                </InputAdornment>
-              ),
-            }}
-            margin='normal'
-            fullWidth
-            style={{ marginTop: 10 }}
+      {/* Drawer content */}
+      <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
+        <form noValidate autoComplete='off'>
+          <Input
+            leftSectionPointerEvents="none"
+            leftSection={
+              <svg style={{ fill: '#CED4DA', width: 20, height: 20 }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clipRule="evenodd" />
+              </svg>
+            }
+            id="search"
+            placeholder="Search"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-          />
+          /> 
         </form>
-        <div className={classes.section}>
+
+        <Flex mt="md" direction="column">
           {value ? (
             filteredData.length > 0 ? (
-              filteredData.map((item, i) => {
+              filteredData.map((item) => {
                 return (
                   <>
-                    <div className={classes.label}>
-                      <Typography variant='h7' style={{ paddingLeft: 18 }}>
-                        {item.name}
-                      </Typography>
-                      <div>
-                        <Tooltip title='Edit'>
-                          <IconButton
-                            className={classes.btn}
-                            size='small'
-                            onClick={() => {
-                              handleClose()
-                              {
-                                title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true)
-                              }
-                              editItem(item, title);
-                            }}
-                          >
-                            <EditIcon fontSize='small' className={classes.edt} />
-                          </IconButton>
-                        </Tooltip>
-                        {
-                          setStateBtn && (
-                            item.is_active ? (
-                              <>
-                                <Tooltip title='Deactivate'>
-                                  <IconButton
-                                    className={classes.btn}
-                                    size='small'
-                                    onClick={() => {
-                                      handleClose()
-                                      setOpenDeactiveForm(true);
-                                      DeactivateItem(item.id)
-                                    }}
-                                  >
-                                    <CheckCircleTwoTone style={{ color: '#93D9A3' }}/>
-                                  </IconButton>
-                                </Tooltip>
-                              </>
-                            ) : (
-                              <>
-                                <Tooltip title='Activate'>
-                                  <IconButton
-                                    className={classes.btn}
-                                    size='small'
-                                    onClick={() => {
-                                      const test = {is_active: 1}
-                                      updateStateById(test, item.id)
-                                        .then((res) => {
-                                          enqueueSnackbar(res, {
-                                            anchorOrigin: {
-                                              vertical: 'top',
-                                              horizontal: 'right',
-                                            },
-                                            variant: 'success',
-                                          })
-                                          setTimeout(() => {
-                                            window.location.reload(false);
-                                          }, 1500);
-                                        })
-                                        .catch((err) => {
-                                          console.log(err);
-                                        });
-                                    }}
-                                  >
-                                    <CheckCircleTwoTone style={{ color: '#C9CCD5' }}/>
-                                  </IconButton>
-                                </Tooltip>
-                              </>
-                            )
-                          )
-                        }
-                        <Tooltip title='Delete'>
-                          <IconButton className={classes.btn} size='small' onClick={() => {
+                    <Flex 
+                      justify="space-between" 
+                      align="center"
+                      py="6"
+                    >
+                      <Text>{item.name}</Text>
+
+                      <Flex align="center" gap="4">
+                        <ActionIcon 
+                          variant="transparent" 
+                          aria-label="Edit"
+                          onClick={() => {
+                            handleClose()
+                            {title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true)}
+                            editItem(item, title);
+                          }}
+                        >
+                          <svg style={{ fill: '#868E96',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                          </svg>
+                        </ActionIcon>
+
+                        {setStateBtn && item.is_active ? (
+                          <Tooltip fz="xs" px="8" py="2.5" zIndex={99999} offset={2} label="Deactivate">
+                            <ActionIcon
+                              variant="transparent" 
+                              aria-label="Deactivate"
+                              onClick={() => {
+                                handleClose()
+                                setOpenDeactiveForm(true);
+                                DeactivateItem(item.id)
+                              }}
+                            >
+                              <svg style={{ fill: '#868E96',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                              </svg>
+                            </ActionIcon>
+                          </Tooltip>
+                        ) : (
+                          <Tooltip fz="xs" px="8" py="2.5" zIndex={99999} offset={2} label="Activate">
+                            <ActionIcon
+                              variant="transparent" 
+                              aria-label="Activate"
+                              onClick={() => {
+                                const test = { is_active: 1 }
+                                updateStateById(test, item.id)
+                                  .then((res) => {
+                                    enqueueSnackbar(res, {
+                                      anchorOrigin: {
+                                        vertical: 'top',
+                                        horizontal: 'right',
+                                      },
+                                      variant: 'success',
+                                    })
+                                    setTimeout(() => {
+                                      window.location.reload(false);
+                                    }, 1500);
+                                  })
+                                  .catch((err) => {
+                                    console.log(err);
+                                  });
+                              }}
+                            >
+                              <svg style={{ fill: '#ADB5BD',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
+                                <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+                              </svg>
+                            </ActionIcon>
+                          </Tooltip>
+                        )}
+
+                        <ActionIcon 
+                          variant="transparent" 
+                          aria-label="Delete"
+                          onClick={() => {
                             handleClose()
                             setOpenDeleteForm(true);
                             deleteItem(item, title);
-                          }}>
-                            <DeleteIcon fontSize='small' />
-                          </IconButton>
-                        </Tooltip>
-                      </div>
-                    </div>
-                    <Divider className={classes.divider} />
+                          }}
+                        >
+                          <svg style={{ fill: '#FF6B6B', width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        </ActionIcon>
+                      </Flex>
+                    </Flex>
+
+                    <Divider color="#E9ECEF" />
                   </>
                 );
               })
@@ -953,6 +942,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               <>
                 <div className={classes.nodata}>
                   <Typography variant='h6'>No Data Found</Typography>
+                  
                   <div>
                     <Button
                       variant='outlined'
@@ -960,7 +950,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                       color='primary'
                       style={{ marginTop: 15 }}
                       onClick={() => {
-                        if(title === 'Region'){
+                        if (title === 'Region') {
                           handleClose()
                           setOpenRegionForm(true)
                           setStatus(title)
@@ -981,106 +971,116 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             data.map((item) => {
               return (
                 <>
-                  <div className={classes.label}>
-                    <Typography
-                      variant='h7'
-                      style={{ paddingLeft: 18 }}
-                      key={item.id ? item.id : item.region}
-                    >
-                      {item.name}
-                    </Typography>
-                    <div>
-                      <Tooltip title='Edit'>
-                        <IconButton
-                          className={classes.btn}
-                          size='small'
-                          onClick={() => {
-                            handleClose()
-                            {
-                              title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true)
-                            }
-                            editItem(item, title);
-                          }}
-                        >
-                          <EditIcon fontSize='small' className={classes.edt} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title='Delete'>
-                        <IconButton className={classes.btn} size='small' onClick={() => {
+                  <Flex 
+                    key={item.id ? item.id : item.region} 
+                    justify="space-between" 
+                    align="center"
+                    py="6"
+                    styles={{
+                      backgroundColor: 'red',
+                      '&:hover': {
+                        backgroundColor: '#000'
+                      }
+                    }}
+                  >
+                    <Text>{item.name}</Text>
+
+                    <Flex align="center" gap="4">
+                      <ActionIcon 
+                        variant="transparent" 
+                        aria-label="Edit"
+                        onClick={() => {
+                          handleClose()
+                          {title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true)}
+                          editItem(item, title);
+                        }}
+                      >
+                        <svg style={{ fill: '#868E96',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                      </ActionIcon>
+
+                      {setStateBtn && item.is_active ? (
+                        <Tooltip fz="xs" px="8" py="2.5" zIndex={99999} offset={2} label="Deactivate">
+                          <ActionIcon
+                            variant="transparent" 
+                            aria-label="Deactivate"
+                            onClick={() => {
+                              handleClose()
+                              setOpenDeactiveForm(true);
+                              DeactivateItem(item.id)
+                            }}
+                          >
+                            <svg style={{ fill: '#868E96',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                              <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                            </svg>
+                          </ActionIcon>
+                        </Tooltip>
+                      ) : (
+                        <Tooltip fz="xs" px="8" py="2.5" zIndex={99999} offset={2} label="Activate">
+                          <ActionIcon
+                            variant="transparent" 
+                            aria-label="Activate"
+                            onClick={() => {
+                              const test = { is_active: 1 }
+                              updateStateById(test, item.id)
+                                .then((res) => {
+                                  enqueueSnackbar(res, {
+                                    anchorOrigin: {
+                                      vertical: 'top',
+                                      horizontal: 'right',
+                                    },
+                                    variant: 'success',
+                                  })
+                                  setTimeout(() => {
+                                    window.location.reload(false);
+                                  }, 1500);
+                                })
+                                .catch((err) => {
+                                  console.log(err);
+                                });
+                            }}
+                          >
+                            <svg style={{ fill: '#ADB5BD',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
+                              <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+                            </svg>
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+
+                      <ActionIcon 
+                        variant="transparent" 
+                        aria-label="Delete"
+                        onClick={() => {
                           handleClose()
                           setOpenDeleteForm(true);
                           deleteItem(item, title);
-                        }}>
-                          <DeleteIcon fontSize='small' />
-                        </IconButton>
-                      </Tooltip>
-                      {
-                        setStateBtn && (
-                          item.is_active ? (
-                            <>
-                              <Tooltip title='Deactivate'>
-                                <IconButton
-                                  className={classes.btn}
-                                  size='small'
-                                  onClick={() => {
-                                    handleClose()
-                                    setOpenDeactiveForm(true);
-                                    DeactivateItem(item.id)
-                                  }}
-                                >
-                                  <CheckCircleTwoTone style={{ color: '#93D9A3' }}/>
-                                </IconButton>
-                              </Tooltip>
-                            </>
-                          ) : (
-                            <>
-                              <Tooltip title='Activate'>
-                                <IconButton
-                                  className={classes.btn}
-                                  size='small'
-                                  onClick={() => {
-                                    const test = {is_active: 1}
-                                    updateStateById(test, item.id)
-                                      .then((res) => {
-                                        enqueueSnackbar(res, {
-                                          anchorOrigin: {
-                                            vertical: 'top',
-                                            horizontal: 'right',
-                                          },
-                                          variant: 'success',
-                                        })
-                                        setTimeout(() => {
-                                          window.location.reload(false);
-                                        }, 1500);
-                                      })
-                                      .catch((err) => {
-                                        console.log(err);
-                                      });
-                                  }}
-                                >
-                                  <CheckCircleTwoTone style={{ color: '#C9CCD5' }}/>
-                                </IconButton>
-                              </Tooltip>
-                            </>
-                          )
-                        ) 
-                      }   
-                    </div>
-                  </div>
-                  <Divider className={classes.divider} />
+                        }}
+                      >
+                        <svg style={{ fill: '#FF6B6B', width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                      </ActionIcon>
+                    </Flex>
+                  </Flex>
+                  
+                  <Divider color="#E9ECEF" />
                 </>
               );
             })
           )}
-        </div>
-      </Paper>
+        </Flex>
+      </div>
+
       {
         openAddForm && (
           <div className={classes.addForm}>
             <Typography variant='h5'>Add {title}</Typography>
-            <Grid item md={12} style={{marginTop: 15}}>
+            <Grid item md={12} style={{ marginTop: 15 }}>
               <label>{title}</label>
-              <TextField 
+              <TextField
                 id='add'
                 style={{ marginTop: 8 }}
                 variant='outlined'
@@ -1099,7 +1099,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               </Button>
               <Button
                 onClick={submitAdd}
-                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98' }}
                 variant='outlined'
                 size='small'
               >
@@ -1113,8 +1113,8 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
         openEditForm && (
           <div className={classes.addForm}>
             <Typography variant='h5'>Edit {title}</Typography>
-            <Grid item md={12} style={{marginTop: 15}}>
-              <label style={{marginBottom: 8}}>{title}</label>
+            <Grid item md={12} style={{ marginTop: 15 }}>
+              <label style={{ marginBottom: 8 }}>{title}</label>
               <TextField
                 id='edit'
                 fullWidth
@@ -1125,7 +1125,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             </Grid>
             {
               status === 'State' &&
-                <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+              <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
             }
             <div className={classes.formFooter}>
               <Button
@@ -1137,7 +1137,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               </Button>
               <Button
                 onClick={handleSubmit}
-                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98' }}
                 variant='outlined'
                 size='small'
               >
@@ -1161,7 +1161,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               </Button>
               <Button
                 onClick={handleDelete}
-                style={{ color: '#FF4848', borderColor: '#FF4848'}}
+                style={{ color: '#FF4848', borderColor: '#FF4848' }}
                 variant='outlined'
                 size='small'
               >
@@ -1174,7 +1174,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
       {
         openDeactiveForm && (
           <div className={classes.addForm}>
-            <Typography variant='h7'>Do you want to disable this state ?</Typography>            
+            <Typography variant='h7'>Do you want to disable this state ?</Typography>
             <div className={classes.formFooter}>
               <Button
                 onClick={handleClose}
@@ -1185,7 +1185,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               </Button>
               <Button
                 onClick={handleStateDeactivate}
-                style={{ color: '#FF4848', borderColor: '#FF4848'}}
+                style={{ color: '#FF4848', borderColor: '#FF4848' }}
                 variant='outlined'
                 size='small'
               >
@@ -1199,7 +1199,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
         openRegionForm && (
           <div className={classes.addForm}>
             <Typography variant='h5'>Add New {title}</Typography>
-            <Grid container spacing={2} style={{marginTop: 15}}>
+            <Grid container spacing={2} style={{ marginTop: 15 }}>
               <Grid item md={6}>
                 <label style={{ marginBottom: 8 }}>State</label>
                 <TextInput
@@ -1215,9 +1215,9 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               </Grid>
               <Grid item md={6}>
                 <label style={{ marginBottom: 8 }}>{title}</label>
-                <TextField 
+                <TextField
                   id='add'
-                  style={{width: '100%', marginTop: 4}}
+                  style={{ width: '100%', marginTop: 4 }}
                   variant='outlined'
                   onChange={handleAdd}
                 />
@@ -1233,7 +1233,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               </Button>
               <Button
                 onClick={submitAdd}
-                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98' }}
                 variant='outlined'
                 size='small'
               >
@@ -1247,7 +1247,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
         openAssetForm && (
           <div className={classes.addForm}>
             <Typography variant='h5'>Add New {title}</Typography>
-            <Grid container spacing={2} style={{marginTop: 15}}>
+            <Grid container spacing={2} style={{ marginTop: 15 }}>
               <Grid item md={6}>
                 <label style={{ marginBottom: 8 }}>Asset Type</label>
                 <TextField
@@ -1261,8 +1261,8 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             </Grid>
             {
               assetValue.map((x, i) => {
-                return(
-                  <Grid key={i} container spacing={2} style={{marginTop: 15, display: 'flex', alignItems: 'center'}}>
+                return (
+                  <Grid key={i} container spacing={2} style={{ marginTop: 15, display: 'flex', alignItems: 'center' }}>
                     <Grid item md={3}>
                       <label style={{ marginBottom: 8 }}>Label</label>
                       <TextField
@@ -1290,7 +1290,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                         id='type'
                         fullWidth
                         variant='outlined'
-                        style={{margin: 0}}
+                        style={{ margin: 0 }}
                         value={x?.type}
                         onChange={e => handleInputChange(e, i)}
                       >
@@ -1300,7 +1300,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                       </TextInput>
                     </Grid>
                     <div className={classes.listBtn}>
-                      {assetValue.length !== 1 && <button className={classes.deleteBtn} variant='outlined' size='small' onClick={() => handleRemoveClick(i)}><DeleteOutlineIcon style={{fontSize: 'small', marginTop: 5}} /></button>}
+                      {assetValue.length !== 1 && <button className={classes.deleteBtn} variant='outlined' size='small' onClick={() => handleRemoveClick(i)}><DeleteOutlineIcon style={{ fontSize: 'small', marginTop: 5 }} /></button>}
                       {assetValue.length - 1 === i && <button className={classes.btns} variant='outlined' size='small' onClick={handleAddClick}>+</button>}
                     </div>
                   </Grid>
@@ -1317,7 +1317,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               </Button>
               <Button
                 onClick={rowData ? handleSubmit : submitAdd}
-                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98' }}
                 variant='outlined'
                 size='small'
               >
@@ -1327,31 +1327,46 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           </div>
         )
       }
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button variant='outlined' onClick={callback}>
-              Back
-            </Button>
-          </div>
-          <div>
+
+      {/* Sticky footer */}
+      <Flex
+        h="64"
+        style={{
+          flexShrink: 0,
+          alignItems: 'center',
+          justifyContent: 'end',
+          padding: '0 16px',
+          background: '#FFFFFF',
+          borderTop: '1px solid #eaeaea',
+          zIndex: 9
+        }}
+      >
+        <Flex gap="sm">
+          <Tooltip position="top" label="Edit">
             <Button
-              variant='contained'
-              type='submit'
-              startIcon={<AddIcon  />}
-              onClick={() => {
-                handleClose()
-                !regionForm && !assetForm? setOpenAddForm(true) : !assetForm? setOpenRegionForm(true) : setOpenAssetForm(true)
-                setStatus(title)
-              }}
-              color='primary'
+              variant="outline"
+              size="md"
+              color="gray"
+              onClick={callback}
             >
-              Add
+              Go back
             </Button>
-          </div>
-        </div>
-      </div>
+          </Tooltip>  
+
+          <Button
+            variant="filled"
+            size="md"
+            color="rgba(0, 0, 0, 1)"
+            onClick={() => {
+              handleClose()
+              !regionForm && !assetForm ? setOpenAddForm(true) : !assetForm ? setOpenRegionForm(true) : setOpenAssetForm(true)
+              setStatus(title)
+            }}
+          >
+            Add
+          </Button>
+        </Flex>
+      </Flex>
     </>
   );
 }

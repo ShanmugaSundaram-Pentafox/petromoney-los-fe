@@ -3,6 +3,7 @@ import React from 'react';
 
 export const RightSideDrawer = ({
   title,
+  size,
   opened,
   onClose,
   children
@@ -14,6 +15,7 @@ export const RightSideDrawer = ({
       onClose={onClose}
       overlayProps={{ backgroundOpacity: 0.2, blur: 2 }}
       title={title}
+      size={size}
       zIndex={99999}
       styles={{
         content: {

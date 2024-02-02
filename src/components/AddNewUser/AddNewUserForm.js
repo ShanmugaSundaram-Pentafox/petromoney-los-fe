@@ -1,67 +1,18 @@
-import { CircularProgress } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
+import { Flex, Button, Grid, TextInput, Text, Loader } from '@mantine/core';
 import Alert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import { addNewUser, getAllUserRoles } from '../../services/users.service';
-import Button from '../CommonComponents/Button/Button';
-import TextInput from '../TextInput/TextInput';
-
-const useStyles = makeStyles((theme) => ({
-  sidePanelTitle: {
-    padding: '24px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333',
-  },
-  sidePanelFormWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '40vw',
-  },
-  sidePanelFormContentWrapper: {
-    flex: 1,
-    overflow: 'auto',
-  },
-  stepperRoot: {
-    padding: 16,
-    paddingTop: 8,
-  },
-  actionButtonsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '12px 16px',
-  },
-  editButton: {
-    marginRight: '8px',
-    '&.MuiButton-contained': {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.white,
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark,
-    },
-  },
-}));
+// import TextInput from '../TextInput/TextInput';
 
 const AddNewUserForm = ({ callback, action }) => {
   const [apiStatus, setApiStatus] = useState({});
   const [userRoles, setUserRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState('')
-  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   let isDealership = {};
   useMount(() => {
@@ -140,150 +91,159 @@ const AddNewUserForm = ({ callback, action }) => {
     
 
   return (
-    <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant='h4'>
-        <div>Add New User Form</div>
-        <CloseIcon onClick={action} />
-      </Typography>
-      <div className={classes.sidePanelFormContentWrapper}>
-        <div className={classes.stepperRoot}>
-          <Box>
-            <form onSubmit={handleSubmit}>
-              <Grid container spacing={2}>
-                <Grid item md={12}>
-                  <TextInput
-                    {...inputProps}
-                    select
-                    labelText='User Role'
-                    name='role_id'
-                    value={values.role_id}
-                    
-                    error={errors.role_id}
-                    helperText={errors.role_id}
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option value=''  >Choose user role</option>
-                    {(values.role_id) && type != values && setType(values)}
-                    {userRoles.map((userRole) => (
-                      <option key={userRole.role_name} value={userRole.id}  >
-                        ({userRole.role_name}) - {userRole.name} 
-                      </option>
-                    ))}
-                  </TextInput>
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    name='first_name'
-                    labelText='First Name'
-                    value={values.first_name?.toUpperCase()}
-                    error={errors.first_name}
-                    helperText={errors.first_name}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    name='last_name'
-                    labelText='Last Name'
-                    value={values.last_name?.toUpperCase()}
-                    error={errors.last_name}
-                    helperText={errors.last_name}
-                  />
-                </Grid>
-                {
-                  (values.role_id == 13) &&
-                    <Grid item md={6}>
-                      <TextInput
-                        {...inputProps}
-                        type='number'
-                        name='dealership_id'
-                        labelText='Dealership ID'
-                        value={values.dealership_id}
-                        error={errors.dealership_id}
-                        helperText={errors.dealership_id}
-                      />
-                    </Grid>
-                }
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    type='mobile'
-                    name='mobile'
-                    labelText='Mobile'
-                    value={values.mobile}
-                    error={errors.mobile}
-                    helperText={errors.mobile}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    type='email'
-                    name='email'
-                    labelText='Email'
-                    value={values.email}
-                    error={errors.email}
-                    helperText={errors.email}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    type='password'
-                    name='password'
-                    labelText='Password (Optional)'
-                    value={values.password}
-                    error={errors.password}
-                    helperText={
-                      errors.password || 'Default password is Petromall@2020'
-                    }
-                  />
-                </Grid>
-              </Grid>
-            </form>
-            {apiStatus.type && (
-              <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
-            )}
-          </Box>
-        </div>
-      </div>
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button variant='outlined' onClick={action}>
-              Back
-            </Button>
-          </div>
-          <div>
-            {!loading ? (
-              <Button
-                variant='contained'
-                type='submit'
-                onClick={handleSubmit}
-                className={clsx(classes.btn, classes.editButton)}
-              >
-                Create New User
-              </Button>
-            ) : (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  width: '90%',
-                  margin: '0 auto',
+    <>
+      {/* Drawer content */}
+      <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
+        <form onSubmit={handleSubmit}>
+          <Grid gutter="sm">
+            {/* <Grid.Col>
+              <TextInput
+                {...inputProps}
+                select
+                labelText='User Role'
+                name='role_id'
+                value={values.role_id}
+                
+                error={errors.role_id}
+                helperText={errors.role_id}
+                SelectProps={{
+                  native: true,
                 }}
               >
-                <CircularProgress size={30} />
-              </div>
+                <option value=''  >Choose user role</option>
+                {(values.role_id) && type != values && setType(values)}
+                {userRoles.map((userRole) => (
+                  <option key={userRole.role_name} value={userRole.id}  >
+                    ({userRole.role_name}) - {userRole.name} 
+                  </option>
+                ))}
+              </TextInput>
+            </Grid.Col> */}
+            
+            <Grid.Col>
+              <Flex bg="lightGray" p="xs" h="48" align="center">User Role Select Comes here</Flex>
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <TextInput
+                {...inputProps}
+                name='first_name'
+                label='First Name'
+                value={values.first_name}
+                error={errors.first_name}
+              />
+            </Grid.Col>
+            
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <TextInput
+                {...inputProps}
+                name='last_name'
+                label='Last Name'
+                value={values.last_name}
+                error={errors.last_name}
+              />
+            </Grid.Col>
+            
+            {(values.role_id == 13) && (
+              <Grid.Col span={{ base: 12, md: 6 }}>
+                <TextInput
+                  {...inputProps}
+                  type='number'
+                  name='dealership_id'
+                  label='Dealership ID'
+                  value={values.dealership_id}
+                  error={errors.dealership_id}
+                />
+              </Grid.Col>
             )}
-          </div>
-        </div>
+
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <TextInput
+                {...inputProps}
+                type='mobile'
+                name='mobile'
+                label='Mobile'
+                value={values.mobile}
+                error={errors.mobile}
+              />
+            </Grid.Col>
+            
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <TextInput
+                {...inputProps}
+                type='email'
+                name='email'
+                label='Email'
+                value={values.email}
+                error={errors.email}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, md: 6 }}>
+              <TextInput
+                {...inputProps}
+                type='text'
+                name='password'
+                label='Password (Optional)'
+                value={values.password}
+                error={errors.password}
+              />
+              <Text 
+                mt="4" 
+                size="xs"
+                style={{
+                  color: '#868E96'
+                }}
+              >
+                {errors.password || 'Default password is Petromall@2020'}
+              </Text>
+            </Grid.Col>
+          </Grid>
+        </form>
+
+        {apiStatus.type && (
+          <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+        )}
       </div>
-    </div>
+
+      {/* Sticky footer */}
+      <Flex
+        h="64"
+        style={{ 
+          flexShrink: 0,
+          alignItems: 'center',
+          justifyContent: 'end',
+          padding: '0 16px', 
+          background: '#FFFFFF', 
+          borderTop: '1px solid #eaeaea', 
+          zIndex: 9
+        }}
+      >
+        <Flex gap="sm">
+          <Button 
+            variant="outline" 
+            size="md"
+            color="gray"
+            onClick={action}
+          >
+            Go back
+          </Button>
+
+          <Button 
+            variant="filled" 
+            size="md"
+            color="rgba(0, 0, 0, 1)"
+            onClick={handleSubmit}
+          >
+            Create New User
+
+            {loading && (
+              <Loader ml="md" color="rgba(255, 255, 255, 1)" size="xs" />
+            )}
+          </Button>
+        </Flex>  
+      </Flex>
+    </>
   );
 };
 

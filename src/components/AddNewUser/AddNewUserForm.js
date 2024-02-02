@@ -124,7 +124,7 @@ const AddNewUserForm = ({ callback, action }) => {
               <Flex bg="lightGray" p="xs" h="48" align="center">User Role Select Comes here</Flex>
             </Grid.Col>
 
-            <Grid.Col span={{ base: 12, md: 6 }}>
+            <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
                 {...inputProps}
                 name='first_name'
@@ -134,7 +134,7 @@ const AddNewUserForm = ({ callback, action }) => {
               />
             </Grid.Col>
             
-            <Grid.Col span={{ base: 12, md: 6 }}>
+            <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
                 {...inputProps}
                 name='last_name'
@@ -145,7 +145,7 @@ const AddNewUserForm = ({ callback, action }) => {
             </Grid.Col>
             
             {(values.role_id == 13) && (
-              <Grid.Col span={{ base: 12, md: 6 }}>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   {...inputProps}
                   type='number'
@@ -157,7 +157,7 @@ const AddNewUserForm = ({ callback, action }) => {
               </Grid.Col>
             )}
 
-            <Grid.Col span={{ base: 12, md: 6 }}>
+            <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
                 {...inputProps}
                 type='mobile'
@@ -168,7 +168,7 @@ const AddNewUserForm = ({ callback, action }) => {
               />
             </Grid.Col>
             
-            <Grid.Col span={{ base: 12, md: 6 }}>
+            <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
                 {...inputProps}
                 type='email'
@@ -179,7 +179,7 @@ const AddNewUserForm = ({ callback, action }) => {
               />
             </Grid.Col>
 
-            <Grid.Col span={{ base: 12, md: 6 }}>
+            <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
                 {...inputProps}
                 type='text'

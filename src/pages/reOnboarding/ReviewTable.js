@@ -13,6 +13,8 @@ import Currency from '../../components/Number/Currency';
 import { getSignedUrl } from '../../services/common.service';
 import { downloadEnhancementData, getEnhancedLoanByStatus, getPageDetails } from '../../services/enhancement.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 
 const useStyles = makeStyles(theme => ({
@@ -34,11 +36,12 @@ const useStyles = makeStyles(theme => ({
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
   const [loans, setLoans] = useState([]);
-  const [page, setPage] = useState();
+  const [page, setPage] = useState(1);
   const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const columnHelper = createColumnHelper();
 
   useEffect(() => {
     setLoading(true);
@@ -90,91 +93,36 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Name',
-        name: 'dealership_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Old Product Type',
-        name: 'old_product_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-
-      {
-        label: 'New Product Type',
-        name: 'new_product_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
-
-      },
-      {
-        label: 'Old loan Amount',
-        name: 'old_loan_amount',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
-          setCellHeaderProps: () => ({
-            align: 'right',
-          }),
-          customBodyRender: value => <Currency value={value} />
-        }
-      },
-      {
-        label: 'New Loan Amount',
-        name: 'new_loan_amount',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
-          setCellHeaderProps: () => ({
-            align: 'right',
-          }),
-          customBodyRender: value => <Currency value={value} />
-        }
-      },
-    ]
-  }, [loans]);
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('dealership_name', {
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('old_product_name', {
+      header: 'Old Product Scheme',
+      cell: value => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('new_product_name', {
+      header: 'New Product Scheme',
+      cell: value => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+      cell: value => <span>{value?.getValue() ? value?.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }),
+    columnHelper.accessor('old_loan_amount', {
+      header: 'Old Loan Amount',
+      cell: value => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('new_loan_amount', {
+      header: 'New Loan Amount',
+      cell: value => <Currency value={value?.getValue()} />
+    }),
+  ];
 
   const options = {
     selectableRowsHeader: false,
@@ -223,12 +171,15 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
 
   return (
     <div className={classes.root}>
-      <MUIDataTable
-        title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
-        data={loans}
-        style={classes.tableStyle}
-        columns={columns}
-        options={options}
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        title={`${title} (${loans.length})`}
+        onRowClick={i => onRowClick(i?.dealership_id, i, 'review')}
+        useAPIPagination
+        page={page}
+        setPage={setPage}
+        totalNoOfPages={pageData?.total_number_of_pages}
       />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

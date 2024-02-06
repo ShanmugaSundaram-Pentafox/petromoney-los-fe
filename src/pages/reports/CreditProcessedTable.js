@@ -16,6 +16,8 @@ import {
   getCreditReload,
   getCreditReportById,
 } from '../../services/users.service';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 
 const CreditProcessedTable = ({ currentUser }) => {
@@ -27,11 +29,12 @@ const CreditProcessedTable = ({ currentUser }) => {
   const [offset, setOffset] = useState(0);
   const [downloadLoading, setDownloadLoading] = useState();
   const { enqueueSnackbar } = useSnackbar();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
+  const columnHelper = createColumnHelper();
   usePageTitle('Credit Reload');
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
-  const { data = [], refetch, error, isLoading: searchLoading } = useQuery(['processed-request', offset], () => getCreditReload({ processed: 1, filterQry: filterQry, dealershipId: currentUser?.dealership_id, offset: offset,category: (filterQry?.dealership_id || currentUser?.dealership_id) ? undefined : 'today' }), { refetchOnWindowFocus: false, enabled: true })
+  const { data = [], refetch, error, isLoading: searchLoading } = useQuery(['processed-request', offset], () => getCreditReload({ processed: 1, filterQry: filterQry, dealershipId: currentUser?.dealership_id, offset: offset, category: (filterQry?.dealership_id || currentUser?.dealership_id) ? undefined : 'today' }), { refetchOnWindowFocus: false, enabled: true })
   const { data: fileData } = useQuery(['view-credit-report'], () => getCreditReportById(filterQry, 'view=1'), { refetchOnWindowFocus: false })
 
 
@@ -61,130 +64,79 @@ const CreditProcessedTable = ({ currentUser }) => {
       })
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        name: 'dealership_id',
-        label: 'Dealership ID',
-        options: {
-          filter: false,
-          customBodyRender: (value) => {
-            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
-          }
+  const DisplayValue = ({ value, row }) => {
+    const handleClick = () => {
+      let d = [];
+      d.push({
+        ...row,
+        payment_proof_attachment: typeof (row?.payment_proof_attachment) === 'string' ? JSON.parse(row?.payment_proof_attachment) : (row?.payment_proof_attachment || [])
+      })
+      setRowData(d[0])
+      setStatusModal(true)
+    }
+    return (
+      <div style={{ cursor: 'pointer', color: '#1976d2' }} onClick={() => handleClick()}>{value}</div>
+    )
+  }
+
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.dealership_id} />
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.dealership_id} />
+    }),
+    columnHelper.accessor('request_id', {
+      header: 'Request Id',
+    }),
+    columnHelper.accessor('product_name', {
+      header: 'Scheme',
+    }),
+    columnHelper.accessor('utr', {
+      header: 'UTR',
+    }),
+    columnHelper.accessor('created_date', {
+      header: 'Requested Date',
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+    }),
+    columnHelper.accessor('amount', {
+      header: 'Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('account_no', {
+      header: 'Account number',
+    }),
+    columnHelper.accessor('created_by', {
+      header: 'Created By',
+    }),
+    columnHelper.accessor('last_modified_by', {
+      header: 'Processed By',
+    }),
+    columnHelper.accessor('origin', {
+      header: 'Origin',
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
+      cell: (value) => {
+        if (value?.getValue() === 'Declined') {
+          return (
+            <div><CustomToken label={value?.getValue()} variant='error' icon='cross' /></div>
+          )
         }
-      },
-      {
-        name: 'name',
-        label: 'Name',
-        options: {
-          filter: false,
-          customBodyRender: (value) => {
-            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.toUpperCase()}</div>
-          }
+        else if (value?.getValue() === 'Disbursed') {
+          return (
+            <div><CustomToken label={value?.getValue()} variant='success' icon='tick' /></div>
+          )
         }
-      },
-      {
-        name: 'request_id',
-        label: 'Request ID',
-        options: { filter: false }
-      },
-      {
-        name: 'product_name',
-        label: 'Product',
-      },
-      {
-        name: 'utr',
-        label: 'UTR',
-        options: {
-          filter: false,
-          customBodyRender: (value) => {
-            return <div>{value || '-'}</div>
-          }
-        }
-      },
-      {
-        name: 'created_date',
-        label: 'Requested Date',
-        options: { filter: false }
-      },
-      {
-        name: 'region',
-        label: 'Region',
-        options: { filter: false }
-      },
-      {
-        name: 'amount', label: 'Amount',
-        options: {
-          filter: false,
-          customBodyRender: (value) => {
-            return <Currency value={value} />
-          }
-        }
-      },
-      {
-        name: 'account_no',
-        label: 'Account number',
-        options: { filter: false }
-      },
-      {
-        name: 'created_by',
-        label: 'Created by'
-      },
-      {
-        name: 'last_modified_by',
-        label: 'Processed by',
-        options: {
-          customBodyRender: (value, tableMeta) => {
-            return <div>{value}</div>
-          }
-        }
-      },
-      {
-        name: 'origin',
-        label: 'Origin',
-        options: {
-          customBodyRender: (value, tableMeta) => {
-            return <div>{value?.toUpperCase()}</div>
-          }
-        }
-      },
-      {
-        name: 'status',
-        label: 'Status',
-        options: {
-          customBodyRender: (value, tableMeta) => {
-            if (value === 'Declined') {
-              return (
-                tableMeta?.rowData[11] ? (
-                  <Tooltip title={tableMeta.rowData[11]}>
-                    <div><CustomToken label={value} variant='error' icon='cross' /></div>
-                  </Tooltip>
-                ) : (
-                  <CustomToken label={value} variant='error' icon='cross' />
-                )
-              )
-            }
-            else if (value === 'Disbursed') {
-              return (
-                tableMeta?.rowData[11] ? (
-                  <Tooltip title={tableMeta.rowData[11]}>
-                    <div><CustomToken label={value} variant='success' icon='tick' /></div>
-                  </Tooltip>
-                ) : (
-                  <CustomToken label={value} variant='success' icon='tick' />
-                )
-              )
-            }
-            else
-              return <CustomToken label={value} variant='warn' />
-          }
-        }
-      },
-      { name: 'remarks', options: { display: 'excluded', filter: false } },
-      { name: 'role_name', options: { display: 'excluded', filter: false } },
-      { name: 'is_withheld', options: { display: 'excluded', filter: false } }
-    ];
-  }, [data?.data]);
+        else return <CustomToken label={value?.getValue()} variant='success' />
+      }
+    }),
+  ]
+
   const options = {
     print: false,
     selectableRowsHeader: false,
@@ -241,7 +193,7 @@ const CreditProcessedTable = ({ currentUser }) => {
             downloadLoading={downloadLoading}
             searchLoading={searchLoading}
           />
-          <MUIDataTable
+          {/* <MUIDataTable
             title={'Processed'}
             columns={columns}
             options={options}
@@ -249,6 +201,11 @@ const CreditProcessedTable = ({ currentUser }) => {
             components={{
               TableFooter: () => <TableFooter offset={offset} stats={data?.stats} handleIncrease={() => setOffset(offset + 1)} handleDecrease={() => setOffset(offset - 1)} />
             }}
+          /> */}
+          <DataTableViewer
+            rowData={error ? [] : data?.data}
+            column={column}
+            title={'Processed'}
           />
         </>
       )}

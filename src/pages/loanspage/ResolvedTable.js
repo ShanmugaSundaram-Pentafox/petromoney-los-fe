@@ -6,6 +6,8 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { getAllWithheldLoans } from '../../services/withheld.services';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -16,84 +18,36 @@ const useStyles = makeStyles((theme) => ({
 const ResolvedTable = () => {
   const [loading, setLoading] = useState(false);
   const classes = useStyles()
-  const { data = [] } = useQuery('withheld-loans', () => getAllWithheldLoans(1), { refetchOnWindowFocus: false })
+  const { data = [] } = useQuery('withheld-loans', () => getAllWithheldLoans(1), { refetchOnWindowFocus: false });
+  const columnHelper = createColumnHelper();
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership ID',
-        name: 'id',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => {
-            return <div>{value}</div>
-          },
-        },
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        },
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-        },
-      },
-      {
-        label: 'Reason',
-        name: 'comments',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'left',
-          }),
-          customBodyRender: (value, tableMeta) => {
+  const column = [
+    columnHelper.accessor('id', {
+      header: 'Dealership Id'
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+    }),
+    columnHelper.accessor('comments', {
+      header: 'Reason',
+      cell: (value) => {
+        return (
+          value?.getValue()?.map((remark, i) => {
             return (
-              value?.map((remark, i) => {
-                return (
-                  <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
-                    <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.comment && remark.comment}</div>
-                  </div>
-                )
-              })
+              <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
+                <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.comment && remark.comment}</div>
+              </div>
             )
-          },
-        },
+          })
+        )
       },
-      {
-        label: 'Remarks',
-        name: 'comments',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => {
-            return (
-              value?.map((remark, i) => {
-                return (
-                  <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
-                    {console.log(remark?.remarks)}
-                    <div style={{ minWidth: 250, maxWidth: 250 }} dangerouslySetInnerHTML={{ __html: remark.remarks ? remark.remarks : '<p>-</p>' }} />
-                  </div>
-                )
-              })
-            )
-          },
-        },
-      },
-    ]
-  }, [])
+    }),
+  ];
+
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',
@@ -128,15 +82,10 @@ const ResolvedTable = () => {
     <>
       <Grid item md={12}>
         {Array.isArray(data) && data.length ? (
-          <MUIDataTable
-            title={
-              <Typography className={classes.title} variant="h5" component="h5">
-                Resolved withheld loans
-              </Typography>
-            }
-            data={data}
-            columns={columns}
-            options={options}
+          <DataTableViewer
+            rowData={data}
+            column={column}
+            title={`Resolved Withheld Loans`}
           />
         ) : (!loading && <Paper style={{ padding: 10 }}>No resolved withheld loans found</Paper>)
         }

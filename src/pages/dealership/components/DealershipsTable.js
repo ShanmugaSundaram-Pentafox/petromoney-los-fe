@@ -11,6 +11,8 @@ import { createStructuredSelector } from 'reselect';
 import { getAllDealership } from '../../../services/dealerships.service';
 import { setAllDealerships } from '../../../store/dealership/dealership.actions';
 import { selectAllDealerships } from '../../../store/dealership/dealership.selector';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 // import { decrypt } from '../../../services/crypto.service';
 
 
@@ -56,80 +58,35 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
   // const [ data, setData ] = useState([]);
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const columnHelper = createColumnHelper();
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'ID',
-        name: 'id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true
-        }
-      },
-      {
-        label: 'Sales Area',
-        name: 'sales_area',
-        options: {
-          filter: true,
-          sort: true,
-          display: false,
-        }
-      },
-      // {
-      //   label: 'Submitted Date',
-      //   name: 'loan_application_submitted_date',
-      //   options: {
-      //     filter: true,
-      //     sort: true,
-      //     customBodyRender: (value) => value ? format(new Date(value), 'dd-MMM-yyyy') : ''
-      //   }
-      // },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true
-        }
-      },
-      {
-        label: 'Pincode',
-        name: 'pincode',
-        options: {
-          filter: false,
-          sort: true
-        }
-      },
-      {
-        label: 'GST',
-        name: 'gst',
-        options: {
-          filter: false,
-          sort: false,
-        }
-      },
-      {
-        label: 'PAN',
-        name: 'pan',
-        options: {
-          filter: false,
-          sort: false,
-        }
-      }
-    ]
-  }, []);
+  const column = [
+    columnHelper.accessor('id', {
+      header: 'ID',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+    }),
+    columnHelper.accessor('sales_area', {
+      header: 'Sales Area',
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+    }),
+    columnHelper.accessor('pincode', {
+      header: 'Pincode',
+    }),
+    columnHelper.accessor('gst', {
+      header: 'GST',
+    }),
+    columnHelper.accessor('pan', {
+      header: 'PAN',
+    }),
+    columnHelper.accessor('pan', {
+      header: 'PAN',
+    }),
+  ]
 
   useMount(() => {
     if (!dealerships.length) {
@@ -147,14 +104,6 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
     }
   })
 
-  const options = {
-    // filterType: 'checkbox',
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    rowsPerPage: 15,
-    isRowSelectable: () => false
-  };
-
   return (
     <div>
       {
@@ -164,11 +113,10 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
           </Grid>
         ) :
           Array.isArray(dealerships) && dealerships.length ? (
-            <MUIDataTable
-              title={<Typography className={classes.title} variant="h5" component="h5">Dealership List</Typography>}
-              data={dealerships}
-              columns={columns}
-              options={options}
+            <DataTableViewer
+              rowData={dealerships}
+              column={column}
+              title={`Dealership List`}
             />
           ) : (
             <Paper style={{ marginTop: 10, padding: 10 }}>No Dealers found</Paper>

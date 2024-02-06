@@ -1,4 +1,4 @@
-import { Button, Tooltip, Dialog, DialogContent, DialogContentText, makeStyles, } from '@material-ui/core';
+import { Tooltip, Dialog, DialogContent, DialogContentText, makeStyles, } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
@@ -15,6 +15,9 @@ import Currency from '../../../components/Number/Currency';
 import { getSignedUrl } from '../../../services/common.service';
 import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, sendRenewalReminder } from '../../../services/renewal.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
+import { Button } from '@mantine/core';
 
 
 const useStyles = makeStyles(theme => ({
@@ -36,12 +39,12 @@ const useStyles = makeStyles(theme => ({
 const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
   const [loans, setLoans] = useState([]);
-  const [page, setPage] = useState();
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-
+  const columnHelper = createColumnHelper();
 
   const pageDetailsQuery = useQuery({
     queryKey: ['renewal_draftRecordCount', filterQry, search],
@@ -112,87 +115,36 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      }, {
-        label: 'Name',
-        name: 'dealership_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      }, {
-        label: 'Scheme',
-        name: 'new_product_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      }, {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
-      }, {
-        label: 'Loan Amount',
-        name: 'new_loan_amount',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
-          setCellHeaderProps: () => ({
-            align: 'right',
-          }),
-          customBodyRender: value => <Currency value={value} />
-        }
-      },
-      {
-        label: 'Month of renewal',
-        name: 'renewal_month',
-        options: {
-          filter: true,
-          filterWidth: '100%',
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'Renewal Fee status',
-        name: 'renewal_fee_payment_status',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-    ]
-  }, [loans]);
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('dealership_name', {
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('new_product_name', {
+      header: 'Scheme',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }),
+    columnHelper.accessor('new_loan_amount', {
+      header: 'Loan Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('renewal_month', {
+      header: 'Month Of Renewal',
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
+    }),
+    columnHelper.accessor('renewal_fee_payment_status', {
+      header: 'Renewal Fee Status',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+  ]
 
   const options = {
     selectableRowsHeader: false,
@@ -249,12 +201,17 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
 
   return (
     <div className={classes.root}>
-      <MUIDataTable
-        title={title ? <Typography className={classes.title} variant="h4" component="h4">{title}</Typography> : null}
-        data={loans}
-        style={classes.tableStyle}
-        columns={columns}
-        options={options}
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        title={title}
+        onRowClick={i => onRowClick(i.dealership_id, i, 'draft')}
+        page={page}
+        setPage={setPage}
+        useAPIPagination
+        totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
+        filter={false}
+        action={<Button size='xs' onClick={() => setOpenModal(true)}>Send Reminder</Button>}
       />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

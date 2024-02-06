@@ -7,7 +7,6 @@ import LinkIcon from '@material-ui/icons/Link';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -22,6 +21,8 @@ import { getDealershipById } from '../../services/dealerships.service';
 import { getDocumentsChecklistById, getLoansByStatus, updateDocumentChecklistById } from '../../services/loans.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -80,6 +81,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
   const [checklistData, setChecklistData] = useState([]);
   const [newValue, setNewValue] = useState('');
   const { enqueueSnackbar } = useSnackbar();
+  const columnHelper = createColumnHelper();
 
   // getting the list of doc based on the id
   const getDocChecklistQuery = useQuery({
@@ -113,131 +115,50 @@ const PresubmitLoansTable = ({ currentUser }) => {
     setShowPanel({ status: true, data: status, id: id, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Type',
-        name: 'type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
-
-      },
-      {
-        label: 'Req. Amount',
-        name: 'amount_requested',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'left',
-          }),
-          customBodyRender: value => <Currency value={value} />
-        }
-      },
-      {
-        label: 'Req. Date',
-        name: 'created_date',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-            </div>
-          }
-        }
-      },
-      {
-        label: 'Application state',
-        name: 'application_state',
-        options: {
-          filter: true,
-          filterWidth: '100%',
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>
-              {value ? value : '-'}
-            </div>
-          }
-        }
-      },
-      {
-        label: 'Documents',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: false,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: (value, r) => {
-            return (
-              <>
-                <Tooltip title={'Click to view documents'}>
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => setDocModal({ modal: true, id: value })}><LinkIcon /></IconButton>
-                </Tooltip>
-              </>
-            )
-          }
-        }
-      }
-    ]
-  }, [loans]);
-
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'pre_submit')
-      }
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      enableColumnFilter: false,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('type', {
+      header: 'Type',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }),
+    columnHelper.accessor('amount_requested', {
+      header: 'Req. Amount',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('created_date', {
+      header: 'Req. Date',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+    }),
+    columnHelper.accessor('application_state', {
+      header: 'Application State',
+      // enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue() || '-'}</span>
+    }),
+    columnHelper.accessor('action', {
+      header: 'Documents',
+      enableColumnFilter: false,
+      cell: (value) => (
+        <Tooltip title={'Click to view documents'}>
+          <IconButton size="small" color="primary" aria-label="application" onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id })}><LinkIcon /></IconButton>
+        </Tooltip>
+      )
+    })
+  ]
 
   // used to check and uncheck the checkbox
   const handleChecked = ({ index, insideIndex, title, value, key }) => {
@@ -312,11 +233,12 @@ const PresubmitLoansTable = ({ currentUser }) => {
     <div className={classes.root}>
       {
         Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={<Typography className={classes.title} variant="h4" component="h4">{'Pre Submit queue'} ({loans.length})</Typography>}
-            data={loans}
-            columns={columns}
-            options={options}
+          <DataTableViewer
+            column={column}
+            rowData={loans}
+            title={'Pre Submit queue'}
+            excelDownload
+            onRowClick={(i) => onRowClick(i.dealership_id, i, 'pre_submit')}
           />
         ) : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
       }

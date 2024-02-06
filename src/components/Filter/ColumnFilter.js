@@ -17,7 +17,7 @@ const ColumnsFilter = ({
     if (data?.length) {
       // callback to update localstorage and table state
       updateFilter(data)
-      close();
+      onClose();
     }
     // else {
     //   displayNotification({ message: 'Select columns to update', variant: 'warning' })

@@ -8,6 +8,8 @@ import { NavLink as RouterLink } from 'react-router-dom'
 import { useMount } from 'react-use'
 import Currency from '../../../components/Number/Currency'
 import { getAllVehicleLoans } from '../../../services/transports.service'
+import { createColumnHelper } from '@tanstack/react-table'
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer'
 // import AddNewVehicleForm from "./AddNewVehicleForm"
 
 
@@ -21,65 +23,29 @@ const VehiclesLoanTable = () => {
   const [data, setData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const classes = useStyles()
+  const classes = useStyles();
+  const columnHelper = createColumnHelper();
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Code',
-        name: 'transporter_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
-          },
-        },
-      },
-      {
-        label: 'Name',
-        name: 'transporter_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        },
-      },
-      {
-        label: 'Vehicle Number',
-        name: 'tt_no',
-        options: {
-          filter: false,
-          sort: true,
-        },
-      },
-      {
-        label: 'Loan Type',
-        name: 'credit_head',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value, tableMeta) => {
-            // console.log(tableMeta)
-            return value
-          },
-        },
-      },
-      {
-        label: 'Amount',
-        name: 'loan_amount',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <Currency value={value} />
-          },
-        },
-      },
-    ]
-  }, [])
+  const column = [
+    columnHelper.accessor('transporter_id', {
+      header: 'Code',
+      cell: (value) => <RouterLink to={`/transports/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('transporter_name', {
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('tt_no', {
+      header: 'Vehicle Number',
+    }),
+    columnHelper.accessor('credit_head', {
+      header: 'Loan Type',
+    }),
+    columnHelper.accessor('loan_amount', {
+      header: 'Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    })
+  ]
 
   useMount(() => {
     setLoading(true)
@@ -93,39 +59,16 @@ const VehiclesLoanTable = () => {
         console.log(e);
       })
   })
-  const options = {
-    // filterType: 'checkbox',
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    rowsPerPage: 10,
-    viewColumns: false,
-    print: false,
-    isRowSelectable: () => false,
-    // customToolbar: () => {
-    //   return (
-    //     <Button
-    //       color="primary"
-    //       variant="contained"
-    //       onClick={() => setOpenModal(true)}
-    //     >
-    //       Add Vehicle
-    //     </Button>
-    //   );
-    // }
-  }
 
   return (
     <Grid item md={12}>
       {Array.isArray(data) && data.length ? (
-        <MUIDataTable
-          title={
-            <Typography className={classes.title} variant="h5" component="h5">
-              Vehicle Loans List
-            </Typography>
-          }
-          data={data}
-          columns={columns}
-          options={options}
+        <DataTableViewer
+          column={column}
+          rowData={data}
+          title={'Vehicle Loans List'}
+          columnsFilter={false}
+          excelDownload
         />
       ) : (!loading && <Paper style={{ padding: 10 }}>No Vehicle Loans</Paper>)
       }

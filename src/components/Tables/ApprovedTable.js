@@ -1,9 +1,3 @@
-import { Dialog, Popover } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import { List } from '@material-ui/icons';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import DescriptionIcon from '@material-ui/icons/Description';
@@ -11,7 +5,6 @@ import LinkIcon from '@material-ui/icons/Link';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
@@ -27,6 +20,7 @@ import Currency from '../Number/Currency';
 import { permissionCheck } from '../UserCan/UserCan';
 import { createColumnHelper } from '@tanstack/table-core';
 import DataTableViewer from '../ReactTable/DataTableViewer';
+import { ActionIcon, Loader, Paper, Popover, Text, Tooltip } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -42,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
   },
   itemLists: {
-    padding: '10px',
+    // padding: '10px',
     display: 'flex',
     gap: '6px',
     flexDirection: 'column',
@@ -113,10 +107,12 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
   const column = [
     columnHelper.accessor('dealership_id', {
       header: 'Dealership Id',
+      enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
     }),
     columnHelper.accessor('name', {
       header: 'Name',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }),
     columnHelper.accessor('type', {
@@ -132,39 +128,84 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
     }),
     columnHelper.accessor('approved_amount', {
       header: 'Approved Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value.getValue()} />
     }),
     columnHelper.accessor('loan_approved_rejected_date', {
       header: 'Approved Date',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
     }),
     columnHelper.accessor('approver', {
       header: 'Approved By',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }),
     columnHelper.accessor('action', {
       header: 'Attachment',
+      enableColumnFilter: false,
       cell: ({ row }) => {
-        console.log(row?.original?.dealership_id)
         return (
-          <span>
-            <Tooltip title="click to view documents checklist">
-              <LinkIcon style={{ color: 'grey' }} onClick={(event) => {
-                setAnchorEl({ attachments: event.currentTarget });
-                setRowData(row?.original);
-              }} />
-            </Tooltip>
-          </span>
+          <Popover shadow='xl' withArrow position='top-end'>
+            <Popover.Target>
+              <Tooltip label={"click to view documents checklist"}>
+                <ActionIcon variant={'subtle'} color={'gray'} size={'xs'} mt={4}><LinkIcon /></ActionIcon>
+              </Tooltip>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <DocCheckListDetailsTable title={row?.original} />
+            </Popover.Dropdown>
+          </Popover>
         )
       }
     }),
     columnHelper.accessor('action', {
       header: 'Documents',
+      enableColumnFilter: false,
       cell: ({ row }) => (
         <>
-          <Tooltip title={'Click to view documents'}>
-            <IconButton size="small" color="primary" aria-label="application" onClick={(e) => setAnchorEl({ document: e.currentTarget, value: row?.original?.dealership_id, r: row?.original })} ><List /></IconButton>
-          </Tooltip>
+          <Popover
+            withArrow
+            position='left-start'
+            shadow="lg"
+          >
+            <Popover.Target>
+              <Tooltip label={'Click to view documents'} withArrow color='gray' offset={10}>
+                <span>
+                  <ActionIcon size="xs" variant='subtle' color={'blue'} mt={4}><List /></ActionIcon>
+                </span>
+              </Tooltip>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <div className={classes.itemLists}>
+                <div className={classes.listItem} onClick={() => { setloanId(row?.original?.['id']); setDealershipId(row?.original?.dealership_id); setType('sanction'); setModalVisible(true); }}>
+                  <div className={classes.listIcon}>
+                    <DescriptionIcon style={{ width: 19, color: 'blue' }} />
+                  </div>
+                  <Text>Sanction Letter</Text>
+                </div>
+                <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(row?.original?.['id']); setDealershipId(row?.original?.dealership_id); setType('agreement'); setModalVisible(true); setLoanAmount(row?.original?.['amount_approved']); setProductTypeId(row?.original?.['product_id']) }}>
+                  <div className={classes.listIcon} >
+                    <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
+                  </div>
+                  <Text>Loan Agreement</Text>
+                </div>
+                <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(row?.original?.['id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
+                  <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
+                    <ESignIcon width={17} style={{ color: 'blue' }} />
+                  </div>
+                  <Text>eSign Application</Text>
+                </div>
+                <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(row?.original?.['id']); setType('loc'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); setLoanAmount(row?.original?.['amount_approved']); }}>
+                  <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
+                    <AssignmentIcon style={{ width: 19, color: 'blue' }} />
+                  </div>
+                  <Text>Letter Of Continuity</Text>
+                </div>
+              </div>
+            </Popover.Dropdown>
+          </Popover>
+
         </>
       )
     })
@@ -184,78 +225,26 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
         ) : (!loading && <Paper style={{ padding: 10 }}>No Approved Applications</Paper>)
       }
       {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+        loading && <div style={{ textAlign: 'center' }}> <Loader /></div>
       }
-      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
-        <SignRequestLayout
-          dealershipId={dealershipId}
-          loanId={loanId}
-          loanAmount={loanAmount}
-          productId={productTypeId}
-          type={type}
-          title={type === 'application' ? 'eSign Application Form' : type === 'loc' ? 'Letter of Continuity' : 'Sanction Letter'}
-          onClose={() => setModalVisible(false)}
-          callback={getLoansTable}
-          currentUser={currentUser}
-        />
-      </Dialog>
+      <SignRequestLayout
+        dealershipId={dealershipId}
+        loanId={loanId}
+        loanAmount={loanAmount}
+        opened={modalVisible}
+        productId={productTypeId}
+        type={type}
+        title={type === 'application' ? 'eSign Application Form' : type === 'loc' ? 'Letter of Continuity' : 'Sanction Letter'}
+        onClose={() => setModalVisible(false)}
+        callback={getLoansTable}
+        currentUser={currentUser}
+      />
       <Popover
         id={id}
         open={open}
-        anchorEl={anchorEl?.attachments}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
       >
         <DocCheckListDetailsTable title={rowData} />
-      </Popover>
-
-      <Popover
-        id={documentId}
-        open={documentPopover}
-        anchorEl={anchorEl?.document}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <div className={classes.itemLists}>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(anchorEl?.r?.['id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
-            <div className={classes.listIcon}>
-              <DescriptionIcon style={{ width: 19, color: 'blue' }} />
-            </div>
-            <Typography>Sanction Letter</Typography>
-          </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(anchorEl?.r?.['id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(anchorEl?.r?.['amount_approved']); setProductTypeId(anchorEl?.r?.['product_id']) }}>
-            <div className={classes.listIcon} >
-              <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
-            </div>
-            <Typography>Loan Agreement</Typography>
-          </div>
-          <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(anchorEl?.r?.['id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
-            <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
-              <ESignIcon width={17} style={{ color: 'blue' }} />
-            </div>
-            <Typography>eSign Application</Typography>
-          </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(anchorEl?.r?.['id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(anchorEl?.r?.['amount_approved']); }}>
-            <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
-              <AssignmentIcon style={{ width: 19, color: 'blue' }} />
-            </div>
-            <Typography>Letter Of Continuity</Typography>
-          </div>
-        </div>
       </Popover>
     </div>
   )

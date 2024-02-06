@@ -9,16 +9,19 @@ import Currency from '../../components/Number/Currency';
 import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { rejectDealerReferralById } from '../../services/dealerships.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const useStyles = makeStyles(theme => ({
   title: {
     fontWeight: 500
   },
 }));
-const RejectedListTable = ({loans, loading, fetchData}) => {
+const RejectedListTable = ({ loans, loading, fetchData }) => {
   const classes = useStyles();
   const [modalObj, setModalObj] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const columnHelper = createColumnHelper();
 
   const handlePushback = () => {
     rejectDealerReferralById({ id: modalObj?.id, data: { remarks: modalObj?.remarks, status: 'pushback' } })
@@ -45,102 +48,48 @@ const RejectedListTable = ({loans, loading, fetchData}) => {
       })
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Dealership Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Disbursed Date',
-        name: 'loan_disbursed_date',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{moment(value).format('DD/MM/YYYY')}</>
-          },
-        }
-      },
-      {
-        label: 'Created By',
-        name: 'created_by',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Referred by Id',
-        name: 'referred_dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <>{value}</>
-        }
-      },
-      {
-        label: 'Referred by Name',
-        name: 'referred_dealership_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Bonus Amount',
-        name: 'current_eligible_bonus',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <Currency value={value ? value : '-'} />
-        }
-      },
-      {
-        label: 'Action',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          customBodyRender: (value, tableMeta) => {
-            return (
-              !tableMeta?.rowData[8] ?
-                <Tooltip title="click to pushback">
-                  <Button variant='outlined' size='small' color='primary'
-                    onClick={() => setModalObj({ open: true, id: value })}
-                  >
-                    Pushback
-                  </Button>
-                </Tooltip> : '-'
-            )
-          }
-        }
-      },
-    ]
-  }, [loans]);
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('name', {
+      header: 'Dealership Name',
+      cell: (value) => <span>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('loan_disbursed_date', {
+      header: 'Disbursed Date',
+      cell: (value) => <span>{moment(value?.getValue()).format('DD/MM/YYYY')}</span>
+    }),
+    columnHelper.accessor('created_by', {
+      header: 'Created By',
+    }),
+    columnHelper.accessor('referred_dealership_id', {
+      header: 'Referred By Id',
+    }),
+    columnHelper.accessor('referred_dealership_name', {
+      header: 'Referred By Name',
+      cell: (value) => <span>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('current_eligible_bonus', {
+      header: 'Bonus Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('action', {
+      header: 'Action',
+      cell: ({ row }) => {
+        return (
+          <Tooltip title="click to pushback">
+            <Button variant='outlined' size='small' color='primary'
+              onClick={() => setModalObj({ open: true, id: row?.original?.dealership_id })}
+            >
+              Pushback
+            </Button>
+          </Tooltip>
+        )
+      }
+    }),
+  ]
 
   const options = {
     selectableRowsHeader: false,
@@ -158,12 +107,12 @@ const RejectedListTable = ({loans, loading, fetchData}) => {
   return (
     <div>
       {Array.isArray(loans) && loans.length ?
-        <MUIDataTable
-          title={<Typography className={classes.title} variant="h4" component="h4">{'Rejected'}</Typography>}
-          data={loans}
-          columns={columns}
-          options={options}
-        /> : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
+        <DataTableViewer
+          rowData={loans}
+          column={column}
+          title={'Rejected'}
+        />
+        : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
@@ -178,7 +127,7 @@ const RejectedListTable = ({loans, loading, fetchData}) => {
             <DialogContentText id="pushback-remarks-desc">
               Please enter your remarks.
             </DialogContentText>
-            <TextEditor setJSON={(e) => setModalObj(old => ({...old, remarks: e}))} toolBar={true} remarkData={modalObj?.remarks} />
+            <TextEditor setJSON={(e) => setModalObj(old => ({ ...old, remarks: e }))} toolBar={true} remarkData={modalObj?.remarks} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
             <Button variant='outlined' onClick={() => setModalObj({})} style={{ marginRight: 8 }}>Cancel</Button>

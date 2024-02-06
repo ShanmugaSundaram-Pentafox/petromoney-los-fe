@@ -18,6 +18,7 @@ import Currency from '../Number/Currency';
 import { permissionCheck } from '../UserCan/UserCan';
 import { createColumnHelper } from '@tanstack/table-core';
 import DataTableViewer from '../ReactTable/DataTableViewer';
+import { ActionIcon, Loader } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,10 +72,12 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
   const column = [
     columnHelper.accessor('dealership_id', {
       header: 'Dealership Id',
+      enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
     }),
     columnHelper.accessor('name', {
       header: 'Name',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }),
     columnHelper.accessor('type', {
@@ -90,29 +93,32 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
     }),
     columnHelper.accessor('amount_request', {
       header: 'Req. Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
     }),
     columnHelper.accessor('modified_date', {
       header: 'Req. Amount',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
     }),
     columnHelper.accessor('reviewer', {
       header: 'Reviewed By',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }),
     columnHelper.accessor('approver', {
       header: 'Approver',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }),
     columnHelper.accessor('action', {
       header: 'Document',
+      enableColumnFilter: false,
       cell: ({ row }) => (
         <Tooltip title="eSign Application">
-          <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(row?.['id']); setType('application'); setDealershipId(row?.dealership_id); setModalVisible(true); }}>
-            <div>
-              <ESignIcon width={24} />
-            </div>
-          </IconButton>
+          <ActionIcon size="xs" color="blue" variant="subtle" onClick={() => { setloanId(row?.['id']); setType('application'); setDealershipId(row?.dealership_id); setModalVisible(true); }}>
+            <ESignIcon />
+          </ActionIcon>
         </Tooltip>
       )
     }),
@@ -127,22 +133,22 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
             rowData={loans}
             title={`${title} (${loans.length})`}
             onRowClick={(e) => onRowClick(e.dealership_id, e, 'loan_approval')}
+            excelDownload
           />
         ) : (!loading && <Paper style={{ padding: 10 }} >No Pending Initial Approvals</Paper>)
       }
       {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+        loading && <div style={{ textAlign: 'center' }}> <Loader /></div>
       }
-      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
-        <SignRequestLayout
-          dealershipId={dealershipId}
-          loanId={loanId}
-          type={type}
-          title={'eSign Application Form'}
-          onClose={() => setModalVisible(false)}
-          currentUser={currentUser}
-        />
-      </Dialog>
+      <SignRequestLayout
+        dealershipId={dealershipId}
+        opened={modalVisible}
+        loanId={loanId}
+        type={type}
+        title={'eSign Application Form'}
+        onClose={() => setModalVisible(false)}
+        currentUser={currentUser}
+      />
     </div>
   )
 }

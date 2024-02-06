@@ -1,74 +1,41 @@
+import { createColumnHelper } from '@tanstack/react-table';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo } from 'react'
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
-const ProcessedCallRequest = ({callbackProcessed}) => {
+const ProcessedCallRequest = ({ callbackProcessed }) => {
 
-  const columns = useMemo(() => {
-    return [
-      {
-        name: 'dealer_id',
-        label: 'Cust Code',
-        options: {
-          customBodyRender: (value) => {
-            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
-          }
-        }
-      },
-      {
-        name: 'dealer_name',
-        label: 'Cust Name',
-        options: {
-          customBodyRender: (value, tableMeta, updateValue) => {
-            return <div>{value?.toUpperCase()}</div>
-          }
-        }
-      },
-      {
-        name: 'dealership_id',
-        label: 'Dealership Id',
-        options: {
-          customBodyRender: (value) => {
-            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
-          }
-        }
-      },
-      {
-        name: 'dealership_name',
-        label: 'Dealership Name',
-        options: { filter: false }
-      },
-      {
-        name: 'region_value',
-        label: 'Region',
-        options: { filter: false }
-      },
-      {
-        name: 'mobile',
-        label: 'Mobile',
-        options: { filter: false }
-      },
-      {
-        name: 'remarks',
-        label: 'Remarks',
-        options: { filter: false }
-      },
-      {
-        name: 'created_date',
-        label: 'Requested On',
-        options: { filter: false }
-      },
-      {
-        name: 'processed_date',
-        label: 'Processed On',
-        options: { filter: false }
-      },
-      {
-        name: 'processed_by',
-        label: 'Processed By',
-        options: { filter: false }
-      },
-    ];
-  });
+  const columnHelper = createColumnHelper();
+
+  const column = [
+    columnHelper.accessor('dealer_id', {
+      header: 'Customer Code',
+      cell: (value) => <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.getValue()}</div>
+    }),
+    columnHelper.accessor('dealer_name', {
+      header: 'Cust Name / Request',
+      cell: (value) => <div>{value?.getValue()?.toUpperCase()}</div>
+    }),
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: (value) => <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.getValue()}</div>
+    }),
+    columnHelper.accessor('dealership_name', {
+      header: 'Dealership Name',
+    }),
+    columnHelper.accessor('region_value', {
+      header: 'Region',
+    }),
+    columnHelper.accessor('mobile', {
+      header: 'Mobile',
+    }),
+    columnHelper.accessor('created_date', {
+      header: 'Requested On',
+    }),
+    columnHelper.accessor('processed_by', {
+      header: 'Processed By',
+    }),
+  ]
 
   const options = {
     print: false,
@@ -80,11 +47,10 @@ const ProcessedCallRequest = ({callbackProcessed}) => {
 
   return (
     <div>
-      <MUIDataTable
+      <DataTableViewer
+        rowData={callbackProcessed}
+        column={column}
         title={'Processed'}
-        columns={columns}
-        options={options}
-        data={callbackProcessed}
       />
     </div>
   )

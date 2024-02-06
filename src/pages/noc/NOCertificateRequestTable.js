@@ -24,6 +24,8 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { getAllNocRequest } from '../../services/noc.services';
 import { isAllowed } from '../../utils/cerbos';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -62,6 +64,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   const [openViewer, setOpenViewer] = useState({ open: false });
   const [list, setList] = useState();
   const { enqueueSnackbar } = useSnackbar();
+  const columnHelper = createColumnHelper();
 
   const actionable = !permissionCheck(
     currentUser.role_name,
@@ -103,147 +106,82 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     }
   };
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value}</>;
-          },
-        },
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id'
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name'
+    }),
+    columnHelper.accessor('applicant_code', {
+      header: 'Applicant Code'
+    }),
+    columnHelper.accessor('noc_type', {
+      header: 'Type'
+    }),
+    columnHelper.accessor('disbursed_amount', {
+      header: 'Disbursed Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('product_name', {
+      header: 'Scheme'
+    }),
+    columnHelper.accessor('formated_date', {
+      header: 'Issued Month'
+    }),
+    columnHelper.accessor('remarks', {
+      header: 'Remarks'
+    }),
+    columnHelper.accessor('status', {
+      header: 'Status',
+      cell: (value) => {
+        if (value?.getValue() == 'rejected') {
+          return (
+            <div>
+              <CustomToken label={value?.getValue()} variant="error" icon="cross" />
+            </div>
+          );
+        } else if (value?.getValue() == 'approved') {
+          return (
+            <div>
+              <CustomToken label={value?.getValue()} variant="success" icon="tick" />
+            </div>
+          );
+        } else return <CustomToken label={value?.getValue()} variant="warn" />;
       },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>;
-          },
-        },
+    }),
+    columnHelper.accessor('noc_letter_url', {
+      header: 'Documents',
+      cell: ({ row }) => {
+        return (
+          <div style={{ minWidth: 70 }}>
+            {row?.original?.noc_letter_url ? (
+              <Tooltip title="Download noc letter">
+                <IconButton
+                  size="small"
+                  color="primary"
+                  aria-label="application"
+                  onClick={() =>
+                    setOpenViewer({
+                      ...openViewer,
+                      open: true,
+                      image: row?.original?.noc_letter_url,
+                      type: row?.original?.noc_letter_url?.endsWith('.pdf')
+                    })
+                  }
+                >
+                  <DescriptionIcon style={{ width: 19 }} />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              '-'
+            )}
+          </div>
+        );
       },
-      {
-        label: 'Applicant code',
-        name: 'applicant_code',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => <span>{value}</span>,
-        },
-      },
-      {
-        label: 'Type',
-        name: 'noc_type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => <>{value}</>,
-        },
-      },
-      {
-        label: 'Disbursed Amount',
-        name: 'disbursed_amount',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => <Currency value={value} />,
-        },
-      },
-      {
-        label: 'Product',
-        name: 'product_name',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => <>{value}</>,
-        },
-      },
-      {
-        label: 'Issued Month',
-        name: 'formated_date',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => <>{value ? value : '-'}</>,
-        },
-      },
-      {
-        label: 'Remarks',
-        name: 'remarks',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => <>{value ? value : '-'}</>,
-        },
-      },
-      {
-        name: 'status',
-        label: 'Status',
-        options: {
-          customBodyRender: (value, tableMeta) => {
-            if (value == 'rejected') {
-              return (
-                <div>
-                  <CustomToken label={value} variant="error" icon="cross" />
-                </div>
-              );
-            } else if (value == 'approved') {
-              return (
-                <div>
-                  <CustomToken label={value} variant="success" icon="tick" />
-                </div>
-              );
-            } else return <CustomToken label={value} variant="warn" />;
-          },
-          filter: false,
-        },
-      },
-      {
-        label: 'Documents',
-        name: 'noc_letter_url',
-        options: {
-          filter: false,
-          sort: false,
-          display: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: (value, r) => {
-            return (
-              <div style={{ minWidth: 70 }}>
-                {value ? (
-                  <Tooltip title="Download noc letter">
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      aria-label="application"
-                      onClick={() =>
-                        setOpenViewer({
-                          ...openViewer,
-                          open: true,
-                          image: value,
-                          type: value?.endsWith('.pdf')
-                        })
-                      }
-                    >
-                      <DescriptionIcon style={{ width: 19 }} />
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  '-'
-                )}
-              </div>
-            );
-          },
-        },
-      },
-    ];
-  }, [list]);
+    })
+  ];
+
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',
@@ -273,15 +211,11 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     <div className={classes.root}>
       {
         Array.isArray(list) ? (
-          <MUIDataTable
-            title={
-              <Typography className={classes.title} variant="h4" component="h4">
-                {'NOC Applications'} ({list.length})
-              </Typography>
-            }
-            data={list}
-            columns={columns}
-            options={options}
+          <DataTableViewer
+            rowData={list}
+            column={column}
+            styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
+            title={'NOC Application'}
           />
         ) : (
           !loading && <Paper style={{ padding: 10 }}>No Request found</Paper>

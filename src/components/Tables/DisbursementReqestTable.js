@@ -63,14 +63,17 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filte
   const column = [
     columnHelper.accessor('dealership_id', {
       header: 'Dealership Id',
+      enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
     }),
     columnHelper.accessor('name', {
       header: 'Name',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }),
     columnHelper.accessor('type', {
       header: 'Type',
+      enableColumnFilter: false,
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
     }),
     columnHelper.accessor('region', {
@@ -82,10 +85,12 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filte
     }),
     columnHelper.accessor('amount_approved', {
       header: 'Approved Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value} />
     }),
     columnHelper.accessor('modified_date', {
       header: 'Approved Date',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
     }),
   ]
@@ -98,6 +103,7 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filte
             rowData={loans}
             column={column}
             title={`${title} (${loans.length})`}
+            excelDownload
             onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
           />
         ) : (!loading && <Paper style={{ padding: 10 }} >No Pending Disbursement Approvals</Paper>)

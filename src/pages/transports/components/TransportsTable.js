@@ -12,6 +12,8 @@ import { getOmcList } from '../../../services/common.service'
 import { getAllTransport, getTransportersOwnerById } from '../../../services/transports.service'
 import { setAllTransports } from '../../../store/transports/transports.actions'
 import { selectAllTransports } from '../../../store/transports/transports.selector'
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 
 
 
@@ -38,54 +40,26 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
 
   const [loading, setLoading] = useState(false);
   const [omcs, setOmcs] = useState([]);
+  const columnHelper = createColumnHelper();
 
-  const classes = useStyles()
+  const classes = useStyles();
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Code',
-        name: 'transporter_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
-          },
-        },
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        },
-      },
-      {
-        label: 'Mobile Number',
-        name: 'mobile',
-        options: {
-          filter: false,
-          sort: true,
-        },
-      },
-      {
-        label: 'OMC',
-        name: 'omc_value',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value || '-'}</>
-          },
-        },
-      },
-    ]
-  }, [transports])
+  const column = [
+    columnHelper.accessor('transporter_id', {
+      header: 'Code',
+      cell: (value) => <RouterLink to={`/transports/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('mobile', {
+      header: 'Mobile Number',
+    }),
+    columnHelper.accessor('omc_value', {
+      header: 'OMC',
+    }),
+  ]
 
   useMount(() => {
     if (portal) {
@@ -133,18 +107,6 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
     onRowClick: (rowData, { dataIndex }) => {
       onRowClick(transports[dataIndex].dealership_id, transports[dataIndex])
     },
-
-    // customToolbar: () => {
-    //   return (
-    //     <Button
-    //       color="primary"
-    //       variant="contained"
-    //       onClick={() => setOpenModal(true)}
-    //     >
-    //       Add Transport
-    //     </Button>
-    //   );
-    // }
   }
 
   return (
@@ -156,17 +118,11 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
           </Grid>
         ) :
           Array.isArray(transports) && transports.length ? (
-            <MUIDataTable
-              title={
-                <div className={classes.button}>
-                  <Typography className={classes.title} variant="h5" component="h5">
-                    Transports List
-                  </Typography>
-                </div>
-              }
-              data={transports}
-              columns={columns}
-              options={options}
+            <DataTableViewer
+              title={'Transporter List'}
+              column={column}
+              rowData={transports}
+              onRowClick={i => onRowClick(i?.dealership_id, i)}
             />
           ) : (
             <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>

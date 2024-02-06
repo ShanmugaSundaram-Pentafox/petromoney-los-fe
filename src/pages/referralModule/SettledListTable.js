@@ -5,92 +5,48 @@ import React, { useMemo } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import Currency from '../../components/Number/Currency';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const useStyles = makeStyles(theme => ({
   title: {
     fontWeight: 500
   },
 }));
-const SettledListTable = ({loans, loading}) => {
-  
+const SettledListTable = ({ loans, loading }) => {
+
   const classes = useStyles();
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Dealership Name',
-        name: 'dealership_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Disbursed Date',
-        name: 'loan_disbursed_date',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{moment(value).format('DD/MM/YYYY')}</>
-          },
-        }
-      },
-      {
-        label: 'Created By',
-        name: 'created_by',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Referred by Id',
-        name: 'referred_dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <>{value}</>
-        }
-      },
-      {
-        label: 'Referred by Name',
-        name: 'referred_dealership_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Bonus Amount',
-        name: 'amount',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <Currency value={value ? value : '-'} />
-        }
-      },
-    ]
-  }, [loans]);
+  const columnHelper = createColumnHelper();
+
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('dealership_name', {
+      header: 'Dealership Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('loan_disbursed_date', {
+      header: 'Disbursed Date',
+      cell: (value) => <span>{moment(value?.getValue()).format('DD/MM/YYYY')}</span>
+    }),
+    columnHelper.accessor('created_by', {
+      header: 'Created By',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('referred_dealership_id', {
+      header: 'Referred By ID',
+    }),
+    columnHelper.accessor('referred_dealership_name', {
+      header: 'Referred By Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('amount', {
+      header: 'Bonus Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+  ]
 
   const options = {
     selectableRowsHeader: false,
@@ -108,12 +64,12 @@ const SettledListTable = ({loans, loading}) => {
   return (
     <div>
       {Array.isArray(loans) && loans.length ?
-        <MUIDataTable
-          title={<Typography className={classes.title} variant="h4" component="h4">{'Settled'}</Typography>}
-          data={loans}
-          columns={columns}
-          options={options}
-        /> : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
+        <DataTableViewer
+          rowData={loans}
+          column={column}
+          title={'Settled'}
+        />
+        : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
       }
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

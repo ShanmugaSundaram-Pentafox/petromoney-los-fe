@@ -1,14 +1,7 @@
-import { Dialog } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { action_id, resources_id } from '../../config/accessControl';
@@ -23,6 +16,7 @@ import Currency from '../Number/Currency';
 import { permissionCheck } from '../UserCan/UserCan';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../ReactTable/DataTableViewer';
+import { ActionIcon, Loader, Modal, Paper, Tooltip } from '@mantine/core';
 
 
 const useStyles = makeStyles(theme => ({
@@ -83,10 +77,12 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
   const column = [
     columnHelper.accessor('dealership_id', {
       header: 'Dealership Id',
+      enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
     }),
     columnHelper.accessor('name', {
       header: 'Name',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }),
     columnHelper.accessor('type', {
@@ -102,10 +98,12 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
     }),
     columnHelper.accessor('amount_requested', {
       header: 'Req. Amount',
-      cell: (value) => <Currency value={value} />
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value?.getValue()} />
     }),
     columnHelper.accessor('created_date', {
       header: 'Req. Date',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
     }),
     columnHelper.accessor('application_state', {
@@ -114,14 +112,13 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
     }),
     columnHelper.accessor('action', {
       header: 'Documents',
+      enableColumnFilter: false,
       cell: ({ row }) => (
         <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
-          <Tooltip title="eSign Application">
-            <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(row?.['id']); setType('application'); setDealershipId(row?.dealership_id); setModalVisible(true); }}>
-              <div>
-                <ESignIcon width={24} />
-              </div>
-            </IconButton>
+          <Tooltip label={"eSign Application"} withArrow>
+            <ActionIcon variant='subtle' onClick={() => { setloanId(row?.original?.['id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
+              <ESignIcon width={24} color='blue' />
+            </ActionIcon>
           </Tooltip>
         </CheckAllowed>
       )
@@ -151,23 +148,30 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
             column={column}
             rowData={loans}
             title={`${title} (${loans.length})`}
+            excelDownload
             onRowClick={(i) => onRowClick(i?.dealership_id, i, 'submitted')}
           />
         ) : (!loading && <Paper style={{ padding: 10 }}>No Submitted Records</Paper>)
       }
       {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+        loading && <div style={{ textAlign: 'center' }}> <Loader /></div>
       }
-      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
-        <SignRequestLayout
-          dealershipId={dealershipId}
-          loanId={loanId}
-          type={type}
-          title={'eSign Application Form'}
-          onClose={() => setModalVisible(false)}
-          currentUser={currentUser}
-        />
-      </Dialog>
+      {/* <Modal
+        title={'eSign Application Form'}
+        onClose={() => setModalVisible(false)}
+      > */}
+      <SignRequestLayout
+        dealershipId={dealershipId}
+        opened={modalVisible}
+        loanId={loanId}
+        type={type}
+        title={'eSign Application Form'}
+        onClose={() => setModalVisible(false)}
+        currentUser={currentUser}
+      />
+      {/* </Modal> */}
+      {/* <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
+      </Dialog> */}
     </div>
   )
 }

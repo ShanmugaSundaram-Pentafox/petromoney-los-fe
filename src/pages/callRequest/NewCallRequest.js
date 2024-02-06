@@ -5,6 +5,8 @@ import React, { useMemo, useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../../components/TextInput/TextInput';
 import { resolveCallbackRequest } from '../../services/callrequest.service';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const useStyles = makeStyles({
   pill: {
@@ -20,13 +22,14 @@ const useStyles = makeStyles({
 
 const NewCallRequest = ({ callbackData }) => {
   const classes = useStyles();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
-  const [rowData, setRowData] = useState()
-  const [remark, setRemark] = useState()
+  const [rowData, setRowData] = useState();
+  const [remark, setRemark] = useState();
   const [error, setError] = useState();
+  const columnHelper = createColumnHelper();
 
-  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData[7]), {
+  const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData?.request_id), {
     onSuccess: (message) => {
       setRowData()
       queryClient.invalidateQueries('new-request')
@@ -62,94 +65,49 @@ const NewCallRequest = ({ callbackData }) => {
     }
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        name: 'dealer_id',
-        label: 'Cust Code',
-        options: {
-          customBodyRender: (value) => {
-            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
-          }
-        }
-      },
-      {
-        name: 'dealer_name',
-        label: 'Cust Name / Requestes',
-        options: {
-          customBodyRender: (value, tableMeta) => {
-            return (
-              <div style={{ display: 'flex' }}>
-                <Typography variant='body1'>{value?.toUpperCase()}</Typography>
-                {
-                  tableMeta.rowData[9] > 1 &&
-                    <Typography variant='body2' className={classes.pill}><strong>{tableMeta.rowData[9]}</strong></Typography>
-                }
-              </div>
-            )
-          }
-        }
-      },
-      {
-        name: 'dealership_id',
-        label: 'Dealership Id',
-        options: {
-          customBodyRender: (value) => {
-            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
-          }
-        }
-      },
-      {
-        name: 'dealership_name',
-        label: 'Dealership Name',
-        options: { filter: false }
-      },
-      {
-        name: 'created_date',
-        label: 'Requested On',
-        options: { filter: false }
-      },
-      {
-        name: 'region_value',
-        label: 'Region',
-        options: { filter: false }
-      },
-      {
-        name: 'mobile',
-        label: 'Mobile',
-        options: { filter: false }
-      },
-      {
-        name: 'request_id',
-        label: 'Request ID',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      {
-        name: 'call',
-        label: 'Action',
-        setCellProps: () => ({
-          align: 'right',
-        }),
-        options: {
-          filter: false,
-          customBodyRender: (value, tableValue) => {
-            return <Button variant='outlined' size='small' color='secondary' onClick={() => setRowData(tableValue?.rowData)}>Resolve</Button>
-          }
-        }
-      },
-      {
-        name: 'count',
-        label: 'Count',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-    ];
-  });
+  const column = [
+    columnHelper.accessor('dealer_id', {
+      header: 'Customer Code',
+      cell: (value) => <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.getValue()}</div>
+    }),
+    columnHelper.accessor('dealer_name', {
+      header: 'Cust Name / Request',
+      cell: ({ row }) => {
+        return (
+          <div style={{ display: 'flex' }}>
+            <Typography variant='body1'>{row?.original?.dealer_name?.toUpperCase()}</Typography>
+            {
+              row?.original?.count > 1 &&
+              <Typography variant='body2' className={classes.pill}><strong>{row?.original?.count}</strong></Typography>
+            }
+          </div>
+        )
+      }
+    }),
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: (value) => <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.getValue()}</div>
+    }),
+    columnHelper.accessor('dealership_name', {
+      header: 'Dealership Name',
+    }),
+    columnHelper.accessor('created_date', {
+      header: 'Requested On',
+    }),
+    columnHelper.accessor('region_value', {
+      header: 'Region',
+    }),
+    columnHelper.accessor('mobile', {
+      header: 'Mobile',
+    }),
+    columnHelper.accessor('request_id', {
+      header: 'Request Id',
+    }),
+    columnHelper.accessor('action', {
+      header: 'Action',
+      cell: ({ row }) => <Button variant='outlined' size='small' color='secondary' onClick={() => setRowData(row?.original)}>Resolve</Button>
+    }),
+  ]
 
   const options = {
     print: false,
@@ -161,11 +119,10 @@ const NewCallRequest = ({ callbackData }) => {
 
   return (
     <div>
-      <MUIDataTable
+      <DataTableViewer
+        rowData={callbackData}
+        column={column}
         title={'New Request'}
-        columns={columns}
-        options={options}
-        data={callbackData}
       />
       <Dialog onClose={() => { setRowData(); setRemark(); setError() }} open={rowData} maxWidth='xs' fullWidth>
         <DialogContent>

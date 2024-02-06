@@ -21,6 +21,8 @@ import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { getRenewalLoans } from '../../services/loans.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -63,6 +65,7 @@ const RenewalTable = ({ currentUser }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+  const columnHelper = createColumnHelper();
 
   const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
@@ -83,127 +86,72 @@ const RenewalTable = ({ currentUser }) => {
     setAnchorEl(null);
   };
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Type',
-        name: 'product_name',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
-      },
-      {
-        label: 'Approved Amount',
-        name: 'amount_approved',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <Currency value={value} />
-        }
-      },
-      {
-        label: 'Approved Date',
-        name: 'approved_date',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-            </div>
-          }
-        }
-      },
-      {
-        label: 'Attachment',
-        name: 'attachment',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return (
-              <>
-                <div>
-                  <Tooltip title="click to view documents checklist">
-                    <LinkIcon style={{ color: 'grey' }} onClick={(event) => {
-                      setAnchorEl(event.currentTarget);
-                      setDealershipId(value)
-                    }} />
-                  </Tooltip>
-                </div>
-              </>
-            )
-          },
-        }
-      },
-      {
-        label: 'Documents',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: false,
-          display: actionable ? true : 'excluded',
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: (value, r) => {
-            return (
-              <div style={{ minWidth: 70 }}>
-                <Tooltip title="Sanction Letter">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('sanction'); setModalVisible(true); }}>
-                    <DescriptionIcon style={{ width: 19 }} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Loan Agreement">
-                  <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setDealershipId(value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[r.rowIndex]['amount_approved']); setProductTypeId(loans?.[r.rowIndex]['product_id']) }}>
-                    <LoanAgreementIcon width={12} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="eSign Application">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['loan_id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
-                    <ESignIcon width={17} />
-                  </IconButton>
-                </Tooltip>
-              </div>
-            )
-          }
-        }
+  const column = [
+    columnHelper.accessor('dealership_id', {
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue}</RouterLink>
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('type', {
+      header: 'Type',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }),
+    columnHelper.accessor('amount_approved', {
+      header: 'Approved Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('amount_date', {
+      header: 'Approved Date',
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+    }),
+    columnHelper.accessor('action', {
+      header: 'Attachment',
+      cell: ({ row }) => {
+        return (
+          <div>
+            <Tooltip title="click to view documents checklist">
+              <LinkIcon style={{ color: 'grey' }} onClick={(event) => {
+                setAnchorEl(event.currentTarget);
+                setDealershipId(row?.original?.attachment)
+              }} />
+            </Tooltip>
+          </div>
+        )
       }
-    ]
-  }, [loans]);
+    }),
+    columnHelper.accessor('action', {
+      header: 'Documents',
+      cell: ({ row }) => {
+        return (
+          <div style={{ minWidth: 70 }}>
+            <Tooltip title="Sanction Letter">
+              <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(row?.original?.['loan_id']); setDealershipId(row?.original?.dealership_id); setType('sanction'); setModalVisible(true); }}>
+                <DescriptionIcon style={{ width: 19 }} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Loan Agreement">
+              <IconButton style={{ marginRight: 3 }} size="small" color="primary" aria-label="application" onClick={() => { setloanId(row?.original?.['loan_id']); setDealershipId(row?.original?.dealership_id); setType('agreement'); setModalVisible(true); setLoanAmount(row?.original?.['amount_approved']); setProductTypeId(row?.original?.['product_id']) }}>
+                <LoanAgreementIcon width={12} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="eSign Application">
+              <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(row?.original?.['loan_id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
+                <ESignIcon width={17} />
+              </IconButton>
+            </Tooltip>
+          </div>
+        )
+      }
+    })
+  ]
+
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',
@@ -221,11 +169,11 @@ const RenewalTable = ({ currentUser }) => {
     <div className={classes.root}>
       {
         Array.isArray(loans) && loans.length !== 0 ? (
-          <MUIDataTable
-            title={<Typography className={classes.title} variant="h4" component="h4">{'Renewal Applications'} ({loans.length})</Typography>}
-            data={loans}
-            columns={columns}
-            options={options}
+          <DataTableViewer
+            title={`Renewal Application`}
+            rowData={loans}
+            column={column}
+            onRowClick={i => setRowData(i)}
           />
         ) : (!loading && <Paper style={{ padding: 10 }}>No Renewal Applications</Paper>)
       }

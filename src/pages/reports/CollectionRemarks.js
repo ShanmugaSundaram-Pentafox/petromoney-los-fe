@@ -10,6 +10,8 @@ import { CollectionRemarksDrawer } from './CollectionRemarksDrawer';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getCollectionRemarkData } from '../../services/users.service';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -41,106 +43,52 @@ const CollectionRemarks = () => {
   const [searchData, setSearchData] = useState();
   const [error, setError] = useState()
   const classes = useStyles();
-  const filterOption = [{ value: 'name', label: 'Dealership Name' },{ value: 'id', label: 'Dealership ID' }];
-  const { data: testData = [], isFetching } = useQuery(['remark-Data', searchData], () => getCollectionRemarkData(searchData), { refetchOnWindowFocus: false,enabled: searchData ? true : false })
+  const filterOption = [{ value: 'name', label: 'Dealership Name' }, { value: 'id', label: 'Dealership ID' }];
+  const { data: testData = [], isFetching } = useQuery(['remark-Data', searchData], () => getCollectionRemarkData(searchData), { refetchOnWindowFocus: false, enabled: searchData ? true : false });
+  const columHelper = createColumnHelper();
 
-  const columns = useMemo(() => {
-    return [
-      {
-        name: 'cust_code',
-        label: 'Dealership ID',
-        options: {
-          filter: false,
-        }
-      },
-      { name: 'applicant_name', label: 'Applicant Name' },
-      {
-        name: 'cust_region',
-        label: 'Region',
-        options: {
-          filter: false,
-        }
-      },
-      {
-        name: 'omc',
-        label: 'OMC',
-        options: {
-          filter: false,
-        }
-      },
-      {
-        name: 'tot_disb_amt',
-        label: 'Total Disbursed Amount',
-        options: {
-          filter: false,
-          customBodyRender: value => {
-            return <Currency value={value} />
-          }
-        }
-      },
-      {
-        name: 'tot_due',
-        label: 'Total Due',
-        options: {
-          filter: false,
-          customBodyRender: value => {
-            return <Currency value={value} />
-          }
-        }
-      },
-      {
-        name: 'tot_overdue',
-        label: 'Total Overdue',
-        options: {
-          filter: false,
-          customBodyRender: value => {
-            return <Currency value={value} />
-          }
-        }
-      },
-      {
-        name: 'loan_data',
-        label: 'Details',
-        options: {
-          filter: false,
-          display: 'excluded',
-          download: false
-        }
-      },
-      {
-        name: 'tot_prin_due',
-        label: 'Total Prin Due',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      {
-        name: 'tot_prin_overdue',
-        label: 'Total Prin Overdue',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      {
-        name: 'tot_int_overdue',
-        label: 'Total Int Overdue',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      {
-        name: 'tot_penal_overdue',
-        label: 'Total Penal Overdue',
-        options: {
-          filter: false,
-          display: false
-        }
-      }
-    ]
-  }, []);
+  const column = [
+    columHelper.accessor('cust_code', {
+      header: 'Dealership Id',
+    }),
+    columHelper.accessor('applicant_name', {
+      header: 'Applicant Name',
+    }),
+    columHelper.accessor('cust_region', {
+      header: 'Region',
+    }),
+    columHelper.accessor('omc', {
+      header: 'OMC',
+    }),
+    columHelper.accessor('tot_disb_amt', {
+      header: 'Total Disbursed Amount',
+      cell: (value) => <Currency value={value.getValue()} />
+    }),
+    columHelper.accessor('tot_due', {
+      header: 'Total Due',
+      cell: (value) => <Currency value={value.getValue()} />
+    }),
+    columHelper.accessor('tot_overdue', {
+      header: 'Total Overdue',
+      cell: (value) => <Currency value={value.getValue()} />
+    }),
+    columHelper.accessor('loan_data', {
+      header: 'Details',
+    }),
+    columHelper.accessor('tot_prin_due', {
+      header: 'Total Principle Due',
+    }),
+    columHelper.accessor('tot_prin_overdue', {
+      header: 'Total Principle Overdue',
+    }),
+    columHelper.accessor('tot_int_overdue', {
+      header: 'Total Interest Overdue',
+    }),
+    columHelper.accessor('tot_penal_overdue', {
+      header: 'Total Penal Overdue',
+    }),
+  ]
+
   const onChangeSearch = () => {
     if (searchValue?.value) {
       setSearchData({ ...searchValue })
@@ -157,7 +105,7 @@ const CollectionRemarks = () => {
     download: false,
     search: false,
     viewColumns: false,
-    print:false,
+    print: false,
     rowsPerPageOptions: [15, 20, 30],
     onRowClick: (value) => {
       setRowData(value)
@@ -200,7 +148,7 @@ const CollectionRemarks = () => {
                 <SearchIcon />
               </IconButton>
             </Tooltip>
-            <IconButton onClick={() => {setSearchValue({type:'name',value:''}); setSearchData();setError('') }} style={{ marginLeft: 10 }} size='small'>
+            <IconButton onClick={() => { setSearchValue({ type: 'name', value: '' }); setSearchData(); setError('') }} style={{ marginLeft: 10 }} size='small'>
               <CloseIcon />
             </IconButton>
           </div>
@@ -213,11 +161,11 @@ const CollectionRemarks = () => {
             <Skeleton variant='rect' width='100%' height={400} />
           </Grid>
         ) : (
-          <MUIDataTable
-            title="Remarks"
-            columns={columns}
-            options={options}
-            data={testData}
+          <DataTableViewer
+            rowData={testData}
+            title={'Remarks'}
+            column={column}
+            onRowClick={i => { setRowData(i); setOpenModal(true) }}
           />
         )
       }

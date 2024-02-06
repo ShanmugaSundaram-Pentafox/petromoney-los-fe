@@ -29,6 +29,7 @@ const Filter = ({
       <Text size='xs' c={'gray'}>{column.columnDef.header}</Text>
       <Select
         value={columnFilterValue ? columnFilterValue : 'All'}
+        defaultValue={'All'}
         onChange={(e) => { e === 'All' ? column.setFilterValue() : column.setFilterValue(e) }}
         clearable
         data={['All', ...sortedUniqueValues]}
@@ -45,8 +46,14 @@ const DataTableViewer = ({
   title,
   excelDownload = false,
   apiSearch,
-  onRowClick
-
+  onRowClick,
+  page,
+  filter = true,
+  columnsFilter = true,
+  setPage,
+  styles = {},
+  totalNoOfPages,
+  action = false,
 }) => {
   const [search, setSearch] = useState();
   const [filterHeader, setFilterHeader] = useState();
@@ -92,7 +99,7 @@ const DataTableViewer = ({
 
   return (
     <Box>
-      <Box style={{ padding: 10 }}>
+      <Box style={{ padding: 10, background: '#ffff', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
         <Group justify='space-between'>
           <Box>
             <Text style={{ fontSize: '16px' }} fw={500}>{title}</Text>
@@ -107,59 +114,69 @@ const DataTableViewer = ({
                     : setSearch(e.target.value);
                 }}
                 mx={0}
-                size='sm'
+                size='xs'
                 icon={<IconSearch size={16} />}
               />
-              <Tooltip
-                label={<Text size={"xs"}>Manage Columns</Text>}
-                color={"dark"}
-                transitionProps={{ transition: "pop", duration: 300 }}
-                withArrow
-              >
-                <ActionIcon variant='light' color='teal.8'>
-                  <IconTableRow size={20} onClick={open} style={{ cursor: 'pointer' }} />
-                </ActionIcon>
-              </Tooltip>
-              <Popover opened={opened} onChange={setOpened} position="left" withArrow shadow="md">
-                <Popover.Target>
-                  <Tooltip
-                    label={<Text size={"xs"}>Filter Rows</Text>}
-                    color={"dark"}
-                    transitionProps={{ transition: "pop", duration: 300 }}
-                    withArrow
-                  >
-                    <ActionIcon variant='light' color='teal.8'>
-                      <IconFilter size={20} onClick={() => setOpened(!opened)} />
-                    </ActionIcon>
-                  </Tooltip>
-                </Popover.Target>
-                <Popover.Dropdown mr={'md'}>
-                  <Title order={'6'}>Filter</Title>
-                  <Grid w={300} gutter={'sm'}>
-                    {filterHeader?.getHeaderGroups().map((headerGroup) => (headerGroup?.headers?.map((header) =>
-                      header.column.getCanFilter()
-                        ? (
-                          <Grid.Col span={6} key={header.id}>
-                            <Filter column={header.column} table={filterHeader} />
-                          </Grid.Col>
-                        )
-                        : null
-                    )))}
-                  </Grid>
-                </Popover.Dropdown>
-              </Popover>
+              {columnsFilter
+                ? <Tooltip
+                  label={<Text size={"xs"}>Manage Columns</Text>}
+                  color={"dark"}
+                  transitionProps={{ transition: "pop", duration: 300 }}
+                  withArrow
+                  position='bottom'
+                >
+                  <ActionIcon size={'md'} variant='light' color='teal.8' onClick={open}>
+                    <IconTableRow size={20} style={{ cursor: 'pointer' }} />
+                  </ActionIcon>
+                </Tooltip>
+                : null
+              }
+              {filter
+                ? <Popover opened={opened} onChange={setOpened} position="left-start" withArrow shadow="md">
+                  <Popover.Target>
+                    <Tooltip
+                      label={<Text size={"xs"}>Filter Rows</Text>}
+                      color={"dark"}
+                      transitionProps={{ transition: "pop", duration: 300 }}
+                      withArrow
+                      position='bottom'
+                    >
+                      <ActionIcon size={'md'} variant='light' color='teal.8'>
+                        <IconFilter size={20} onClick={() => setOpened(!opened)} />
+                      </ActionIcon>
+                    </Tooltip>
+                  </Popover.Target>
+                  <Popover.Dropdown mr={'md'}>
+                    <Title order={'6'}>Filter</Title>
+                    <Grid w={300} gutter={'sm'}>
+                      {filterHeader?.getHeaderGroups().map((headerGroup) => (headerGroup?.headers?.map((header) =>
+                        header.column.getCanFilter()
+                          ? (
+                            <Grid.Col span={6} key={header.id}>
+                              <Filter column={header.column} table={filterHeader} />
+                            </Grid.Col>
+                          )
+                          : null
+                      )))}
+                    </Grid>
+                  </Popover.Dropdown>
+                </Popover>
+                : null
+              }
               {excelDownload
                 ? (<Tooltip
                   label={<Text size={"xs"}>Download</Text>}
                   color={"dark"}
                   transitionProps={{ transition: "pop", duration: 300 }}
                   withArrow
+                  position='bottom'
                 >
-                  <ActionIcon variant='light' color='teal.8'>
+                  <ActionIcon size={'md'} variant='light' color='teal.8'>
                     <IconDownload size={20} onClick={() => { exportToExcel(rowData, title) }} />
                   </ActionIcon>
                 </Tooltip>)
                 : null}
+              {action ? action : null}
             </Box>
           </Box>
         </Group>
@@ -173,6 +190,10 @@ const DataTableViewer = ({
         setFilterHeader={setFilterHeader}
         filterHeader={filterHeader}
         onRowClick={onRowClick}
+        styles={styles}
+        page={page}
+        setPage={setPage}
+        totalNoOfPages={totalNoOfPages}
       />
       <ColumnsFilter
         title={title}

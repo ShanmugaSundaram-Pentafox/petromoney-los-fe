@@ -1,4 +1,4 @@
-import { InputAdornment, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@material-ui/core';
+import { InputAdornment, TextField } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import { Search } from '@material-ui/icons';
@@ -17,6 +17,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 import { getAllUsers, getUsersByPincode, getUsersByRole } from '../../services/users.service';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import { isAllowed } from '../../utils/cerbos';
+import { ScrollArea, Table } from '@mantine/core';
 
 export const ChartWrapper = styled.div`
   background-color: #fff;
@@ -173,35 +174,35 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
                 <div>
                   {(getPincodeDetails?.isFetching || getPincodeDetails?.data?.length)
                     ? (
-                      <TableContainer style={{ maxHeight: 200 }}>
-                        <Table stickyHeader aria-label="sticky table">
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>User Id</TableCell>
-                              <TableCell>Name</TableCell>
-                              <TableCell>Mobile</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
+                      <ScrollArea mah={200}>
+                        <Table stickyHeader style={{ fontSize: '12px' }}>
+                          <Table.Thead style={{ background: 'rgba(228, 237, 253, 1)' }}>
+                            <Table.Tr>
+                              <Table.Th>User Id</Table.Th>
+                              <Table.Th>Name</Table.Th>
+                              <Table.Th>Mobile</Table.Th>
+                            </Table.Tr>
+                          </Table.Thead>
+                          <Table.Tbody>
                             {getPincodeDetails?.isFetching ? (
                               [1, 2, 3, 4, 5]?.map((item) => (
-                                <TableRow key={item}>
-                                  <TableCell><Skeleton variant="text" /></TableCell>
-                                  <TableCell><Skeleton variant="text" /></TableCell>
-                                  <TableCell><Skeleton variant="text" /></TableCell>
-                                </TableRow>
+                                <Table.Tr key={item}>
+                                  <Table.Td><Skeleton variant="text" /></Table.Td>
+                                  <Table.Td><Skeleton variant="text" /></Table.Td>
+                                  <Table.Td><Skeleton variant="text" /></Table.Td>
+                                </Table.Tr>
                               ))
                             ) : getPincodeDetails?.data?.map(user => (
-                              <TableRow key={user.id}>
-                                <TableCell>{user.id}</TableCell>
-                                <TableCell>{user.name}</TableCell>
-                                <TableCell>{user.mobile}</TableCell>
-                              </TableRow>
+                              <Table.Tr key={user.id}>
+                                <Table.Td>{user.id}</Table.Td>
+                                <Table.Td>{user.name}</Table.Td>
+                                <Table.Td>{user.mobile}</Table.Td>
+                              </Table.Tr>
                             ))
                             }
-                          </TableBody>
+                          </Table.Tbody>
                         </Table>
-                      </TableContainer>
+                      </ScrollArea>
                     ) : (
                       <div style={{ marginTop: '50px', color: '#ccc' }}>
                         {pincode?.length < 6 ? <center>Enter Pincode to get users</center> : <center>No User found for this pincode</center>}

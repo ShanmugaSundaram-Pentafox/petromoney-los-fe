@@ -43,6 +43,7 @@ const ReactTable = ({
 
     const fuzzyFilter = (row, columnId, value, addMeta) => {
         const itemRank = rankItem(row.getValue(columnId), value);
+        console.log(itemRank);
         addMeta({
             itemRank,
         });
@@ -130,7 +131,7 @@ const ReactTable = ({
                         highlightOnHover
                         mb={10}
                         verticalSpacing="xs"
-                        style={{ ...styles }}
+                        style={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw", ...styles }}
                     >
                         <Table.Thead style={{ backgroundColor: 'rgba(228, 237, 253, 1)', fontSize: '12px' }}>
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -218,34 +219,34 @@ const ReactTable = ({
                                 </Box>
                                 <Box style={{ display: "flex", gap: 10, alignItems: "center" }}>
                                     {page != 1 && (
-                                        <ActionIcon variant="light" onClick={() => setPage(1)}>
-                                            <IconChevronsLeft size={16} />
+                                        <ActionIcon variant="light" color="blue.1" onClick={() => setPage(1)}>
+                                            <IconChevronsLeft size={16} color={'gray'} />
                                         </ActionIcon>
                                     )}
                                     {page != 1 && (
-                                        <ActionIcon variant="light" onClick={() => setPage(page - 1)}>
+                                        <ActionIcon variant="light" color="blue.1" onClick={() => setPage(page - 1)}>
                                             <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                                 {page - 1}
                                             </Text>
                                         </ActionIcon>
                                     )}
                                     {page >= 1 && (
-                                        <ActionIcon variant="light" color="blue">
+                                        <ActionIcon variant="light">
                                             <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                                 {page}
                                             </Text>
                                         </ActionIcon>
                                     )}
                                     {totalNoOfPages != 1 && totalNoOfPages != page && (
-                                        <ActionIcon variant='light' onClick={() => setPage(page + 1)}>
+                                        <ActionIcon variant='light' color="blue.1" onClick={() => setPage(page + 1)}>
                                             <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
                                                 {page + 1}
                                             </Text>
                                         </ActionIcon>
                                     )}
                                     {totalNoOfPages != 1 && totalNoOfPages != page && (
-                                        <ActionIcon variant='light' onClick={() => setPage(totalNoOfPages)}>
-                                            <IconChevronsRight size={16} />
+                                        <ActionIcon variant='light' color="blue.1" onClick={() => setPage(totalNoOfPages)}>
+                                            <IconChevronsRight size={16} color="gray" />
                                         </ActionIcon>
                                     )}
                                     {totalNoOfRecords ? (
@@ -271,6 +272,7 @@ const ReactTable = ({
                             {table.getState().pagination.pageIndex != 0 && (
                                 <ActionIcon
                                     variant="light"
+                                    color="blue.1"
                                     onClick={() => table.setPageIndex(0)}
                                 >
                                     <IconChevronsLeft size={16} />
@@ -279,6 +281,7 @@ const ReactTable = ({
                             {table.getState().pagination.pageIndex != 0 && (
                                 <ActionIcon
                                     variant="light"
+                                    color="blue.1"
                                     onClick={() => table.previousPage()}
                                 >
                                     <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
@@ -296,7 +299,7 @@ const ReactTable = ({
                             {table.getPageCount() != 0 &&
                                 table.getPageCount() !=
                                 table.getState().pagination.pageIndex + 1 && (
-                                    <ActionIcon variant="light" onClick={() => table.nextPage()}>
+                                    <ActionIcon variant="light" color="blue.1" onClick={() => table.nextPage()}>
                                         <Text size="xs" style={{ color: "rgb(0,0,0,0.5)" }}>
                                             {table.getState().pagination.pageIndex + 2}
                                         </Text>
@@ -307,6 +310,7 @@ const ReactTable = ({
                                 table.getState().pagination.pageIndex + 1 && (
                                     <ActionIcon
                                         variant="light"
+                                        color="blue.1"
                                         onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                                     >
                                         <IconChevronsRight size={16} />

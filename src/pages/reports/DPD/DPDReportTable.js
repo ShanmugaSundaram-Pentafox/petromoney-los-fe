@@ -14,6 +14,8 @@ import Currency from '../../../components/Number/Currency';
 import { getSignedUrl } from '../../../services/common.service';
 import { getDpdPageDetails, getDpdReportData, } from '../../../services/report.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
+import { createColumnHelper } from '@tanstack/react-table';
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 
 
 const useStyles = makeStyles(theme => ({
@@ -35,15 +37,16 @@ const useStyles = makeStyles(theme => ({
 const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
   const [loans, setLoans] = useState([]);
-  const [page, setPage] = useState();
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
   const [download, setDownload] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const columnHelper = createColumnHelper();
 
   const pageDetailsQuery = useQuery({
-    queryKey: ['dpd_pageCount', filterQry, page, search],
-    queryFn: () => getDpdPageDetails(filterQry, page, search),
+    queryKey: ['dpd_pageCount', filterQry, search],
+    queryFn: () => getDpdPageDetails(filterQry, search),
   })
 
   useEffect(() => {
@@ -74,143 +77,52 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
   }, [filterQry, page, search, download])
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Customer Code',
-        name: 'customer_code',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Prospect Code',
-        name: 'prospect_code',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Customer Name',
-        name: 'customer_name',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({ style: { minWidth: '200px', maxWidth: '200px' } }),
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-      {
-        label: 'OMC',
-        name: 'omc',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-      {
-        label: 'Disbursal Date',
-        name: 'disbursal_date',
-        options: {
-          filter: true,
-          filterWidth: '100%',
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'Due date',
-        name: 'due_date',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            style: { minWidth: '100px', maxWidth: '100px' },
-          }),
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'Loan Amount',
-        name: 'loan_amount',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            style: { minWidth: '100px', maxWidth: '100px' },
-            align: 'right'
-          }),
-          customBodyRender: value => <Currency value={value} />
-        }
-      },
-      {
-        label: 'Principle Amount',
-        name: 'principle_amount',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            style: { minWidth: '100px', maxWidth: '100px' },
-            align: 'right'
-          }),
-          customBodyRender: value => <Currency value={value} />
-        }
-      },
-      {
-        label: 'Loan status',
-        name: 'loan_status',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Last Receipt Date',
-        name: 'last_receipt_date',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({ style: { minWidth: '100px', maxWidth: '100px' } }),
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'DPD',
-        name: 'dpd',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-    ]
-  }, [loans]);
+  const column = [
+    columnHelper.accessor('customer_code', {
+      header: 'Customer Code',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }),
+    columnHelper.accessor('prospect_code', {
+      header: 'Prospect Code',
+      cell: (value) => <span>{value?.getValue()}</span>
+    }),
+    columnHelper.accessor('customer_name', {
+      header: 'Customer Name',
+    }),
+    columnHelper.accessor('region', {
+      header: 'Region',
+    }),
+    columnHelper.accessor('omc', {
+      header: 'OMC',
+    }),
+    columnHelper.accessor('disbursal_date', {
+      header: 'Disbursal Data',
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
+    }),
+    columnHelper.accessor('due_date', {
+      header: 'Due Data',
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
+    }),
+    columnHelper.accessor('loan_amount', {
+      header: 'Loan Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('principle_amount', {
+      header: 'Principle Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }),
+    columnHelper.accessor('loan_status', {
+      header: 'Loan Status',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }),
+    columnHelper.accessor('last_receipt_date', {
+      header: 'Last Receipt Date',
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
+    }),
+    columnHelper.accessor('dpd', {
+      header: 'DPD',
+    }),
+  ];
 
   const options = {
     selectableRowsHeader: false,
@@ -254,12 +166,15 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
 
   return (
     <div className={classes.root}>
-      <MUIDataTable
-        title={title ? <Typography className={classes.title} variant="h4" component="h4">{title}</Typography> : null}
-        data={loans}
-        style={classes.tableStyle}
-        columns={columns}
-        options={options}
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
+        title={title}
+        useAPIPagination
+        totalNoOfPages={pageDetailsQuery?.data}
+        page={page}
+        setPage={setPage}
       />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

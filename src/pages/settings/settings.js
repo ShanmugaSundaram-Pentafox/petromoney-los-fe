@@ -7,7 +7,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 const Settings = ({ currentUser }) => {
   usePageTitle('Settings');
   return (
-    <Box p="md"> 
+    <Box> 
       <Title order={3}>Master</Title>
       <Space h="md" />
       <MasterData currentUser={currentUser} />

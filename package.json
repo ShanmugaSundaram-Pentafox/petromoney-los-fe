@@ -9,6 +9,7 @@
     "@dnd-kit/modifiers": "^7.0.0",
     "@dnd-kit/sortable": "^8.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@heroicons/react": "^2.1.1",
     "@mantine/core": "^7.4.0",
     "@mantine/dates": "^7.4.0",
     "@mantine/dropzone": "^7.4.0",

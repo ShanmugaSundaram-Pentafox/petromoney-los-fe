@@ -1,8 +1,6 @@
-import Box from '@material-ui/core/Box';
+import { Paper, Title } from '@mantine/core';
 import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -176,118 +174,116 @@ const LoansTable = ({ currentUser, all_loans, setAllLoans }) => {
   }
 
   return (
-    <div>
-      {
-        Array.isArray(chartData) && (
-          <Box p={2} mb={2} borderRadius={4} bgcolor="background.paper">
-            <Typography variant="h5">Loans&apos; Statistics</Typography>
-            <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap"   >
-              {
-                chartData.map((item, i) => (
-                  <DashCard key={i} noBorder={i === chartData.length - 1} value={item.count} text={item.name} selected={item.name === selectedStatsCard} action={() => handleClick(item.name)} />
-                ))
-              }
-            </Box>
-          </Box>
-        )
-      }
-      <Grid container spacing={2}>
-        {
-          selectedStatsCard === 'Pending Approval' ? (
-            <Grid item md={12}>
-              <Paper className={classes.tableContainer}>
-                <ApprovalReqestTable title={'Pending for Initial Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-              </Paper>
-            </Grid>
-          ) : null
-        }
-        {
-          selectedStatsCard === 'Pending Review' ? (
-            <Grid item md={12}>
-              <Paper className={classes.tableContainer}>
-                <ReviewerTable title={'Pending for Review'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-              </Paper>
-            </Grid>
-          ) : null
-        }
-        {
-          selectedStatsCard === 'Disb. Approval' ? (
-            <Grid item md={12}>
-              <Paper className={classes.tableContainer}>
-                <DisbursementReqestTable title={'Pending for Disbursement Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-              </Paper>
-            </Grid>
-          ) : null
-        }
-        {
-          selectedStatsCard === 'Submitted' ? (
-            <Grid item xs={12}>
-              <Paper className={classes.tableContainer}>
-                <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-              </Paper>
-            </Grid>
-          ) : null
-        }
-        {
-          selectedStatsCard === 'Approved' ? (
-            <Grid item xs={12}>
-              <Paper className={classes.tableContainer}>
-                <ApprovedTable title={'Disbursement Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-              </Paper>
-            </Grid>
+    <>
+      <Paper shadow="xs" p="lg" radius="lg" mb="lg">
+        <Title order={3} mb="sm" className="text-gray-700">Loans&apos; Statistics</Title>
 
-          ) : null
-        }
-        {
-          selectedStatsCard === 'Rejected' ? (
-            <Grid item xs={12}>
-              <Paper className={classes.tableContainer}>
-                <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-              </Paper>
-            </Grid>
-          ) : null
-        }
-        {
-          selectedStatsCard === 'Disbursed' ? (
-            <Grid item xs={12}>
-              <Paper className={classes.tableContainer}>
-                <DisbursedTable title={'Disbursed Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-              </Paper>
-            </Grid>
-          ) : null
-        }
-        {
-          selectedStatsCard === 'Disb. Approved' ? (
-            <Grid item xs={12}>
-              <Paper className={classes.tableContainer}>
-                <DisbursementApprovedTable title={'Disbursement Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-              </Paper>
-            </Grid>
-          ) : null
-        }
+        {Array.isArray(chartData) && (
+          <dl className="grid grid-cols-3 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-4 lg:grid-cols-8">
+            {chartData?.map((item, i) => {
+              return (
+                <>
+                  {item.name || item.count ? (
+                    <DashCard 
+                      key={item.name + i} 
+                      selected={item.name === selectedStatsCard} 
+                      text={item.name} 
+                      value={item.count} 
+                      amount={item.amount} 
+                      action={() => handleClick(item.name)} 
+                    />
+                  ) : null}
+                </>
+              )
+            })}
+          </dl>
+        )}
+      </Paper>
+
+      <Grid container spacing={2}>
+        {selectedStatsCard === 'Pending Approval' ? (
+          <Grid item md={12}>
+            <Paper className={classes.tableContainer}>
+              <ApprovalReqestTable title={'Pending for Initial Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+            </Paper>
+          </Grid>
+        ) : null}
+        
+        {selectedStatsCard === 'Pending Review' ? (
+          <Grid item md={12}>
+            <Paper className={classes.tableContainer}>
+              <ReviewerTable title={'Pending for Review'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+            </Paper>
+          </Grid>
+        ) : null}
+
+        {selectedStatsCard === 'Disb. Approval' ? (
+          <Grid item md={12}>
+            <Paper className={classes.tableContainer}>
+              <DisbursementReqestTable title={'Pending for Disbursement Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+            </Paper>
+          </Grid>
+        ) : null}
+        
+        {selectedStatsCard === 'Submitted' ? (
+          <Grid item xs={12}>
+            <Paper className={classes.tableContainer}>
+              <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+            </Paper>
+          </Grid>
+        ) : null}
+        
+        {selectedStatsCard === 'Approved' ? (
+          <Grid item xs={12}>
+            <Paper className={classes.tableContainer}>
+              <ApprovedTable title={'Disbursement Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+            </Paper>
+          </Grid>
+        ) : null}
+        
+        {selectedStatsCard === 'Rejected' ? (
+          <Grid item xs={12}>
+            <Paper className={classes.tableContainer}>
+              <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+            </Paper>
+          </Grid>
+        ) : null}
+
+        {selectedStatsCard === 'Disbursed' ? (
+          <Grid item xs={12}>
+            <Paper className={classes.tableContainer}>
+              <DisbursedTable title={'Disbursed Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+            </Paper>
+          </Grid>
+        ) : null}
+
+        {selectedStatsCard === 'Disb. Approved' ? (
+          <Grid item xs={12}>
+            <Paper className={classes.tableContainer}>
+              <DisbursementApprovedTable title={'Disbursement Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+            </Paper>
+          </Grid>
+        ) : null}
       </Grid>
+
       <Drawer
         anchor="right"
-        ModalProps={{
-          onBackdropClick: () => { setShowPanel({ status: false }) }
-        }}
+        ModalProps={{ onBackdropClick: () => setShowPanel({ status: false })}}
         open={showPanel?.status}
         variant={'temporary'}
       >
         <div className={classes.sidePanelWrapper}>
-          {
-            showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
-              : showPanel.data === 'loan_review' ? <PendingReviewDrawer {...compProps} />
-                : showPanel.data === 'loan_approval' ? <PendingApprovalDrawer {...compProps} />
-                  : showPanel.data === 'approved' ? <ApprovedDrawer {...compProps} />
-                    : showPanel?.data === 'disbursement_approval' ? <PendingDisbApprovedDrawer {...compProps} />
-                      : showPanel?.data === 'disbursement_approved' ? <DisbApprovedDrawer {...compProps} />
-                        : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
-                          : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null
-          }
+          {showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
+            : showPanel.data === 'loan_review' ? <PendingReviewDrawer {...compProps} />
+              : showPanel.data === 'loan_approval' ? <PendingApprovalDrawer {...compProps} />
+                : showPanel.data === 'approved' ? <ApprovedDrawer {...compProps} />
+                  : showPanel?.data === 'disbursement_approval' ? <PendingDisbApprovedDrawer {...compProps} />
+                    : showPanel?.data === 'disbursement_approved' ? <DisbApprovedDrawer {...compProps} />
+                      : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
+                        : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null}
         </div>
       </Drawer>
-    </div>
+    </>
   )
 }
 

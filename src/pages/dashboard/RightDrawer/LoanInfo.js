@@ -1,11 +1,11 @@
+import { Box, Table } from '@mantine/core';
 import { Select as MSelect } from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+// import Table from '@material-ui/core/Table';
+// import TableBody from '@material-ui/core/TableBody';
+// import TableCell from '@material-ui/core/TableCell';
+// import TableHead from '@material-ui/core/TableHead';
+// import TableRow from '@material-ui/core/TableRow';
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
 import TextInput from '../../../components/TextInput/TextInput';
@@ -15,12 +15,6 @@ import { rulesList } from '../../../config/userRules';
 import { getProductsMaster } from '../../../services/common.service';
 import { isAllowed } from '../../../utils/cerbos';
 
-const LoanInfoWrapper = styled.div`
-  padding: 12px;
-  margin-bottom: 16px;
-  border-radius: 4px;
-  background-color: rgba(0, 160, 0, 0.15);
-`;
 
 const LoanInfo = ({
   data: row,
@@ -54,17 +48,192 @@ const LoanInfo = ({
       })
     }
   }, [row?.product_id, status]);
+
   return (
     <>
-      <LoanInfoWrapper>
-        {
-          type === 'enhancement' || type === 're-onboarding' &&
-            <div style={{ display: 'flex' }}>
-              <ViewData title='Old Product' value={newInfo?.old_product_name} />
-              <ViewData style={{ marginLeft: 10 }} title='Old loan Amount' value={newInfo?.old_loan_amount} />
-            </div>
-        }
-        <Table size="small">
+      <Box p="sm" bg="indigo.0" mb="md" className="rounded-lg">
+        {type === 'enhancement' || type === 're-onboarding' && (
+          <div style={{ display: 'flex' }}>
+            <ViewData title='Old Product' value={newInfo?.old_product_name} />
+            <ViewData style={{ marginLeft: 10 }} title='Old loan Amount' value={newInfo?.old_loan_amount} />
+          </div>
+        )}
+
+        <Table
+          classNames={{
+            table: '!text-xs',
+            th: 'whitespace-nowrap'
+          }}
+        >
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>Loan Type</Table.Th>
+              <Table.Th>Interest %</Table.Th>
+              <Table.Th>Penal Interest %</Table.Th>
+              <Table.Th>Amount</Table.Th>
+              {viewable && (
+                <Table.Th>Amount Approved</Table.Th>
+              )}
+              {['disbursed', 'disbursement_approval'].includes(status) ? (
+                <Table.Th>Disbursement Amount</Table.Th>
+              ) : null}
+            </Table.Tr>
+          </Table.Thead>
+
+          <Table.Tbody>
+            <Table.Tr key={row?.id}>
+              <Table.Td>
+                <MSelect
+                  fullWidth
+                  native
+                  placeholder={'Select Loan Product'}
+                  value={selectedProduct?.product_id}
+                  disabled={selectedProduct?.disabled || !isAllowed(currentUser?.permissions, resources_id.dashboard, 'edit_loantype')}
+                  onChange={e => {
+                    const d = products.find(i => i.product_id == e.target.value)
+                    setSelectedProduct(d)
+                    updateNewLoanInfo(!['approved', 'rejected'].includes(status) ? {
+                      product_id: e.target.value
+                    } : {
+                      ...newInfo,
+                      product_id: e.target.value
+                    })
+                  }}
+                  style={{
+                    color: '#333'
+                  }}
+                >
+                  {/* <option value="">Choose Loan type</option> */}
+                  {products.map(item => <option key={item.product_id} value={item.product_id}>{item.product_name}</option>)}
+                </MSelect>
+              </Table.Td>
+
+              <Table.Td scope="row" component="th">
+                <strong>{selectedProduct?.interest}</strong>
+              </Table.Td>
+              
+              <Table.Td scope="row" component="th">
+                <strong>{selectedProduct?.penal_interest}</strong>
+              </Table.Td>
+
+              {/* option to edit requested amount of the loan in submit and review queue */}
+              {type === 'enhancement' || type === 're-onboarding' ? (
+                <Table.Td align="right">
+                  {
+                    !['approved', 'rejected']?.includes(status) ? (
+                      <UserCan
+                        role={currentUser.role_name}
+                        perform={rulesList.loan_approval}
+                        yes={() => (
+                          <TextInput
+                            money
+                            number
+                            fullWidth={false}
+                            defaultValue={newInfo?.new_loan_amount}
+                            onChange={e => {
+                              updateNewLoanInfo({
+                                loan_amount: e.target.value
+                              })
+                            }}
+                          />
+                        )}
+                        no={() => <Currency value={newInfo?.new_loan_amount} />}
+                      />
+                    )
+                      : <Currency value={newInfo?.new_loan_amount} />
+                  }
+                </Table.Td>
+              ) : (type === 'renewal' ? (
+                <Table.Td align="right">
+                  <Currency value={newInfo?.new_loan_amount} />
+                </Table.Td>
+              ) : (
+                <Table.Td align="right">
+                  {
+                    ['submitted', 'loan_review']?.includes(status) ? (
+                      <UserCan
+                        role={currentUser.role_name}
+                        perform={rulesList.loan_approval}
+                        yes={() => (
+                          <TextInput
+                            money
+                            number
+                            fullWidth={false}
+                            defaultValue={row?.amount_requested}
+                            onChange={e => {
+                              updateNewLoanInfo({
+                                ...newInfo,
+                                amount_requested: e.target.value
+                              })
+                            }}
+                          />
+                        )}
+                        no={() => <Currency value={row?.amount_requested} />}
+                      />
+                    )
+                      : <Currency value={row?.amount_requested} />
+                  }
+                </Table.Td>
+              ))}
+
+              <Table.Td>
+                {status === 'loan_approval' ? (
+                  <UserCan
+                    role={currentUser.role_name}
+                    perform={rulesList.loan_approval}
+                    yes={() => (
+                      <TextInput
+                        money
+                        number
+                        fullWidth={false}
+                        defaultValue={row?.amount_requested}
+                        onChange={e => {
+                          updateNewLoanInfo({
+                            ...newInfo,
+                            amount_approved: e.target.value
+                          })
+                        }}
+                      />
+                    )}
+                    no={() => <Currency value={row?.amount_approved} />}
+                  />
+                ) : viewable && <Currency value={row?.amount_approved} />
+                }
+              </Table.Td>
+
+              {status === 'disbursement_approval' ? (
+                <Table.Td>
+                  <UserCan
+                    role={currentUser.role_name}
+                    perform={rulesList.loan_approval}
+                    yes={() => (
+                      <TextInput
+                        money
+                        number
+                        fullWidth={false}
+                        defaultValue={row?.amount_approved}
+                        onChange={e => {
+                          updateNewLoanInfo({
+                            ...newInfo,
+                            amount_disbursed: e.target.value || row?.amount_approved
+                          })
+                        }}
+                      />
+                    )}
+                    no={() => <Currency value={row?.amount_disbursed} />}
+                  />
+                </Table.Td>
+              ) : (status == 'disbursed' ? (
+                <Table.Td align="right">
+                  <Currency value={row?.amount_disbursed} />
+                </Table.Td>
+              ) : null)
+              }
+            </Table.Tr>
+          </Table.Tbody>
+        </Table>
+
+        {/* <Table size="small">
           <TableHead>
             <TableRow>
               <TableCell>Loan Type</TableCell>
@@ -100,7 +269,7 @@ const LoanInfo = ({
                     color: '#333'
                   }}
                 >
-                  {/* <option value="">Choose Loan type</option> */}
+                  {/* <option value="">Choose Loan type</option> *
                   {
                     products.map(item => <option key={item.product_id} value={item.product_id}>{item.product_name}</option>)
                   }
@@ -108,7 +277,7 @@ const LoanInfo = ({
               </TableCell>
               <TableCell scope="row" component="th"><strong>{selectedProduct?.interest}</strong></TableCell>
               <TableCell scope="row" component="th"><strong>{selectedProduct?.penal_interest}</strong></TableCell>
-              {/* option to edit requested amount of the loan in submit and review queue */}
+              {/* option to edit requested amount of the loan in submit and review queue *
               {
                 type === 'enhancement' || type === 're-onboarding' ? (
                   <TableCell align="right">
@@ -226,8 +395,8 @@ const LoanInfo = ({
               }
             </TableRow>
           </TableBody>
-        </Table>
-      </LoanInfoWrapper>
+        </Table> */}
+      </Box>
     </>
   )
 }

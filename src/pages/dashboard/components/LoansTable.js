@@ -1,5 +1,4 @@
 import Box from '@material-ui/core/Box';
-import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/styles';
@@ -11,6 +10,7 @@ import { createStructuredSelector } from 'reselect';
 // import clsx from 'clsx';
 // import MUIDataTable from "mui-datatables";
 // import Currency from '../../../components/Number/Currency';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
 import DisbursedTable from '../../../components/Tables/DisbursedTable';
@@ -35,8 +35,6 @@ import PendingDisbApprovedDrawer from '../RightDrawer/PendingDisbApprovalDrawer'
 import PendingReviewDrawer from '../RightDrawer/PendingReviewDrawer';
 import RejectedDrawer from '../RightDrawer/RejectedDrawer';
 import SubmittedDrawer from '../RightDrawer/SubmittedDrawer';
-
-
 
 
 const useStyles = makeStyles(theme => ({
@@ -272,7 +270,7 @@ const LoansTable = ({ currentUser, value, filterQry }) => {
             </>)
         )}
       />
-      <Drawer
+      {/* <Drawer
         anchor="right"
         // elevation={4}
         ModalProps={{
@@ -293,7 +291,25 @@ const LoansTable = ({ currentUser, value, filterQry }) => {
                           : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null
           }
         </div>
-      </Drawer>
+      </Drawer> */}
+
+      <RightSideDrawer
+        size="lg"
+        opened={showPanel.status}
+        onClose={() => setShowPanel({ status: false })}
+        title={compProps.data?.id}
+      >
+        {
+          showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
+            : showPanel.data === 'loan_review' ? <PendingReviewDrawer {...compProps} />
+              : showPanel.data === 'loan_approval' ? <PendingApprovalDrawer {...compProps} />
+                : showPanel.data === 'approved' ? <ApprovedDrawer {...compProps} />
+                  : showPanel?.data === 'disbursement_approval' ? <PendingDisbApprovedDrawer {...compProps} />
+                    : showPanel?.data === 'disbursement_approved' ? <DisbApprovedDrawer {...compProps} />
+                      : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
+                        : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null
+        }
+      </RightSideDrawer>
     </Box>
   )
 }

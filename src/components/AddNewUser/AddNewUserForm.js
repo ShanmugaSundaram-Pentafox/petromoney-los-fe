@@ -1,11 +1,11 @@
-import { Flex, Button, Grid, TextInput, Text, Loader } from '@mantine/core';
+import { Flex, Button, Grid, TextInput, Text, Loader, Select } from '@mantine/core';
 import Alert from '@material-ui/lab/Alert';
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import { addNewUser, getAllUserRoles } from '../../services/users.service';
+import { displayNotification } from '../CommonComponents/Notification/displayNotification.ts';
 // import TextInput from '../TextInput/TextInput';
 
 const AddNewUserForm = ({ callback, action }) => {
@@ -13,19 +13,18 @@ const AddNewUserForm = ({ callback, action }) => {
   const [userRoles, setUserRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState('')
-  const { enqueueSnackbar } = useSnackbar();
   let isDealership = {};
   useMount(() => {
     getAllUserRoles()
       .then((data) => {
-        setUserRoles(data);
+        setUserRoles(data?.map((item, index) => ({ label: `( ${item?.role_name} ) - ${item.name}`, value: `${item?.id}`, role_name: item?.role_name })));
       })
       .catch((e) => {
         console.log(e);
       });
   });
-  if(type.role_id == 13){
-    isDealership= {
+  if (type.role_id == 13) {
+    isDealership = {
       dealership_id: Yup.string().nullable('Enter dealership id').required('Enter valid dealership id')
     };
   }
@@ -34,6 +33,7 @@ const AddNewUserForm = ({ callback, action }) => {
     errors,
     handleChange,
     handleSubmit,
+    setFieldValue,
     isSubmitting,
     setSubmitting,
   } = useFormik({
@@ -41,7 +41,7 @@ const AddNewUserForm = ({ callback, action }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      role_id: Yup.number().nullable('Choose Proper User Role').required('Choose Proper User Role'),
+      role_id: Yup.string().nullable('Choose Proper User Role').required('Choose Proper User Role'),
       first_name: Yup.string().nullable('Enter first name').matches(/^[A-Za-z_ ]+$/, 'Enter valid name').required('Enter first name'),
       last_name: Yup.string().nullable('Enter last name').min(1).matches(/^[A-Za-z_ ]+$/, 'Enter valid name').required('Enter last name'),
       mobile: Yup.string().nullable('Enter mobile number').matches(/^\d{10}$/, 'Enter valid mobile number').required('Enter mobile number'),
@@ -53,42 +53,34 @@ const AddNewUserForm = ({ callback, action }) => {
     onSubmit: (formData) => {
       setLoading(true);
       const userType = userRoles.find(
-        (role) => role.id === Number(formData.role_id)
+        (role) => role.value == parseInt(formData.role_id)
       );
+      console.log(userType);
       Object.keys(formData).forEach(k => (formData[k] === '') && delete formData[k]);
       addNewUser(formData, userType.role_name)
         .then((message) => {
           setLoading(false);
-          enqueueSnackbar(message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: message,
             variant: 'success',
           });
           callback &&
-          setTimeout(() => {
-            callback();
-          }, 1000);
+            setTimeout(() => {
+              callback();
+            }, 1000);
         })
         .catch((e) => {
           setLoading(false);
-          enqueueSnackbar(e, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: e,
             variant: 'error',
-          });
+          })
         });
     },
   });
   const inputProps = {
-    direction: 'column',
-    alignTop: true,
     onChange: handleChange,
   };
-    
 
   return (
     <>
@@ -96,32 +88,18 @@ const AddNewUserForm = ({ callback, action }) => {
       <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
         <form onSubmit={handleSubmit}>
           <Grid gutter="sm">
-            {/* <Grid.Col>
-              <TextInput
-                {...inputProps}
-                select
-                labelText='User Role'
-                name='role_id'
-                value={values.role_id}
-                
-                error={errors.role_id}
-                helperText={errors.role_id}
-                SelectProps={{
-                  native: true,
-                }}
-              >
-                <option value=''  >Choose user role</option>
-                {(values.role_id) && type != values && setType(values)}
-                {userRoles.map((userRole) => (
-                  <option key={userRole.role_name} value={userRole.id}  >
-                    ({userRole.role_name}) - {userRole.name} 
-                  </option>
-                ))}
-              </TextInput>
-            </Grid.Col> */}
-            
+
             <Grid.Col>
-              <Flex bg="lightGray" p="xs" h="48" align="center">User Role Select Comes here</Flex>
+              <Select
+                data={userRoles}
+                name='role_id'
+                id='role_id'
+                label={'User Roles'}
+                value={values.role_id}
+                onChange={(e) => setFieldValue('role_id', e)}
+                error={errors.role_id}
+                styles={{ dropdown: { position: 'absolute', zIndex: 99999 } }}
+              />
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -133,7 +111,7 @@ const AddNewUserForm = ({ callback, action }) => {
                 error={errors.first_name}
               />
             </Grid.Col>
-            
+
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
                 {...inputProps}
@@ -143,7 +121,7 @@ const AddNewUserForm = ({ callback, action }) => {
                 error={errors.last_name}
               />
             </Grid.Col>
-            
+
             {(values.role_id == 13) && (
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
@@ -167,7 +145,7 @@ const AddNewUserForm = ({ callback, action }) => {
                 error={errors.mobile}
               />
             </Grid.Col>
-            
+
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
                 {...inputProps}
@@ -188,8 +166,8 @@ const AddNewUserForm = ({ callback, action }) => {
                 value={values.password}
                 error={errors.password}
               />
-              <Text 
-                mt="4" 
+              <Text
+                mt="4"
                 size="xs"
                 style={{
                   color: '#868E96'
@@ -209,39 +187,36 @@ const AddNewUserForm = ({ callback, action }) => {
       {/* Sticky footer */}
       <Flex
         h="64"
-        style={{ 
+        style={{
           flexShrink: 0,
           alignItems: 'center',
           justifyContent: 'end',
-          padding: '0 16px', 
-          background: '#FFFFFF', 
-          borderTop: '1px solid #eaeaea', 
+          padding: '0 16px',
+          background: '#FFFFFF',
+          borderTop: '1px solid #eaeaea',
           zIndex: 9
         }}
       >
         <Flex gap="sm">
-          <Button 
-            variant="outline" 
-            size="md"
+          <Button
+            variant="outline"
+            size="sm"
             color="gray"
             onClick={action}
           >
             Go back
           </Button>
 
-          <Button 
-            variant="filled" 
-            size="md"
+          <Button
+            variant="filled"
+            size="sm"
             color="rgba(0, 0, 0, 1)"
             onClick={handleSubmit}
+            loading={loading}
           >
             Create New User
-
-            {loading && (
-              <Loader ml="md" color="rgba(255, 255, 255, 1)" size="xs" />
-            )}
           </Button>
-        </Flex>  
+        </Flex>
       </Flex>
     </>
   );

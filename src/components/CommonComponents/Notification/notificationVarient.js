@@ -1,8 +1,6 @@
-import { COLORS } from "../../../constants"
-
 const notificationVariant = {
   success: 'green',
-  error: COLORS.red(100),
+  error: 'rgba(255, 33, 22, 100%)',
   warning: '#FD7E14',
 }
 

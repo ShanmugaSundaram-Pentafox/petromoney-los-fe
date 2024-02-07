@@ -33,7 +33,7 @@ function ConfigurationsMaster({ currentUser }) {
     <Paper p="lg">
       <SimpleGrid cols={{ base: 3, sm: 4, md: 5, lg: 6 }} spacing="lg">
         <div>
-          <Box component="a" href="/rbac" className={classes.content}>
+          <Box component="a" href="#/rbac" className={classes.content}>
             <AccessIcon className={classes.icons} />
             <Text size="xs" fw="bold" ta="center">RBAC</Text>
           </Box>
@@ -43,7 +43,7 @@ function ConfigurationsMaster({ currentUser }) {
           <Box className={classes.content} onClick={() => setOpenConfig('external_api')}>
             <AccessIcon width={40} className={classes.icons} />
             <Text size="xs" fw="bold" ta="center">External APIs</Text>
-          </Box>  
+          </Box>
         </div>
       </SimpleGrid>
 

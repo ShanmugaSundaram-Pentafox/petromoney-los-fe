@@ -93,7 +93,7 @@ const Profile = (props) => {
         >
           <Center mb="lg">
             <Stack gap="6">
-              <Avatar src={null} color="cyan" size="lg" radius="xl">
+              <Avatar src={null} color="blue" size="lg" radius="xl">
                 {currentUser?.first_name?.substring(0, 2)}
               </Avatar>
 

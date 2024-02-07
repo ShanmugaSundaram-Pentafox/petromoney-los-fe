@@ -1,5 +1,4 @@
-import { Typography } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
+import { Paper, Title } from '@mantine/core';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
@@ -93,50 +92,61 @@ const Dashboard = ({ currentUser }) => {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      {
-        currentUser.role_name === 'DEALER' ? (
-          <>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Box p={2} borderRadius={4} bgcolor="background.paper">
-                  <Typography variant="h5">Sanctioned Loan : <Currency value={dealerDetail.sanctioned_loan_amount} /></Typography>
-                  <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
-                    {
-                      dealerChartData.map((item, i) => (
-                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name != 'Active Loans' ? (<Currency value={item.count} />) : item.count} text={item.name} action={() => handleClick(item.name)} />
-                      ))
-                    }
-                  </Box>
-                </Box>
-              </Grid>
+      {currentUser.role_name === 'DEALER' ? (
+        <>
+          <Paper shadow="xs" p="lg" radius="lg" mb="lg">
+            <Title order={3} mb="sm" className="text-gray-700">
+              Sanctioned Loan : <Currency value={dealerDetail.sanctioned_loan_amount} />
+            </Title>
+
+            {dealerChartData.length ? (
+              <dl className="grid grid-cols-3 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-4 lg:grid-cols-8">
+                {dealerChartData?.map((item, i) => {
+                  return (
+                    <>
+                      {item.name || item.count ? (
+                        <DashCard 
+                          key={item.name + i} 
+                          selected={item.name === selectedStatsCard} 
+                          text={item.name} 
+                          value={item.name != 'Active Loans' ? (<Currency value={item.count} />) : item.count} 
+                          amount={item.amount} 
+                          action={() => handleClick(item.name)} 
+                        />
+                      ) : null}
+                    </>
+                  )
+                })}
+              </dl>
+            ) : null}
+          </Paper>
+
+          <LoansTable currentUser={currentUser} value={selectedReportStatsCard} />
+        </>
+      ) : (
+        <>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <DashboardFilter
+                filterQry={setFilterQry}
+                setChartData={setChartData}
+                setTotalLoans={setTotalLoans}
+                filterType='Dashboard'
+                filters={['zone', 'region', 'product', 'period']}
+              />
             </Grid>
-            <LoansTable currentUser={currentUser} value={selectedReportStatsCard} />
-          </>
-        ) : (
-          <>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <DashboardFilter
-                  filterQry={setFilterQry}
-                  setChartData={setChartData}
-                  setTotalLoans={setTotalLoans}
-                  filterType='Dashboard'
-                  filters={['zone', 'region', 'product', 'period']}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <LoanStats
-                  selectedStatsCard={selectedStatsCard}
-                  handleClick={handleClick}
-                  chartData={chartData}
-                  totalLoans={totalLoans}
-                />
-              </Grid>
+            <Grid item xs={12}>
+              <LoanStats
+                selectedStatsCard={selectedStatsCard}
+                handleClick={handleClick}
+                chartData={chartData}
+                totalLoans={totalLoans}
+              />
             </Grid>
-            <LoansTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} />
-          </>
-        )
-      }
+          </Grid>
+          <LoansTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} />
+        </>
+      )}
     </div>
   );
 }

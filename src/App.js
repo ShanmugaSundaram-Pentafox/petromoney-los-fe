@@ -3,6 +3,7 @@ import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/dropzone/styles.css';
 
+import { MantineProvider } from '@mantine/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { SnackbarProvider } from 'notistack';
 import React from 'react';
@@ -15,7 +16,6 @@ import './App.css';
 import Routes from './routes/routes';
 import { store, persistor } from './store';
 import theme from './theme';
-import { MantineProvider } from '@mantine/core';
 import defaultTheme from './theme/mantine-theme/mantineTheme';
 
 const actionStyle = {

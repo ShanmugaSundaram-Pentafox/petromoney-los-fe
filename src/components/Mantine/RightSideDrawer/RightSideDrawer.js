@@ -35,6 +35,7 @@ export const RightSideDrawer = ({
           overflow: 'hidden'
         }
       }}
+      closeOnEscape={false}
     >
       {children}
     </Drawer>

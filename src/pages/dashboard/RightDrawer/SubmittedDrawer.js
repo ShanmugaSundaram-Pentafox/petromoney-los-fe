@@ -1,6 +1,4 @@
 import { Dialog, DialogContent, DialogContentText, Button } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/CloseRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
@@ -20,53 +18,9 @@ import { isAllowed } from '../../../utils/cerbos';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 
 
-const useStyles = makeStyles(theme => ({
-  wrapper: {
-    padding: '0 24px 10px 24px',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-  },
+const useStyles = makeStyles(() => ({
   dialog: {
     minWidth: '30vw'
-  },
-  contentWrapper: {
-    padding: 12,
-    flex: 1,
-    overflow: 'auto',
-    overflowX: 'hidden'
-  },
-  wrapperTitle: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginRight: 24,
-  },
-  title: {
-    top: 0,
-    left: 0,
-    padding: '8px 16px',
-    background: theme.palette.grey[300],
-    borderBottomRightRadius: 12,
-    boxShadow: '0px 0px 4px #8d8d8d',
-  },
-  closeIcon: {
-    marginTop: 8,
-  },
-  actionButtonsWrapper: {
-    paddingTop: 16,
-  },
-  btn: {
-    marginLeft: 16
-  },
-  btnSuccess: {
-    '&.MuiButton-contained': {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.white
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark
-    }
   },
 }))
 
@@ -114,7 +68,6 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
       return null;
     }
   }
-
   const updateLoanStatus = () => {
     if ((user && remarks) || status == 'pre_submit') {
       setLoading(true)
@@ -159,22 +112,45 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
       ...d
     })
   }
+
   return (
     <>
-      <div className={classes.wrapper}>
-        <div className={classes.wrapperTitle}>
+      {/* Drawer content */}
+      <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
+        {/* <div className={classes.wrapperTitle}>
           <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
           <CloseIcon className={classes.closeIcon} onClick={onClose} />
-        </div>
-        <div className={classes.contentWrapper}>
-          <DealershipData data={data} readOnly={true} />
-          <WorkingSheetDrawer id={id} />
-          <LoanInfo status={status} viewable={false} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
-        </div>
-        <div>
-          <DrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={status == 'pre_submit' ? updateLoanStatus : handleReviewModal} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
-        </div>
-      </div >
+        </div> */}
+        
+        <DealershipData 
+          data={data} 
+          readOnly={true} 
+        />
+
+        <WorkingSheetDrawer id={id} />
+        
+        <LoanInfo 
+          status={status} 
+          viewable={false} 
+          currentUser={currentUser} 
+          newInfo={loanData} 
+          editable={editable} 
+          data={selectedLoanData} 
+          updateNewLoanInfo={updateNewLoanInfo} 
+        />
+      </div>
+
+      {/* Sticky footer */}
+      <DrawerFooter 
+        selectedLoanData={selectedLoanData} 
+        handleReviewModal={status == 'pre_submit' ? updateLoanStatus : handleReviewModal} 
+        data={data} 
+        onClose={onClose} 
+        id={id} 
+        currentUser={currentUser} 
+        status={status} 
+      />
+
       <Dialog
         open={reviewModal}
         onClose={handleReviewModal}

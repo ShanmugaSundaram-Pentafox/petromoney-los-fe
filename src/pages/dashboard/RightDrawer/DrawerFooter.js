@@ -1,19 +1,17 @@
-import { Dialog, DialogActions, DialogContent, FormGroup, Checkbox, Tooltip, FormControlLabel, Button, Typography, Chip, IconButton, CircularProgress, DialogContentText } from '@material-ui/core';
-import AccountTreeRoundedIcon from '@material-ui/icons/AccountTreeRounded';
-import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+import { Flex, Button, Text, Box, Alert, Loader } from '@mantine/core';
+import { Dialog, DialogActions, DialogContent, FormGroup, Checkbox, Tooltip, FormControlLabel, Typography, Chip, IconButton, CircularProgress, DialogContentText } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/CloseRounded';
-import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
-import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
-import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
+import { IconInfoCircle } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { Link as RouterLink } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import Select from 'react-select';
 import { useMount } from 'react-use';
 import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { sendLoanForEnhancement } from '../../../services/enhancement.service';
@@ -117,6 +115,7 @@ const DrawerFooter = ({
   handlePendingApprovalModal,
   updateApprovalStatus,
 }) => {
+  const history = useHistory();
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const classes = useStyles();
   const [reLoader, setReloader] = useState(false);
@@ -306,142 +305,451 @@ const DrawerFooter = ({
       setErrorMsg('Please Select a reason to reject this loan')
     }
   }
+  
   return (
-    <div>
-      <div className={classes.actionButtonsWrapper}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button
-            variant="contained"
-            startIcon={<ArrowBackIosRoundedIcon />}
-            onClick={onClose}>
-            Back
+    <>
+      {/* <div>
+        <div className={classes.actionButtonsWrapper}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              variant="contained"
+              startIcon={<ArrowBackIosRoundedIcon />}
+              onClick={onClose}>
+              Back
+            </Button>
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard.pushback}>
+              {!['disbursed'].includes(status) ? (
+                <Button
+                  variant="outlined"
+                  color='primary'
+                  onClick={() => {setPushback({ ...pushback, open: true }); ['disbursed'].includes(status) && setPushbackRemarks('pre_submit')}}
+                  style={{ marginLeft: 12 }}
+                >
+                  Pushback
+                </Button>
+              ) : null}
+            </CheckAllowed>
+            {
+              isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected'].includes(status.toLowerCase()) &&
+                <LoaderButton
+                  variant={'contained'}
+                  className={clsx(classes.btn, classes.btnError)}
+                  isLoading={reLoader}
+                  onClick={handleResubmit}
+                  loadingText='submitting...'>{'Re-Submit'}</LoaderButton>
+            }
+            {
+              isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['disbursed'].includes(status.toLowerCase()) &&
+                <LoaderButton
+                  variant={'outlined'}
+                  className={clsx(classes.btn)}
+                  isLoading={reLoader}
+                  onClick={() => setEnhancementModal(true)}
+                  loadingText='sending...'>{`Send for ${loanData?.is_noc ? 'Re onboarding' : 'Enhancement'}`}</LoaderButton>
+            }
+          </div>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Button
+              component={RouterLink}
+              to={`/dealership/${id}`}
+              variant="contained"
+              disabled={loanData?.isLoading}
+              className={clsx(classes.btn, classes.btnSuccess)}
+              startIcon={<AccountTreeRoundedIcon />}
+            >
+              View more
+            </Button>
+            {
+              status && ['submitted'].includes(status.toLowerCase()) &&
+                <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
+                  <Button
+                    variant="contained"
+                    disabled={loanData?.isLoading}
+                    className={clsx(classes.btn, classes.btnSuccess)}
+                    startIcon={<ThumbUpAltIcon />}
+                    onClick={handleReviewModal}
+                  >
+                    Send for Review
+                  </Button>
+                </CheckAllowed>
+            }
+            {
+              status && ['pre_submit'].includes(status.toLowerCase()) &&
+                <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_submit'}>
+                  <Button
+                    variant="contained"
+                    disabled={loanData?.isLoading}
+                    className={clsx(classes.btn, classes.btnSuccess)}
+                    startIcon={<ThumbUpAltIcon />}
+                    onClick={handleReviewModal}
+                  >
+                    Submit
+                  </Button>
+                </CheckAllowed>
+            }
+            {
+              status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) &&
+                <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
+                  <Button
+                    variant="contained"
+                    disabled={loanData?.loading}
+                    className={clsx(classes.btn, classes.btnError)}
+                    startIcon={<ThumbDownAltIcon />}
+                    onClick={() => setRejectModal(true)}
+                  >
+                    Reject
+                  </Button>
+                </CheckAllowed>
+            }
+            {
+              status && ['disbursement_approval'].includes(status.toLowerCase()) &&
+                <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_approve'}>
+                  <Button
+                    variant="contained"
+                    disabled={loanData?.loading}
+                    className={clsx(classes.btn, classes.btnSuccess)}
+                    startIcon={<ThumbUpAltIcon />}
+                    onClick={updateApprovalStatus}
+                  >
+                    Approve
+                  </Button>
+                </CheckAllowed>
+            }
+            {
+              status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_approve')) &&
+                <Button
+                  variant="contained"
+                  disabled={loanData?.loading}
+                  className={clsx(classes.btn, classes.btnSuccess)}
+                  startIcon={<ThumbUpAltIcon />}
+                  onClick={handlePendingApprovalModal}
+                >
+                  Approve
+                </Button>
+            }
+            {
+              status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'send_for_approval')) &&
+                <div>
+                  <Button
+                    variant="contained"
+                    disabled={loanData?.isLoading}
+                    className={clsx(classes.btn, classes.btnSuccess)}
+                    startIcon={<ThumbUpAltIcon />}
+                    onClick={handleApprovalModal}
+                  >
+                    Send for Approval
+                  </Button>
+                </div>
+            }
+          </div>
+        </div>
+
+        <Dialog
+          open={rejectModal}
+          onClose={() => setRejectModal(false)}
+        >
+          <DialogContent className={classes.rejectModal}>
+            {
+              <>
+                <div>
+                  {
+                    errorMsg &&
+                      <Alert severity='error' style={{ marginBottom: 12 }}>{errorMsg}</Alert>
+                  }
+                  <Typography style={{ marginBottom: 16 }} variant='body1'>Choose category and reasons for rejection.</Typography>
+                  <Typography variant='body2'>Category</Typography>
+                  {
+                    optionsData.map((item, i) => {
+                      return <Chip key={i} label={item.label} className={classes.chip} variant={activeTab === i ? 'default' : 'outlined'} onClick={() => {
+                        setSelectedCategory({ label: item?.label, value: item?.value })
+                        setActiveTab(item.value)
+                      }} clickable color={activeTab === i ? 'primary' : ''} />
+                    })
+                  }
+                </div>
+                {
+                  selectedCategory && (
+                    <div className={classes.actions}>
+                      <Typography variant='body1'>Reason</Typography>
+                      <FormGroup>
+                        {
+                          reasonData[selectedCategory.value][0].map((data, index) => {
+                            return (
+                              <FormControlLabel
+                                key={index}
+                                control={
+                                  <Checkbox
+                                    className={classes.checkbox}
+                                    onChange={handleReasonChange}
+                                    value={data.value} key={data.value} checked={rejectReason.includes(data.value)} name={data.label}
+                                  />}
+                                label={data.label}
+                                color={activeTab === data.label ? 'primary' : ''}
+                              />
+                            )
+                          })
+                        }
+                      </FormGroup>
+                    </div>
+                  )
+                }
+                {
+                  displayReason.length != 0 && (
+                    <div className={classes.actions2}>
+                      <Typography variant='body1'><strong>Selected Reasons</strong></Typography>
+                      {
+                        displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
+                          return (
+                            <div key={i} className={classes.items}>
+                              <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
+                              <Tooltip title="Remove">
+                                <IconButton size='small'>
+                                  <CloseIcon fontSize='small' onClick={() => removeItem(item)} />
+                                </IconButton>
+                              </Tooltip>
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
+                  )
+                }
+              </>
+            }
+          </DialogContent>
+          <DialogActions>
+            <div>
+              <Button onClick={() => setRejectModal(false)}>Cancel</Button>
+              <Button color='primary' variant='outlined' onClick={updateLoanStatus}>{loading ? <CircularProgress size={22} /> : 'Confirm'}</Button>
+            </div>
+          </DialogActions>
+        </Dialog>
+        
+        <Dialog
+          open={pushback?.open}
+          onClose={() => setPushback({})}
+        >
+          <DialogContent>
+            <div style={{ marginBottom: 12 }}>
+              <DialogContentText>
+                Please choose status where you want to push back.
+              </DialogContentText>
+              <Select
+                isClearable
+                onChange={(e) => setPushbackRemarks(e?.value)}
+                value={loanStatusList?.find(e => e.value === pushbackRemarks)}
+                options={loanStatusList}
+                menuPlacement='bottom'
+                menuPosition='fixed'
+                maxMenuHeight='200px'
+              />
+            </div>
+            <DialogContentText>
+              Please Enter the reason for Push back.
+            </DialogContentText>
+            <TextEditor
+              setJSON={(data) => setPushback({
+                ...pushback,
+                data: {
+                  ...pushback.data,
+                  remarks: data
+                }
+              })}
+              toolBar={true}
+            />
+            {
+              errorMsg &&
+                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorMsg}</Alert>
+            }
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>
+              <Button variant='outlined' style={{ marginRight: 8 }} onClick={() => setPushback({ ...pushback, open: false })}>Cancel</Button>
+              <LoaderButton
+                color='primary'
+                variant='contained'
+                isLoading={loading}
+                loadingText='Submitting...'
+                onClick={handlePushBack}
+              >Confirm</LoaderButton>
+            </div>
+          </DialogContent>
+        </Dialog>
+        
+        <Dialog
+          open={openEnhancementModal}
+          onClose={() => setEnhancementModal(false)}
+        >
+          <DialogContent>
+            <DialogContentText>
+              {`Are you sure want to move your loan for ${loanData?.is_noc ? 'Re onboarding' : 'Enhancement'}?`}
+            </DialogContentText>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>
+              <Button variant='outlined' style={{ marginRight: 8 }} onClick={() => setEnhancementModal(false)}>Cancel</Button>
+              <LoaderButton
+                color='primary'
+                variant='contained'
+                isLoading={loading}
+                loadingText='Submitting...'
+                onClick={handlePushToEnhancement}
+              >Yes</LoaderButton>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div> */}
+
+      <Flex
+        h="64"
+        style={{ 
+          flexShrink: 0,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 16px', 
+          background: '#FFFFFF', 
+          borderTop: '1px solid #eaeaea', 
+          zIndex: 9
+        }}
+      >
+        <Flex gap="xs">
+          <Button 
+            variant="outline" 
+            size="md"
+            color="gray"
+            onClick={onClose}
+          >
+            Go back
           </Button>
+
           <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard.pushback}>
             {!['disbursed'].includes(status) ? (
-              <Button
-                variant="outlined"
-                color='primary'
+              <Button 
+                variant="outline" 
+                size="md"
+                // color="gray"
                 onClick={() => {setPushback({ ...pushback, open: true }); ['disbursed'].includes(status) && setPushbackRemarks('pre_submit')}}
-                style={{ marginLeft: 12 }}
               >
                 Pushback
               </Button>
             ) : null}
           </CheckAllowed>
-          {
-            isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected'].includes(status.toLowerCase()) &&
-              <LoaderButton
-                variant={'contained'}
-                className={clsx(classes.btn, classes.btnError)}
-                isLoading={reLoader}
-                onClick={handleResubmit}
-                loadingText='submitting...'>{'Re-Submit'}</LoaderButton>
-          }
-          {
-            isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['disbursed'].includes(status.toLowerCase()) &&
-              <LoaderButton
-                variant={'outlined'}
-                className={clsx(classes.btn)}
-                isLoading={reLoader}
-                onClick={() => setEnhancementModal(true)}
-                loadingText='sending...'>{`Send for ${loanData?.is_noc ? 'Re onboarding' : 'Enhancement'}`}</LoaderButton>
-          }
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button
-            component={RouterLink}
-            to={`/dealership/${id}`}
-            variant="contained"
+
+          {isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['loan_review', 'loan_approval', 'approved', 'rejected'].includes(status.toLowerCase()) && (
+            <LoaderButton
+              variant={'contained'}
+              className={clsx(classes.btn, classes.btnError)}
+              isLoading={reLoader}
+              onClick={handleResubmit}
+              loadingText='submitting...'
+            >
+              Re-Submit
+            </LoaderButton>
+          )}
+
+          {isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['disbursed'].includes(status.toLowerCase()) && (
+            <LoaderButton
+              variant={'outlined'}
+              className={clsx(classes.btn)}
+              isLoading={reLoader}
+              onClick={() => setEnhancementModal(true)}
+              loadingText='sending...'
+            >
+              Send for {loanData?.is_noc ? 'Re onboarding' : 'Enhancement'}
+            </LoaderButton>
+          )}
+        </Flex>
+
+        <Flex gap="xs">
+          <Button 
+            variant="filled" 
+            size="md"
+            color="rgba(0, 0, 0, 1)"
+            onClick={() => history.push(`/dealership/${id}`)}
             disabled={loanData?.isLoading}
-            className={clsx(classes.btn, classes.btnSuccess)}
-            startIcon={<AccountTreeRoundedIcon />}
           >
             View more
           </Button>
-          {
-            status && ['submitted'].includes(status.toLowerCase()) &&
-              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
-                <Button
-                  variant="contained"
-                  disabled={loanData?.isLoading}
-                  className={clsx(classes.btn, classes.btnSuccess)}
-                  startIcon={<ThumbUpAltIcon />}
-                  onClick={handleReviewModal}
-                >
-                  Send for Review
-                </Button>
-              </CheckAllowed>
-          }
-          {
-            status && ['pre_submit'].includes(status.toLowerCase()) &&
-              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_submit'}>
-                <Button
-                  variant="contained"
-                  disabled={loanData?.isLoading}
-                  className={clsx(classes.btn, classes.btnSuccess)}
-                  startIcon={<ThumbUpAltIcon />}
-                  onClick={handleReviewModal}
-                >
-                  Submit
-                </Button>
-              </CheckAllowed>
-          }
-          {
-            status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) &&
-              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
-                <Button
-                  variant="contained"
-                  disabled={loanData?.loading}
-                  className={clsx(classes.btn, classes.btnError)}
-                  startIcon={<ThumbDownAltIcon />}
-                  onClick={() => setRejectModal(true)}
-                >
-                  Reject
-                </Button>
-              </CheckAllowed>
-          }
-          {
-            status && ['disbursement_approval'].includes(status.toLowerCase()) &&
-              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_approve'}>
-                <Button
-                  variant="contained"
-                  disabled={loanData?.loading}
-                  className={clsx(classes.btn, classes.btnSuccess)}
-                  startIcon={<ThumbUpAltIcon />}
-                  onClick={updateApprovalStatus}
-                >
-                  Approve
-                </Button>
-              </CheckAllowed>
-          }
-          {
-            status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_approve')) &&
-              <Button
-                variant="contained"
+
+          {status && ['submitted'].includes(status.toLowerCase()) && (
+            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
+              <Button 
+                variant="filled" 
+                size="md"
+                color="rgba(0, 0, 0, 1)"
+                onClick={handleReviewModal}
+                disabled={loanData?.isLoading}
+              >
+                Send for Review
+              </Button>
+            </CheckAllowed>
+          )}
+
+          {status && ['pre_submit'].includes(status.toLowerCase()) && (
+            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_submit'}>
+              <Button 
+                variant="filled" 
+                size="md"
+                color="rgba(0, 0, 0, 1)"
+                onClick={handleReviewModal}
+                disabled={loanData?.isLoading}
+              >
+                Submit
+              </Button>
+            </CheckAllowed>
+          )}
+
+          {status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) && (
+            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
+              <Button 
+                variant="filled" 
+                size="md"
+                color="rgba(0, 0, 0, 1)"
+                onClick={() => setRejectModal(true)}
                 disabled={loanData?.loading}
-                className={clsx(classes.btn, classes.btnSuccess)}
-                startIcon={<ThumbUpAltIcon />}
-                onClick={handlePendingApprovalModal}
+              >
+                Reject
+              </Button>
+            </CheckAllowed>
+          )}
+
+          {status && ['disbursement_approval'].includes(status.toLowerCase()) && (
+            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_approve'}>
+              <Button 
+                variant="filled" 
+                size="md"
+                color="rgba(0, 0, 0, 1)"
+                onClick={updateApprovalStatus}
+                disabled={loanData?.loading}
               >
                 Approve
               </Button>
-          }
-          {
-            status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'send_for_approval')) &&
-              <div>
-                <Button
-                  variant="contained"
-                  disabled={loanData?.isLoading}
-                  className={clsx(classes.btn, classes.btnSuccess)}
-                  startIcon={<ThumbUpAltIcon />}
-                  onClick={handleApprovalModal}
-                >
-                  Send for Approval
-                </Button>
-              </div>
-          }
-        </div>
-      </div>
+            </CheckAllowed>
+          )}
+
+          {status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_approve')) && (
+            <Button 
+              variant="filled" 
+              size="md"
+              color="rgba(0, 0, 0, 1)"
+              onClick={handlePendingApprovalModal}
+              disabled={loanData?.loading}
+            >
+              Approve
+            </Button>
+          )}
+          
+          {status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'send_for_approval')) && (
+            <Button 
+              variant="filled" 
+              size="md"
+              color="rgba(0, 0, 0, 1)"
+              onClick={handleApprovalModal}
+              disabled={loanData?.loading}
+            >
+              Send for Approval
+            </Button>
+          )}
+        </Flex> 
+      </Flex>
+
       <Dialog
         open={rejectModal}
         onClose={() => setRejectModal(false)}
@@ -522,7 +830,86 @@ const DrawerFooter = ({
           </div>
         </DialogActions>
       </Dialog>
-      <Dialog
+          
+      <RightSideDrawer
+        size="md" 
+        opened={pushback?.open}
+        onClose={() => setPushback({})}
+      >
+        <Box p="md">
+          <Box mb="md">
+            <Text>Please choose status where you want to push back.</Text>
+            <Select
+              isClearable
+              onChange={(e) => setPushbackRemarks(e?.value)}
+              value={loanStatusList?.find(e => e.value === pushbackRemarks)}
+              options={loanStatusList}
+              menuPlacement='bottom'
+              menuPosition='fixed'
+              maxMenuHeight='200px'
+            />
+          </Box>
+          
+          <Box mb="md">
+            <Text>Please Enter the reason for Push back.</Text>
+            <TextEditor
+              setJSON={(data) => setPushback({
+                ...pushback,
+                data: {
+                  ...pushback.data,
+                  remarks: data
+                }
+              })}
+              toolBar={true}
+            />
+          </Box>
+
+          {errorMsg && (
+            <Alert variant="light" color="red" radius="md" title={errorMsg} icon={<IconInfoCircle />} p="xs" mb="xl" />
+          )}
+
+          <Flex gap="xs" justify="end">
+            {/* <Button variant='outlined' style={{ marginRight: 8 }} onClick={() => setPushback({ ...pushback, open: false })}>
+              Cancel
+            </Button>
+            
+            <LoaderButton
+              color='primary'
+              variant='contained'
+              isLoading={loading}
+              loadingText='Submitting...'
+              onClick={handlePushBack}
+            >
+              Confirm
+            </LoaderButton> */}
+
+            <Button 
+              variant="outline" 
+              size="md"
+              color="gray"
+              onClick={() => setPushback({ ...pushback, open: false })}
+            >
+              Cancel
+            </Button>
+
+            <Button 
+              variant="filled" 
+              size="md"
+              color="rgba(0, 0, 0, 1)"
+              onClick={handlePushBack}
+              loading={loading}
+            >
+              Confirm
+
+              {loading && (
+                <Loader ml="md" color="rgba(255, 255, 255, 1)" size="xs" />
+              )} 
+            </Button>
+          </Flex>
+        </Box>
+      </RightSideDrawer>
+
+      {/* <Dialog
         open={pushback?.open}
         onClose={() => setPushback({})}
       >
@@ -569,7 +956,8 @@ const DrawerFooter = ({
             >Confirm</LoaderButton>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
+      
       <Dialog
         open={openEnhancementModal}
         onClose={() => setEnhancementModal(false)}
@@ -590,7 +978,7 @@ const DrawerFooter = ({
           </div>
         </DialogContent>
       </Dialog>
-    </div >
+    </>
   )
 }
 

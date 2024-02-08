@@ -52,7 +52,7 @@ import { permissionCheck } from '../UserCan/UserCan';
 // });
 
 const Topbar = (props) => {
-  const { onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps} = props;
+  const { onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps } = props;
   // const classes = useStyles();
   // const { enqueueSnackbar } = useSnackbar();
   // const [loading, setLoading] = useState(false)
@@ -83,16 +83,16 @@ const Topbar = (props) => {
 
   return (
     <>
-      <Box 
+      <Box
         component="header"
-        className="bg-white h-16 flex items-center px-4 border-b border-b-gray-200" 
+        className="bg-white h-14 flex items-center px-4 border-b border-b-gray-200"
         {...appBarProps}
       >
         {goBackIcon && editable && (
           <Tooltip fz="xs" px="8" py="2.5" offset={2} label="Go Back">
-            <ActionIcon 
-              variant="subtle" 
-              size="lg" 
+            <ActionIcon
+              variant="subtle"
+              size="lg"
               aria-label="Go back"
               onClick={history.goBack}
               color='gray.9'
@@ -101,7 +101,7 @@ const Topbar = (props) => {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </ActionIcon>
-          </Tooltip>    
+          </Tooltip>
         )}
 
         <Title order={3}>
@@ -148,7 +148,7 @@ const Topbar = (props) => {
             </Tooltip>
           </span>
         )} */}
-        
+
         {typeof pageTitle !== 'string' && (
           <div className="hidden lg:block py-4">
             <dl className="grid grid-flow-col auto-cols-max overflow-hidden divide-x divide-gray-200">
@@ -158,9 +158,11 @@ const Topbar = (props) => {
                     {item.label}
                   </dt>
 
-                  <dd className="mt-0.5 flex text-xs font-semibold text-blue-500">
+                  {/* <Tooltip label={item.value} withArrow position='bottom' color='gray' disabled={item?.value?.trim()?.length > 10}> */}
+                  <dd className="mt-0.5 flex text-xs font-semibold text-blue-500 max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis">
                     {item.value || '-'}
                   </dd>
+                  {/* </Tooltip> */}
                 </div>
               ))}
             </dl>
@@ -178,9 +180,9 @@ const Topbar = (props) => {
         </Flex>
       </Box>
 
-      <NotificationSidebar 
-        showNotification={showNotificationSidebar} 
-        closeButton={() => setShowNotificationSidebar(false)} 
+      <NotificationSidebar
+        showNotification={showNotificationSidebar}
+        closeButton={() => setShowNotificationSidebar(false)}
       />
     </>
   );

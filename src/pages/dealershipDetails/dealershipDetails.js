@@ -3,8 +3,6 @@ import Collapse from '@material-ui/core/Collapse';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
 import { makeStyles } from '@material-ui/styles';
 import toInteger from 'lodash-es/toInteger';
 import React, { useState } from 'react';
@@ -30,6 +28,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
+import { Tabs, Badge, Group, Paper } from '@mantine/core';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -81,34 +80,42 @@ const DealershipDetails = ({ currentUser, match }) => {
     {
       id: action_id?.dealershipNavigation?.dealership,
       name: 'Dealership',
+      value: 'dealership',
     },
     {
       id: action_id?.dealershipNavigation?.dealers,
       name: 'Dealers',
+      value: 'dealer',
     },
     {
       id: action_id?.dealershipNavigation?.scoreCard,
       name: 'Score Card',
+      value: 'score_card'
     },
     {
       id: action_id?.dealershipNavigation?.loansList,
       name: 'Loans List',
+      value: 'loans_list'
     },
     {
       id: action_id?.dealershipNavigation?.personalDiscussion,
       name: 'Personal Discussion',
+      value: 'personal_discussion'
     },
     {
       id: action_id?.dealershipNavigation?.docChecklist,
       name: 'Documents',
+      value: 'documents'
     },
     {
       id: action_id?.dealershipNavigation?.transporters,
       name: 'Transporters',
+      value: 'transporter'
     },
     {
       id: action_id?.dealershipNavigation?.fleetOperator,
       name: 'Fleet Operators',
+      value: 'fleet_operators'
     },
   ]
 
@@ -117,7 +124,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   // Allowed navigations inside dealership 
   for (const page in pageData) {
     if (isAllowed(currentUser?.permissions, resources_id?.dealershipNavigation, pageData[page]?.id)) {
-      tabs.push(pageData[page]?.name)
+      tabs.push(pageData[page])
     }
   }
 
@@ -133,7 +140,7 @@ const DealershipDetails = ({ currentUser, match }) => {
     },
     refetchOnWindowFocus: false
   })
-  const onChangeTab = (e, newTab) => {
+  const onChangeTab = (newTab) => {
     setActiveTab(newTab);
     history.replace(`?t=${newTab}`)
   }
@@ -153,8 +160,43 @@ const DealershipDetails = ({ currentUser, match }) => {
   usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
   return (
     <div>
+      <Tabs variant="pills" orientation="vertical" onChange={onChangeTab} value={activeTab}>
+        <Tabs.List>
+          {
+            tabs.map((item, i) => {
+              return (<Tabs.Tab key={1} value={item?.value}><Group><Badge size="xs" circle variant='white'>{i + 1}</Badge> {item?.name}</Group></Tabs.Tab>)
+            })
+          }
+        </Tabs.List>
+        <Paper p={'md'}>
+          <Tabs.Panel value={'dealership'}>
+            <DealershipInfo data={dealershipData.data} currentUser={currentUser} />
+          </Tabs.Panel>
+          <Tabs.Panel value={'dealers'}>
+            <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+          </Tabs.Panel>
+          <Tabs.Panel value={'score_card'}>
+            <ScoreCard currentUser={currentUser} dealership_id={id} />
+          </Tabs.Panel>
+          <Tabs.Panel value={'loans_list'}>
+            <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+          </Tabs.Panel>
+          <Tabs.Panel value={'personal_discussion'}>
+            <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+          </Tabs.Panel>
+          <Tabs.Panel value={'documents'}>
+            <DealershipDoc id={id} currentUser={currentUser} />
+          </Tabs.Panel>
+          <Tabs.Panel value={'transporters'}>
+            <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+          </Tabs.Panel>
+          <Tabs.Panel value={'fleet_operators'}>
+            <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+          </Tabs.Panel>
+        </Paper>
+      </Tabs>
       <div className={classes.tabsWrapper}>
-        <div>
+        {/* <div>
           <Collapse in={!showSolarForm}>
             <Tabs
               orientation="vertical"
@@ -220,7 +262,7 @@ const DealershipDetails = ({ currentUser, match }) => {
             activeTab == tabs.indexOf('Fleet Operators') &&
               <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
           }
-        </TabPanel>
+        </TabPanel> */}
         <SolarEnquiryForm
           dealershipId={id}
           mainApplicant={mainApplicant}

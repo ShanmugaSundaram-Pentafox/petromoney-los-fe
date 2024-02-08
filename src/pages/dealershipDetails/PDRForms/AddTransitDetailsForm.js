@@ -61,6 +61,13 @@ const AddTransitDetailsForm = ({ dealershipId, data, callback, currentUser }) =>
     validationSchema: Yup.object().shape({
       pdc_cheque_ids: Yup.string('Select cheque to upload details').nullable('Select cheque to upload details').required('Select cheque to upload details'),
       event_type: Yup.string('Select Event type').nullable('select event type').required('select event type'),
+      // added the validation for file
+      file: Yup.string().when('event_type', (event_type, schema) => {
+        if (['return_to_dealer', 'deposited']?.includes(event_type)) {
+          return schema.required('Please Upload the file');
+        }
+        return schema;
+      })
     }),
     onSubmit: values => {
       let obj = { ...values };
@@ -191,6 +198,7 @@ const AddTransitDetailsForm = ({ dealershipId, data, callback, currentUser }) =>
                       )
                     }
                   </div>
+                  {errors.file ? <div style={{ fontSize: 10, color: 'red' }}>{errors.file}</div> : null}
                 </label>
                 {
                   values?.proof_1_file && (

@@ -1,3 +1,4 @@
+import { Button } from '@mantine/core';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import AddNewUserForm from './AddNewUserForm';
@@ -6,7 +7,6 @@ import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { getAllUsers } from '../../services/users.service';
 import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import { RightSideDrawer } from '../Mantine/RightSideDrawer/RightSideDrawer';
-import { Button } from '@mantine/core';
 
 
 const AddNewUserAction = ({currentUser}) => {

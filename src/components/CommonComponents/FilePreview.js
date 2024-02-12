@@ -1,4 +1,5 @@
-import { Box, Avatar, Typography } from '@material-ui/core';
+import { Grid, Text } from '@mantine/core';
+import { Avatar, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/styles';
 import React, { useEffect, useState } from 'react'
@@ -53,18 +54,21 @@ const PreviewWrapper = styled.div`
     }
 `;
 
-export const ViewData = ({ title, value, style = { marginBottom: 8 }, endIcon }) => {
-  const classes = useStyles()
+export const ViewData = ({ title, value, endIcon }) => {
   return (
-    <Box className={classes.details} style={style}>
-      <p className={classes.title}>{title}</p>
-      <strong className={classes.text}>
+    <>
+      <Text size="sm" fw="600" c="gray.7">{title}</Text>
+
+      <Text 
+        size="sm"
+        c="gray.6"
+        className="flex items-center gap-2"
+      >
         {value ? value : '-'}
-        {
-          endIcon && endIcon
-        }
-      </strong>
-    </Box >
+
+        {endIcon}
+      </Text>
+    </>
   )
 }
 export const AvatarCard = ({ file, title, tooltip }) => {

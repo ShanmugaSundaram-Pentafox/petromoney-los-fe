@@ -83,7 +83,7 @@ const DisbursedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, 
           {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
         </>
         {
-          loanData?.isLoading ? <Skeleton variant="rect" width="100%" height={400} /> : <DispApprovedDataTable id={id} editable={editable} loanData={loanData} currentUser={currentUser} />
+          loanData?.isLoading ? <Skeleton variant="rect" width="100%" height={400} /> : <DispApprovedDataTable id={id} editable={editable} loanData={loanData?.disbursement_loans} currentUser={currentUser} />
         }
       </div>
       <div>

@@ -1,6 +1,5 @@
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/CloseRounded';
-import { Skeleton } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import React from 'react';
 import { useQuery } from 'react-query';
@@ -10,7 +9,6 @@ import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
 import { getLoanById } from '../../../services/loans.service';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
-import DispApprovedDataTable from '../components/DispApprovedDataTable';
 
 
 const useStyles = makeStyles(theme => ({
@@ -85,9 +83,6 @@ const DisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnl
           <DrawerRemarks label={'Disbursement approved recommendation'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />
           {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
         </>
-        {
-          loanData?.isLoading ? <Skeleton variant="rect" width="100%" height={400} /> : <DispApprovedDataTable id={id} editable={editable} loanData={loanData} currentUser={currentUser} />
-        }
       </div>
       <div>
         <DrawerFooter selectedLoanData={selectedLoanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} />

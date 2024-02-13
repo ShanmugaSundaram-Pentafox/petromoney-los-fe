@@ -1,7 +1,6 @@
-import { Badge, Button, Typography, Dialog, DialogContent, DialogContentText, Collapse, DialogTitle, DialogActions } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles';
+import { Box, Grid, Text, Title } from '@mantine/core';
+import { Button, Typography, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip';
-import AddIcon from '@material-ui/icons/Add';
 import AudiotrackIcon from '@material-ui/icons/Audiotrack';
 import EditIcon from '@material-ui/icons/Edit';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
@@ -24,73 +23,10 @@ import CheckAllowed from '../../rbac/CheckAllowed';
 const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
 const csvFileTypes = ['csv', 'xls', 'xlsx'];
 const audioFileTypes = ['mp3', 'wav', 'm4a']
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: 10,
-    borderBottom: '1px solid #CCC'
-  },
-  titleRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    margin: 5,
-  },
-}))
 
-
-const usePreviewStyles = makeStyles((theme) => ({
-  container: {
-    transition: '.2s ease-in-out',
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: '#fcfcfc',
-      '& $attachmentDelete': {
-        visibility: 'visible'
-      },
-      '& $attachmentEdit': {
-        visibility: 'visible'
-      }
-    },
-    border: '1px dashed grey',
-    width: 100,
-    height: 75,
-    borderRadius: 6,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: '8px 0px 8px 15px',
-    position: 'relative'
-  },
-  smallText: {
-    width: 100,
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    marginTop: 2,
-    overflow: 'hidden',
-    marginLeft: 15,
-    fontSize: 10,
-    color: '#999'
-  },
-  attachmentDelete: {
-    position: 'absolute', width: 25, height: 23, bottom: 0, right: 0, backgroundColor: 'rgb(255,59,48)', borderRadius: '5px 0px 5px 0px', display: 'flex', justifyContent: 'center', alignItems: 'center', visibility: 'hidden',
-    '&:hover': {
-      border: '2px solid #F19C9C'
-    }
-  },
-  attachmentEdit: {
-    position: 'absolute', width: 25, height: 23, bottom: 0, left: 0, backgroundColor: '#308dff', borderRadius: '0px 5px 0px 5px', display: 'flex', justifyContent: 'center', alignItems: 'center', visibility: 'hidden',
-    '&:hover': {
-      border: '2px solid #30b0ff'
-    }
-  },
-  deleteModal: {
-    display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 19, width: '100%'
-  }
-}))
 const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable, crimeCheck, currentUser }) => {
   const queryClient = useQueryClient()
   const [imageModal, setImageModal] = useState({});
-  const classes = usePreviewStyles();
   const [deleteModal, setDeleteModal] = useState({ open: false, loading: false })
   const [editModal, setEditModal] = useState({ open: false })
   const { enqueueSnackbar } = useSnackbar();
@@ -106,6 +42,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         console.log(err);
       });
   }
+
   const handleDocNameEdit = () => {
     const d = { file_id: editModal?.fileId, file_url: editModal?.fileUrl, file_name: editModal?.name + '.' + fileType, file_type: fileType }
     editDocsImage(dealershipId, docId, d)
@@ -146,53 +83,72 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         });
       })
   }
+
   return (
     <>
-      {
-        url ? (
-          <Tooltip title={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'}>
-            <span>
-              <div className={classes.container}
-                onClick={() => csvFileTypes.includes(fileType) ? handleDownload(url) : audioFileTypes.includes(fileType) ? handleDownload(url) : setImageModal({ open: true, image: url, type: fileType })}
-              >
-                {
-                  imgFileTypes.includes(fileType) ?
-                    <PermMediaIcon style={{ color: '#63686E' }} />
-                    : fileType === 'pdf' ?
-                      <PictureAsPdfIcon style={{ color: '#63686E' }} />
-                      : audioFileTypes.includes(fileType) ?
-                        <AudiotrackIcon style={{ color: '#63686E' }} />
-                        : <ListAltIcon style={{ color: '#63686E' }} />
-                }
-                {
-                  DocName &&
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
-                      <div className={classes.attachmentDelete} onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}><DeleteIcon width={16} /></div>
-                    </CheckAllowed>
-                }
-                {
-                  DocName &&
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
-                      <div className={classes.attachmentEdit} onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}><EditIcon fontSize='small' style={{ color: 'white' }} /></div>
-                    </CheckAllowed>
-                }
-              </div>
-              <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{file_name}</h5>
-              <span className={classes.smallText}>{updatedDateTime}</span>
-            </span>
-          </Tooltip>
-
-        ) : (
-          <>
-            {
-              !crimeCheck && (<Typography variant='h6' style={{ color: '#b5b5b5', marginLeft: 15 }}>No Documents!</Typography>)
+      {url ? (
+        // <Tooltip title={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'}>
+        <>
+          <Box 
+            className="h-20 flex items-center justify-center p-4 border border-gray-200 border-dashed rounded cursor-pointer"
+            onClick={() => csvFileTypes.includes(fileType) ? handleDownload(url) : audioFileTypes.includes(fileType) ? handleDownload(url) : setImageModal({ open: true, image: url, type: fileType })}
+          >
+            {imgFileTypes.includes(fileType) ?
+              <PermMediaIcon style={{ color: '#63686E' }} />
+              : fileType === 'pdf' ?
+                <PictureAsPdfIcon style={{ color: '#63686E' }} />
+                : audioFileTypes.includes(fileType) ?
+                  <AudiotrackIcon style={{ color: '#63686E' }} />
+                  : <ListAltIcon style={{ color: '#63686E' }} />
             }
-          </>
-        )
-      }
+            
+            {DocName && (
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
+                <div onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}>
+                  <DeleteIcon width={16} />
+                </div>
+              </CheckAllowed>
+            )}
+
+            {DocName && (
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
+                <div onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}>
+                  <EditIcon fontSize='small' style={{ color: 'white' }} />
+                </div>
+              </CheckAllowed>
+            )}
+          </Box>
+          
+          {file_name && ( 
+            <Title order={6} lineClamp={1} mt="6">
+              {file_name}
+            </Title>
+          )}
+
+          {updatedDateTime && (
+            <Text fz="12" mt="4">
+              {updatedDateTime}
+            </Text>
+          )}  
+        </>
+        // </Tooltip>
+      ) : (
+        <>
+          {!crimeCheck && (
+            <Typography 
+              variant='h6' 
+              style={{ color: '#b5b5b5', marginLeft: 15 }}
+            >
+              No Documents!
+            </Typography>
+          )}
+        </>
+      )}
+      
       <FormDialog title={DocName} onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
         <FilePreview data={imageModal} />
       </FormDialog>
+
       <Dialog
         open={deleteModal?.open}
         onClose={() => setDeleteModal({ loading: false, open: false })}
@@ -206,13 +162,15 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
           </div>
           <DialogContentText style={{ textAlign: 'center' }}>Do you really want to delete this document? This process cannot be undone!</DialogContentText>
         </DialogContent>
-        <div className={classes.deleteModal}>
+
+        <div>
           <Button size='medium' variant='outlined' onClick={() => setDeleteModal({ open: false, loading: true })}>Cancel</Button>
           <Button variant='contained' size='medium' disabled={deleteModal?.loading} style={{ backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 15 }} onClick={() => !deleteModal?.loading ? handleDocDelete(deleteModal?.fileId) : null}>
             {deleteModal?.loading ? 'Deleting..' : 'Delete'}
           </Button>
         </div>
       </Dialog>
+
       {/* The modal is to edit the file name of the documents */}
       <Dialog
         open={editModal?.open}
@@ -243,45 +201,56 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
 }
 
 const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable, crimeCheck, currentUser }) => {
-  const classes = useStyles();
   const [collapse, setCollapse] = useState(false);
   const handleCollapse = () => {
     setCollapse(!collapse)
   }
+
   return (
-    <div className={classes.root}>
-      <div className={classes.titleRow}>
-        {
-          docName && (
-            <div onClick={() => handleCollapse()} style={{ cursor: 'pointer' }}>
-              <Typography variant='h7' onClick={() => handleCollapse}><strong>{`${id}. ${docName}`}</strong></Typography>
-              <Badge badgeContent={file[0].file_url && file?.length || 0} color="primary" style={{ marginLeft: 15 }} />
-            </div>
+    <>
+      {/* <div>
+        {docName && (
+          <div onClick={() => handleCollapse()} style={{ cursor: 'pointer' }}>
+            <Typography variant='h7' onClick={() => handleCollapse}><strong>{`${id}. ${docName}`}</strong></Typography>
+            <Badge badgeContent={file[0].file_url && file?.length || 0} color="primary" style={{ marginLeft: 15 }} />
+          </div>
+        )}
+
+        {upload && (
+          <div>
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.upload}>
+              <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
+            </CheckAllowed>
+          </div>
+        )}
+      </div> */}
+
+
+      
+      <Grid gutter="sm">
+        {file?.map((data, i) => {
+          return (
+            <Grid.Col key={i} span={{ base: 12, sm: 4 }}>
+              <DocPreview 
+                currentUser={currentUser} 
+                crimeCheck={crimeCheck} 
+                fileId={data?.file_id} 
+                docId={docId} 
+                dealershipId={dealershipId} 
+                fileType={data.file_type || 'pdf'} 
+                file_name={data.file_name} 
+                url={data?.file_url} 
+                DocName={docName} 
+                updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} 
+                editable={editable} 
+              />
+              {/* <Collapse in={!collapse} key={i}>
+              </Collapse> */}
+            </Grid.Col>
           )
-        }
-        {
-          upload &&
-            <div className={classes.titleBtns}>
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.upload}>
-                <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
-              </CheckAllowed>
-            </div>
-        }
-      </div>
-      <div
-        style={{ display: 'flex', flexWrap: 'wrap' }}
-      >
-        {
-          file?.map((data, i) => {
-            return (
-              <Collapse in={!collapse} key={i}>
-                <DocPreview currentUser={currentUser} crimeCheck={crimeCheck} fileId={data?.file_id} docId={docId} dealershipId={dealershipId} fileType={data.file_type || 'pdf'} file_name={data.file_name} url={data?.file_url} DocName={docName} updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} editable={editable} />
-              </Collapse>
-            )
-          })
-        }
-      </div>
-    </div>
+        })}
+      </Grid>
+    </>
   )
 }
 

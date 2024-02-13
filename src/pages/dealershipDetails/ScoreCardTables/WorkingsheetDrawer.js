@@ -41,7 +41,7 @@ const WorkingSheetDrawer = ({ id }) => {
           {tableData?.map(item => {
             return (
               <Accordion.Item key={item?.id} value={item?.name}>
-                <Accordion.Control>
+                <Accordion.Control px="xs">
                   {item?.name}
                 </Accordion.Control>
 

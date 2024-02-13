@@ -2,6 +2,105 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.36.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.35.0...v2.36.0) (2024-02-08)
+
+
+### Features
+
+* **AddTransitDetailsForm:** added the validation for file upload ([44efb52](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/44efb524b7542f50dd3d7e458e93695a7ccc7998))
+
+## [2.35.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.34.0...v2.35.0) (2024-02-01)
+
+
+### Features
+
+* **CreditProcessedTable:** displayed the disbursed and declined date ([f5f4f80](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f5f4f80cde41b39cb60e8381569ca4f33c69b05a))
+* **ScoreCard:** score card changes ([819b47f](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/819b47fc7e2d1b33866e520c30b0bc1e84579cbe))
+
+## [2.34.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.33.0...v2.34.0) (2024-01-31)
+
+
+### Features
+
+* **Bank:** add deactivate option ([2cdab77](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/2cdab772de8f8df44e58679a8b325374e1b2a78d))
+* **Bank:** add deactivate option ([87c4e52](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/87c4e52d7c622c958f5fe7bb0e2923175d534d02))
+* **Cheques:** added two new options in edit transit ([792f9d5](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/792f9d5cb7141112dd69e0f965a1a08368163615))
+* **Cibil:** added access for credit manager ([925d5ba](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/925d5baaa9cf7f729e7cb3a9578bff242010e6d2))
+* **CreditReload:** Express CRR ([78b72c5](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/78b72c54217c22fb0945a9abebb630a8964c6a30))
+* **DealerReferral:** added segment control ([31eec94](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/31eec94635be249d679d3de7450350e7e9278e65))
+* **DealerReferral:** added the reject option ([d83413c](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/d83413c9d8fbe3c648f92762036b997bab30bd37))
+* **DealershipInfo:** added check to edit dealership ([622c80b](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/622c80b6f099441519a042820e981fc02a86eea9))
+* **DisbursedDrawer:** added the presubmit option ([f774f13](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f774f13642ba3b68fc3c64f2d55768bd63705f62))
+* **legality:** added new document LOC ([4692031](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/4692031b0d5e777dad3eea81cbb807a828778281))
+* **Noc_report:** added the new column ([4af4f1e](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/4af4f1e5c7c23b5239fb69a7a0d695c27fd85feb))
+* **OMC:** changed the omc edit check ([41234f3](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/41234f3eb5a1cddf9a8cb423b01543a94d6a48f0))
+* option to update applicant type ([6bffee4](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/6bffee4899a174833448911c335fad029fe24acd))
+* option to updated loan status manually for admin. ([df06462](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/df06462cecf78edbe8c50a822cb29e9d04c67be5))
+* option to verify bank manually. ([3f5c19a](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/3f5c19af9c319eea1243269c47277e2db1cd7011))
+* **pdc:** added option to add cheque details ([6663ab2](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/6663ab256e53e42c9b974c92a55287c5303b5372))
+* **pincode:** UI to map pincode to the field officers ([3eb3bb0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/3eb3bb076124f962fecf5edb5254968d0d2203bb))
+* **PreSubmitLoansTable:** added the doc checklist ([9f60dfe](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/9f60dfe5474cc82aaf71fb25d20ee3fdda9602e8))
+* **ReferralTable:** given access to ops-manager ([cf28b7d](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/cf28b7d769ff3da63f8f98ce0aa0d6f232ba3009))
+* **Renewal:** renewal changes ([c309a9b](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/c309a9b4d390fbe887084eb4c4598b42cd9866cb))
+* **renewal:** send notification to users from renewal ([64de92b](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/64de92b71ea3c781d0fc3b6d065ef5ebf1205759))
+* **signRequestLayout:** add override option for all document ([0b1c776](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/0b1c77639aecb87cfe9a6df0f31d44b4ccdee3d5))
+* **SignRequestLayout:** added override option for all documents ([ccf1c98](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/ccf1c98ce36807ab12ceba098e8eff3afb09d595))
+* **SignRequestLayout:** added the override button for all documents ([6075092](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/607509281b28d45e37e4343a4dc153f05ad084c3))
+* **udyam:** added the udyam in dealership info ([cfbbf5e](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/cfbbf5ebdb325c0f5f1f971073445ac6f44f748b))
+* **UserRule:** added access to credit manager for cibil refresh ([f3bcc5f](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f3bcc5f05868bd9d2c86b45ca32e7020381c6de4))
+* **UserRules:** handled the credit manager role ([f9e1e28](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f9e1e28740008afea9e1abcce3631040874844e8))
+* **Users:** added the pincode search option ([35bd2bd](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/35bd2bd94be54ec4cf2dd5072c724783ce4dbf6a))
+* **withheld:** added the conformation modal ([d6c42ca](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/d6c42caa83f4f668176fcba7dcaed77432b2afee))
+* **withheld:** added the conformation modal ([95b431a](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/95b431aa2be667926289ced1d64765dedb5bc020))
+
+
+### Bug Fixes
+
+* **bank:** updated regex to block white spaces ([cad2405](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/cad2405be94266f4083661c76c26a767826716a8))
+* **CreditReloadForm:** added the crr check ([920b686](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/920b686b1ca346d535ce567c3294b00c6c1bde40))
+* **CRR:** udated default filter value and removed logs ([0741032](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/07410329f5c3ba1191ad9b0f77211de5a323c97f))
+* **CRR:** updated get API call ([34808ab](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/34808ab67194b791b8da4fe2030403b802ec1219))
+* **Dashboard:** added the fix for legality ([616308d](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/616308d3b961eef7d721dcc4c9e1b633b42857ed))
+* **DealerReferral:** fixed the settlement issue ([c6025cc](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/c6025cc2afbebe172109523de2388bfd10841161))
+* **DealerShipEdit:** revoke access ([f006365](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f00636519f2841e2cd1ce9e0601e27a2059e91b4))
+* **dealershipTable:** hide submitted date ([bbbe7f6](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/bbbe7f6690d5cf712f6617a665648704e206ed61))
+* **DisbursedTable:** changed the key ([c951fa9](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/c951fa99662915844c4ce4a5979964a9ed6b0cfc))
+* **DisbursedTable:** changed the key ([3de7dfb](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/3de7dfb84d146cccb56bb593ebb514974ba05e65))
+* **DisbursementApprovedTable:** changed the key name ([b8dc9a1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/b8dc9a1ef0e9f6b32b1db3538397705dfd36deb0))
+* **doc-download:** blocked  repeated download API call. ([3d2e08d](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/3d2e08d60ebefbdbe4eb5f9ba93d6dbf48d6ced6))
+* **doc-preview:** updated dialog width for pdf preview ([8e13d2c](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/8e13d2c3debaeee8b03d0d4c22b8b528be3c83e4))
+* **document-checklist:** added loading for document delete. ([60549cb](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/60549cb2374a381db4bc207d58dd693f029b647e))
+* **legality:** added the active button ([639fa32](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/639fa32647e0482f3a2ffd363c0880b5eccfb57b))
+* **Legality:** send the dealership id and doc id ([cc9e8b9](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/cc9e8b9286bc2d88be3bab5d0e3fba67bac9d4fd))
+* **loans:** updated loan approval flow ([0b9318e](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/0b9318ebe5410d3c9e4105cbdf4d7f6b78763c5d))
+* **lons:** added vaalidation for status before API call ([acdb2bf](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/acdb2bfc7ecfc0af534d2f21d9895a05d168d9c2))
+* **map-region:** map region fix while mapping pincode ([d6280e1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/d6280e1a195a6ad2b07f969f739721e2e074041f))
+* Merge branch 'dev-los' ([9878d44](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/9878d44a16606686f1d781bfc78327b146b4eeb8))
+* Merge branch 'dev-los'  into feat/pdc ([b5fcdf7](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/b5fcdf798b7f17f6734034297d9a4d4d05afbd66))
+* **noc:** added month wise filter ([f776af1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f776af1f5a413b96adf0b189647edfa00ebba268))
+* **noc:** allow ops to approve noc ([f0cf15d](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f0cf15d51acbe3695c7df7744a419500ae790442))
+* **pdc:** option to edit bank and cheque details ([594e8c6](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/594e8c659e41380b092c04190f185449ff8652d1))
+* **pdc:** updated notifications ([524f269](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/524f2691f844f896cc44164656a644a898dbbdb9))
+* **PDC:** updated UI ([c23d8c0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/c23d8c015eddf34a4eec0651373b889476f7d979))
+* **PDC:** updated UI for tracking details ([5af3d6f](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/5af3d6f952ae5f294e51efe927d9e096cd57bd40))
+* **pdr-bank:** allow character while adding bank in PDR. ([c613edc](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/c613edcd0d29cd87ea3abea3d1e0b3e7bd06da8d))
+* **pdr-bank:** updated alert message for manual verify ([1b1683b](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/1b1683bf1c170faaff663ddfd410946f2608860c))
+* **pdr:** added sync option to sync bank details ([81c4362](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/81c43621d291187529df1fd533980964e61b0662))
+* remove unused code ([7b619ea](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/7b619eadb7dad4bd7bb86f23e67850e3da52cde9))
+* removed sanction and application for renewal cases ([78935f9](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/78935f9e2dbf452e59cbdd82fc94eefac0f9d80f))
+* removed unused code ([9628627](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/9628627acc7872590570625685b83d946f90f895))
+* **Renewal:** changed the key of approved amount ([63dbdf8](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/63dbdf8fb92ac4b694be6a00ba62e86ce48aec0d))
+* **renewal:** status value fix ([b17ebb6](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/b17ebb684f58368ee9e27b702e5552fe20fc2231))
+* **report-download-view:** updated signed url for viewing documents ([c8dd60a](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/c8dd60a975b4ffd910dafad4e4a6e1b348857991))
+* **score-card:** added new table in PD sheet ([92e98cb](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/92e98cb578b69eaf3cc6dad0506b7b45c7c9026e))
+* **score-card:** removed unwanted cells in FC eligibility sheet ([6fcd239](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/6fcd2396b4d49cf27346fb48dcc6ca24c9dbe6c0))
+* **signed-url:** fix updated signed url for download ([bb4e20d](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/bb4e20d7eb11d827ae7f5dc121c3fef224bdb309))
+* **SOA:** updated signed URL call for SOA ([6ce9a67](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/6ce9a674836fd6d0d47851468250fb13581a487f))
+* update ui for cheque list table ([9a2904c](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/9a2904c5f23b0fc9d9399f8b5d4f03f013d1bc58))
+* updated button name ([cf218f7](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/cf218f78595c9fc8bffb6bdd728ad4a769683bcf))
+* updated key name ([a330293](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/a33029332487270049efb0e355c082171b44652f))
+* **UserProfile:** fixed the user roles ([cc93cda](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/cc93cdaae9df58da5b1217287329c5012954d347))
+
 ### [2.33.1](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.33.0...v2.33.1) (2023-06-29)
 
 

@@ -255,12 +255,13 @@ export const passReset = (password, userId) => {
 }
 
 export const getCreditReload = (data) => {
-  const { processed, category, filterQry = { region: '0', products: '0', account: '0', zone: '0' }, dealershiId, offset } = data
-  const { region, from, to, account, products, zone, dealership_id } = filterQry;
+  const { processed, category, filterQry = { region: '0', products: '0', account: '0', zone: '0', type: null }, dealershiId, offset } = data
+  const { region, from, to, account, products, zone, dealership_id, type } = filterQry;
   let qry = []
   let apiUrl = dealershiId ? `credit/reload/${dealershiId}?processed=${processed}` : category ? `credit/reload?processed=${processed}&category=${category}` : `credit/reload?processed=${processed}`;
   if (dealership_id) qry.push(`dealership_id=${dealership_id}`)
   if (zone && zone !== '0') qry.push(`zone=${zone}`)
+  if (type) qry.push(`reload_type=${type}`)
   if (region && region !== '0') qry.push(`region=${region}`)
   if (products && products !== '0') qry.push(`product=${products}`)
   if (account && account !== '0') qry.push(`account_type=${account}`)

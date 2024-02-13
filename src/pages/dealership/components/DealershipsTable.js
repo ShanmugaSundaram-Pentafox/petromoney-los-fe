@@ -2,6 +2,7 @@ import { Grid, Paper } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/styles';
+import { format } from 'date-fns';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
@@ -70,6 +71,10 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
     }),
     columnHelper.accessor('sales_area', {
       header: 'Sales Area',
+    }),
+    columnHelper.accessor('loan_application_submitted_date', {
+      header: 'Submitted Date',
+      cell: (value) => <span>{value?.getValue() ? format(new Date(value?.getValue()), 'dd-MMM-yyyy') : '-'}</span>
     }),
     columnHelper.accessor('region', {
       header: 'Region',

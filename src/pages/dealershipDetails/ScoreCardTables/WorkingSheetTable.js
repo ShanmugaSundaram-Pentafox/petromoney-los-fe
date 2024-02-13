@@ -156,6 +156,7 @@ let workingSheetSummary1 = [
   { label: 'Total regular customer bases', key: 'total_regular_customer_bases' },
   { label: 'Max credit period days / limit', key: 'max_credit_period_days' },
   { label: 'Total receivables ( latest) Rs.', key: 'total_receivables' },
+  { label: 'Daily Cash Collection', key: 'daily_cash_collection' },
 ]
 
 let workingSheetSummary2 = [

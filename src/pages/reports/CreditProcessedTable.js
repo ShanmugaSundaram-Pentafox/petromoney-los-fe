@@ -135,6 +135,9 @@ const CreditProcessedTable = ({ currentUser }) => {
         else return <CustomToken label={value?.getValue()} variant='success' />
       }
     }),
+    columnHelper.accessor('disbursed_declined_date', {
+      label: 'Disbursed / Declined Date',
+    }),
   ]
 
   const options = {
@@ -149,6 +152,9 @@ const CreditProcessedTable = ({ currentUser }) => {
     setRowProps: (row, dataIndex) => {
       if (row[12]) {
         return { style: { backgroundColor: '#ffb99b69' } }
+      }
+      if (data?.data?.[dataIndex]?.reload_type === 'express') {
+        return { style: { backgroundColor: '#ff21161a' } }
       }
     },
     customToolbar: () => {
@@ -186,7 +192,7 @@ const CreditProcessedTable = ({ currentUser }) => {
             currentUser={currentUser}
             filterQry={setFilterQry}
             refetch={refetch}
-            filterList={['period']}
+            filterList={['period', 'type']}
             filterType={'processed'}
             handleDownload={handleDownload}
             fileData={fileData?.data[0]}

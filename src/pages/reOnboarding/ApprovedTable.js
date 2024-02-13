@@ -26,6 +26,8 @@ import { downloadEnhancementData, getEnhancedLoanByStatus, getEnhancementSync, g
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { useQuery } from 'react-query';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 
 const useStyles = makeStyles(theme => ({
@@ -85,6 +87,25 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   const documentPopover = Boolean(anchorEl?.document);
   const documentId = documentPopover ? 'document-popover' : undefined;
   const columnHelper = createColumnHelper();
+
+  const reOnboardingDownloadQuery = useQuery({
+    queryKey: 'reOnboarding-download-approved',
+    queryFn: () => downloadEnhancementData('approved', filterQry),
+    onSuccess: (data) => {
+      getSignedUrl(data[0]?.url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          displayNotification({ message: e, variant: 'error' });
+        })
+    },
+    onError: (e) => {
+      displayNotification({ message: e, variant: 'error' })
+    },
+    enabled: Boolean(false),
+    retry: Boolean(false),
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -245,15 +266,15 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
     onSearchChange: (searchText) => {
       setSearch(searchText)
     },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-          </Tooltip>
-        </>
-      );
-    },
+    // customToolbar: () => {
+    //   return (
+    //     <>
+    //       <Tooltip title="Download">
+    //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+    //       </Tooltip>
+    //     </>
+    //   );
+    // },
     customFooter: () => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -287,6 +308,9 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
         page={page}
         setPage={setPage}
         totalNoOfPages={pageData?.total_number_of_pages}
+        filter={false}
+        downloadQuery={{ query: reOnboardingDownloadQuery?.refetch, isLoading: reOnboardingDownloadQuery?.isFetching }}
+        excelDownload
       />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

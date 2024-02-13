@@ -232,10 +232,6 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
   }
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant='h4'>
-        <div>Credit Reload Form</div>
-        <CloseIcon onClick={callback} />
-      </Typography>
       <>
         <div className={classes.sidePanelFormContentWrapper}>
           <div className={classes.stepperRoot}>
@@ -301,8 +297,8 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                             <div>
                               <h3 style={{ color: 'black' }}>Available Limit: < Currency value={creditLimit?.available_limit} /></h3>
                               {
-                                typeof(creditLimit?.available_tranche_limit) == 'number' &&
-                                  <h3 style={{ color: 'black', marginTop: 10 }}>Available tranche count: {creditLimit?.available_tranche_limit}</h3>
+                                typeof (creditLimit?.available_tranche_limit) == 'number' &&
+                                <h3 style={{ color: 'black', marginTop: 10 }}>Available tranche count: {creditLimit?.available_tranche_limit}</h3>
                               }
                             </div>
                           </FormHelperText>

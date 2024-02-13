@@ -105,13 +105,13 @@ const Dashboard = ({ currentUser }) => {
                   return (
                     <>
                       {item.name || item.count ? (
-                        <DashCard 
-                          key={item.name + i} 
-                          selected={item.name === selectedStatsCard} 
-                          text={item.name} 
-                          value={item.name != 'Active Loans' ? (<Currency value={item.count} />) : item.count} 
-                          amount={item.amount} 
-                          action={() => handleClick(item.name)} 
+                        <DashCard
+                          key={item.name + i}
+                          selected={item.name === selectedStatsCard}
+                          text={item.name}
+                          value={item.name != 'Active Loans' ? (<Currency value={item.count} />) : item.count}
+                          amount={item.amount}
+                          action={() => handleClick(item.name)}
                         />
                       ) : null}
                     </>

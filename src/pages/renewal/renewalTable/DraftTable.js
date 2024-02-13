@@ -1,4 +1,4 @@
-import { Tooltip, Dialog, DialogContent, DialogContentText, makeStyles, } from '@material-ui/core';
+import { makeStyles, } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
@@ -17,7 +17,8 @@ import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, sendRenewa
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
-import { Button } from '@mantine/core';
+import { Button, Group, Modal, Text, Tooltip } from '@mantine/core';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 
 const useStyles = makeStyles(theme => ({
@@ -49,7 +50,26 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const pageDetailsQuery = useQuery({
     queryKey: ['renewal_draftRecordCount', filterQry, search],
     queryFn: () => getPageDetails('draft', filterQry),
-  })
+  });
+
+  const renewalDownloadQuery = useQuery({
+    queryKey: 'renewal-download-draft',
+    queryFn: () => downloadRenewalData('draft', filterQry),
+    onSuccess: (data) => {
+      getSignedUrl(data[0]?.url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          displayNotification({ message: e, variant: 'error' });
+        })
+    },
+    onError: (e) => {
+      displayNotification({ message: e, variant: 'error' })
+    },
+    enabled: Boolean(false),
+    retry: Boolean(false),
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -161,22 +181,22 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
     onSearchChange: (searchText) => {
       setSearch(searchText)
     },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-          </Tooltip>
-          <Button
-            color='primary'
-            variant='contained'
-            onClick={() => setOpenModal(true)}
-          >
-            Send Reminder
-          </Button>
-        </>
-      );
-    },
+    // customToolbar: () => {
+    //   return (
+    //     <>
+    //       <Tooltip label="Download" withArrow color='gray'>
+    //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+    //       </Tooltip>
+    //       <Button
+    //         color='primary'
+    //         variant='contained'
+    //         onClick={() => setOpenModal(true)}
+    //       >
+    //         Send Reminder
+    //       </Button>
+    //     </>
+    //   );
+    // },
     customFooter: () => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -212,30 +232,32 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
         totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
         filter={false}
         action={<Button size='xs' onClick={() => setOpenModal(true)}>Send Reminder</Button>}
+        downloadQuery={{ query: renewalDownloadQuery?.refetch, isLoading: renewalDownloadQuery?.isFetching }}
+        excelDownload
       />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
-      <Dialog
-        open={openModal}
+      <Modal
+        opened={openModal}
         onClose={() => setOpenModal(false)}
-        maxWidth='xs'
-        fullWidth
+        centered
+        size={'md'}
+        shadow='lg'
+        withCloseButton={false}
       >
-        <DialogContent>
-          <div style={{ textAlign: 'center', marginBottom: 16 }}>
-            <InfoCircleOutlined style={{ fontSize: 48, color: '#f0ad4e', margin: 16, marginBottom: 20 }} />
-            <Typography variant='h3'>Are you certain?</Typography>
-          </div>
-          <DialogContentText style={{ textAlign: 'center' }}>Were you planning to inform all the regional managers, dealers, and sales teams that their loan renewal is currently in progress?</DialogContentText>
-        </DialogContent>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
-          <Button size='medium' variant='outlined' onClick={() => setOpenModal(false)}>Cancel</Button>
-          <Button variant='contained' size='medium' style={{ backgroundColor: '#f0ad4e', color: 'white', marginLeft: 16 }} onClick={handleReminder}>
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
+          <InfoCircleOutlined style={{ fontSize: 48, color: '#f0ad4e', margin: 16, marginBottom: 20 }} />
+          <Typography variant='h3'>Are you certain?</Typography>
+        </div>
+        <Text ta={'center'}>Were you planning to inform all the regional managers, dealers, and sales teams that their loan renewal is currently in progress?</Text>
+        <Group justify='center' gap={10} mt={'lg'}>
+          <Button variant='outline' onClick={() => setOpenModal(false)}>Cancel</Button>
+          <Button color='green' onClick={handleReminder}>
             Yes
           </Button>
-        </div>
-      </Dialog>
+        </Group>
+      </Modal>
     </div>
   )
 }

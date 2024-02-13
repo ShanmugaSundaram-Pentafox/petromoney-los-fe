@@ -13,6 +13,7 @@ import { resetCurrentUser } from '../../store/user/user.actions';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import { permissionCheck } from '../UserCan/UserCan';
+import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 
 // const useStyles = makeStyles(theme => {
 //   return ({
@@ -108,15 +109,15 @@ const Topbar = (props) => {
           {typeof pageTitle === 'string' ? pageTitle : null}
         </Title>
 
-        {/* {match?.path?.toLowerCase() == '/users' && (
-          <span 
-            // className={classes.actionsContainer}
+        {match?.path?.toLowerCase() == '/users' && (
+          <span
+          // className={classes.actionsContainer}
           >
             <AddNewUserAction currentUser={user} />
           </span>
         )}
 
-        {match?.path?.toLowerCase() == '/passbook' && (
+        {/* {match?.path?.toLowerCase() == '/passbook' && (
           <span>
             <Tooltip title="Download">
               <Button 

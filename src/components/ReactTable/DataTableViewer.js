@@ -43,6 +43,7 @@ const DataTableViewer = ({
   column = [],
   rowData = [],
   useAPIPagination = false,
+  downloadQuery,
   title,
   excelDownload = false,
   apiSearch,
@@ -125,8 +126,8 @@ const DataTableViewer = ({
                   withArrow
                   position='bottom'
                 >
-                  <ActionIcon size={'md'} variant='light' color='teal.8' onClick={open}>
-                    <IconTableRow size={20} style={{ cursor: 'pointer' }} />
+                  <ActionIcon size={'md'} variant='outline' onClick={open} color='gray.4'>
+                    <IconTableRow size={20} style={{ cursor: 'pointer' }} color='#4196f0' />
                   </ActionIcon>
                 </Tooltip>
                 : null
@@ -141,8 +142,8 @@ const DataTableViewer = ({
                       withArrow
                       position='bottom'
                     >
-                      <ActionIcon size={'md'} variant='light' color='teal.8'>
-                        <IconFilter size={20} onClick={() => setOpened(!opened)} />
+                      <ActionIcon size={'md'} variant='outline' color='gray.4'>
+                        <IconFilter size={20} onClick={() => setOpened(!opened)} color='#4196f0' />
                       </ActionIcon>
                     </Tooltip>
                   </Popover.Target>
@@ -171,8 +172,14 @@ const DataTableViewer = ({
                   withArrow
                   position='bottom'
                 >
-                  <ActionIcon size={'md'} variant='light' color='teal.8'>
-                    <IconDownload size={20} onClick={() => { exportToExcel(rowData, title) }} />
+                  <ActionIcon
+                    size={'md'}
+                    variant='outline'
+                    color='gray.4'
+                    loading={downloadQuery?.isLoading}
+                    onClick={() => { downloadQuery ? downloadQuery?.query() : exportToExcel(rowData, title) }}
+                  >
+                    <IconDownload size={20} color='#4196f0' />
                   </ActionIcon>
                 </Tooltip>)
                 : null}

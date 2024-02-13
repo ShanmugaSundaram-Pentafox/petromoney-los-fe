@@ -31,6 +31,7 @@ import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, syncRenewa
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -94,6 +95,25 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     ['renewal_approvedRecordCount', filterQry, search],
     () => getPageDetails('approved', filterQry),
   );
+
+  const renewalDownloadQuery = useQuery({
+    queryKey: 'renewal-download-approved',
+    queryFn: () => downloadRenewalData('approved', filterQry),
+    onSuccess: (data) => {
+      getSignedUrl(data[0]?.url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          displayNotification({ message: e, variant: 'error' });
+        })
+    },
+    onError: (e) => {
+      displayNotification({ message: e, variant: 'error' })
+    },
+    enabled: Boolean(false),
+    retry: Boolean(false),
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -255,15 +275,15 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
       }
     },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-          </Tooltip>
-        </>
-      );
-    },
+    // customToolbar: () => {
+    //   return (
+    //     <>
+    //       <Tooltip title="Download">
+    //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+    //       </Tooltip>
+    //     </>
+    //   );
+    // },
     customSort: (data, dataIndex, rowIndex) => {
       let dateIndex = 5
       return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
@@ -282,6 +302,8 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         setPage={setPage}
         totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
         filter={false}
+        downloadQuery={{ query: renewalDownloadQuery?.refetch, isLoading: renewalDownloadQuery?.isFetching }}
+        excelDownload
       />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

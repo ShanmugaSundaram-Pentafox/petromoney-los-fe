@@ -1,4 +1,3 @@
-import { Box, Tooltip, Popover, Button, CircularProgress } from '@material-ui/core';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import SearchIcon from '@material-ui/icons/Search';
 import { subDays, format, isValid } from 'date-fns'
@@ -12,6 +11,8 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getAllRegions, getFilteredProducts, getSignedUrl, getZones } from '../../../services/common.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { ActionIcon, Box, Button, Loader, Paper, Popover, Tooltip } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
 
 const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload, fileData, downloadLoading, searchLoading }) => {
   const classes = filterStyles();
@@ -40,29 +41,29 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   const onDateChange = type => (event) => {
     setSelectedPeriodType(type)
     switch (type) {
-    case 'D':
-      setSelectedPeriod({
-        from: new Date(),
-        to: new Date(),
-      })
-      break;
-    case 'W':
-      setSelectedPeriod({
-        from: subDays(new Date(), 8),
-        to: new Date(),
-      })
-      break;
-    case 'M':
-      setSelectedPeriod({
-        from: new Date(new Date().getFullYear(), new Date().getMonth()),
-        to: new Date(),
-      })
-      break;
-    case 'Custom':
-      setShowPicker(event.currentTarget)
-      break;
-    default:
-      break;
+      case 'D':
+        setSelectedPeriod({
+          from: new Date(),
+          to: new Date(),
+        })
+        break;
+      case 'W':
+        setSelectedPeriod({
+          from: subDays(new Date(), 8),
+          to: new Date(),
+        })
+        break;
+      case 'M':
+        setSelectedPeriod({
+          from: new Date(new Date().getFullYear(), new Date().getMonth()),
+          to: new Date(),
+        })
+        break;
+      case 'Custom':
+        setShowPicker(event.currentTarget)
+        break;
+      default:
+        break;
     }
   }
   useEffect(() => {
@@ -162,52 +163,43 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }
   return (
     <CheckAllowed currentUser={currentUser} resource={resources_id.creditReload} action={action_id.creditReload.dealer_search}>
-      <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10 }}>
+      <Paper p={10} radius={'md'} shadow='xs'>
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
             filters.includes('zone') &&
-              <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
+            <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
           }
           {
             filters.includes('region') &&
-              <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+            <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
           }
           {
             filters.includes('product') &&
-              <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
+            <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
           }
           {
             filters.includes('period') &&
-              <Box>
-                <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
-                <div className={classes.filterWrapper}>
-                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
-                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                  <Tooltip title='Choose custom dates'>
-                    <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                      {
-                        selectedPeriodType === 'Custom' ? (
-                          `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                        ) : 'Custom'
-                      }
-                    </div>
-                  </Tooltip>
-                </div>
-                <Popover
-                  id={showPicker ? 'dp' : undefined}
-                  open={Boolean(showPicker)}
-                  anchorEl={showPicker}
-                  onClose={onDateRangeClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                  }}
-                >
+            <Box>
+              <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
+              <div className={classes.filterWrapper}>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                <Tooltip label='Choose custom dates' withArrow color='gray'>
+                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                    {
+                      selectedPeriodType === 'Custom' ? (
+                        `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                      ) : 'Custom'
+                    }
+                  </div>
+                </Tooltip>
+              </div>
+              <Popover
+                opened={Boolean(showPicker)}
+                onClose={onDateRangeClose}
+              >
+                <Popover.Dropdown>
                   <DateRange
                     ranges={[dateRange]}
                     onChange={onDatePickerChange}
@@ -217,12 +209,13 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                     minDate={subDays(new Date(), 1095)}
                   />
                   <Box p={1} textAlign='right'>
-                    <Button variant="contained" color="primary" onClick={onDateRangeClose}>
+                    <Button variant='light' onClick={onDateRangeClose} fullWidth>
                       Apply
                     </Button>
                   </Box>
-                </Popover>
-              </Box>
+                </Popover.Dropdown>
+              </Popover>
+            </Box>
           }
           {
             filterType == 'processed' && (
@@ -238,36 +231,35 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
               </div>
             )
           }
-          <div style={{ display: 'flex', marginTop: 15, marginLeft: 10 }}>
-            <Button
-              color="primary"
-              variant="contained"
-              size='small'
-              disabled={searchLoading}
-              onClick={handleSearch}
-            >
-              {searchLoading ? <CircularProgress size={14} /> : <SearchIcon />}
-            </Button>
+          <div style={{ display: 'flex', marginTop: 22, marginLeft: 10 }}>
+            <Tooltip label={'Click to search'} withArrow color={'gray'}>
+              <ActionIcon
+                color="gray.4"
+                variant="outline"
+                onClick={handleSearch}
+                loading={searchLoading}
+              >
+                <IconSearch size={16} color={'#4196f0'} />
+              </ActionIcon>
+            </Tooltip>
             {
               filterType == 'processed' && (
                 <>
                   <Button
-                    color="primary"
-                    variant="outlined"
-                    size='small'
+                    variant="outline"
+                    size='xs'
                     disabled={downloadLoading}
-                    startIcon={<GetAppIcon />}
-                    style={{ marginLeft: 10 }}
+                    leftSection={<GetAppIcon />}
+                    ml={10}
                     onClick={handleDownload}
                   >
                     Download Report
                   </Button>
                   <Button
-                    color="primary"
-                    variant="outlined"
-                    size='small'
+                    variant="outline"
+                    size='xs'
                     disabled={!fileData?.file_url}
-                    style={{ marginLeft: 10 }}
+                    ml={10}
                     onClick={downloadExistingReport}
                   >
                     {fileData?.file_url ? `Show Report ( Last update : ${isValid(new Date(fileData?.modified_date)) && format(new Date(fileData?.modified_date), 'MMM dd yyyy hh:mma')} )` : fileData?.status}
@@ -277,7 +269,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
             }
           </div>
         </Box>
-      </Box>
+      </Paper>
     </CheckAllowed>
   )
 }

@@ -9,7 +9,7 @@ import { RightSideDrawer } from '../Mantine/RightSideDrawer/RightSideDrawer';
 import { Button } from '@mantine/core';
 
 
-const AddNewUserAction = ({currentUser}) => {
+const AddNewUserAction = ({ currentUser }) => {
   const [openModal, setOpenModal] = useState(false);
   const dispatch = useDispatch();
 
@@ -34,9 +34,11 @@ const AddNewUserAction = ({currentUser}) => {
     <div>
       <CheckAllowed currentUser={currentUser} resource={resources_id?.users} action={action_id?.users.userCreate}>
         <Button
-          variant="outline"
-          size="xs"
+          variant={'light'}
+          color={'teal.4'}
           onClick={() => setOpenModal(true)}
+          size={'xs'}
+          ml={'md'}
         >
           Create New User
         </Button>
@@ -46,10 +48,10 @@ const AddNewUserAction = ({currentUser}) => {
         opened={openModal}
         size="lg"
         onClose={() => setOpenModal(false)}
-        title="Add New User Form" 
+        title="Add New User Form"
       >
-        <AddNewUserForm 
-          callback={saveUserCallback} 
+        <AddNewUserForm
+          callback={saveUserCallback}
           action={() => handleClose()}
         />
       </RightSideDrawer>

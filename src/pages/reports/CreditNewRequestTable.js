@@ -1,6 +1,3 @@
-import { Button, Grid, Tooltip, Drawer } from '@material-ui/core';
-import Skeleton from '@material-ui/lab/Skeleton';
-import MUIDataTable from 'mui-datatables';
 import React, { useState, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import CreditReload from './CreditReload';
@@ -18,6 +15,8 @@ import {
 import { isAllowed } from '../../utils/cerbos';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Button, Drawer, Grid, Skeleton } from '@mantine/core';
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 const CreditNewRequestTable = ({ currentUser }) => {
   const [rowData, setRowData] = useState();
@@ -115,8 +114,6 @@ const CreditNewRequestTable = ({ currentUser }) => {
         // Credit Reload create action
         isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.create) ?
           <Button
-            color='primary'
-            variant='contained'
             onClick={() => setOpenModal(true)}
           >
             Add
@@ -138,8 +135,10 @@ const CreditNewRequestTable = ({ currentUser }) => {
   return (
     <div style={{ marginTop: 20 }}>
       {loading ? (
-        <Grid item xs={12}>
-          <Skeleton variant='rect' width='100%' height={400} />
+        <Grid>
+          <Grid.Col>
+            <Skeleton width='100%' height={400} />
+          </Grid.Col>
         </Grid>
       ) : (
         <>
@@ -148,32 +147,41 @@ const CreditNewRequestTable = ({ currentUser }) => {
             title={'New Request'}
             rowData={tableData?.data}
             column={column}
+            action={(isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.create) ?
+              <Button
+                size='xs'
+                onClick={() => setOpenModal(true)}
+                leftSection={<PlusIcon className='w-4 h-4' />}
+              >
+                Add
+              </Button> : null
+            )}
           />
         </>
       )}
       <Drawer
-        anchor='right'
-        open={statusModal}
+        position='right'
+        opened={statusModal}
         onClose={() => setStatusModal(false)}
-        variant='temporary'
+        styles={{ root: { position: 'absolute', zIndex: 9999 } }}
       >
         {
           <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser} view={view} />
         }
       </Drawer>
       <Drawer
-        anchor='right'
-        open={openModal}
+        position='right'
+        opened={openModal}
+        title={'Credit Reload Form'}
         onClose={() => setOpenModal(false)}
-        variant='temporary'
+        styles={{ root: { position: 'absolute', zIndex: 9999 } }}
       >
-        {
-          <CreditReloadForm
-            callback={() => setOpenModal(false)}
-            currentUser={currentUser}
-            view={view}
-          />
-        }
+        <CreditReloadForm
+          callback={() => setOpenModal(false)}
+          currentUser={currentUser}
+          opened={openModal}
+          view={view}
+        />
       </Drawer>
     </div>
   )

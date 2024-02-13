@@ -15,6 +15,8 @@ import { downloadEnhancementData, getEnhancedLoanByStatus, getPageDetails } from
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { useQuery } from 'react-query';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification.ts';
 
 
 const useStyles = makeStyles(theme => ({
@@ -43,6 +45,24 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
   const columnHelper = createColumnHelper();
 
+  const enhancementDownloadQuery = useQuery({
+    queryKey: 'enhancement-download-approval',
+    queryFn: () => downloadEnhancementData('approval', filterQry),
+    onSuccess: (data) => {
+      getSignedUrl(data[0]?.url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          displayNotification({ message: e, variant: 'error' });
+        })
+    },
+    onError: (e) => {
+      displayNotification({ message: e, variant: 'error' })
+    },
+    enabled: Boolean(false),
+  })
+
   useEffect(() => {
     setLoading(true);
     getEnhancedLoanByStatus('approval', filterQry, page, search)
@@ -62,27 +82,6 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
       .catch((e) => console.log('getPageCountError >>>', e))
   }, [filterQry])
-
-
-  const onDownloadClick = () => {
-    downloadEnhancementData('approval', filterQry)
-      .then(data => {
-        getSignedUrl(data[0]?.url)
-          .then((res) => {
-            window.open(res?.url, '_blank');
-          })
-          .catch(e => {
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
-          })
-      })
-      .catch(e => console.log('Download error >>>', e))
-  }
 
   const column = [
     columnHelper.accessor('dealership_id', {
@@ -129,15 +128,15 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
     onSearchChange: (searchText) => {
       setSearch(searchText)
     },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-          </Tooltip>
-        </>
-      );
-    },
+    // customToolbar: () => {
+    //   return (
+    //     <>
+    //       <Tooltip title="Download">
+    //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+    //       </Tooltip>
+    //     </>
+    //   );
+    // },
     customFooter: () => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -174,6 +173,7 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
         filter={false}
         columnsFilter={false}
         excelDownload
+        downloadQuery={{ query: enhancementDownloadQuery?.refetch, isLoading: enhancementDownloadQuery?.isFetching }}
       />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

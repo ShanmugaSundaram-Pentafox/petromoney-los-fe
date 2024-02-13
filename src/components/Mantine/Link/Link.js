@@ -4,14 +4,14 @@ import React from 'react';
 export const Link = ({
   key,
   color,
-  variant= 'filled',
+  variant = 'light',
   href,
   active,
   label,
   description,
   leftSection,
   rightSection,
-  onClick, 
+  onClick,
   disabled,
   childrenOffset,
   defaultOpened,
@@ -40,10 +40,18 @@ export const Link = ({
           display: 'flex',
           flexDirection: 'column',
           gap: 4
+        },
+        label: {
+          fontSize: '13px',
+          fontWeight: 550,
+          color: !active && 'rgb(50,50,50)'
+        },
+        section: {
+          color: !active && 'rgba(0,0,0,30%)'
         }
       }}
     >
       {children}
-    </NavLink>    
+    </NavLink>
   )
 }

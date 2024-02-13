@@ -327,7 +327,7 @@ const Sidebar = props => {
           <Text c="blue.4" fz="xs" py="md" tt="uppercase" ta="center">version {packageJSON.version}</Text>
         </div>
       </Drawer> */}
-      
+
       <ScrollArea>
         <div
           {...rest}
@@ -366,7 +366,7 @@ const Sidebar = props => {
             navLinks={pages}
             currentUser={currentUser}
           />
-          
+
           <Text c="blue.4" fz="xs" py="md" tt="uppercase" ta="center">version {packageJSON.version}</Text>
         </div>
       </ScrollArea>

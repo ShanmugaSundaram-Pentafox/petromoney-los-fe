@@ -15,6 +15,8 @@ import { downloadEnhancementData, getEnhancedLoanByStatus, getPageDetails } from
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { useQuery } from 'react-query';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 
 const useStyles = makeStyles(theme => ({
@@ -43,6 +45,25 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
   const { enqueueSnackbar } = useSnackbar();
   const columnHelper = createColumnHelper();
 
+  const enhancementDownloadQuery = useQuery({
+    queryKey: 'enhancement-download-rejected',
+    queryFn: () => downloadEnhancementData('rejected', filterQry),
+    onSuccess: (data) => {
+      getSignedUrl(data[0]?.url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          displayNotification({ message: e, variant: 'error' });
+        })
+    },
+    onError: (e) => {
+      displayNotification({ message: e, variant: 'error' })
+    },
+    enabled: Boolean(false),
+    retry: Boolean(false),
+  });
+
   useEffect(() => {
     setLoading(true);
     getEnhancedLoanByStatus('rejected', filterQry, page, search)
@@ -53,7 +74,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
       .catch(e => {
         setLoading(false);
       })
-  }, [filterQry, page, search])
+  }, [filterQry, page, search]);
 
   useEffect(() => {
     getPageDetails('rejected', filterQry)
@@ -61,36 +82,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
         setPageData(res)
       })
       .catch((e) => console.log('getPageCountError >>>', e))
-  }, [filterQry])
-
-
-  const onDownloadClick = () => {
-    downloadEnhancementData('rejected', filterQry)
-      .then(data => {
-        getSignedUrl(data[0]?.url)
-          .then((res) => {
-            window.open(res?.url, '_blank');
-          })
-          .catch(e => {
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
-          })
-      })
-      .catch(e => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
+  }, [filterQry]);
 
   const column = [
     columnHelper.accessor('dealership_id', {
@@ -137,15 +129,15 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
     onSearchChange: (searchText) => {
       setSearch(searchText)
     },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-          </Tooltip>
-        </>
-      );
-    },
+    // customToolbar: () => {
+    //   return (
+    //     <>
+    //       <Tooltip title="Download">
+    //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+    //       </Tooltip>
+    //     </>
+    //   );
+    // },
     customFooter: () => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -182,6 +174,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
         filter={false}
         columnsFilter={false}
         excelDownload
+        downloadQuery={{ query: enhancementDownloadQuery?.refetch, isLoading: enhancementDownloadQuery?.isFetching }}
       />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>

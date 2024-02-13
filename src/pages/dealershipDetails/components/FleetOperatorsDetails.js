@@ -3,6 +3,7 @@ import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import Button from '../../../components/CommonComponents/Button/Button';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import FleetOperatorsTable from '../../../components/Tables/FleetOperatorsTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
@@ -66,7 +67,34 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
           <FleetOperatorsTable id={id} dealersClickRow={handleClick} />
         </div>
       </div>
-      <Drawer
+
+
+      <RightSideDrawer
+        opened={openModal}
+        size="lg"
+        onClose={handleEdit}
+        title="Fleet Operator Information" 
+      >
+        {!edit ? (
+          <AddNewFleetOperatorForm 
+            dealer_id={id} 
+            isEdit='Edit' 
+            callback={handleEdit} 
+            currentUser={currentUser} 
+            editable={editable} 
+          />
+        ) : (
+          <AddNewFleetOperatorForm 
+            data={data} 
+            dealer_id={id} 
+            callback={handleEdit} 
+            currentUser={currentUser} 
+            editable={editable} 
+          />
+        )}
+      </RightSideDrawer>      
+
+      {/* <Drawer
         anchor="right"
         open={openModal}
         onClose={handleEdit}
@@ -79,7 +107,7 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
             <AddNewFleetOperatorForm data={data} dealer_id={id} callback={handleEdit} currentUser={currentUser} editable={editable} />
           )
         }
-      </Drawer>
+      </Drawer> */}
     </div>
   )
 }

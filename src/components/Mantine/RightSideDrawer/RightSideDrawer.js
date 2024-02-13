@@ -1,4 +1,4 @@
-import { Drawer } from '@mantine/core'
+import { Button, Drawer, Flex } from '@mantine/core'
 import React from 'react';
 
 export const RightSideDrawer = ({
@@ -6,7 +6,8 @@ export const RightSideDrawer = ({
   size,
   opened,
   onClose,
-  children
+  children,
+  footerAction
 }) => {
   return (
     <Drawer
@@ -37,7 +38,51 @@ export const RightSideDrawer = ({
       }}
       closeOnEscape={false}
     >
-      {children}
+      {/* Drawer content */}
+      {footerAction ? (
+        <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
+          {children}  
+        </div>
+      ) : 
+        children
+      }
+
+      {/* Sticky footer */}
+      {footerAction && (
+        <Flex
+          h="64"
+          style={{
+            flexShrink: 0,
+            alignItems: 'center',
+            justifyContent: 'end',
+            padding: '0 16px',
+            background: '#FFFFFF',
+            borderTop: '1px solid #eaeaea',
+            zIndex: 9
+          }}
+        >
+          <Flex gap="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              color="gray"
+              onClick={footerAction.left.onClick}
+            >
+              {footerAction.left.buttonName ?? 'Go back'} 
+            </Button>
+
+            <Button
+              variant="filled"
+              size="sm"
+              color="rgba(0, 0, 0, 1)"
+              onClick={footerAction.right.onClick}
+              loading={footerAction.right.loading}
+            >
+              {footerAction.right.buttonName ?? 'Save'}
+            </Button>
+          </Flex>
+        </Flex>
+      )}
     </Drawer>
   )
 }

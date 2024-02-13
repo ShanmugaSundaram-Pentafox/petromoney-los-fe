@@ -28,7 +28,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
-import { Tabs, Badge, Group, Paper } from '@mantine/core';
+import { Tabs, Badge, Group, Paper, Pill } from '@mantine/core';
 
 const useStyles = makeStyles((theme) => ({
 
@@ -159,44 +159,64 @@ const DealershipDetails = ({ currentUser, match }) => {
   ]
   usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
   return (
-    <div>
-      <Tabs variant="pills" orientation="vertical" onChange={onChangeTab} value={activeTab}>
+    <>
+      <Tabs 
+        color="indigo"
+        variant="pills" 
+        orientation="vertical" 
+        onChange={onChangeTab} 
+        value={activeTab}
+        classNames={{
+          root: 'gap-4',
+          tabLabel: 'flex grow items-center gap-2',
+          panel: 'h-full bg-white p-4 rounded-md'
+        }}
+      >
         <Tabs.List>
-          {
-            tabs.map((item, i) => {
-              return (<Tabs.Tab key={1} value={item?.value}><Group><Badge size="xs" circle variant='white'>{i + 1}</Badge> {item?.name}</Group></Tabs.Tab>)
-            })
+          {tabs.map((item, i) => {
+            return (
+              <Tabs.Tab 
+                key={1} 
+                value={item?.value}
+              >
+                <Badge size="sm" circle variant="white" color="indigo">{i + 1}</Badge> 
+                
+                {item?.name}
+              </Tabs.Tab>
+            )
+          })
           }
         </Tabs.List>
-        <Paper p={'md'}>
-          <Tabs.Panel value={'dealership'}>
-            <DealershipInfo data={dealershipData.data} currentUser={currentUser} />
-          </Tabs.Panel>
-          <Tabs.Panel value={'dealers'}>
-            <DealersList id={id} titleAlign="left" currentUser={currentUser} />
-          </Tabs.Panel>
-          <Tabs.Panel value={'score_card'}>
-            <ScoreCard currentUser={currentUser} dealership_id={id} />
-          </Tabs.Panel>
-          <Tabs.Panel value={'loans_list'}>
-            <LoansList id={id} titleAlign="left" currentUser={currentUser} />
-          </Tabs.Panel>
-          <Tabs.Panel value={'personal_discussion'}>
-            <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
-          </Tabs.Panel>
-          <Tabs.Panel value={'documents'}>
-            <DealershipDoc id={id} currentUser={currentUser} />
-          </Tabs.Panel>
-          <Tabs.Panel value={'transporters'}>
-            <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
-          </Tabs.Panel>
-          <Tabs.Panel value={'fleet_operators'}>
-            <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
-          </Tabs.Panel>
-        </Paper>
+        
+        <Tabs.Panel value={'dealership'}>
+          <DealershipInfo data={dealershipData.data} currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'dealers'}>
+          <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'score_card'}>
+          <ScoreCard currentUser={currentUser} dealership_id={id} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'loans_list'}>
+          <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'personal_discussion'}>
+          <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'documents'}>
+          <DealershipDoc id={id} currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'transporters'}>
+          <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'fleet_operators'}>
+          <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
       </Tabs>
-      <div className={classes.tabsWrapper}>
-        {/* <div>
+
+
+      {/* <div className={classes.tabsWrapper}>
+        <div>
           <Collapse in={!showSolarForm}>
             <Tabs
               orientation="vertical"
@@ -262,16 +282,17 @@ const DealershipDetails = ({ currentUser, match }) => {
             activeTab == tabs.indexOf('Fleet Operators') &&
               <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
           }
-        </TabPanel> */}
-        <SolarEnquiryForm
-          dealershipId={id}
-          mainApplicant={mainApplicant}
-          solarTab={solarTab}
-          onChangeTab={setSolarTab}
-          currentUser={currentUser}
-          onClose={() => setShowSolarForm(false)}
-        />
-      </div>
+        </TabPanel>
+      </div> */}
+
+      <SolarEnquiryForm
+        dealershipId={id}
+        mainApplicant={mainApplicant}
+        solarTab={solarTab}
+        onChangeTab={setSolarTab}
+        currentUser={currentUser}
+        onClose={() => setShowSolarForm(false)}
+      />
 
       <Dialog
         fullScreen
@@ -291,7 +312,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div >
+    </ >
   );
 };
 

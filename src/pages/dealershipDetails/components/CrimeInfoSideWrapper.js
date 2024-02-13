@@ -22,6 +22,7 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
     rulesList.external_view
   );
   const queryClient = useQueryClient();
+  
   const { data: crimeData } = useQuery('crime', () => getCrimeInfo(data?.id, data?.category?.toLowerCase()), {
     onSuccess: (data) => {
       if (data?.length) {
@@ -130,7 +131,8 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
         
         <Divider my="lg" />
 
-        <Title order={4}>Crime Reports</Title>
+        <Title order={4} mb="xs">Crime Reports</Title>
+
         {Array.isArray(crimeData) &&
           crimeData.map((row, i) => (
             <DocListPreview
@@ -141,6 +143,7 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
               id={i + 1}
               dealershipId={data?.id}
               editable={editable}
+              colSpan={{ base: 12, sm: 6 }}
             />
           ))}
       </div>

@@ -1,5 +1,6 @@
-import { Button, Drawer, Flex } from '@mantine/core'
+import { Drawer, Flex } from '@mantine/core'
 import React from 'react';
+import { Button } from '../Button/Button';
 
 export const RightSideDrawer = ({
   title,
@@ -17,7 +18,7 @@ export const RightSideDrawer = ({
       overlayProps={{ backgroundOpacity: 0.2, blur: 2 }}
       title={title}
       size={size}
-      zIndex={99999}
+      zIndex={999}
       styles={{
         content: {
           overflow: 'hidden',
@@ -45,7 +46,7 @@ export const RightSideDrawer = ({
         </div>
       ) : 
         children
-      }
+      } 
 
       {/* Sticky footer */}
       {footerAction && (
@@ -63,23 +64,27 @@ export const RightSideDrawer = ({
         >
           <Flex gap="sm">
             <Button
+              colorScheme="secondary"
+              size="md"
               variant="outline"
-              size="sm"
-              color="gray"
               onClick={footerAction.left.onClick}
             >
               {footerAction.left.buttonName ?? 'Go back'} 
             </Button>
 
-            <Button
-              variant="filled"
-              size="sm"
-              color="rgba(0, 0, 0, 1)"
-              onClick={footerAction.right.onClick}
-              loading={footerAction.right.loading}
-            >
-              {footerAction.right.buttonName ?? 'Save'}
-            </Button>
+
+            {footerAction.right.renderBtnComponent ? (
+              footerAction.right.renderBtnComponent
+            ) : (
+              <Button
+                colorScheme="primary"
+                size="md"
+                onClick={footerAction.right.onClick}
+                loading={footerAction.right.loading ?? false}
+              >
+                {footerAction.right.buttonName ?? 'Save'}
+              </Button>
+            )}
           </Flex>
         </Flex>
       )}

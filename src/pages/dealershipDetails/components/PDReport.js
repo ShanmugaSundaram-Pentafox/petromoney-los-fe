@@ -1,25 +1,16 @@
 import { Box, Flex, SimpleGrid, Text, Title } from '@mantine/core';
 import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { IconAddressBook, IconCashBanknote, IconUser, IconBuildingBank, IconServer2, IconCube, IconMoneybag, IconCreditCard, IconInfoHexagon, IconPercentage, IconOutlet, IconUsersGroup, IconReport } from '@tabler/icons-react';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import EmptySidewrapper from '../../../components/CommonComponents/EmptySidewrapper';
+import EmptySideDrawer from '../../../components/CommonComponents/EmptySideDrawer';
+import { Button } from '../../../components/Mantine/Button/Button';
 import { Tooltip } from '../../../components/Mantine/Tooltip/Tooltip';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
-import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
-import { ReactComponent as BankIcon } from '../../../icons/bankIcon.svg';
-import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
-import { ReactComponent as CreditIcon } from '../../../icons/credits_pd.svg';
-import { ReactComponent as IncomeIcon } from '../../../icons/income.svg';
-import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
-import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
-import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
-import { ReactComponent as OutletIcon } from '../../../icons/outlet.svg';
-import { ReactComponent as ReferenceIcon } from '../../../icons/reference.svg';
 import { getSignedUrl } from '../../../services/common.service';
 import { getDealershipById } from '../../../services/dealerships.service';
 import { downloadPDReport, getAssetDetailsById, getBusinessDetailsbyID, getInfrastructureDetailsById, getOmcDetailsById, getOtherDetailsbyID, getOutletDetailsById, getReferenceDetailsbyID } from '../../../services/PDReport.services';
@@ -37,8 +28,6 @@ import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
 import Cheque from '../PDRForms/Cheque';
 import VoiceCall from '../PDRForms/VoiceCall';
-import { IconAddressBook, IconCashBanknote, IconUser, IconBriefcase, IconBuildingBank, IconServer2, IconCube, IconMoneybag, IconCreditCard, IconInfoHexagon, IconPercentage, IconOutlet, IconUsersGroup, IconReport } from '@tabler/icons-react';
-import { Button } from '../../../components/Mantine/Button/Button';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -374,20 +363,28 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
             </div>
           )
         })}
-      </SimpleGrid>
+      </SimpleGrid> 
 
-      <Drawer
-        anchor="right"
-        open={openOmcForm}
-        onClose={() => setOpenOmcForm(false)}
-        variant="temporary"
-      >
-        {
-          externalView && !omcEdit ?
-            <EmptySidewrapper title="OMC Details" callback={handleEdit} /> :
-            <AddOmcDetailsForm dealer_id={id} isEdit={omcEdit ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} editable={externalView} />
-        }
-      </Drawer>
+      {/* Right Side Drawer Starts Here */}
+      {externalView && !omcEdit ? (
+        <EmptySideDrawer 
+          title="OMC Details" 
+          callback={handleEdit} 
+        /> 
+      ) : (
+        <AddOmcDetailsForm 
+          open={openOmcForm}
+          onClose={() => setOpenOmcForm(false)}
+          dealer_id={id} 
+          isEdit={omcEdit ? null : 'Edit'}
+          callback={handleEdit} 
+          currentUser={currentUser} 
+          data={omcData} 
+          editable={externalView} 
+        />
+      )}
+      {/* Right Side Drawer Ends Here */}
+
       <Drawer
         anchor="right"
         open={openOutletForm}
@@ -396,7 +393,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !outletData ?
-            <EmptySidewrapper title="Outlet Details" callback={handleEdit} /> :
+            <EmptySideDrawer title="Outlet Details" callback={handleEdit} /> :
             <AddNewOutletDetailsForm dealer_id={id} isEdit={outletData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={outletData} editable={externalView} />
         }
       </Drawer>
@@ -408,7 +405,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !businessData ?
-            <EmptySidewrapper title="Business Details" callback={handleEdit} /> :
+            <EmptySideDrawer title="Business Details" callback={handleEdit} /> :
             <AddBusinessDetailsForm dealer_id={id} isEdit={businessData ? null : 'Edit'} callback={handleEdit} data={businessData} currentUser={currentUser} editable={externalView} />
         }
       </Drawer>
@@ -420,7 +417,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !infrastructureDetails ?
-            <EmptySidewrapper title="Infrastructure Details" callback={handleEdit} /> :
+            <EmptySideDrawer title="Infrastructure Details" callback={handleEdit} /> :
             <AddInfrastructureDetailsForm dealer_id={id} isEdit={infrastructureDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={infrastructureDetails} editable={externalView} />
         }
       </Drawer>

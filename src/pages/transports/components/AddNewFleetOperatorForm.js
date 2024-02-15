@@ -1,8 +1,9 @@
-import { Button, Flex, Grid, Text } from '@mantine/core';
+import { Flex, Grid, Text } from '@mantine/core';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import * as Yup from 'yup';
+import { Button } from '../../../components/Mantine/Button/Button';
 import { Divider } from '../../../components/Mantine/Divider/Divider';
 import { TextInput } from '../../../components/Mantine/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
@@ -528,8 +529,9 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable, 
       >
         <Flex gap="sm">
           <Button
+            colorScheme="secondary"
             variant="outline"
-            size="sm"
+            size="md"
             color="gray"
             onClick={handleClose}
           >
@@ -538,9 +540,8 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable, 
 
           {!readOnly ? (
             <Button
-              variant="filled"
-              size="sm"
-              color="rgba(0, 0, 0, 1)"
+              colorScheme="primary"
+              size="md"
               onClick={loading ? () => null : handleSubmit}
               loading={loading}
             >
@@ -549,9 +550,8 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable, 
           ) : (
             <CheckAllowed currentUser={currentUser} resource={resources_id?.fleetOperator} action={action_id?.fleetOperator?.edit}>
               <Button
-                variant="filled"
-                size="sm"
-                color="rgba(0, 0, 0, 1)"
+                colorScheme="primary"
+                size="md"
                 type="submit"
                 onClick={loading ? () => null : handleEdit}
                 loading={loading}

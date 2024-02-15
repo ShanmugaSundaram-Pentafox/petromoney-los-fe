@@ -1,4 +1,4 @@
-import { Flex, Button, Grid, TextInput, Text, Loader, Select } from '@mantine/core';
+import { Flex, Grid, TextInput, Text, Select } from '@mantine/core';
 import Alert from '@material-ui/lab/Alert';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
@@ -6,6 +6,7 @@ import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import { addNewUser, getAllUserRoles } from '../../services/users.service';
 import { displayNotification } from '../CommonComponents/Notification/displayNotification.ts';
+import { Button } from '../Mantine/Button/Button';
 // import TextInput from '../TextInput/TextInput';
 
 const AddNewUserForm = ({ callback, action }) => {
@@ -199,18 +200,18 @@ const AddNewUserForm = ({ callback, action }) => {
       >
         <Flex gap="sm">
           <Button
+            colorScheme="secondary"
             variant="outline"
-            size="sm"
-            color="gray"
+            size="md"
             onClick={action}
           >
             Go back
           </Button>
 
           <Button
+            colorScheme="primary"
             variant="filled"
-            size="sm"
-            color="rgba(0, 0, 0, 1)"
+            size="md"
             onClick={handleSubmit}
             loading={loading}
           >

@@ -1,4 +1,4 @@
-import { Card, Flex, Grid, Space, Text, Title } from '@mantine/core';
+import { Box, Card, Flex, Grid, Space, Text, Title } from '@mantine/core';
 import { Tooltip, Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Sync } from '@material-ui/icons';
@@ -438,21 +438,38 @@ const DealershipInfo = ({ data, currentUser }) => {
           </Grid>
 
           {values?.pan_file_url || values?.gst_file_url ? (
-            <div>
-              <Typography variant='h4'>Attachments</Typography>
-              <div style={{ marginTop: 16, display: 'flex', width: '39vw' }}>
-                {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN Card' style={{ marginRight: 10 }} />}
-                {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{ marginRight: 10 }} />}
-                {values.udyam_file_url && <DocAttachment tooltip='View UDYAM' imgUrl={values?.udyam_file_url} docName='UDYAM' style={{ marginRight: 10 }} />}
-              </div>
-            </div>
+            <Box mt="sm">
+              <Title order={3} mb="md">Attachments</Title>
+              
+              <Flex gap="xs">
+                {values.pan_file_url && (
+                  <DocAttachment 
+                    tooltip='View PAN' 
+                    imgUrl={values?.pan_file_url} 
+                    docName='PAN Card' 
+                  />
+                )}
+                {values.gst_file_url && (
+                  <DocAttachment 
+                    tooltip='View GST' 
+                    imgUrl={values?.gst_file_url} 
+                    docName='GST' 
+                  />
+                )}
+                {values.udyam_file_url && (
+                  <DocAttachment 
+                    tooltip='View UDYAM' 
+                    imgUrl={values?.udyam_file_url} 
+                    docName='UDYAM' 
+                  />
+                )}
+              </Flex>
+            </Box>
           ) : (
-            <div>
-              <Typography variant='h4'>Attachments</Typography>
-              <div style={{marginTop: '20px' }}>
-                <Typography variant='h7'>No Attachments Found</Typography>
-              </div>
-            </div>
+            <Box mt="sm">
+              <Title order={3} mb="xs">Attachments</Title>
+              <Text fz="xs" c="gray.6">No Attachments Found!</Text>
+            </Box>
           )}
         </>
       ) : (
@@ -682,7 +699,7 @@ const DealershipInfo = ({ data, currentUser }) => {
           ) : null}
 
           
-          <Text fw={600} mb="xs">Attachments</Text>
+          <Title order={3} mb="md">Attachments</Title>
           <Flex gap="sm">
             <DocAttachment 
               action={true} 
@@ -729,7 +746,7 @@ const DealershipInfo = ({ data, currentUser }) => {
       )}
       
       {!readOnly ? (
-        <Flex gap="sm" mt="lg">
+        <Flex gap="sm" mt="xl">
           <Button
             variant="outline"
             color="gray"
@@ -747,7 +764,7 @@ const DealershipInfo = ({ data, currentUser }) => {
           </Button>
         </Flex>
       ) : (
-        <Flex gap="sm" mt="lg">
+        <Flex gap="sm" mt="xl">
           <Button
             variant="outline"
             color="gray"

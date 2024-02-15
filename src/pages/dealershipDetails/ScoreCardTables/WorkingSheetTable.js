@@ -197,7 +197,7 @@ let cibilAnalysis = [
 
 export const RemarksTable = ({ data }) => {
   return (
-    data.length ? (
+    ((data?.ws_summary_data[0]?.profile_of_customer_and_business)?.split('\n'))?.length ? (
       ((data?.ws_summary_data[0]?.profile_of_customer_and_business)?.split('\n'))?.map((item, i) => (
         <div key={i}>
           <br />

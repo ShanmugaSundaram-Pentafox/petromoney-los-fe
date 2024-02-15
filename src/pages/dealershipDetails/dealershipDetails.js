@@ -70,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
 
 const DealershipDetails = ({ currentUser, match }) => {
   const classes = useStyles();
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState('dealership');
   const [solarTab, setSolarTab] = useState(-1);
   const [showSolarForm, setShowSolarForm] = useState();
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
@@ -160,12 +160,12 @@ const DealershipDetails = ({ currentUser, match }) => {
   usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
   return (
     <>
-      <Tabs 
+      <Tabs
         color="indigo"
-        variant="pills" 
-        orientation="vertical" 
-        onChange={onChangeTab} 
-        value={activeTab}
+        variant="pills"
+        orientation="vertical"
+        onChange={onChangeTab}
+        value={activeTab || 'dealership'}
         classNames={{
           root: 'gap-4',
           tabLabel: 'flex grow items-center gap-2',
@@ -175,19 +175,19 @@ const DealershipDetails = ({ currentUser, match }) => {
         <Tabs.List>
           {tabs.map((item, i) => {
             return (
-              <Tabs.Tab 
-                key={1} 
+              <Tabs.Tab
+                key={1}
                 value={item?.value}
               >
-                <Badge size="sm" circle variant="white" color="indigo">{i + 1}</Badge> 
-                
+                <Badge size="sm" circle variant={(item?.value || 'dealership') === activeTab ? "white" : "filled"} color="indigo">{i + 1}</Badge>
+
                 {item?.name}
               </Tabs.Tab>
             )
           })
           }
         </Tabs.List>
-        
+
         <Tabs.Panel value={'dealership'}>
           <DealershipInfo data={dealershipData.data} currentUser={currentUser} />
         </Tabs.Panel>

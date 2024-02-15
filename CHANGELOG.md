@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.37.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.36.0...v2.37.0) (2024-02-15)
+
+
+### Features
+
+* **DisbursedDrawer:** handled the multiple applicant code ([158fef5](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/158fef5dd9afed1d51bb09dc0c31cb0c8519fbd8))
+* **PDCReport:** Added new report ([0446dc7](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/0446dc7b5bc8df588accc6f7a4437beea999ad21))
+
+
+### Bug Fixes
+
+* **WorkingSheet:** fixed the remarks tab ([f7f5c71](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/f7f5c71aabfef472f362336bf0e81b452191a5e4))
+
 ## [2.36.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.35.0...v2.36.0) (2024-02-08)
 
 

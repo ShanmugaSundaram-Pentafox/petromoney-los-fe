@@ -1,21 +1,20 @@
-import { Box, Grid, Text, Title } from '@mantine/core';
-import { Button, Typography, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from '@material-ui/core'
-import Tooltip from '@material-ui/core/Tooltip';
+import { ActionIcon, ActionIconGroup, Badge, Box, Collapse, Flex, Grid, Paper, Text, Title } from '@mantine/core';
+import { Typography, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from '@material-ui/core'
 import AudiotrackIcon from '@material-ui/icons/Audiotrack';
-import EditIcon from '@material-ui/icons/Edit';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import PermMediaIcon from '@material-ui/icons/PermMedia';
-import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
+import { IconEdit, IconFileTypePdf, IconTrash, IconUpload } from '@tabler/icons-react';
 import { format } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import { Button } from '../../../components/Mantine/Button/Button';
+import { Tooltip } from '../../../components/Mantine/Tooltip/Tooltip';
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
-import { ReactComponent as DeleteIcon } from '../../../icons/deleteIcon.svg';
 import { getSignedUrl } from '../../../services/common.service';
 import { deleteDocsImage, editDocsImage } from '../../../services/dealerships.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
@@ -24,7 +23,7 @@ const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
 const csvFileTypes = ['csv', 'xls', 'xlsx'];
 const audioFileTypes = ['mp3', 'wav', 'm4a']
 
-const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable, crimeCheck, currentUser }) => {
+const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name, fileId, dealershipId, editable, crimeCheck, currentUser, colSpan = { base: 12, sm: 3 } }) => {
   const queryClient = useQueryClient()
   const [imageModal, setImageModal] = useState({});
   const [deleteModal, setDeleteModal] = useState({ open: false, loading: false })
@@ -87,65 +86,82 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
   return (
     <>
       {url ? (
-        // <Tooltip title={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'}>
-        <>
-          <Box 
-            className="h-20 flex items-center justify-center p-4 border border-gray-200 border-dashed rounded cursor-pointer"
-            onClick={() => csvFileTypes.includes(fileType) ? handleDownload(url) : audioFileTypes.includes(fileType) ? handleDownload(url) : setImageModal({ open: true, image: url, type: fileType })}
-          >
-            {imgFileTypes.includes(fileType) ?
-              <PermMediaIcon style={{ color: '#63686E' }} />
-              : fileType === 'pdf' ?
-                <PictureAsPdfIcon style={{ color: '#63686E' }} />
-                : audioFileTypes.includes(fileType) ?
-                  <AudiotrackIcon style={{ color: '#63686E' }} />
-                  : <ListAltIcon style={{ color: '#63686E' }} />
-            }
+        <Tooltip label={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'}>
+          <Grid.Col span={colSpan}>
+            <Box 
+              className="relative h-32 flex items-center justify-center p-4 bg-blue-50/40 border border-blue-300 border-dashed rounded cursor-pointer"
+              onClick={() => csvFileTypes.includes(fileType) ? handleDownload(url) : audioFileTypes.includes(fileType) ? handleDownload(url) : setImageModal({ open: true, image: url, type: fileType })}
+            >
+              {imgFileTypes.includes(fileType) ?
+                <PermMediaIcon style={{ color: '#63686E' }} />
+                : fileType === 'pdf' ?
+                  <IconFileTypePdf size={28} className="text-blue-500" />
+                  : audioFileTypes.includes(fileType) ?
+                    <AudiotrackIcon style={{ color: '#63686E' }} />
+                    : <ListAltIcon style={{ color: '#63686E' }} />
+              }
+
+              {DocName && (
+                <ActionIconGroup className="absolute bottom-1.5 right-1.5">
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
+                    <ActionIcon 
+                      color="red" 
+                      variant="light" 
+                      aria-label="Delete"
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        setDeleteModal({ open: true, fileId: fileId }) 
+                      }}
+                    >
+                      <IconTrash size={13} />
+                    </ActionIcon>
+                  </CheckAllowed>  
+
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
+                    <ActionIcon 
+                      variant="light" 
+                      aria-label="Edit"
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) 
+                      }}
+                    >
+                      <IconEdit size={13} />
+                    </ActionIcon>
+                  </CheckAllowed>  
+                </ActionIconGroup>
+              )}
+            </Box>
             
-            {DocName && (
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
-                <div onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}>
-                  <DeleteIcon width={16} />
-                </div>
-              </CheckAllowed>
+            {file_name && ( 
+              <Title order={6} lineClamp={1} mt="6" c="gray.8">
+                {file_name}
+              </Title>
             )}
 
-            {DocName && (
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
-                <div onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}>
-                  <EditIcon fontSize='small' style={{ color: 'white' }} />
-                </div>
-              </CheckAllowed>
-            )}
-          </Box>
-          
-          {file_name && ( 
-            <Title order={6} lineClamp={1} mt="6">
-              {file_name}
-            </Title>
-          )}
-
-          {updatedDateTime && (
-            <Text fz="12" mt="4">
-              {updatedDateTime}
-            </Text>
-          )}  
-        </>
-        // </Tooltip>
+            {updatedDateTime && (
+              <Text fz="12" mt="4" c="gray.7">
+                {updatedDateTime}
+              </Text>
+            )}  
+          </Grid.Col>
+        </Tooltip>
       ) : (
         <>
           {!crimeCheck && (
-            <Typography 
-              variant='h6' 
-              style={{ color: '#b5b5b5', marginLeft: 15 }}
-            >
-              No Documents!
-            </Typography>
+            <Grid.Col h="40">
+              <Text fz="xs" c="gray.6" ta="center">No Documents!</Text>
+            </Grid.Col>
           )}
         </>
       )}
       
-      <FormDialog title={DocName} onDownload={imageModal?.image} open={imageModal?.open} onClose={() => setImageModal({ open: false })}>
+      <FormDialog 
+        title={DocName} 
+        onDownload={imageModal?.image} 
+        open={imageModal?.open} 
+        onClose={() => setImageModal({ open: false })}
+      >
         <FilePreview data={imageModal} />
       </FormDialog>
 
@@ -200,57 +216,73 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
   )
 }
 
-const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable, crimeCheck, currentUser }) => {
+const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable, crimeCheck, currentUser, colSpan }) => {
   const [collapse, setCollapse] = useState(false);
   const handleCollapse = () => {
     setCollapse(!collapse)
   }
 
+  const showPaperStyle = docName || upload
+
   return (
-    <>
-      {/* <div>
-        {docName && (
-          <div onClick={() => handleCollapse()} style={{ cursor: 'pointer' }}>
-            <Typography variant='h7' onClick={() => handleCollapse}><strong>{`${id}. ${docName}`}</strong></Typography>
-            <Badge badgeContent={file[0].file_url && file?.length || 0} color="primary" style={{ marginLeft: 15 }} />
-          </div>
-        )}
+    <Paper withBorder={showPaperStyle} radius={showPaperStyle ? 'md': null} mb="md">
+      {showPaperStyle && (
+        <Flex p="sm" align="center" justify="space-between">
+          {docName && (
+            <Box onClick={() => handleCollapse()} className="flex items-center gap-2 cursor-pointer">
+              <Text 
+                order={3} 
+                fw="600" 
+                className="text-gray-500 hover:text-blue-600"
+              >
+                {`${id}. ${docName}`}
+              </Text> 
 
-        {upload && (
-          <div>
+              <Badge>
+                {file[0].file_url && file?.length || 0}
+              </Badge>
+            </Box>
+          )}
+
+          {upload && (
             <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.upload}>
-              <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
+              <Button
+                size="xs"
+                variant="outline"
+                leftSection={<IconUpload size={14} />}
+                onClick={upload} 
+              >
+                Upload
+              </Button>
             </CheckAllowed>
-          </div>
-        )}
-      </div> */}
-
-
+          )}
+        </Flex>
+      )}
       
-      <Grid gutter="sm">
-        {file?.map((data, i) => {
-          return (
-            <Grid.Col key={i} span={{ base: 12, sm: 4 }}>
+      <Collapse in={!collapse} p={showPaperStyle ? 'sm' : '0'}>
+        <Grid gutter="md">
+          {file?.map((data, i) => {
+            return (
               <DocPreview 
+                key={i}
                 currentUser={currentUser} 
                 crimeCheck={crimeCheck} 
                 fileId={data?.file_id} 
                 docId={docId} 
                 dealershipId={dealershipId} 
                 fileType={data.file_type || 'pdf'} 
-                file_name={data.file_name} 
-                url={data?.file_url} 
-                DocName={docName} 
-                updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')} 
+                file_name={data.file_name}
+                url={data?.file_url}
+                DocName={docName}
+                updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')}
                 editable={editable} 
+                colSpan={colSpan}
               />
-              {/* <Collapse in={!collapse} key={i}>
-              </Collapse> */}
-            </Grid.Col>
-          )
-        })}
-      </Grid>
-    </>
+            )
+          })}
+        </Grid>
+      </Collapse>
+    </Paper>
   )
 }
 

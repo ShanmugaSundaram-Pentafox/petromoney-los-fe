@@ -1,4 +1,4 @@
-import { Button, Card, Flex, Grid, Space, Text, Title } from '@mantine/core';
+import { Card, Flex, Grid, Space, Text, Title } from '@mantine/core';
 import { Tooltip, Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Sync } from '@material-ui/icons';
@@ -15,6 +15,7 @@ import { DocAttachment } from '../../../components/Attachment/DocAttachment';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
+import { Button } from '../../../components/Mantine/Button/Button';
 import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import TextInput from '../../../components/TextInput/TextInput';
 import TextInputMask from '../../../components/TextInput/TextInputMask';
@@ -731,7 +732,6 @@ const DealershipInfo = ({ data, currentUser }) => {
         <Flex gap="sm" mt="lg">
           <Button
             variant="outline"
-            size="sm"
             color="gray"
             onClick={() => setReadOnly(true)}
             disabled={loading}
@@ -740,9 +740,6 @@ const DealershipInfo = ({ data, currentUser }) => {
           </Button>
 
           <Button
-            variant="filled"
-            size="sm"
-            color="rgba(0, 0, 0, 1)"
             onClick={handleSubmit}
             loading={loading}
           >
@@ -753,7 +750,6 @@ const DealershipInfo = ({ data, currentUser }) => {
         <Flex gap="sm" mt="lg">
           <Button
             variant="outline"
-            size="sm"
             color="gray"
             onClick={() => setReadOnly(false)}
           >
@@ -761,12 +757,7 @@ const DealershipInfo = ({ data, currentUser }) => {
           </Button>
 
           <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.crimeCheck}>
-            <Button
-              variant="filled"
-              size="sm"
-              color="rgba(0, 0, 0, 1)"
-              onClick={() => setCrimeData({ ...crimeData, category: 'dealership', id: data?.id, first_name: data?.name })}
-            >
+            <Button onClick={() => setCrimeData({ ...crimeData, category: 'dealership', id: data?.id, first_name: data?.name })}>
               Crime check
             </Button>
           </CheckAllowed>

@@ -1,27 +1,16 @@
-import { Grid, Typography, Drawer } from '@material-ui/core';
-import Tooltip from '@material-ui/core/Tooltip';
+import { Box, Flex, SimpleGrid, Text, Title } from '@mantine/core';
+import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { IconAddressBook, IconCashBanknote, IconUser, IconBuildingBank, IconServer2, IconCube, IconMoneybag, IconCreditCard, IconInfoHexagon, IconPercentage, IconOutlet, IconUsersGroup, IconReport } from '@tabler/icons-react';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import EmptySidewrapper from '../../../components/CommonComponents/EmptySidewrapper';
+import EmptySideDrawer from '../../../components/CommonComponents/EmptySideDrawer';
+import { Button } from '../../../components/Mantine/Button/Button';
+import { Tooltip } from '../../../components/Mantine/Tooltip/Tooltip';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
-import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
-import { ReactComponent as ChequeIcon } from '../../../icons/BankChequeIcon.svg';
-import { ReactComponent as BankIcon } from '../../../icons/bankIcon.svg';
-import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
-import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
-import { ReactComponent as ContactsIcon } from '../../../icons/contacts.svg';
-import { ReactComponent as CreditIcon } from '../../../icons/credits_pd.svg';
-import { ReactComponent as IncomeIcon } from '../../../icons/income.svg';
-import { ReactComponent as InfrastructureIcon } from '../../../icons/infrastructure.svg';
-import { ReactComponent as LoanIcon } from '../../../icons/loan.svg';
-import { ReactComponent as OtherIcon } from '../../../icons/other_icons.svg';
-import { ReactComponent as OutletIcon } from '../../../icons/outlet.svg';
-import { ReactComponent as ReferenceIcon } from '../../../icons/reference.svg';
 import { getSignedUrl } from '../../../services/common.service';
 import { getDealershipById } from '../../../services/dealerships.service';
 import { downloadPDReport, getAssetDetailsById, getBusinessDetailsbyID, getInfrastructureDetailsById, getOmcDetailsById, getOtherDetailsbyID, getOutletDetailsById, getReferenceDetailsbyID } from '../../../services/PDReport.services';
@@ -245,165 +234,157 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
   const sales_permission = permissionCheck(currentUser.role_name, rulesList.pdr_view);
   const externalView = permissionCheck(currentUser.role_name, rulesList.external_view);
   const phonecall_permission = permissionCheck(currentUser.role_name, rulesList.phone_call);
+
+
+  const PDReportLists = [
+    {
+      name: 'OMC details',
+      icon: <IconUser size={32} stroke={1.25} />,
+      onClick: () => setOpenOmcForm(true),
+      action: action_id?.personalDiscussion?.omcView
+    },
+    {
+      name: 'Business details',
+      icon: <IconBuildingBank size={32} stroke={1.25} />,
+      onClick: () => setOpenBusinessForm(true),
+      action: action_id?.personalDiscussion?.businessView
+    },
+    {
+      name: 'Outlet details',
+      icon: <IconOutlet size={32} stroke={1.25} />,
+      onClick: () => setOpenOutletForm(true),
+      action: action_id?.personalDiscussion?.outletView
+    },
+    {
+      name: 'Infrastructure details',
+      icon: <IconServer2 size={32} stroke={1.25} />,
+      onClick: () => setOpenInfrastructureForm(true),
+      action: action_id?.personalDiscussion?.infrastructureView
+    },
+    {
+      name: 'Asset details',
+      icon: <IconCube size={32} stroke={1.25} />,
+      onClick: () => setOpenAssetForm(true),
+      action: action_id?.personalDiscussion?.assetView
+    },
+    {
+      name: 'Bank details',
+      icon: <IconCreditCard size={32} stroke={1.25} />,
+      onClick: () => setOpenBankingForm(true),
+      action: action_id?.personalDiscussion?.bankView
+    },
+    {
+      name: 'Loan Details',
+      icon: <IconMoneybag size={32} stroke={1.25} />,
+      onClick: () => setOpenLoanForm(true),
+      action: action_id?.personalDiscussion?.loanView
+    },
+    {
+      name: 'Income/Expenses Details',
+      icon: <IconCashBanknote size={32} stroke={1.25} />,
+      onClick: () => setOpenIncomeForm(true),
+      action: action_id?.personalDiscussion?.incomeExpenceView
+    },
+    {
+      name: 'Third party verification',
+      icon: <IconUsersGroup size={32} stroke={1.25} />,
+      onClick: () => setOpenReferenceForm(true),
+      action: action_id?.personalDiscussion?.thirdPartyView
+    },
+    {
+      name: 'Other Details',
+      icon: <IconInfoHexagon size={32} stroke={1.25} />,
+      onClick: () => setOpenOtherForm(true),
+      action: action_id?.personalDiscussion?.otherView
+    },
+    {
+      name: 'Credit PD',
+      icon: <IconPercentage size={32} stroke={1.25} />,
+      onClick: () => setOpenCreditPdForm(true),
+      action: action_id?.personalDiscussion?.creditPdView
+    },
+    {
+      name: 'Call logs',
+      icon: <IconAddressBook size={32} stroke={1.25} />,
+      onClick: () => setOpenPhonecall(true),
+      action: action_id?.personalDiscussion?.callLogView
+    },
+    {
+      name: 'Cheque',
+      icon: <IconCashBanknote size={32} stroke={1.25} />,
+      onClick: () => setOpenChequeDrawer(true)
+    }
+  ]
+
   return (
+    <>
+      <Flex align="center" justify="space-between" mb="lg">
+        <Title order={3}>Personal Discussion Report</Title>
 
-    <div>
-      <div className={classes.wrapper}>
-        <div className={classes.header}>
-          <Typography style={{ width: '70%' }} variant="h4" align={textAlign} className={classes.WrapperTitle} >Personal Discussion Report</Typography>
-          <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.pdReport}>
-            <LoaderButton
-              variant='contained' size='small' className={classes.btnSuccess} onClick={handleDownload} isLoading={loading}
-              loadingText='Loading...'
-            >Report</LoaderButton>
-          </CheckAllowed>
-        </div>
+        <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.pdReport}>
+          <Button
+            onClick={handleDownload} 
+            leftSection={<IconReport size={18} />}
+            loading={loading}
+            loaderProps={{ type: 'dots' }}
+          >
+            Report
+          </Button>
+        </CheckAllowed>
+      </Flex>
 
+      <SimpleGrid cols={{ base: 3, sm: 4, md: 5, lg: 6 }} spacing="sm">
+        {PDReportLists.map((list, index) => {
+          return (
+            <div key={list.name + index}>
+              {list.action ? (
+                <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={list.action}>
+                  <Tooltip position="bottom" label={`click to edit ${list.name}`}>
+                    <Box 
+                      className="h-28 bg-gray-50 hover:bg-gray-200 flex flex-col items-center justify-between px-2 py-6 rounded-lg cursor-pointer transition-transform transform hover:-translate-y-0.5 duration-500"
+                      onClick={list.onClick}
+                    >
+                      {list.icon}
+                      <Text size="xs" fw="bold" ta="center" lineClamp={1}>{list.name}</Text>
+                    </Box>
+                  </Tooltip>
+                </CheckAllowed>
+              ) : (
+                <Tooltip position="bottom" label={`click to edit ${list.name}`}>
+                  <Box 
+                    className="h-28 bg-gray-50 hover:bg-gray-200 flex flex-col items-center justify-between px-2 py-6 rounded-lg cursor-pointer transition-transform transform hover:-translate-y-0.5 duration-500"
+                    onClick={list.onClick}
+                  >
+                    {list.icon}
+                    <Text size="xs" fw="bold" ta="center" lineClamp={1}>{list.name}</Text>
+                  </Box>
+                </Tooltip>
+              )}
+            </div>
+          )
+        })}
+      </SimpleGrid> 
 
-        <Grid container spacing={1} className={classes.root}>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.omcView}>
-              <Tooltip title="click to edit OMC details">
-                <div className={classes.content} onClick={() => setOpenOmcForm(true)}>
-                  <BunkIcon width={30} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >OMC details</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.businessView}>
-              <Tooltip title="click to edit Business details">
-                <div className={classes.content} onClick={() => setOpenBusinessForm(true)}>
-                  <BusinessIcon width={30} className={classes.icons} />
-                  <Typography variant="h6" align='center' className={classes.title} >Business details</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.outletView}>
-              <Tooltip title="click to edit Outlet details">
-                <div className={classes.content} onClick={() => setOpenOutletForm(true)}>
-                  <OutletIcon width={30} className={classes.icons} />
-                  <Typography variant="h6" align='center' className={classes.title} >Outlet details</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.infrastructureView}>
-              <Tooltip title="click to edit Infrastructure details">
-                <div className={classes.content} onClick={() => setOpenInfrastructureForm(true)}>
-                  <InfrastructureIcon width={30} className={classes.icons} />
-                  <Typography variant="h6" align='center' className={classes.title} >Infrastructure details</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.assetView}>
-              <Tooltip title="click to edit Asset details">
-                <div className={classes.content} onClick={() => setOpenAssetForm(true)}>
-                  <AssetIcon width={30} />
-                  <Typography variant="h5" align='center' className={classes.title} >Asset details</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankView}>
-              <Tooltip title="click to edit Bank details">
-                <div className={classes.content} onClick={() => setOpenBankingForm(true)}>
-                  <BankIcon width={30} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Bank details</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.loanView}>
-              <Tooltip title="click to edit Loan details">
-                <div className={classes.content} onClick={() => setOpenLoanForm(true)}>
-                  <LoanIcon width={30} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Loan Details</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.incomeExpenceView}>
-              <Tooltip title="click to edit income details">
-                <div className={classes.content} onClick={() => setOpenIncomeForm(true)}>
-                  <IncomeIcon width={30} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Income/Expenses Details</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.thirdPartyView}>
-              <Tooltip title="click to edit reference details">
-                <div className={classes.content} onClick={() => setOpenReferenceForm(true)}>
-                  <ReferenceIcon width={30} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Third party verification</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.otherView}>
-              <Tooltip title="click to edit other details">
-                <div className={classes.content} onClick={() => setOpenOtherForm(true)}>
-                  <OtherIcon width={30} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Other Details</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.creditPdView}>
-              <Tooltip title="click to edit other details">
-                <div className={classes.content} onClick={() => setOpenCreditPdForm(true)}>
-                  <CreditIcon width={30} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Credit PD</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.callLogView}>
-              <Tooltip title="click to Call">
-                <div className={classes.content} onClick={() => setOpenPhonecall(true)}>
-                  <ContactsIcon width={30} className={classes.icons} />
-                  <Typography variant="h5" align='center' className={classes.title} >Call logs</Typography>
-                </div>
-              </Tooltip>
-            </CheckAllowed>
-          </Grid>
-          <Grid item md={2}>
-            <Tooltip title="click to add cheque">
-              <div className={classes.content} onClick={() => setOpenChequeDrawer(true)}>
-                <ChequeIcon width={40} className={classes.icons} />
-                <Typography variant="h5" align='center' className={classes.title} >Cheque</Typography>
-              </div>
-            </Tooltip>
-          </Grid>
-        </Grid>
-      </div>
+      {/* Right Side Drawer Starts Here */}
+      {externalView && !omcEdit ? (
+        <EmptySideDrawer 
+          title="OMC Details" 
+          callback={handleEdit} 
+        /> 
+      ) : (
+        <AddOmcDetailsForm 
+          open={openOmcForm}
+          onClose={() => setOpenOmcForm(false)}
+          dealer_id={id} 
+          isEdit={omcEdit ? null : 'Edit'}
+          callback={handleEdit} 
+          currentUser={currentUser} 
+          data={omcData} 
+          editable={externalView} 
+        />
+      )}
+      {/* Right Side Drawer Ends Here */}
 
-      <Drawer
-        anchor="right"
-        open={openOmcForm}
-        onClose={() => setOpenOmcForm(false)}
-        variant="temporary"
-      >
-        {
-          externalView && !omcEdit ?
-            <EmptySidewrapper title="OMC Details" callback={handleEdit} /> :
-            <AddOmcDetailsForm dealer_id={id} isEdit={omcEdit ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} editable={externalView} />
-        }
-      </Drawer>
       <Drawer
         anchor="right"
         open={openOutletForm}
@@ -412,7 +393,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !outletData ?
-            <EmptySidewrapper title="Outlet Details" callback={handleEdit} /> :
+            <EmptySideDrawer title="Outlet Details" callback={handleEdit} /> :
             <AddNewOutletDetailsForm dealer_id={id} isEdit={outletData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={outletData} editable={externalView} />
         }
       </Drawer>
@@ -424,7 +405,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !businessData ?
-            <EmptySidewrapper title="Business Details" callback={handleEdit} /> :
+            <EmptySideDrawer title="Business Details" callback={handleEdit} /> :
             <AddBusinessDetailsForm dealer_id={id} isEdit={businessData ? null : 'Edit'} callback={handleEdit} data={businessData} currentUser={currentUser} editable={externalView} />
         }
       </Drawer>
@@ -436,7 +417,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         {
           externalView && !infrastructureDetails ?
-            <EmptySidewrapper title="Infrastructure Details" callback={handleEdit} /> :
+            <EmptySideDrawer title="Infrastructure Details" callback={handleEdit} /> :
             <AddInfrastructureDetailsForm dealer_id={id} isEdit={infrastructureDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={infrastructureDetails} editable={externalView} />
         }
       </Drawer>
@@ -448,7 +429,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         <AddAssetDetailsForm dealer_id={id} isEdit={assetDetails ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={assetDetails} editable={externalView} />
       </Drawer>
-
       <Drawer
         anchor="right"
         open={openBankingForm}
@@ -512,8 +492,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       >
         <Cheque dealershipId={id} callback={() => setOpenChequeDrawer(false)} currentUser={currentUser} dealershipData={dealershipData} />
       </Drawer>
-    </div >
+    </>
   );
-
 }
 export default PersonalDiscussionReport;

@@ -1,4 +1,4 @@
-import { Flex, Button, Text, ActionIcon, Divider, Tooltip, Input } from '@mantine/core';
+import { Flex, Text, ActionIcon, Divider, Tooltip, Input } from '@mantine/core';
 import { Grid, Typography } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useMount } from 'react-use';
 import TransferList from '../../../components/CommonComponents/TransferList';
+import { Button } from '../../../components/Mantine/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { logger } from '../../../config/logger';
 import {
@@ -1125,7 +1126,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             </Grid>
             {
               status === 'State' &&
-              <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+                <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
             }
             <div className={classes.formFooter}>
               <Button
@@ -1344,9 +1345,9 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
         <Flex gap="sm">
           <Tooltip position="top" label="Edit">
             <Button
+              colorScheme="secondary"
               variant="outline"
               size="md"
-              color="gray"
               onClick={callback}
             >
               Go back
@@ -1354,9 +1355,8 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           </Tooltip>  
 
           <Button
-            variant="filled"
+            colorScheme="primary"
             size="md"
-            color="rgba(0, 0, 0, 1)"
             onClick={() => {
               handleClose()
               !regionForm && !assetForm ? setOpenAddForm(true) : !assetForm ? setOpenRegionForm(true) : setOpenAssetForm(true)

@@ -1,8 +1,7 @@
-import { Typography } from '@material-ui/core';
-import Drawer from '@material-ui/core/Drawer';
-import { makeStyles } from '@material-ui/styles';
+import { Flex, Title } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
 import React, { useState } from 'react';
-import Button from '../../../components/CommonComponents/Button/Button';
+import { Button } from '../../../components/Mantine/Button/Button';
 import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import FleetOperatorsTable from '../../../components/Tables/FleetOperatorsTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
@@ -11,27 +10,10 @@ import { rulesList } from '../../../config/userRules';
 import CheckAllowed from '../../rbac/CheckAllowed';
 import AddNewFleetOperatorForm from '../../transports/components/AddNewFleetOperatorForm';
 
-const useStyles = makeStyles((theme) => ({
-
-  wrapper: {
-    padding: 8,
-    // width: '50vw',
-  },
-  title: {
-    paddingLeft: 8,
-    marginBottom: 8
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: 8
-  },
-}))
 const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
   const [openModal, setOpenModal] = useState(false);
   const [edit, setEdit] = useState(false)
   const [data, setData] = useState({})
-  const classes = useStyles()
   const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
 
@@ -48,26 +30,21 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
   }
 
   return (
-    <div>
-      <div className={classes.wrapper}>
-        <div className={classes.header}>
-          <Typography style={{ width: '70%' }} variant="h5" align={titleAlign} className={classes.title}>Fleet Operator</Typography>
-          <CheckAllowed currentUser={currentUser} resource={resources_id?.fleetOperator} action={action_id?.fleetOperator?.add}>
-            <Button
-              color="primary"
-              variant="contained"
-              size='small'
-              onClick={() => setOpenModal(true)}
-            >
-              Add Fleet Operator
-            </Button>
-          </CheckAllowed>
-        </div>
-        <div>
-          <FleetOperatorsTable id={id} dealersClickRow={handleClick} />
-        </div>
-      </div>
+    <>
+      <Flex align="center" justify="space-between" mb="lg">
+        <Title order={3}>Fleet Operator</Title>
 
+        <CheckAllowed currentUser={currentUser} resource={resources_id?.fleetOperator} action={action_id?.fleetOperator?.add}>
+          <Button
+            onClick={() => setOpenModal(true)}
+            leftSection={<IconPlus size={18} />}
+          >
+            Add Fleet Operator
+          </Button>
+        </CheckAllowed>
+      </Flex>
+    
+      <FleetOperatorsTable id={id} dealersClickRow={handleClick} />
 
       <RightSideDrawer
         opened={openModal}
@@ -92,23 +69,8 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
             editable={editable} 
           />
         )}
-      </RightSideDrawer>      
-
-      {/* <Drawer
-        anchor="right"
-        open={openModal}
-        onClose={handleEdit}
-        variant="temporary"
-      >
-        {
-          !edit ? (
-            <AddNewFleetOperatorForm dealer_id={id} isEdit='Edit' callback={handleEdit} currentUser={currentUser} editable={editable} />
-          ) : (
-            <AddNewFleetOperatorForm data={data} dealer_id={id} callback={handleEdit} currentUser={currentUser} editable={editable} />
-          )
-        }
-      </Drawer> */}
-    </div>
+      </RightSideDrawer>
+    </>
   )
 }
 export default FleetOperatorsDetails;

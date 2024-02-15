@@ -168,6 +168,8 @@ const CreditNewRequestTable = ({ currentUser }) => {
         opened={statusModal}
         onClose={() => setStatusModal(false)}
         styles={{ root: { position: 'absolute', zIndex: 9999 } }}
+        title={'Credit Reload Form'}
+        size={'40%'}
       >
         {
           <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser} view={view} />

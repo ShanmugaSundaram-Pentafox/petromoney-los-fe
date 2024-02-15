@@ -7,12 +7,11 @@ import { DateRange } from 'react-date-range';
 import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
 import { filterStyles, Selector } from '../../../components/CommonComponents/FilterCard';
-import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getAllRegions, getFilteredProducts, getSignedUrl, getZones } from '../../../services/common.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
-import { ActionIcon, Box, Button, Loader, Paper, Popover, Tooltip } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { ActionIcon, Box, Button, Group, Loader, Paper, Popover, TextInput, Tooltip } from '@mantine/core';
+import { IconDownload, IconSearch } from '@tabler/icons-react';
 
 const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload, fileData, downloadLoading, searchLoading }) => {
   const classes = filterStyles();
@@ -132,14 +131,17 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }
   const handleSearch = () => {
     if (filterType == 'processed') {
-      if (selectedDealership?.id || selectedPeriodType == 'D')
-        refetch()
+      if (selectedDealership?.id || selectedPeriodType == 'D') {
+        refetch();
+        setSelectedDealership({ ...selectedDealership, error: null });
+      }
       else
-        setSelectedDealership({ ...selectedDealership, error: 'Please enter dealership ID to get data' })
+        setSelectedDealership({ ...selectedDealership, error: 'Please enter dealership ID to get data' });
     }
     else {
-      refetch()
-      setChartData({ name: 'Zone', count: selectedZones })
+      refetch();
+      setSelectedDealership({ ...selectedDealership, error: null });
+      setChartData({ name: 'Zone', count: selectedZones });
     }
   }
   const downloadExistingReport = () => {
@@ -206,65 +208,66 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                 <Tooltip label='Up to Date' withArrow color='gray'>
                   <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
                 </Tooltip>
+                <Popover
+                  opened={Boolean(showPicker)}
+                  onClose={onDateRangeClose}
+                  withArrow
+                  shadow='md'
+                >
+                  <Popover.Target>
+                    <Tooltip label={selectedPeriodType === 'Custom' ? `${format(dateRange?.startDate, 'MMM dd yyy')} to ${format(dateRange?.endDate || new Date(), 'MMM dd yyy')}` : 'Choose custom Date'} withArrow color='gray'>
+                      <div role={'button'} className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                        Custom
+                      </div>
+                    </Tooltip>
+                  </Popover.Target>
+                  <Popover.Dropdown>
+                    <DateRange
+                      ranges={[dateRange]}
+                      onChange={onDatePickerChange}
+                      maxDate={new Date()}
+                      months={2}
+                      direction="horizontal"
+                      minDate={subDays(new Date(), 1095)}
+                    />
+                    <Box p={1} textAlign='right'>
+                      <Button onClick={onDateRangeClose} fullWidth>
+                        Apply
+                      </Button>
+                    </Box>
+                  </Popover.Dropdown>
+                </Popover>
               </div>
-              <Popover
-                opened={Boolean(showPicker)}
-                onClose={onDateRangeClose}
-              >
-                <Popover.Target>
-                  <Tooltip label='Choose custom dates' withArrow color='gray'>
-                    <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                      {
-                        selectedPeriodType === 'Custom' ? (
-                          `${format(dateRange?.startDate, 'MMM dd yyy')} to ${format(dateRange?.endDate || new Date(), 'MMM dd yyy')}`
-                        ) : 'Custom'
-                      }
-                    </div>
-                  </Tooltip>
-                </Popover.Target>
-                <Popover.Dropdown>
-                  <DateRange
-                    ranges={[dateRange]}
-                    onChange={onDatePickerChange}
-                    maxDate={new Date()}
-                    months={2}
-                    direction="horizontal"
-                    minDate={subDays(new Date(), 1095)}
-                  />
-                  <Box p={1} textAlign='right'>
-                    <Button variant='light' onClick={onDateRangeClose} fullWidth>
-                      Apply
-                    </Button>
-                  </Box>
-                </Popover.Dropdown>
-              </Popover>
             </Box>
           }
           {
             filterType == 'processed' && (
-              <div style={{ marginLeft: 10, minWidth: '20%' }}>
+              <div style={{ marginLeft: 10, width: '150px' }}>
                 <label style={{ color: 'hsl(0,0%,75%)' }}>Enter dealership ID</label>
                 <TextInput
-                  number
+                  type={'number'}
+                  size='xs'
                   value={selectedDealership?.id}
-                  onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value }) }}
+                  onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value, error: null }); }}
                   error={selectedDealership?.error}
-                  helperText={selectedDealership?.error}
                 />
               </div>
             )
           }
-          <div style={{ display: 'flex', marginTop: 22, marginLeft: 10 }}>
-            <Tooltip label={'Click to search'} withArrow color={'gray'}>
-              <ActionIcon
-                color="gray.4"
-                variant="outline"
-                onClick={handleSearch}
-                loading={searchLoading}
-              >
-                <IconSearch size={16} color={'#4196f0'} />
-              </ActionIcon>
-            </Tooltip>
+          {/* <Group gap={4}> */}
+          <Tooltip label={'Click to search'} withArrow color={'gray'}>
+            <ActionIcon
+              color="gray.4"
+              variant="outline"
+              onClick={handleSearch}
+              ml={10}
+              mt={21}
+              loading={searchLoading}
+            >
+              <IconSearch size={16} color={'#4196f0'} />
+            </ActionIcon>
+          </Tooltip>
+          <Box mt={10}>
             {
               filterType == 'processed' && (
                 <>
@@ -272,8 +275,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                     variant="outline"
                     size='xs'
                     disabled={downloadLoading}
-                    leftSection={<GetAppIcon />}
-                    ml={10}
+                    leftSection={<IconDownload size={16} />}
                     onClick={handleDownload}
                   >
                     Download Report
@@ -290,7 +292,8 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                 </>
               )
             }
-          </div>
+          </Box>
+          {/* </Group> */}
         </Box>
       </Paper>
     </CheckAllowed >

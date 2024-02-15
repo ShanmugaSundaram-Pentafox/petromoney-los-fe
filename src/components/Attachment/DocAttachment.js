@@ -8,6 +8,9 @@ import React, { useState } from 'react';
 import { ReactComponent as UploadingIcon } from '../../icons/uploadIcon.svg';
 import FilePreview from '../CommonComponents/FilePreview';
 import FormDialog from '../CommonComponents/FormDialog/FormDialog';
+import { ActionIcon, ActionIconGroup, Box, Flex } from '@mantine/core';
+import { IconFileTypePdf, IconPhoto, IconPhotoUp, IconTrash, IconUpload } from '@tabler/icons-react';
+import { Button } from '../Mantine/Button/Button';
 
 const useStyles = makeStyles({
   overlay: {
@@ -55,48 +58,72 @@ export const DocAttachment = ({ imgUrl, onUpload, onDelete, docName, action = fa
   const classes = useStyles();
   const [imageModal, setImageModal] = useState({})
   return (
-    <Grid item md={2} style={style}>
-      <Grid item>
+    <>
+      <Flex direction="column" gap="xs">
         <Tooltip title={!disabled ? tooltip : ''}>
-          <div className={classes.imgContainer} onClick={() => typeof (imgUrl) == 'string' ? setImageModal({ open: true, image: imgUrl, type: imgUrl?.endsWith('.pdf') }) : null}>
-            {
-              typeof (imgUrl) === 'string' || imgUrl === null || imgUrl === undefined ?
-                imgUrl?.endsWith('.pdf') ?
-                  <PictureAsPdfIcon style={{ color: '#63686E' }} /> :
+          <Box 
+            className="group relative w-28 h-28 bg-white flex justify-center items-center rounded-lg border border-dashed border-gray-300 hover:border-gray-400 overflow-hidden cursor-pointer"
+            onClick={() => typeof (imgUrl) == 'string' ? setImageModal({ open: true, image: imgUrl, type: imgUrl?.endsWith('.pdf') }) : null}
+          >
+            {typeof (imgUrl) === 'string' || imgUrl === null || imgUrl === undefined ? (
+              <>
+                {imgUrl?.endsWith('.pdf') ? (
+                  <IconFileTypePdf size={28} className="text-gray-500" /> 
                   // <img src={imgUrl || Thumbnail} alt={docName} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover', display: 'block' }} />
-                  <PermMediaIcon style={{ color: '#63686E' }} />
-                :
-                <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
-            }
-            <div className={classes.overlay} style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(201,201,201,0) 0%, rgba(0,0,0,0.7598389697675946) 100%)' }}>{docName}</div>
-          </div>
+                ) : (
+                  <IconPhoto size={32} stroke={1.5} className="text-gray-500" />
+                )}
+              </>
+            ) : (
+              <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+            )}
+
+            <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-b from-gray-100/5 group-hover:from-gray-100/15 to-gray-900/20 group-hover:to-gray-900/30" />
+
+            {action && (
+              <ActionIcon 
+                variant="filled"
+                color="red"
+                className="!absolute top-0.5 right-0.5"
+                aria-label="Delete"
+                disabled={disabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  !disabled && onDelete();
+                }}
+              >
+                <IconTrash size={16} />
+              </ActionIcon>
+            )}  
+          </Box>
         </Tooltip>
-      </Grid>
-      {
-        action &&
-          <div className={classes.btnsContainer}>
-            <Grid item>
-              <Tooltip title='Upload'>
-                <div className={classes.buttons} onClick={onUpload}>
-                  <UploadingIcon />
-                </div>
-              </Tooltip>
-            </Grid>
-            <Grid item>
-              <Tooltip title={!disabled ? 'Delete' : ''}>
-                <div className={!disabled ? classes.buttons : classes.disbButtons} onClick={!disabled && onDelete}>
-                  <DeleteIcon fontSize='small' style={disabled ? { color: 'gray' } : { color: '#ff3d00' }} />
-                </div>
-              </Tooltip>
-            </Grid>
-          </div>
-      }
-      {
-        imgUrl &&
-          <FormDialog className={classes.dialogBox} title={docName} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
-            <FilePreview data={imageModal} />
-          </FormDialog>
-      }
-    </Grid>
+        
+        {action && (
+          <Flex justify="center">
+            <Button   
+              variant="outline"
+              size="xs" 
+              radius="lg"
+              leftSection={<IconUpload size={16} />}
+              onClick={onUpload}
+            >
+              Upload
+            </Button>
+          </Flex>
+        )}
+      </Flex>
+      
+      {imgUrl && (
+        <FormDialog 
+          className={classes.dialogBox} 
+          title={docName} 
+          onDownload={imageModal.image} 
+          open={imageModal.open} 
+          onClose={() => setImageModal({ open: false })}
+        >
+          <FilePreview data={imageModal} />
+        </FormDialog>
+      )}
+    </>
   )
 }

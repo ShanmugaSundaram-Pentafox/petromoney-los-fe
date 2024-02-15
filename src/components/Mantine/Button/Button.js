@@ -2,15 +2,15 @@ import { Button as ButtonWrapper } from '@mantine/core';
 import React from 'react';
 
 export const Button = ({
+  colorScheme,
   variant = 'filled',
-  radius= 'md',
   children,
   ...restProps
 }) => {
   return (
     <ButtonWrapper
       variant={variant}
-      radius={radius}
+      color={colorScheme === 'primary' ? 'rgba(0, 0, 0, 1)' : colorScheme === 'secondary' ? 'gray' : restProps.color}
       {...restProps}
     >
       {children}

@@ -1,18 +1,16 @@
 import { Button, Tooltip } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
-import Currency from '../../../components/Number/Currency';
 import { getSignedUrl } from '../../../services/common.service';
-import { getDpdPageDetails, getDpdReportData, } from '../../../services/report.service';
+import { getPDCReportData, } from '../../../services/report.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
 
 
@@ -32,27 +30,43 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
+const PDCReportTable = ({ filterQry, currentUser }) => {
   const classes = useStyles();
-  const [loans, setLoans] = useState([]);
   const [page, setPage] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
-  const [download, setDownload] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const pageDetailsQuery = useQuery({
-    queryKey: ['dpd_pageCount', filterQry, page, search],
-    queryFn: () => getDpdPageDetails(filterQry, page, search),
+  // getting the PDC report details
+  const pdcReportQuery = useQuery({
+    queryKey: ['pdc-report', filterQry, page, search],
+    queryFn: () => getPDCReportData({ filterQry, page, search }),
+    onSuccess: (data) => {
+      if (data?.report_url) {
+        getSignedUrl(data?.report_url)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e => {
+            enqueueSnackbar(e, {
+              anchorOrigin: {
+                vertical: 'top',
+                horizontal: 'right',
+              },
+              variant: 'error',
+            });
+          })
+      }
+    }
   })
 
-  useEffect(() => {
-    setLoading(true);
-    getDpdReportData(filterQry, page, search, download)
-      .then(({ data, report_url }) => {
-        setLoans(data);
-        if (report_url) {
-          getSignedUrl(report_url)
+  // used to handle the download
+  const handleDownload = () => {
+    setLoading(true)
+    getPDCReportData({ filterQry, page, search, download: 'yes' })
+      .then((res) => {
+        if (res?.data) {
+          getSignedUrl(res?.data)
             .then((res) => {
               window.open(res?.url, '_blank');
             })
@@ -65,20 +79,35 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
                 variant: 'error',
               });
             })
+        } else {
+          enqueueSnackbar('No Document found', {
+            anchorOrigin: {
+              vertical: 'top',
+              horizontal: 'right',
+            },
+            variant: 'error',
+          });
         }
-        setDownload(false);
-        setLoading(false);
       })
       .catch(e => {
-        setLoading(false);
+        enqueueSnackbar(e, {
+          anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'right',
+          },
+          variant: 'error',
+        });
       })
-  }, [filterQry, page, search, download])
+      .finally(() => {
+        setLoading(false);
+      });
+  }
 
   const columns = useMemo(() => {
     return [
       {
-        label: 'Customer Code',
-        name: 'customer_code',
+        label: 'Dealership Id',
+        name: 'dealership_id',
         options: {
           filter: false,
           sort: true,
@@ -88,129 +117,90 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
         }
       },
       {
-        label: 'Prospect Code',
-        name: 'prospect_code',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Customer Name',
-        name: 'customer_name',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({ style: { minWidth: '200px', maxWidth: '200px' } }),
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
+        label: 'Applicant Type',
+        name: 'applicant_type',
         options: {
           filter: false,
           sort: true,
         }
       },
       {
-        label: 'OMC',
-        name: 'omc',
+        label: 'Account Number',
+        name: 'account_number',
         options: {
           filter: false,
           sort: true,
         }
       },
       {
-        label: 'Disbursal Date',
-        name: 'disbursal_date',
+        label: 'Bank',
+        name: 'bank_name',
+        options: {
+          filter: false,
+          sort: true,
+        }
+      },
+      {
+        label: 'IFSC Code',
+        name: 'ifsc_code',
+        options: {
+          filter: false,
+          sort: true,
+        }
+      },
+      {
+        label: 'Branch Name',
+        name: 'branch_name',
+        options: {
+          filter: false,
+          sort: true,
+        }
+      },
+      {
+        label: 'Cheque No',
+        name: 'cheque_number',
+        options: {
+          filter: false,
+          sort: true,
+        }
+      },
+      {
+        label: 'Cheque Status',
+        name: 'cheque_status',
         options: {
           filter: true,
-          filterWidth: '100%',
           sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
+        }
+      },
+      {
+        label: 'Cheque Type',
+        name: 'cheque_type',
+        options: {
+          filter: false,
+          sort: true,
+        }
+      },
+      {
+        label: 'Event Date',
+        name: 'event_date',
+        options: {
+          filter: false,
+          sort: true,
           customBodyRender: value => {
             return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
           }
         }
       },
       {
-        label: 'Due date',
-        name: 'due_date',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            style: { minWidth: '100px', maxWidth: '100px' },
-          }),
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'Loan Amount',
-        name: 'loan_amount',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            style: { minWidth: '100px', maxWidth: '100px' },
-            align: 'right'
-          }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
-        }
-      },
-      {
-        label: 'Principle Amount',
-        name: 'principle_amount',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            style: { minWidth: '100px', maxWidth: '100px' },
-            align: 'right'
-          }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
-        }
-      },
-      {
-        label: 'Loan status',
+        label: 'Loan Status',
         name: 'loan_status',
-        options: {
+        option: {
           filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
+          sort: false,
         }
-      },
-      {
-        label: 'Last Receipt Date',
-        name: 'last_receipt_date',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({ style: { minWidth: '100px', maxWidth: '100px' } }),
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'DPD',
-        name: 'dpd',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
+      }
     ]
-  }, [loans]);
+  }, [pdcReportQuery?.data?.data]);
 
   const options = {
     selectableRowsHeader: false,
@@ -230,7 +220,7 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
       return (
         <>
           <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={() => setDownload(true)}></Button>
+            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={() => handleDownload()}></Button>
           </Tooltip>
         </>
       );
@@ -239,7 +229,7 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
       return (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <MuiTableFooter
-            totalCount={pageDetailsQuery?.data}
+            totalCount={pdcReportQuery?.data?.no_of_pages}
             pageSize={10}
             onPageChange={(value) => { setPage(value) }}
           />
@@ -255,17 +245,17 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
   return (
     <div className={classes.root}>
       <MUIDataTable
-        title={title ? <Typography className={classes.title} variant="h4" component="h4">{title}</Typography> : null}
-        data={loans}
+        title={null}
+        data={pdcReportQuery?.data?.data}
         style={classes.tableStyle}
         columns={columns}
         options={options}
       />
       {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
+        pdcReportQuery?.isLoading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }
     </div>
   )
 }
 
-export default DpdReportTable;
+export default PDCReportTable;

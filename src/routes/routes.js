@@ -32,6 +32,7 @@ import CreditNewRequestTable from '../pages/reports/CreditNewRequestTable';
 import CreditProcessedTable from '../pages/reports/CreditProcessedTable';
 import DealersDueReport from '../pages/reports/DealersDueReport';
 import DpdReport from '../pages/reports/DPD/DpdReport';
+import PDCReport from '../pages/reports/PDC Report/PDCReport';
 import Settings from '../pages/settings/settings';
 import Survey from '../pages/survey/survey';
 import FastTagPassbook from '../pages/transports/components/TransportsPassbook';
@@ -53,39 +54,40 @@ const Routes = ({ currentUser }) => {
         exact
         path="/"
         component={Dashboard}
-        allow={isAllowed(currentUser?.permissions,resources_id.navigation,action_id.navigation.dashboard)}
+        allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.dashboard)}
       />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.dealerships)} exact path="/dealership" component={Dealership} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.loans)} exact path="/loans" component={Loans} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.dealerships)} exact path="/dealership" component={Dealership} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.loans)} exact path="/loans" component={Loans} />
       <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.transports)} exact path='/transports' component={Transport} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.transports)} exact path='/transports' component={Transport} />
       <ProtectedRoute allow exact path='/transports-field' component={TransportsPortal} />
       <ProtectedRoute allow exact path="/transports/:id?" component={TransportsDetails} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.settings)} exact path="/settings" component={Settings} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.settings)} exact path="/settings" component={Settings} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.transportsPassbook)} exact path="/transport/fastag/details" component={FastTagPassbook} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/reload/processed/reports" component={CreditProcessedTable} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.credit_reload)} exact path="/credit/reload/new/reports" component={CreditNewRequestTable} />
       <ProtectedRoute allow exact path="/vehicle-loan" component={VehiclesLoanTable} />
       <ProtectedRoute allow exact path="/owners/:id?" component={OwnerDetails} />
       <ProtectedRoute allow exact path="/profile" component={Profile} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.withheld)} exact path="/withheld" component={BlacklistTable} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.renewal)} exact path="/renewal" component={RenewalList} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.withheld)} exact path="/withheld" component={BlacklistTable} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.renewal)} exact path="/renewal" component={RenewalList} />
       <ProtectedRoute allow exact path="/enhancement" component={EnhancementList} />
       <ProtectedRoute allow exact path="/re-onboarding" component={ReOnboardingList} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
       <ProtectedRoute allow exact path="/report/dpd" component={DpdReport} />
+      <ProtectedRoute allow exact path="/report/pdc" component={PDCReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.collection_remarks)} exact path="/reports/remarks" component={CollectionRemarks} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.noc)} exact path="/noc" component={NOCertificateRequestTable} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.pre_submit)} exact path="/pre-submit" component={PresubmitLoansTable} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.noc)} exact path="/noc" component={NOCertificateRequestTable} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.pre_submit)} exact path="/pre-submit" component={PresubmitLoansTable} />
       <ProtectedRoute allow exact path="/rbac" component={UserControl} />
-      <ProtectedRoute allow={isAllowed(currentUser?.permissions,resources_id.navigation, action_id.navigation.dealer_referral)}  exact path="/referral" component={DealerReferralPage} />
+      <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.dealer_referral)} exact path="/referral" component={DealerReferralPage} />
       <ProtectedRoute allow exact path="/user/:id?" component={ProfileTabs} />
 
-      <ProtectedRoute 
-        exact 
-        path="/reports/opportunities" 
-        component={OpportunityReport} 
-        allow={permissionCheck(currentUser?.role_name, rulesList.opportunity_report)} 
+      <ProtectedRoute
+        exact
+        path="/reports/opportunities"
+        component={OpportunityReport}
+        allow={permissionCheck(currentUser?.role_name, rulesList.opportunity_report)}
       />
       <ProtectedRoute
         exact

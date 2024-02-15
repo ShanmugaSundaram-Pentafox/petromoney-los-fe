@@ -2,6 +2,7 @@
 /* eslint-disable react/display-name */
 import { List, ListItem, Button, colors, Hidden } from '@material-ui/core';
 import Collapse from '@material-ui/core/Collapse';
+import { History } from '@material-ui/icons';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssessmentOutlinedIcon from '@material-ui/icons/AssessmentOutlined';
 import BarChartOutlinedIcon from '@material-ui/icons/BarChartOutlined';
@@ -386,6 +387,22 @@ const SidebarNav = props => {
                   >
                     <div className={classes.icon}><AssessmentOutlinedIcon /></div>
                     DPD Report &nbsp;
+                  </Button>
+                </ListItem>
+                <ListItem
+                  className={classes.itemSub}
+                  disableGutters
+                  key={'pdc-report'}
+                >
+                  <Button
+                    className={classes.button}
+                    activeClassName={classes.active}
+                    component={CustomRouterLink}
+                    to={'/report/pdc'}
+                    exact
+                  >
+                    <div className={classes.icon}><History /></div>
+                    PDC Report &nbsp;
                   </Button>
                 </ListItem>
               </Collapse>

@@ -35,8 +35,6 @@ export const getDpdPageDetails = (filterQry, page, searchText) => {
     if (page) qry.push(`page=${page}`);
     if (searchText) qry.push(`customer_id_name=${searchText}`);
     if (from && to) qry.push(`from=${from}&to=${to}`);
-    if (page) qry.push(`page=${page}`);
-    if (searchText) qry.push(`customer_id_name=${searchText}`);
     if (qry.length) apiUrl += '?' + qry.join('&');
     apiCall(apiUrl)
       .then(({ status, total_number_of_pages, message }) => {
@@ -56,6 +54,8 @@ export const getPDCReportData = ({ filterQry = {}, download, page, searchText })
   return new Promise((resolve, reject) => {
     let qry = []
     let apiUrl = 'pdc/report';
+    if (page) qry.push(`page=${page}`)
+    if (searchText) qry.push(`customer_id_name=${searchText}`)
     if (filterQry?.zone && filterQry?.zone !== '0') qry.push(`zone_id=${filterQry?.zone}`)
     if (filterQry?.region && filterQry?.region !== '0') qry.push(`region_id=${filterQry?.region}`)
     if (filterQry?.products && filterQry?.products !== '0') qry.push(`product_id=${filterQry?.products}`)

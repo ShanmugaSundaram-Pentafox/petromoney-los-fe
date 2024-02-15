@@ -65,8 +65,8 @@ const PDCReportTable = ({ filterQry, currentUser }) => {
     setLoading(true)
     getPDCReportData({ filterQry, page, search, download: 'yes' })
       .then((res) => {
-        if (res?.report_url) {
-          getSignedUrl(res?.report_url)
+        if (res?.data) {
+          getSignedUrl(res?.data)
             .then((res) => {
               window.open(res?.url, '_blank');
             })

@@ -1,9 +1,10 @@
-import { Button, Divider, Drawer, Flex, Grid, TextInput, Textarea, Checkbox, Accordion, Text, ActionIcon } from '@mantine/core';
+import { Divider, Drawer, Flex, Grid, TextInput, Textarea, Checkbox, Accordion, Text, ActionIcon } from '@mantine/core';
 import { Formik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import * as Yup from 'yup';
+import { Button } from '../../../components/Mantine/Button/Button';
 import {
   getExternalApi,
   updateExternalApi,
@@ -118,18 +119,17 @@ const ExternalApi = ({ callback }) => {
       >
         <Flex gap="sm">
           <Button 
+            colorScheme="secondary"
             variant="outline" 
             size="md"
-            color="gray"
             onClick={() => callback(false)}
           >
             Go back
           </Button>
 
           <Button 
-            variant="filled" 
+            colorScheme="primary"
             size="md"
-            color="rgba(0, 0, 0, 1)"
             onClick={() => setAddForm({})}
           >
             Add New Config

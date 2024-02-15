@@ -1,10 +1,7 @@
 import { ActionIcon, ActionIconGroup, Badge, Box, Collapse, Flex, Grid, Paper, Text, Title } from '@mantine/core';
 import { Typography, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from '@material-ui/core'
-import AudiotrackIcon from '@material-ui/icons/Audiotrack';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import PermMediaIcon from '@material-ui/icons/PermMedia';
-import { IconEdit, IconFileTypePdf, IconTrash, IconUpload } from '@tabler/icons-react';
+import { IconEdit, IconFileMusic, IconFileTypePdf, IconFiles, IconPhoto, IconTrash, IconUpload } from '@tabler/icons-react';
 import { format } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -89,16 +86,16 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         <Tooltip label={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'}>
           <Grid.Col span={colSpan}>
             <Box 
-              className="relative h-32 flex items-center justify-center p-4 bg-blue-50/40 border border-blue-300 border-dashed rounded cursor-pointer"
+              className="group relative h-32 flex items-center justify-center p-4 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 border-dashed rounded transition-colors cursor-pointer"
               onClick={() => csvFileTypes.includes(fileType) ? handleDownload(url) : audioFileTypes.includes(fileType) ? handleDownload(url) : setImageModal({ open: true, image: url, type: fileType })}
             >
               {imgFileTypes.includes(fileType) ?
-                <PermMediaIcon style={{ color: '#63686E' }} />
+                <IconPhoto size={28} className="text-gray-500 group-hover:text-gray-600 transition-colors" />
                 : fileType === 'pdf' ?
-                  <IconFileTypePdf size={28} className="text-blue-500" />
+                  <IconFileTypePdf size={28} className="text-gray-500 group-hover:text-gray-600 transition-colors" />
                   : audioFileTypes.includes(fileType) ?
-                    <AudiotrackIcon style={{ color: '#63686E' }} />
-                    : <ListAltIcon style={{ color: '#63686E' }} />
+                    <IconFileMusic size={28} className="text-gray-500 group-hover:text-gray-600 transition-colors" />
+                    : <IconFiles size={28} className="text-gray-500 group-hover:text-gray-600 transition-colors" />
               }
 
               {DocName && (
@@ -134,7 +131,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
             </Box>
             
             {file_name && ( 
-              <Title order={6} lineClamp={1} mt="6" c="gray.8">
+              <Title order={6} lineClamp={1} mt="6" c="gray.7">
                 {file_name}
               </Title>
             )}

@@ -84,15 +84,15 @@ const Profile = (props) => {
 
   return (
     <>
-      <Container size="sm" mt="xs">
-        <Paper 
-          p="xl" 
-          style={{
-            height: '88vh'
-          }}
-        >
+      <Container 
+        size="sm"
+        style={{
+          height: 'calc(100vh - 88px)'
+        }}
+      >
+        <Paper p="xl" h="100%">
           <Center mb="lg">
-            <Stack gap="6">
+            <Stack align="center" gap="6">
               <Avatar src={null} color="blue" size="lg" radius="xl">
                 {currentUser?.first_name?.substring(0, 2)}
               </Avatar>

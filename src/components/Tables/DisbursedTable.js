@@ -151,9 +151,17 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
           }
         }
       },
-
       {
-        label: 'Amount',
+        label: 'Actual Amount Disbursed',
+        name: 'actual_amount_disbursed',
+        options: {
+          filter: false,
+          sort: true,
+          customBodyRender: value => <strong><Currency value={value || 0} /></strong>
+        }
+      },
+      {
+        label: 'Amount Disbursed',
         name: 'amount_disbursed',
         options: {
           filter: false,

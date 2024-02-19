@@ -137,7 +137,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
   };
 
   return (
-    <div style={{ marginTop: 20 }}>
+    <div>
       {loading ? (
         <Grid>
           <Grid.Col>

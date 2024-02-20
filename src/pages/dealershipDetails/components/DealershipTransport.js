@@ -1,12 +1,12 @@
-import { Typography } from '@material-ui/core';
-import Drawer from '@material-ui/core/Drawer';
+import { Flex, Title } from '@mantine/core';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 // import { withStyles } from "@material-ui/core/styles"
 // import MuiAccordion from "@material-ui/core/Accordion"
 // import MuiAccordionSummary from "@material-ui/core/AccordionSummary"
 // import MuiAccordionDetails from "@material-ui/core/AccordionDetails"
-import Button from '../../../components/CommonComponents/Button/Button';
+import { Button } from '../../../components/Mantine/Button/Button';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import TransportOwnerTable from '../../../components/Tables/TransportOwnerTable';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
@@ -120,41 +120,43 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
 
 
   return (
-    <div>
-      <div className={classes.wrapper}>
-        <div className={classes.header}>
-          <Typography style={{ width: '70%' }} variant="h5" align={titleAlign} className={classes.title}>Transport Owner</Typography>
-          <CheckAllowed currentUser={currentUser} resource={resources_id?.transporters} action={action_id.transporters.addOwner}>
-            <Button
-              color="primary"
-              variant="contained"
-              size='small'
-              onClick={() => {
-                setOpenModal(true)
-                setRowData({})
-                setFormType('Add')
-              }}
-            >
-              Add Owner
-            </Button>
-          </CheckAllowed>
-        </div>
-        <div>
-          <TransportOwnerTable id={id} onRowClick={showOwnerEditForm} />
-        </div>
-      </div>
-      <Drawer
-        anchor="right"
-        open={openModal}
+    <>
+      <Flex align="center" justify="space-between" mb="lg">
+        <Title order={3}>Transport Owner</Title>
+
+        <CheckAllowed currentUser={currentUser} resource={resources_id?.transporters} action={action_id.transporters.addOwner}>
+          <Button
+            onClick={() => {
+              setOpenModal(true)
+              setRowData({})
+              setFormType('Add')
+            }}
+          >
+            Add Owner
+          </Button>
+        </CheckAllowed>
+      </Flex>
+
+      <TransportOwnerTable id={id} onRowClick={showOwnerEditForm} />
+
+      <RightSideDrawer
+        size="lg"
+        opened={openModal}
         onClose={() => {
           setRowData({})
           setOpenModal(false)
         }}
-        variant="temporary"
+        title="Owner Information"
       >
-        <AddNewTransportsOwnerForm dealer_id={id} rowData={rowData} isAdd={formType} callback={handleEdit} currentUser={currentUser} editable={editable} />
-      </Drawer>
-    </div>
+        <AddNewTransportsOwnerForm 
+          dealer_id={id} 
+          rowData={rowData} 
+          isAdd={formType} 
+          callback={handleEdit} 
+          currentUser={currentUser} editable={editable}
+        />
+      </RightSideDrawer>
+    </>
   )
 }
 export default DealershipTransport;

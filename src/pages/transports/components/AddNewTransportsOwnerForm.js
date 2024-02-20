@@ -1,17 +1,12 @@
 import DateFnsUtils from '@date-io/date-fns';
-import { Box, CircularProgress, Divider, Grid, Switch, Tooltip, Typography, IconButton } from '@material-ui/core';
+import { Box, Divider, Flex, Grid, Switch, Text, Title } from '@mantine/core';
+import { CircularProgress, Tooltip } from '@material-ui/core';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import { format, parse } from 'date-fns';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -19,12 +14,13 @@ import React, { useState, useEffect } from 'react';
 import { useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
-import Button from '../../../components/CommonComponents/Button/Button';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
 import {
   ViewData,
 } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
+import { Button } from '../../../components/Mantine/Button/Button';
+import { TextInput as MantineTextInput } from '../../../components/Mantine/TextInput/TextInput';
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
@@ -34,110 +30,7 @@ import { validateId } from '../../../services/dealerships.service';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
-
-const useStyles = makeStyles((theme) => ({
-  sidePanelTitle: {
-    // textAlign: 'center',
-    padding: '12px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333',
-  },
-  sidePanelFormWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '40vw',
-  },
-  sidePanelFormContentWrapper: {
-    flex: 1,
-    overflowX: 'hidden',
-  },
-  title: {
-    marginBottom: 4,
-    fontSize: 11,
-  },
-  actionButtons: {
-    // paddingTop: 8
-  },
-  tableRow: {
-    cursor: 'pointer',
-  },
-  document: {
-    display: 'inline-block',
-    borderRadius: 2,
-    lineHeight: 1,
-  },
-  stepperRoot: {
-    padding: 16,
-    paddingTop: 8,
-  },
-  fileStyle: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    marginTop: 12,
-  },
-  fileAttachement: {
-    display: 'flex',
-    // justifyContent:'center',
-    marginTop: 6,
-  },
-  icon: {
-    marginRight: 4,
-    marginTop: 6,
-  },
-  typography: {
-    marginTop: 8,
-  },
-  actionButtonsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '12px 16px',
-  },
-  details: {
-    // padding: 6,
-    borderColor: 'grey',
-    minWidth: 80,
-    height: 50,
-    display: 'flex',
-    textAlign: 'left',
-    alignItems: 'left',
-    justifyContent: 'left',
-  },
-  text: {
-    fontSize: 12,
-  },
-  readOnlyWrapper: {
-    margin: '8px 4px',
-    maxWidth: '100%',
-  },
-  editButton: {
-    marginRight: '8px',
-    '&.MuiButton-contained': {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.white,
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark,
-    },
-  },
-  profileLink: {
-    display: 'inline-block',
-    borderRadius: 2,
-    lineHeight: 1,
-    marginRight: 4,
-    marginBottom: 4,
-    padding: 4,
-    backgroundColor: '#eeeeee',
-    color: '#43a047',
-  },
-  attachmentContainer: {
-    display: 'flex', justifyContent: 'space-between', width: '39vw', paddingRight: 12, flexWrap: 'wrap', marginLeft: 8
-  },
-}));
+import { IconEdit, IconPencil } from '@tabler/icons-react';
 
 const AddNewTransportsOwnerForm = ({
   handleNext,
@@ -225,7 +118,7 @@ const AddNewTransportsOwnerForm = ({
   const queryClient = useQueryClient()
   const currentYear = date.getFullYear();
   const currentYearDiff = date.getFullYear() - 1970;
-  const classes = useStyles();
+  
   const {
     values,
     errors,
@@ -407,6 +300,7 @@ const AddNewTransportsOwnerForm = ({
   const onCloseUploader = () => {
     setShowUpload(false);
   };
+
   const handleSave = (value) => {
     if (fileType === 'PAN') {
       setFieldValue('pan_file_url', value[0]);
@@ -419,6 +313,7 @@ const AddNewTransportsOwnerForm = ({
     }
     onCloseUploader();
   };
+
   const docUpload = (val) => {
     setShowUpload(true);
     setFileType(val);
@@ -449,506 +344,545 @@ const AddNewTransportsOwnerForm = ({
   }
 
   return (
-    <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant='h4'>
-        <div>Owner Information</div>
-        <IconButton onClick={handleClose} size='small'>
-          <CloseIcon />
-        </IconButton>
-      </Typography>
-      <div className={classes.sidePanelFormContentWrapper}>
-        <div className={classes.stepperRoot}>
+    <>
+      {/* Drawer content */}
+      <div className="grow p-4 overflow-auto">
+        <>
           {readOnly ? (
             <>
-              <Typography variant="h6" style={{ marginTop: 8 }}>Personal Details</Typography>
-              <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                <Grid item md={6}>
-                  <Box className={classes.box}>
-                    <ViewData title='Owner ID' value={values.t_owner_id} />
-                    <ViewData title='Date of Birth' value={values.dob} />
-                    <ViewData title='Address' value={values.address} />
-                    <ViewData title='City' value={values.city_name} />
-                    <ViewData title='Marital Status' value={values.marital_status} />
-                    <ViewData title='Mobile' value={values.mobile} />
-                  </Box>
-                </Grid>
-                <Grid item md={6}>
-                  <Box className={classes.box}>
-                    <ViewData title='Name' value={values.first_name} />
-                    <ViewData title='Gender' value={values.gender} />
-                    <ViewData title='Pincode' value={values.pincode} />
-                    <ViewData title='State' value={values.state_name} />
-                    <ViewData title='Residing since' value={values.residing_since} />
-                    <ViewData title='Email' value={values.email} />
-                  </Box>
-                </Grid>
+              <Title order={4} mb="lg">Personal Details</Title>
+              <Grid gutter="sm">
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData title='Owner ID' value={values.t_owner_id} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>  
+                  <ViewData title='Date of Birth' value={values.dob} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>  
+                  <ViewData title='Address' value={values.address} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData title='City' value={values.city_name} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData title='Marital Status' value={values.marital_status} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData title='Mobile' value={values.mobile} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData title='Name' value={values.first_name} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>  
+                  <ViewData title='Gender' value={values.gender} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData title='Pincode' value={values.pincode} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData title='State' value={values.state_name} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData title='Residing since' value={values.residing_since} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData title='Email' value={values.email} />
+                </Grid.Col>
               </Grid>
-              <Divider />
-              <Typography variant="h6" style={{ marginTop: 8 }}>KYC Details</Typography>
-              <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                <Grid item md={6}>
-                  <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success' : 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'} />} />
-                </Grid>
-                <Grid item md={6}>
-                  <ViewData title='Aadhar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success' : 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'} />} />
-                </Grid>
+
+              <Divider my="lg" />
+
+              <Title order={4} mb="lg">KYC Details</Title>
+              <Grid gutter="sm">
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData 
+                    title='PAN'
+                    value={values.pan} 
+                    endIcon={
+                      <CustomToken variant={values?.pan_verified ? 'success' : 'error'} 
+                        label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'}
+                        icon={values?.pan_verified ? 'tick' : 'cross'} 
+                      />
+                    } 
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <ViewData 
+                    title='Aadhar' 
+                    value={values.aadhar} 
+                    endIcon={
+                      <CustomToken 
+                        variant={values?.aadhar_verified ? 'success' : 'error'} 
+                        label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} 
+                        icon={values?.aadhar_verified ? 'tick' : 'cross'} 
+                      />
+                    } 
+                  />
+                </Grid.Col>
               </Grid>
-              <Divider />
+              
+              <Divider my="lg" />
+
               {values?.profile_image_url ||
                 values?.pan_file_url ||
                 values?.aadhar_f_file_url ||
                 values?.aadhar_b_file_url ? (
-                  <div className={classes.readOnlyWrapper}>
-                    <Typography variant='h4'>Attachments</Typography>
-                    <div
-                      style={{
-                        display: 'flex',
-                        marginTop: 16,
-                      }}
-                    >
-                      {values.profile_image_url && <DocAttachment tooltip='View Profile' imgUrl={values?.profile_image_url} docName='Profile' style={{ marginRight: 20 }} />}
-                      {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{ marginRight: 20 }} />}
-                      {values.aadhar_f_file_url && <DocAttachment tooltip='View Aadhar Front' imgUrl={values?.aadhar_f_file_url} docName='Aadhar front' style={{ marginRight: 20 }} />}
-                      {values.aadhar_b_file_url && <DocAttachment tooltip='View Aadhar Back' imgUrl={values?.aadhar_b_file_url} docName='Aadhar back' style={{ marginRight: 20 }} />}
-                    </div>
-                  </div>
+                  <>
+                    <Title order={4} mb="lg">Attachments</Title>
+                    <Flex gap="xs" mb="lg">
+                      {values.profile_image_url && (
+                        <DocAttachment 
+                          tooltip='View Profile' 
+                          imgUrl={values?.profile_image_url} 
+                          docName='Profile' 
+                        />
+                      )}
+                      {values.pan_file_url && (
+                        <DocAttachment 
+                          tooltip='View PAN' 
+                          imgUrl={values?.pan_file_url} 
+                          docName='PAN' 
+                        />
+                      )}
+                      {values.aadhar_f_file_url && (
+                        <DocAttachment 
+                          tooltip='View Aadhar Front' 
+                          imgUrl={values?.aadhar_f_file_url} 
+                          docName='Aadhar front' 
+                        />
+                      )}
+                      {values.aadhar_b_file_url && (
+                        <DocAttachment 
+                          tooltip='View Aadhar Back' 
+                          imgUrl={values?.aadhar_b_file_url} 
+                          docName='Aadhar back' 
+                        />
+                      )}
+                    </Flex>
+                  </>
                 ) : (
-                  <div className={classes.readOnlyWrapper}>
-                    <Typography variant='h4'>Attachments</Typography>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        marginTop: '20px',
-                      }}
-                    >
-                      <Typography variant='h7'>No Attachments Found</Typography>
-                    </div>
-                  </div>
+                  <>
+                    <Title order={4} mb="lg">Attachments</Title>
+                    <Flex h="40" align="center" justify="center" mb="lg">
+                      <Text>No Attachments Found</Text>
+                    </Flex>
+                  </>
                 )}
             </>
           ) : (
-            <Box>
-              <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                  <Grid item md={12} >
-                    <Typography variant="title"><strong>KYC Details</strong></Typography>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      label='PAN'
-                      name='pan'
-                      value={values.pan?.toUpperCase()}
-                      disabled={panValidateData?.loading || values?.pan_verified}
-                      error={errors.pan}
+            <form onSubmit={handleSubmit}>
+              <Title order={4} mb="lg">KYC Details</Title>
+              
+              <Grid gutter="sm">
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <MantineTextInput
+                    label='PAN'
+                    name='pan'
+                    value={values.pan?.toUpperCase()}
+                    disabled={panValidateData?.loading || values?.pan_verified}
+                    error={errors.pan}
+                    readOnly={readOnly}
+                    onChange={handleChange}
+                    // InputProps={ValidateProps(panValidateData)}
+                  />
+
+                  {!values?.pan_verified || values?.pan !== rowData?.pan ? (
+                    <Box 
+                      component="span" 
+                      className="cursor-pointer"
+                      onClick={() => handleValidate('pan', values?.pan)}
+                    >
+                      <Text fz="xs" fw="600" c="indigo.5" span>Validate PAN</Text>
+                    </Box>
+                  ) : null}
+
+                  
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <MantineTextInput
+                    label='Aadhar'
+                    name='aadhar'
+                    value={values.aadhar}
+                    disabled={aadharValidateData?.loading || values?.aadhar_verified}
+                    readOnly={readOnly}
+                    error={errors.aadhar}
+                    onChange={handleChange}
+                    // InputProps={ValidateProps(aadharValidateData)}
+                  />
+                  
+                  {!values?.aadhar_verified || values?.aadhar !== rowData?.aadhar ? (
+                    <Box 
+                      component="span" 
+                      className="cursor-pointer"
+                      onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}
+                    >
+                      <Text fz="xs" fw="600" c="indigo.5" span>Validate Aadhar</Text>
+                    </Box>
+                  ) : null}
+
+                </Grid.Col>
+              </Grid>  
+
+              <Title order={4} my="lg">Personal Details</Title>
+              <Grid gutter="sm">
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <MantineTextInput
+                    label='First name'
+                    name='first_name'
+                    value={values.first_name?.toUpperCase()}
+                    error={errors.first_name}
+                    readOnly={readOnly}
+                    onChange={handleChange}
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <MantineTextInput
+                    label='Last name'
+                    name='last_name'
+                    readOnly={readOnly}
+                    error={errors.last_name}
+                    value={values.last_name?.toUpperCase()}
+                    onChange={handleChange}
+                  />
+                </Grid.Col>
+                
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <KeyboardDatePicker
+                      variant='inline'
+                      fullWidth
+                      inputVariant='outlined'
+                      name='dob'
+                      label='Date of Birth'
+                      format='dd-MM-yyyy'
+                      animateYearScrolling={true}
+                      disableFuture={true}
+                      invalidDateMessage='Invalid Date Format'
+                      error={errors.dob}
+                      helperText={errors.dob}
                       readOnly={readOnly}
-                      helperText={errors.pan}
-                      onChange={handleChange}
+                      disabled={readOnly}
+                      margin='normal'
+                      id='date-picker'
+                      autoOk={true}
+                      value={selectedDate ? selectedDate : null}
+                      onChange={handleDateChange}
                       InputLabelProps={{ shrink: true }}
-                      InputProps={ValidateProps(panValidateData)}
+                      keyboardButtonProps={{
+                        'aria-label': 'change date',
+                      }}
+                      PopoverProps={{
+                        anchorOrigin: {
+                          vertical: 'bottom',
+                          horizontal: 'center',
+                        },
+                      }}
                     />
+                  </MuiPickersUtilsProvider>
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <TextInput
+                    select
+                    label='Gender'
+                    name='gender'
+                    error={errors.gender}
+                    helperText={errors.gender}
+                    value={values.gender}
+                    readOnly={readOnly}
+                    disabled={readOnly}
+                    onChange={handleChange}
+                    SelectProps={{
+                      native: true,
+                    }}
+                  >
+                    <option value='null'>Select Gender</option>
+                    <option value={'MALE'}>Male</option>
+                    <option value={'FEMALE'}>Female</option>
+                  </TextInput>
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <MantineTextInput
+                    label='Address'
+                    name='address'
+                    readOnly={readOnly}
+                    value={values.address?.toUpperCase()}
+                    error={errors.address}
+                    onChange={handleChange}
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <MantineTextInput
+                    label="Pin code"
+                    name="pincode"
+                    readOnly={readOnly}
+                    value={values.pincode}
+                    error={errors.pincode}
+                    onChange={handleChange}
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <TextInput
+                    select
+                    label="City"
+                    name="city"
+                    readOnly={readOnly}
+                    value={values.city}
+                    error={errors.city}
+                    helperText={errors.city}
+                    onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
+                  >
                     {
-                      !values?.pan_verified || values?.pan !== rowData?.pan ?
-                        <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+                      city?.length ?
+                        <option value="" disabled>Choose City...</option> :
+                        <option value="" disabled>Enter Pincode to select City</option>
                     }
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      label='Aadhar'
-                      name='aadhar'
-                      value={values.aadhar}
-                      disabled={aadharValidateData?.loading || values?.aadhar_verified}
-                      helperText={errors.aadhar}
-                      readOnly={readOnly}
-                      error={errors.aadhar}
-                      onChange={handleChange}
-                      InputLabelProps={{ shrink: true }}
-                      InputProps={ValidateProps(aadharValidateData)}
-                    />
                     {
-                      !values?.aadhar_verified || values?.aadhar !== rowData?.aadhar ?
-                        <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhar</Typography> : null
+                      city?.map((item, i) => {
+                        return (
+                          <option key={i} value={item?.city_code}>{item?.city}</option>
+                        )
+                      })
                     }
-                  </Grid>
-                  <Grid item md={12} >
-                    <Typography variant="title"><strong>Personal Details</strong></Typography>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      label='First Name'
-                      name='first_name'
-                      value={values.first_name?.toUpperCase()}
-                      error={errors.first_name}
-                      readOnly={readOnly}
-                      helperText={errors.first_name}
-                      InputLabelProps={{ shrink: true }}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      label='Last Name'
-                      name='last_name'
-                      readOnly={readOnly}
-                      error={errors.last_name}
-                      helperText={errors.last_name}
-                      value={values.last_name?.toUpperCase()}
-                      InputLabelProps={{ shrink: true }}
-                      onChange={handleChange}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                      <KeyboardDatePicker
-                        variant='inline'
-                        fullWidth
-                        inputVariant='outlined'
-                        name='dob'
-                        label='Date of Birth'
-                        format='dd-MM-yyyy'
-                        animateYearScrolling={true}
-                        disableFuture={true}
-                        invalidDateMessage='Invalid Date Format'
-                        error={errors.dob}
-                        helperText={errors.dob}
-                        readOnly={readOnly}
-                        disabled={readOnly}
-                        margin='normal'
-                        id='date-picker'
-                        autoOk={true}
-                        value={selectedDate ? selectedDate : null}
-                        onChange={handleDateChange}
-                        InputLabelProps={{ shrink: true }}
-                        keyboardButtonProps={{
-                          'aria-label': 'change date',
-                        }}
-                        PopoverProps={{
-                          anchorOrigin: {
-                            vertical: 'bottom',
-                            horizontal: 'center',
-                          },
-                        }}
-                      />
-                    </MuiPickersUtilsProvider>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      select
-                      label='Gender'
-                      name='gender'
-                      error={errors.gender}
-                      helperText={errors.gender}
-                      value={values.gender}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      onChange={handleChange}
-                      SelectProps={{
-                        native: true,
-                      }}
-                    >
-                      <option value='null'>Select Gender</option>
-                      <option value={'MALE'}>Male</option>
-                      <option value={'FEMALE'}>Female</option>
-                    </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      label='Address'
-                      name='address'
-                      readOnly={readOnly}
-                      value={values.address?.toUpperCase()}
-                      error={errors.address}
-                      helperText={errors.address}
-                      onChange={handleChange}
-                      rows={3}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      number
-                      label="Pincode"
-                      name="pincode"
-                      readOnly={readOnly}
-                      value={values.pincode}
-                      error={errors.pincode}
-                      helperText={errors.pincode}
-                      onChange={handleChange}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      select
-                      label="City"
-                      name="city"
-                      readOnly={readOnly}
-                      value={values.city}
-                      error={errors.city}
-                      helperText={errors.city}
-                      onChange={handleChange}
-                      InputLabelProps={{ shrink: true }}
-                    >
-                      {
-                        city?.length ?
-                          <option value="" disabled>Choose City...</option> :
-                          <option value="" disabled>Enter Pincode to select City</option>
-                      }
-                      {
-                        city?.map((item, i) => {
+                  </TextInput>
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <TextInput
+                    select
+                    name='state'
+                    label='State'
+                    readOnly={readOnly}
+                    value={values.state}
+                    error={errors.state}
+                    helperText={errors.state}
+                    onChange={handleChange}
+                    InputLabelProps={{ shrink: true }}
+                  >
+                    {
+                      city?.length ?
+                        <option value="" disabled>Choose State...</option> :
+                        <option value="" disabled>Enter Pincode to select State</option>
+                    }
+                    {
+                      city?.map((item, i) => {
+                        return (
+                          <option key={i} value={item?.state_code}>{item?.state}</option>
+                        )
+                      })
+                    }
+                  </TextInput>
+                </Grid.Col>
+                
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <TextInput
+                    select
+                    label='Residing Since'
+                    name='residing_since'
+                    value={values.residing_since}
+                    error={errors.residing_since}
+                    onChange={handleChange}
+                    readOnly={readOnly}
+                    disabled={readOnly}
+                    SelectProps={{
+                      native: true,
+                    }}
+                  >
+                    {
+                      <>
+                        <option value='null'>Residing Since</option>
+                        {[...Array(currentYearDiff)].map((_, i) => {
                           return (
-                            <option key={i} value={item?.city_code}>{item?.city}</option>
-                          )
-                        })
-                      }
-                    </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      select
-                      name='state'
-                      label='State'
-                      readOnly={readOnly}
-                      value={values.state}
-                      error={errors.state}
-                      helperText={errors.state}
-                      onChange={handleChange}
-                      InputLabelProps={{ shrink: true }}
-                    >
-                      {
-                        city?.length ?
-                          <option value="" disabled>Choose State...</option> :
-                          <option value="" disabled>Enter Pincode to select State</option>
-                      }
-                      {
-                        city?.map((item, i) => {
-                          return (
-                            <option key={i} value={item?.state_code}>{item?.state}</option>
-                          )
-                        })
-                      }
-                    </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      select
-                      label='Residing Since'
-                      name='residing_since'
-                      value={values.residing_since}
-                      error={errors.residing_since}
-                      onChange={handleChange}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      SelectProps={{
-                        native: true,
-                      }}
-                    >
-                      {
-                        <>
-                          <option value='null'>Residing Since</option>
-                          {[...Array(currentYearDiff)].map((_, i) => {
-                            return (
-                              <option key={i} value={currentYear - i}>
-                                {currentYear - i}
-                              </option>
-                            );
-                          })}
-                        </>
-                      }
-                    </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      select
-                      label='Marital Status'
-                      name='marital_status'
-                      error={errors.marital_status}
-                      helperText={errors.marital_status}
-                      value={values.marital_status}
-                      onChange={handleChange}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      SelectProps={{
-                        native: true,
-                      }}
-                    >
-                      <option value='null'>Choose Marital Status</option>
-                      <option value='Single'>Single</option>
-                      <option value='Married'>Married</option>
-                      <option value='Divorced'>Divorced</option>
-                      <option value='Widowed'>Widowed</option>
-                    </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      label='Email'
-                      name='email'
-                      readOnly={readOnly}
-                      error={errors.email}
-                      helperText={errors.email}
-                      defaultValue={values.email}
-                      onChange={handleChange}
-                      InputLabelProps={{ shrink: true }}
+                            <option key={i} value={currentYear - i}>
+                              {currentYear - i}
+                            </option>
+                          );
+                        })}
+                      </>
+                    }
+                  </TextInput>
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <TextInput
+                    select
+                    label='Marital Status'
+                    name='marital_status'
+                    error={errors.marital_status}
+                    helperText={errors.marital_status}
+                    value={values.marital_status}
+                    onChange={handleChange}
+                    readOnly={readOnly}
+                    disabled={readOnly}
+                    SelectProps={{
+                      native: true,
+                    }}
+                  >
+                    <option value='null'>Choose Marital Status</option>
+                    <option value='Single'>Single</option>
+                    <option value='Married'>Married</option>
+                    <option value='Divorced'>Divorced</option>
+                    <option value='Widowed'>Widowed</option>
+                  </TextInput>
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <MantineTextInput
+                    label='Email'
+                    name='email'
+                    readOnly={readOnly}
+                    error={errors.email}
+                    defaultValue={values.email}
+                    onChange={handleChange}
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <MantineTextInput
+                    label='Mobile'
+                    name='mobile'
+                    value={values.mobile}
+                    onChange={handleChange}
+                    error={errors.mobile}
+                    readOnly={readOnly}
+                    type='number'
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <Flex h="48" align="center" justify="space-between">
+                    <Text fz="xs">Mobile number on Whatsapp?</Text>
+                    <Switch
+                      color="indigo"
+                      size="md"
+                      checked={state.checkedA}
+                      onChange={handleStateChange}
+                      onLabel="Yes" 
+                      offLabel="No"
                     />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      label='Mobile'
-                      name='mobile'
-                      value={values.mobile}
-                      onChange={handleChange}
-                      error={errors.mobile}
-                      readOnly={readOnly}
-                      helperText={errors.mobile}
-                      type='number'
-                      InputLabelProps={{ shrink: true }}
-                    ></TextInput>
-                  </Grid>
-                  <Grid item md={12}>
-                    <Grid container>
-                      <Grid item md={6}>
-                        <Typography component='div'>
-                          <Grid
-                            component='label'
-                            container
-                            alignItems='center'
-                            style={{ marginBottom: '10px', marginTop: '6px' }}
-                            spacing={2}
-                          >
-                            <Grid
-                              md={12}
-                              style={{ paddingLeft: '8px', fontSize: '13px' }}
-                            >
-                              Mobile number on Whatsapp?
-                            </Grid>
-                            <Grid style={{ paddingLeft: '8px' }}>No</Grid>
-                            <Grid>
-                              <Switch
-                                checked={state.checkedA}
-                                onChange={handleStateChange}
-                                name='checkedA'
-                                color='primary'
-                                inputProps={{ 'aria-label': 'secondary checkbox' }}
-                              />
-                            </Grid>
-                            <Grid>Yes</Grid>
-                          </Grid>
-                        </Typography>
-                      </Grid>
-                      <Grid item md={6}>
-                        <Typography component='div'>
-                          <Grid
-                            component='label'
-                            container
-                            style={{ marginBottom: '8px', marginTop: '6px' }}
-                            alignItems='center'
-                            spacing={2}
-                          >
-                            <Grid
-                              md={12}
-                              style={{ paddingLeft: '8px', fontSize: '13px' }}
-                            >
-                              Mobile number linked with AADHAR?
-                            </Grid>
-                            <Grid style={{ paddingLeft: '8px' }}>No</Grid>
-                            <Grid>
-                              <Switch
-                                checked={state.checkedB}
-                                onChange={handleStateChange}
-                                color='primary'
-                                name='checkedB'
-                                inputProps={{ 'aria-label': 'secondary checkbox' }}
-                              />
-                            </Grid>
-                            <Grid>Yes</Grid>
-                          </Grid>
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                  <Grid md={12} item>
-                    <Typography variant='subtitle1' component='subtitle1'>
-                      Attachments
-                    </Typography>
-                  </Grid>
-                  <div className={classes.attachmentContainer}>
-                    <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete({ profile_image_url: '' })} disabled={!values?.profile_image_url} />
-                    <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({ pan_file_url: '' })} disabled={!values?.pan_file_url} />
-                    <DocAttachment action={true} imgUrl={values?.aadhar_f_file_url} docName='Aadhar Front' onUpload={() => docUpload('Front')} onDelete={() => onDocDelete({ aadhar_f_file_url: '' })} disabled={!values?.aadhar_f_file_url} />
-                    <DocAttachment action={true} imgUrl={values?.aadhar_b_file_url} docName='Aadhar Back' onUpload={() => docUpload('Back')} onDelete={() => onDocDelete({ aadhar_b_file_url: '' })} disabled={!values?.aadhar_b_file_url} />
-                  </div>
-                </Grid>
-              </form>
-            </Box>
+                  </Flex>
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, sm: 6 }}>
+                  <Flex h="48" align="center" justify="space-between">
+                    <Text fz="xs">Mobile number linked with AADHAR?</Text>
+                    <Switch
+                      color="indigo"
+                      size="md"
+                      checked={state.checkedB}
+                      onChange={handleStateChange}
+                      onLabel="Yes" 
+                      offLabel="No"
+                    />
+                  </Flex>
+                </Grid.Col>
+              </Grid>
+
+              <Title order={4} my="lg">Attachments</Title>
+              <Flex gap="xs" mb="lg">
+                <DocAttachment 
+                  action={true} 
+                  imgUrl={values?.profile_image_url} 
+                  docName='Profile'
+                  onUpload={() => docUpload('Profile')} 
+                  onDelete={() => onDocDelete({ profile_image_url: '' })} 
+                  disabled={!values?.profile_image_url} 
+                />
+                <DocAttachment 
+                  action={true} 
+                  imgUrl={values?.pan_file_url} 
+                  docName='PAN Card' 
+                  onUpload={() => docUpload('PAN')} 
+                  onDelete={() => onDocDelete({ pan_file_url: '' })} 
+                  disabled={!values?.pan_file_url} 
+                />
+                <DocAttachment 
+                  action={true} 
+                  imgUrl={values?.aadhar_f_file_url} 
+                  docName='Aadhar Front' 
+                  onUpload={() => docUpload('Front')} 
+                  onDelete={() => onDocDelete({ aadhar_f_file_url: '' })} 
+                  disabled={!values?.aadhar_f_file_url} 
+                />
+                <DocAttachment 
+                  action={true} 
+                  imgUrl={values?.aadhar_b_file_url} 
+                  docName='Aadhar Back' 
+                  onUpload={() => docUpload('Back')} 
+                  onDelete={() => onDocDelete({ aadhar_b_file_url: '' })} 
+                  disabled={!values?.aadhar_b_file_url} 
+                />
+              </Flex> 
+            </form>
           )}
-        </div>
-        {showUpload && (
-          <FileUpload
-            handleSave={(value) => handleSave(value)}
-            id={id}
-            data={rowData}
-            title='Upload Transport Owner Documents'
-            open={showUpload}
-            onCloseUploader={onCloseUploader}
-          />
-        )}
+
+          {showUpload && (
+            <FileUpload
+              handleSave={(value) => handleSave(value)}
+              id={id}
+              data={rowData}
+              title='Upload Transport Owner Documents'
+              open={showUpload}
+              onCloseUploader={onCloseUploader}
+            />
+          )}
+        </>
       </div>
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button
-              variant='outlined'
-              startIcon={<NavigateBeforeRoundedIcon />}
-              disabled={loading}
-              onClick={handleClose}
-            >
-              Back
-            </Button>
-          </div>
+
+      {/* Sticky footer */}
+      <Flex
+        h="64"
+        align="center"
+        justify="end"
+        className="bg-white shrink-0 px-4 z-[9]"
+        style={{
+          borderTop: '1px solid #eaeaea',
+        }}
+      >
+        <Flex gap="sm">
+          <Button
+            colorScheme="secondary"
+            variant="outline"
+            size="md"
+            onClick={handleClose}
+            disabled={loading}
+          >
+            Go back
+          </Button>
+
           {!readOnly ? (
-            !loading ? (
-              <>
-                <Button
-                  variant='contained'
-                  type='submit'
-                  className={clsx(classes.btn, classes.editButton)}
-                  startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                  disabled={loading}
-                  onClick={loading ? () => null : handleSubmit}
-                >
-                  Save
-                </Button>
-              </>
-            ) : (
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  width: '90%',
-                  margin: '0 auto',
-                }}
-              >
-                <CircularProgress size={30} />
-              </div>
-            )
+            <Button
+              colorScheme="primary"
+              variant="filled"
+              size="md"
+              onClick={loading ? () => null : handleSubmit}
+              loading={loading}
+            >
+              Save
+            </Button>
           ) : (
             <CheckAllowed currentUser={currentUser} resource={resources_id?.transporters} action={action_id?.transporters?.editOwner}>
               <Button
-                variant='contained'
-                type='submit'
-                className={clsx(classes.btn, classes.editButton)}
-                startIcon={!readOnly ? <NavigateNextRounded /> : <EditIcon />}
-                disabled={loading}
+                colorScheme="primary"
+                variant="filled"
+                size="md"
                 onClick={loading ? () => null : handleEdit}
+                loading={loading}
               >
                 Edit
               </Button>
             </CheckAllowed>
           )}
-        </div>
-      </div>
-    </div>
+        </Flex>
+      </Flex>
+    </>
   );
 };
 

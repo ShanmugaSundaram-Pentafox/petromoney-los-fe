@@ -210,7 +210,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
     selectableRows: 'none',
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 8) {
+      if (cellMeta.colIndex !== 9) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'loan_approval')
       }
     },

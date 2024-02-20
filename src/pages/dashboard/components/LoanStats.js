@@ -7,7 +7,7 @@ const LoanStats = ({ selectedStatsCard, handleClick, chartData, totalLoans }) =>
     <Paper shadow="0" p="lg">
       <>
         <Text fz={'md'} mb="sm" className="text-gray-500">
-          Loans&apos; Statistics ({totalLoans ?? null})
+          Loans&apos; Statistics {totalLoans ? `(${totalLoans})` : null}
         </Text>
 
         {chartData.length ? (

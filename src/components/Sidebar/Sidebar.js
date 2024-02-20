@@ -188,7 +188,12 @@ const Sidebar = props => {
           name: 'DPD Report',
           href: '/report/dpd',
           icon: <DocumentIcon className="w-5 h-5" />
-        }
+        },
+        {
+          name: 'PDC Report',
+          href: '/report/pdc',
+          icon: <DocumentIcon className="w-5 h-5" />
+        },
       ]
     },
     {

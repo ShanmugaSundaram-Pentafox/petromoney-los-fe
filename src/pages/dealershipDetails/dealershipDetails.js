@@ -188,7 +188,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         <Tabs.Panel value={'dealership'}>
           <DealershipInfo data={dealershipData.data} currentUser={currentUser} />
         </Tabs.Panel>
-        <Tabs.Panel value={'dealers'}>
+        <Tabs.Panel value={'dealer'}>
           <DealersList id={id} titleAlign="left" currentUser={currentUser} />
         </Tabs.Panel>
         <Tabs.Panel value={'score_card'}>
@@ -203,7 +203,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         <Tabs.Panel value={'documents'}>
           <DealershipDoc id={id} currentUser={currentUser} />
         </Tabs.Panel>
-        <Tabs.Panel value={'transporters'}>
+        <Tabs.Panel value={'transporter'}>
           <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
         </Tabs.Panel>
         <Tabs.Panel value={'fleet_operators'}>

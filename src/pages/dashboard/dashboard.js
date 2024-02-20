@@ -1,5 +1,4 @@
-import { Paper, Title } from '@mantine/core';
-import Grid from '@material-ui/core/Grid';
+import { Grid, Paper, Title } from '@mantine/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
@@ -125,8 +124,8 @@ const Dashboard = ({ currentUser }) => {
         </>
       ) : (
         <>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
+          <Grid gutter={0}>
+            <Grid.Col>
               <DashboardFilter
                 filterQry={setFilterQry}
                 setChartData={setChartData}
@@ -134,15 +133,15 @@ const Dashboard = ({ currentUser }) => {
                 filterType='Dashboard'
                 filters={['zone', 'region', 'product', 'period']}
               />
-            </Grid>
-            <Grid item xs={12}>
+            </Grid.Col>
+            <Grid.Col mt={'xs'}>
               <LoanStats
                 selectedStatsCard={selectedStatsCard}
                 handleClick={handleClick}
                 chartData={chartData}
                 totalLoans={totalLoans}
               />
-            </Grid>
+            </Grid.Col>
           </Grid>
           <LoansTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} />
         </>

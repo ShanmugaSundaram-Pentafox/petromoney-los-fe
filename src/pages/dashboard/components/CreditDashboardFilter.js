@@ -172,7 +172,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }
   return (
     <CheckAllowed currentUser={currentUser} resource={resources_id.creditReload} action={action_id.creditReload.dealer_search}>
-      <Paper p={10} radius={'md'} shadow='xs'>
+      <Box>
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
             filters.includes('zone') &&
@@ -254,11 +254,9 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
               </div>
             )
           }
-          {/* <Group gap={4}> */}
           <Tooltip label={'Click to search'} withArrow color={'gray'}>
             <ActionIcon
-              color="gray.4"
-              variant="outline"
+              variant="white"
               onClick={handleSearch}
               ml={10}
               mt={21}
@@ -295,7 +293,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
           </Box>
           {/* </Group> */}
         </Box>
-      </Paper>
+      </Box>
     </CheckAllowed >
   )
 }

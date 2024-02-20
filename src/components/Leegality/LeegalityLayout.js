@@ -7,32 +7,18 @@ import {
   DialogContentText,
   Typography,
 } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import Chip from '@material-ui/core/Chip';
-import Grid from '@material-ui/core/Grid';
-import Popover from '@material-ui/core/Popover';
 import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
-import AccountCircleRoundedIcon from '@material-ui/icons/AccountCircleRounded';
-import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
-import DeleteOutlineOutlinedIcon from '@material-ui/icons/DeleteOutlineOutlined';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
-import HighlightOffRoundedIcon from '@material-ui/icons/HighlightOffRounded';
-import SettingsIcon from '@material-ui/icons/Settings';
 import moment from 'moment';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
 import { deleteRequestUrl } from '../../services/leegality.service';
 import apiCall from '../../utils/api.util';
 import FilePreview from '../CommonComponents/FilePreview';
+import { Avatar, Badge, Box, Button, Grid, Group, Menu, Modal, Popover, Table, Text } from '@mantine/core';
+import { IconCopy, IconMessageCircle, IconSettings, IconSquareRoundedCheck, IconSquareRoundedX, IconTrash } from '@tabler/icons-react';
+import { displayNotification } from '../CommonComponents/Notification/displayNotification';
 
 const Card = styled.div`
   background-color: #fff;
@@ -77,7 +63,6 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedItemData, setSelectedItemData] = useState({});
   const [open, setOpen] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
   const classes = useStyles();
 
   const getLegalityDocument = useQuery({
@@ -89,21 +74,13 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
       setActiveState(data);
     },
     onError: (err) => {
-      enqueueSnackbar(err.message, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
+      displayNotification({
+        message: err.message,
         variant: 'error',
-      });
+      })
       setActiveState();
     }
   })
-
-  const handleClick = (event, cardData) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedItemData(cardData)
-  };
 
   const ResendNotification = () => {
     apiCall('document/resend', {
@@ -111,13 +88,10 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
       body: { sign_url: selectedItemData.signUrl },
     })
       .then((res) => {
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: res.message,
           variant: 'success',
-        });
+        })
       })
       .catch((err) => {
         console.log(err);
@@ -129,29 +103,23 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
     deleteRequestUrl(value)
       .then((res) => {
         setOpen(false)
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: res,
           variant: 'success',
-        });
+        })
       })
       .catch((err) => {
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
+        displayNotification({
+          message: err,
+          variant: 'success',
+        })
       });
   };
 
   return (
     <Box bgcolor="#fbfbfb">
-      <Grid container spacing={2}>
-        <Grid item md={6} style={{ position: 'relative' }}>
+      <Grid>
+        <Grid.Col span={7} style={{ position: 'relative' }}>
           {docId && getLegalityDocument?.data?.file && (
             <FilePreview
               title="Leegality"
@@ -165,42 +133,42 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
           >
             <CircularProgress size={25} style={{ color: 'white' }} />
           </Backdrop>
-        </Grid>
+        </Grid.Col>
         {getLegalityDocument?.data?.file ? (
-          <Grid item md={4}>
-            <Box pt={2}>
-              <TableContainer>
-                <Table aria-label="leegality table">
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>Document ID</TableCell>
-                      <TableCell>{getLegalityDocument?.data?.documentId}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Name</TableCell>
-                      <TableCell>{getLegalityDocument?.data?.documentName}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Last Active Date</TableCell>
-                      <TableCell>
+          <Grid.Col span={5}>
+            <Box pt={2} mb={'md'}>
+              <Table.ScrollContainer>
+                <Table striped>
+                  <Table.Tbody style={{ fontSize: 12 }}>
+                    <Table.Tr>
+                      <Table.Td fw={600}>Document ID</Table.Td>
+                      <Table.Td>{getLegalityDocument?.data?.documentId}</Table.Td>
+                    </Table.Tr>
+                    <Table.Tr>
+                      <Table.Td fw={600}>Name</Table.Td>
+                      <Table.Td>{getLegalityDocument?.data?.documentName}</Table.Td>
+                    </Table.Tr>
+                    <Table.Tr>
+                      <Table.Td fw={600}>Last Active Date</Table.Td>
+                      <Table.Td>
                         {getLegalityDocument?.data?.creationDate &&
                           moment(
                             getLegalityDocument?.data?.creationDate?.split(' ')[0],
                             'DD-MM-YYYY'
                           ).format('MMM DD, YYYY')}
-                      </TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Status</TableCell>
-                      <TableCell>{getLegalityDocument?.data?.status}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Internal Reference no</TableCell>
-                      <TableCell>{getLegalityDocument?.data?.irn}</TableCell>
-                    </TableRow>
-                  </TableBody>
+                      </Table.Td>
+                    </Table.Tr>
+                    <Table.Tr>
+                      <Table.Td fw={600}>Status</Table.Td>
+                      <Table.Td>{getLegalityDocument?.data?.status}</Table.Td>
+                    </Table.Tr>
+                    <Table.Tr>
+                      <Table.Td fw={600}>Internal Reference no</Table.Td>
+                      <Table.Td >{getLegalityDocument?.data?.irn}</Table.Td>
+                    </Table.Tr>
+                  </Table.Tbody>
                 </Table>
-              </TableContainer>
+              </Table.ScrollContainer>
 
               <Box mt={2}>
                 {getLegalityDocument?.data?.invitations?.map((item, i) => {
@@ -208,11 +176,9 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
                     <Card key={`inv-${i}`}>
                       <div className="card-body">
                         <Box pr={2}>
-                          <Avatar>
-                            <AccountCircleRoundedIcon />
-                          </Avatar>
+                          <Avatar />
                         </Box>
-                        <Box>
+                        <Box ml={'md'}>
                           <p>
                             <strong>{item.name}</strong>
                           </p>
@@ -226,178 +192,163 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
                               <small>{item.phone}</small>
                             </p>
                           )}
-                          <div
-                            style={{ flex: 1, justifyContent: 'space-between' }}
-                          >
-                            <Chip
-                              style={{ marginRight: 10, border: 0 }}
-                              variant="outlined"
-                              size="small"
-                              label="Signed"
-                              icon={
+                          <Group>
+                            <Badge
+                              p={0}
+                              color='gray'
+                              variant="transparent"
+                              leftSection={
                                 item.signed ? (
-                                  <CheckCircleOutlineRoundedIcon
-                                    style={{ color: 'green' }}
+                                  <IconSquareRoundedCheck
+                                    color='green'
+                                    size={14}
                                   />
                                 ) : (
-                                  <HighlightOffRoundedIcon
-                                    style={{ color: 'red' }}
+                                  <IconSquareRoundedX
+                                    color='red'
+                                    size={14}
                                   />
                                 )
                               }
-                            />
+                              size='sm'
+                            >
+                              Signed
+                            </Badge>
                             {!item.signed && (
                               <>
-                                <Chip
-                                  style={{ marginRight: 10, border: 0 }}
-                                  variant="outlined"
-                                  size="small"
-                                  label="Active"
-                                  icon={
+                                <Badge
+                                  p={0}
+                                  color='gray'
+                                  variant="transparent"
+                                  leftSection={
                                     item.active ? (
-                                      <CheckCircleOutlineRoundedIcon
-                                        style={{ color: 'green' }}
+                                      <IconSquareRoundedCheck
+                                        color='green'
+                                        size={14}
                                       />
                                     ) : (
-                                      <HighlightOffRoundedIcon
-                                        style={{ color: 'red' }}
+                                      <IconSquareRoundedX
+                                        color='red'
+                                        size={14}
                                       />
                                     )
                                   }
-                                />
-                                <Chip
-                                  style={{ marginRight: 10, border: 0 }}
-                                  variant="outlined"
-                                  size="small"
-                                  label="Expired"
-                                  icon={
+                                  size='sm'
+                                >
+                                  Active
+                                </Badge>
+                                <Badge
+                                  p={0}
+                                  color='gray'
+                                  variant="transparent"
+                                  leftSection={
                                     item.expired ? (
-                                      <CheckCircleOutlineRoundedIcon
-                                        style={{ color: 'green' }}
+                                      <IconSquareRoundedCheck
+                                        color='green'
+                                        size={14}
                                       />
                                     ) : (
-                                      <HighlightOffRoundedIcon
-                                        style={{ color: 'red' }}
+                                      <IconSquareRoundedX
+                                        color='red'
+                                        size={14}
                                       />
                                     )
                                   }
-                                />
+                                  size='sm'
+                                >
+                                  Expired
+                                </Badge>
                               </>
                             )}
-                          </div>
+                          </Group>
                         </Box>
                       </div>
                       <div className="card-footer">
                         {item.active ? (
                           <Button
-                            variant="outlined"
-                            color="secondary"
+                            variant="outline"
                             onClick={ResendNotification}
-                            size="small"
+                            size='compact-sm'
                           >
                             Resend Notification
                           </Button>
                         ) : null}
                         {/* <Button variant="outlined" color="secondary" size="small">Details</Button> */}
-                        <SettingsIcon
-                          fontSize={'small'}
-                          color={'action'}
-                          onClick={(e) => handleClick(e, item)}
-                        />
-                        <Popover
-                          // id={id}
-                          open={Boolean(anchorEl)}
-                          anchorEl={anchorEl}
-                          onClose={() => {
-                            setAnchorEl(null)
-                            setSelectedItemData({})
-                          }}
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'center',
-                          }}
-                          transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'center',
-                          }}
-                        >
-                          <div className={classes.popover}>
-                            {currentUser?.role_id == 1 ? (
-                              <div
-                                className={classes.icon}
-                                onClick={() => {
-                                  setOpen(true);
-                                }}
-                              >
-                                <DeleteOutlineOutlinedIcon fontSize="small" />
-                                <Typography className={classes.text}>
-                                  Delete
-                                </Typography>
-                              </div>
-                            ) : null}
-                            <div className={classes.icon} onClick={() => navigator.clipboard.writeText(selectedItemData?.signUrl).then(
-                              () => {
-                                setAnchorEl(null)
-                                enqueueSnackbar('Sign URL copied successfully', {
-                                  anchorOrigin: {
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                  },
-                                  variant: 'success',
-                                })
-                              },
-                              () => {
-                                enqueueSnackbar('Copy failed', {
-                                  anchorOrigin: {
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                  },
-                                  variant: 'error',
-                                })
-                              }
-                            )}>
-                              <FileCopyOutlinedIcon fontSize='small' color={'action'} />
-                              <Typography className={classes.text}>Copy link</Typography>
-                            </div>
-                          </div>
-                        </Popover>
+                        <Menu shadow="md" withArrow width={150} styles={{ dropdown: { zIndex: 9999, position: 'absolute' }, itemLabel: { fontSize: 14, color: 'gray' } }}>
+                          <Menu.Target>
+                            <IconSettings
+                              color={'gray'}
+                              onClick={() => setSelectedItemData(item)}
+                            />
+                          </Menu.Target>
+                          <Menu.Dropdown>
+                            <Menu.Item
+                              leftSection={<IconTrash color='gray' size={14} />}
+                              onClick={() => {
+                                setOpen(true);
+                              }}
+                            >
+                              Delete
+                            </Menu.Item>
+                            <Menu.Item
+                              leftSection={<IconCopy color='gray' size={14} />}
+                              onClick={() => navigator.clipboard.writeText(selectedItemData?.signUrl).then(
+                                () => {
+                                  displayNotification({
+                                    message: 'Sign URL copied successfully',
+                                    variant: 'success',
+                                  })
+                                },
+                                () => {
+                                  displayNotification({
+                                    message: 'Copy Failed',
+                                    variant: 'error',
+                                  })
+                                }
+                              )}
+                            >
+                              Copy Link
+                            </Menu.Item>
+                          </Menu.Dropdown>
+                        </Menu>
                       </div>
-                      <Dialog
-                        open={open}
+                      <Modal
+                        opened={open}
                         onClose={() => {
                           setOpen(false);
                         }}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
+                        title={'Are you sure?'}
+                        size={'sm'}
+                        styles={{ root: { zIndex: 9999, position: 'absolute' } }}
                       >
-                        <DialogContent>
-                          <DialogContentText className={classes.text}>
-                            Do you want to delete the document?
-                          </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
+                        <Text>
+                          Do you want to delete the document
+                        </Text>
+                        <Group justify={'flex-end'} mt={'md'}>
                           <Button
                             onClick={() => {
                               setOpen(false);
                             }}
+                            variant='outline'
+                            size='compact-md'
                           >
                             No
                           </Button>
                           <Button
                             onClick={handleDelete}
-                            className={classes.button}
-                            variant="contained"
+                            color='red'
+                            size='compact-md'
                           >
                             Yes
                           </Button>
-                        </DialogActions>
-                      </Dialog>
+                        </Group>
+                      </Modal>
                     </Card>
                   )
                 })}
               </Box>
             </Box >
-          </Grid >
+          </Grid.Col>
         ) : null}
       </Grid >
     </Box >

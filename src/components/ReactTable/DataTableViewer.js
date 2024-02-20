@@ -52,6 +52,7 @@ const DataTableViewer = ({
   filter = true,
   columnsFilter = true,
   setPage,
+  loading = false,
   styles = {},
   totalNoOfPages,
   action = false,
@@ -201,6 +202,7 @@ const DataTableViewer = ({
         page={page}
         setPage={setPage}
         totalNoOfPages={totalNoOfPages}
+        loading={loading}
       />
       <ColumnsFilter
         title={title}

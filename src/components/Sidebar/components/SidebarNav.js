@@ -16,8 +16,8 @@ const SidebarNav = props => {
   const location = useLocation();
 
   return (
-    <List 
-      {...rest} 
+    <List
+      {...rest}
       listStyleType="none"
       className="flex flex-col gap-y-1"
     >
@@ -152,7 +152,7 @@ const SidebarNav = props => {
 
       {navLinks.map((link, i) => {
         return (
-          <ListItem 
+          <ListItem
             key={link.name + i}
             styles={{
               itemWrapper: {
@@ -163,7 +163,7 @@ const SidebarNav = props => {
               },
             }}
           >
-            <Link 
+            <Link
               label={link.name}
               leftSection={link.icon}
               onClick={() => history.push(link.href)}
@@ -172,7 +172,7 @@ const SidebarNav = props => {
             >
               {link.links?.map((subLinks, index) => {
                 return (
-                  <Link 
+                  <Link
                     key={index}
                     onClick={() => history.push(subLinks.href)}
                     label={subLinks.name}
@@ -184,7 +184,7 @@ const SidebarNav = props => {
             </Link>
           </ListItem>
         )
-      })}  
+      })}
 
       <ListItem hiddenFrom="lg">
         <Link

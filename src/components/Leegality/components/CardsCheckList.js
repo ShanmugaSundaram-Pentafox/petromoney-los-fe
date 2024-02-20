@@ -4,11 +4,12 @@ import { green } from '@material-ui/core/colors';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
 import { makeStyles } from '@material-ui/styles';
+import { IconCheckbox, IconSquare } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const useStyles = makeStyles(() => ({
-  container:{
+  container: {
     border: '1px dashed #ccc',
     borderRadius: 4,
     minWidth: 280,
@@ -57,7 +58,7 @@ const CardItem = ({ onChange, data }) => {
   const [aadharSign, setAadharSign] = useState(true);
   const [virtualSign, setVirtualSign] = useState(false);
   const onPressItem = () => {
-    onChange(!checked, {...data, signatures:['AADHAAR']});
+    onChange(!checked, { ...data, signatures: ['AADHAAR'] });
     setChecked(!checked);
   }
   const handleAadharSign = (event) => {
@@ -65,22 +66,22 @@ const CardItem = ({ onChange, data }) => {
   };
   const handleVirtualSign = (event) => {
     setVirtualSign(event.target.checked);
-    onChange(true, {...data, signatures:['AADHAAR', 'VIRTUAL_SIGN']})
+    onChange(true, { ...data, signatures: ['AADHAAR', 'VIRTUAL_SIGN'] })
   }
 
   return (
     <div style={{ display: 'flex', margin: 10 }}>
       <div className={classes.container}>
         <div className="card-body" onClick={onPressItem}>
-          <div style={{display: 'flex', padding: 12, cursor: 'pointer'}}>
+          <div style={{ display: 'flex', padding: 12, cursor: 'pointer' }}>
             <div>
               {
                 checked ?
-                  <CheckBoxOutlinedIcon style={{ color: green[300] }} />
-                  : <CheckBoxOutlineBlankIcon color="primary" />
+                  <IconCheckbox color={green[300]} />
+                  : <IconSquare />
               }
             </div>
-            <div style={{marginLeft: 10}}>
+            <div style={{ marginLeft: 10 }}>
               <p><strong>{data.first_name} {data.last_name || ''}</strong></p>
               {data.email && <p><small>{data.email}</small></p>}
               {data.mobile && <p><small>{data.mobile}</small></p>}
@@ -89,8 +90,8 @@ const CardItem = ({ onChange, data }) => {
         </div>
         {
           checked && (
-            <div style={{display: 'flex', justifyContent: 'space-evenly', borderTop: '1px dashed #ccc'}}>
-              <div className="toogle" style={{display:'flex', margin:'8px', alignItems: 'center'}}>
+            <div style={{ display: 'flex', justifyContent: 'space-evenly', borderTop: '1px dashed #ccc' }}>
+              <div className="toogle" style={{ display: 'flex', margin: '8px', alignItems: 'center' }}>
                 <Switch
                   checked={aadharSign}
                   onChange={handleAadharSign}
@@ -100,10 +101,10 @@ const CardItem = ({ onChange, data }) => {
                   disabled
                   inputProps={{ 'aria-label': 'secondary checkbox' }}
                 />
-                <Typography style={{fontSize:'10px'}}>Aadhar Sign</Typography>
+                <Typography style={{ fontSize: '10px' }}>Aadhar Sign</Typography>
               </div>
               <Divider orientation="vertical" flexItem />
-              <div style={{display:'flex',margin:'5px', alignItems: 'center'}}>
+              <div style={{ display: 'flex', margin: '5px', alignItems: 'center' }}>
                 <Switch
                   checked={virtualSign}
                   onChange={handleVirtualSign}
@@ -112,7 +113,7 @@ const CardItem = ({ onChange, data }) => {
                   name="state"
                   inputProps={{ 'aria-label': 'secondary checkbox' }}
                 />
-                <Typography style={{fontSize:'10px'}} >Virtual Sign</Typography>
+                <Typography style={{ fontSize: '10px' }} >Virtual Sign</Typography>
               </div>
             </div>
           )

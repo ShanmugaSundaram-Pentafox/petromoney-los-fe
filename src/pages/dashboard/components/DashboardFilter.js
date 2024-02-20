@@ -41,6 +41,9 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
       case 'D':
         setSelectedPeriod({
           from: today,
+
+
+
           to: today,
         })
         break;
@@ -153,7 +156,7 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
   }
 
   return (
-    <Box p={3}>
+    <Box p={3} mb={0}>
       <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {

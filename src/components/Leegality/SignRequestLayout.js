@@ -16,6 +16,7 @@ import { getLoanDocumentHistoryById } from '../../services/loans.service';
 import apiCall from '../../utils/api.util';
 import { Box, Button, Grid, Group, Loader, Modal, NumberInput, Text } from '@mantine/core';
 import classes from './SignRequestLayout.module.css'
+import { displayNotification } from '../CommonComponents/Notification/displayNotification';
 
 const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId, loanId, callback, loanAmount, productId, currentUser, getStatus = false }) => {
   const [dealership, setDealership] = useState({})
@@ -36,7 +37,6 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
   const [resign, setResign] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const queryClient = useQueryClient();
-  const { enqueueSnackbar } = useSnackbar();
 
   const getTrancheStatus = useQuery({
     queryKey: ['getTrancheStatus', dealershipId],
@@ -47,24 +47,18 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
   const handleResign = () => {
     deleteResignDocument({ dealershipId, docId: loansData?.document_id })
       .then((data) => {
-        enqueueSnackbar('Document Override successfully', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: 'Document Override successfully',
           variant: 'success',
-        })
+        });
         onClose()
       })
       .catch(err => {
         console.log(err)
-        enqueueSnackbar(err?.message || 'Document Override Failed', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: err?.message || 'Document Override successfully',
           variant: 'error',
-        })
+        });
       })
   }
 
@@ -85,7 +79,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
           setLoansData();
         })
     }
-  }, [reinitiate]);
+  }, [reinitiate, opened]);
 
   useEffect(() => {
     if (loansData?.document_id) {
@@ -95,11 +89,8 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
         })
         .catch(err => {
           console.log(err);
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: err,
             variant: 'error',
           });
         });
@@ -117,13 +108,10 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
         .catch(err => {
           setPdfLoading(false)
           console.log('getPdfContent >> ', err);
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: err,
             variant: 'error',
-          });
+          })
         })
     }
     if (dealershipId && !loansData?.document_id || reinitiate) {
@@ -223,14 +211,10 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
       })
         .then(res => {
           if (res.status === 'SUCCESS') {
-            enqueueSnackbar(res.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
+            displayNotification({
+              message: res?.message,
               variant: 'success',
-            }
-            )
+            })
             setTimeout(() => {
               ReloadData();
               onClose();
@@ -238,11 +222,8 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
             }, 3000);
           } else {
             setHideSend(false)
-            enqueueSnackbar(res.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
+            displayNotification({
+              message: res?.message,
               variant: 'error',
             })
             console.log('>> Document Details status error >> ', res)
@@ -277,13 +258,10 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
                 queryClient.invalidateQueries(['getLegality-document']);
               }
             } else {
-              enqueueSnackbar(res?.message, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
+              displayNotification({
+                message: res?.message,
                 variant: 'error',
-              });
+              })
               setActiveState();
             }
           })
@@ -367,7 +345,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
               </Box>
             )
         }
-        <Group gap={'8px'} justify={'flex-end'} style={{ display: 'flex' }}>
+        <Group gap={'8px'} justify={'flex-end'} style={{ display: 'flex' }} mt={'md'}>
           <div style={{ marginRight: '20px' }}>
             {
               status && (

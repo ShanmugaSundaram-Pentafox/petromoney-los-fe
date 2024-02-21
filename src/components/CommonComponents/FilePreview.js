@@ -1,4 +1,4 @@
-import { Grid, Text } from '@mantine/core';
+import { Text } from '@mantine/core';
 import { Avatar, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/styles';
@@ -34,24 +34,24 @@ const useStyles = makeStyles(() => ({
 }))
 
 const PreviewWrapper = styled.div`
+  width:100%;
+  .image {
+    width: 100%;
+    object-fit: contain;
+  }
+  .iframe-container {
+    height:72vh;
+    overflow: hidden;
+    padding-top: 45%;
+    position: relative;
+  }
+  .iframe-container iframe {
     width:100%;
-    .image {
-        width: 100%;
-        object-fit: contain;
-        }
-    .iframe-container {
-        height:72vh;
-        overflow: hidden;
-        padding-top: 45%;
-        position: relative;
-    }
-    .iframe-container iframe {
-        width:100%;
-        height:100%;
-        left: 0;
-        position: absolute;
-        top: 0;
-    }
+    height:100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+  }
 `;
 
 export const ViewData = ({ title, value, endIcon }) => {
@@ -71,9 +71,11 @@ export const ViewData = ({ title, value, endIcon }) => {
     </>
   )
 }
+
 export const AvatarCard = ({ file, title, tooltip }) => {
   const classes = useStyles()
   const [imageModal, setImageModal] = useState({})
+  
   return (
     <>
       <div onClick={() => setImageModal({ open: true, image: file, type: file?.endsWith('.pdf') })} style={{ margin: 10, paddingLeft: 10 }} tabIndex={0} role="button" onKeyDown={'click'}>
@@ -118,10 +120,16 @@ const FilePreview = ({ data, title }) => {
             </div>
           )
           :
-          <img className="image" src={signedUrl} alt='viewer' />
+          // eslint-disable-next-line react/jsx-indent
+          <img 
+            className="image" 
+            src={signedUrl} 
+            alt='viewer' 
+          />
       }
     </PreviewWrapper>
   )
 
 }
+
 export default FilePreview;

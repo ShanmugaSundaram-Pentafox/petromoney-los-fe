@@ -88,7 +88,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
     setOpenModal(!openModal)
   }
   const updateLoanStatus = () => {
-    if(remarks){
+    if (remarks) {
       setLoading(true)
       let reqBody = {
         user_id: currentUser.id,
@@ -127,10 +127,6 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
   return (
     <>
       <div className={classes.wrapper}>
-        <div className={classes.wrapperTitle}>
-          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-          <CloseIcon className={classes.closeIcon} onClick={onClose} />
-        </div>
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
           <WorkingSheetDrawer id={id} />
@@ -156,7 +152,7 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
             <DialogContentText id="approval-remarks-desc">
               Please enter remarks for approval.
             </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true}/>
+            <TextEditor setJSON={setRemarks} toolBar={true} />
             {/* <TextInput
               multiline
               alignTop
@@ -171,13 +167,13 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
               }}
             /> */}
             {
-              errorStatus && 
-                <Alert severity="error" style={{padding: '0px 16px'}}>{errorStatus}</Alert>
+              errorStatus &&
+              <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
             }
           </div>
-          <div style={{display: 'flex', justifyContent: 'center', margin: '8px 0px 5px 0px'}}>
-            <Button variant='outlined' style={{marginRight:8}} onClick={handleModal}>Cancel</Button>
-            <LoaderButton 
+          <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0px 5px 0px' }}>
+            <Button variant='outlined' style={{ marginRight: 8 }} onClick={handleModal}>Cancel</Button>
+            <LoaderButton
               variant='contained'
               color='primary'
               isLoading={loading}

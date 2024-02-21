@@ -1,4 +1,4 @@
-import { Tabs, Badge } from '@mantine/core';
+import { Tabs, Badge, Text } from '@mantine/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -145,7 +145,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   useMount(() => {
     const queryString = window.location.hash;
     const test = queryString.split('=');
-    setActiveTab(toInteger(test[1]))
+    setActiveTab(test[1])
   });
   let cardData = [
     { label: 'Dealership ID', value: dealershipData?.data?.id },
@@ -155,14 +155,16 @@ const DealershipDetails = ({ currentUser, match }) => {
     { label: 'Email', value: mainApplicant?.data?.email }
   ]
   usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
+
   return (
     <>
       <Tabs
-        color="indigo"
+        color="blue.1"
         variant="pills"
         orientation="vertical"
         onChange={onChangeTab}
-        value={activeTab || 'dealership'}
+        value={activeTab}
+        // defaultValue={'dealership'}
         classNames={{
           root: 'gap-4',
           tabLabel: 'flex grow items-center gap-2',
@@ -176,9 +178,8 @@ const DealershipDetails = ({ currentUser, match }) => {
                 key={1}
                 value={item?.value}
               >
-                <Badge size="sm" circle variant={(item?.value || 'dealership') === activeTab ? "white" : "filled"} color="indigo">{i + 1}</Badge>
-
-                {item?.name}
+                <Badge size="sm" circle variant={(item?.value) === activeTab ? "white" : "filled"} color="blue.3">{i + 1}</Badge>
+                <Text c={(item?.value) === activeTab ? "blue.9" : "gray"}>{item?.name}</Text>
               </Tabs.Tab>
             )
           })

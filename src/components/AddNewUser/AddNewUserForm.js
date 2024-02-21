@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import { addNewUser, getAllUserRoles } from '../../services/users.service';
-import { displayNotification } from '../CommonComponents/Notification/displayNotification.ts';
+import { displayNotification } from '../CommonComponents/Notification/displayNotification';
 import { Button } from '../Mantine/Button/Button';
 // import TextInput from '../TextInput/TextInput';
 

@@ -116,8 +116,8 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
       cell: ({ row }) => (
         <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
           <Tooltip label={"eSign Application"} withArrow>
-            <ActionIcon variant='subtle' onClick={() => { setloanId(row?.original?.['id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
-              <ESignIcon width={24} color='blue' />
+            <ActionIcon size="xs" color="blue" variant="subtle" onClick={() => { setloanId(row?.original?.['id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
+              <ESignIcon />
             </ActionIcon>
           </Tooltip>
         </CheckAllowed>

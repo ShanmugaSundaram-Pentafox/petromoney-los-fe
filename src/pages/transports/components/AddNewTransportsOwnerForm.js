@@ -772,7 +772,7 @@ const AddNewTransportsOwnerForm = ({
 
                 <Grid.Col span={{ base: 12, sm: 6 }}>
                   <Flex h="48" align="center" justify="space-between">
-                    <Text fz="xs">Mobile number linked with AADHAR?</Text>
+                    <Text fz="xs">Mobile number linked with Aadhaar?</Text>
                     <Switch
                       color="indigo"
                       size="md"

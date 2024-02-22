@@ -183,8 +183,10 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         showDealerEditForm={showDealerEditForm} />
 
       <RightSideDrawer
+        size="lg"
         opened={showDealerEditForm}
         onClose={() => setShowDealerEditForm(false)}
+        title={modelType === 'DEALER' ? 'Dealer Edit Form' : modelType === 'GUARANTOR' ? 'Guarantor Edit Form' : 'CoApplicant Edit Form'}
       >
         <DealerEditSideWrapper
           id={id}

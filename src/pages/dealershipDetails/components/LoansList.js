@@ -1,6 +1,5 @@
 import { Flex, Stack, Table, Text, Title } from '@mantine/core';
 import { Select as MSelect } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
@@ -20,27 +19,8 @@ import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../..
 import apiCall from '../../../utils/api.util';
 import { isAllowed } from '../../../utils/cerbos';
 
-
-const useStyles = makeStyles({
-  wrapper: {
-    padding: 8
-  },
-  title: {
-    paddingLeft: 8,
-    marginBottom: 8
-  },
-  table: {
-    padding: 8
-  },
-  editor: {
-    border: '1px solid gray',
-    minHeight: '6em'
-  }
-});
-
 const LoansList = ({ id, currentUser, titleAlign }) => {
   const queryClient = useQueryClient()
-  const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const [remarks, setRemarks] = useState();
   const [dialogState, setDialogState] = useState({});

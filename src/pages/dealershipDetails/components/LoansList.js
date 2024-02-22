@@ -1,23 +1,14 @@
+import { Flex, Stack, Table, Text, Title } from '@mantine/core';
 import { Select as MSelect } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import Select from 'react-select';
 import AccountStatement from './AccountStatement';
+import { Button } from '../../../components/Mantine/Button/Button';
+import { Modal } from '../../../components/Mantine/Modal/Modal';
 import Currency from '../../../components/Number/Currency';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
@@ -60,6 +51,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id), { refetchOnWindowFocus: false })
   const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id), { refetchOnWindowFocus: false })
+
   useEffect(() => {
     if (!isLoading) {
       if (loanData.length) {
@@ -135,6 +127,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const submitRemarks = () => {
     processLoan({ ...dialogState.data });
   }
+
   const updateApplicationStatus = (state) => {
     apiCall(`dealership/${id}/loans/${loanData[0].id}`, {
       method: 'POST',
@@ -160,44 +153,51 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
 
   if (!loanData || !loanData.length)
     return (
-      <div className={classes.wrapper}>
-        <Typography variant="h5" align={titleAlign} className={classes.title}>No Loan details found</Typography>
-      </div>
+      <Stack mih="320" align="center" justify="center">
+        <Text>No Loan details found</Text>
+      </Stack>
     );
+
   return (
-    <div className={classes.wrapper}>
-      <Typography variant="h5" align={titleAlign} className={classes.title}>Loans</Typography>
-      <Table className={classes.table} size="small" aria-label="Dealers">
-        <TableHead>
-          <TableRow>
-            <TableCell>Type</TableCell>
-            <TableCell align="right">Req</TableCell>
-            <TableCell align="right">Appr</TableCell>
-            <TableCell align="right">Disb</TableCell>
-            <TableCell align="center">Status</TableCell>
-            <TableCell align="center">Application Status</TableCell>
-            <TableCell align="center">Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+    <>
+      <Title order={3} mb="lg">Loans</Title>
+      
+      <Table fz="xs" aria-label="Dealers">
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Type</Table.Th>
+            <Table.Th>Req</Table.Th>
+            <Table.Th>Appr</Table.Th>
+            <Table.Th>Disb</Table.Th>
+            <Table.Th>Status</Table.Th>
+            <Table.Th>Application Status</Table.Th>
+            <Table.Th ta="center">Actions</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+
+        <Table.Tbody>
           {Array.isArray(loanData) && loanData?.map(row => (
-            <TableRow key={row.id}>
-              <TableCell>{row.type}</TableCell>
-              <TableCell align="right"><Currency value={row.amount_requested} /></TableCell>
-              <TableCell align="right">
+            <Table.Tr key={row.id}>
+              <Table.Td className="whitespace-nowrap">{row.type}</Table.Td>
+              
+              <Table.Td><Currency value={row.amount_requested} /></Table.Td>
+              
+              <Table.Td>
                 <Tooltip title={row.approval_remarks} arrow>
                   <Currency value={row.amount_approved} />
                 </Tooltip>
-              </TableCell>
-              <TableCell align="right">
+              </Table.Td>
+
+              <Table.Td>
                 <Tooltip title={row.disbursement_approval_remarks} arrow>
                   <Currency value={row.amount_disbursed} />
                 </Tooltip>
-              </TableCell>
-              <TableCell align="center">{row.status}</TableCell>
-              <TableCell align="center">
-                {
-                  row?.status?.toLowerCase() !== 'disbursed' && row?.status?.toLowerCase() !== 'rejected' &&
+              </Table.Td>
+              
+              <Table.Td>{row.status}</Table.Td>
+              
+              <Table.Td>
+                {row?.status?.toLowerCase() !== 'disbursed' && row?.status?.toLowerCase() !== 'rejected' && (
                   <MSelect
                     fullWidth
                     native
@@ -217,122 +217,100 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                       status?.map((item, i) => item.application_state !== row.application_state && <option key={i} value={item.id}>{item.application_state}</option>)
                     }
                   </MSelect>
-                }
-              </TableCell>
-              <TableCell align="center">
-                {
-                  row?.status?.toLowerCase() === 'submitted' && editable && (
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      size='small'
-                      disabled={loading}
-                      className={classes.btnSuccess}
-                      onClick={getRemarks(row)}>
-                      {
-                        loading ? 'Pleaes wait...' : 'Send for review'
-                      }
-                    </Button>
-                  )
-                }
-                {
-                  row?.status?.toLowerCase() === 'loan_review' && editable && (
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      size='small'
-                      disabled={loading}
-                      className={classes.btnSuccess}
-                      onClick={getRemarks(row)}>
-                      {
-                        loading ? 'Pleaes wait...' : 'Send for Approval'
-                      }
-                    </Button>
-                  )
-                }
-                {
-                  row?.status?.toLowerCase() === 'approved' && editable && (
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      fontSize="small"
-                      disabled={loading}
-                      className={classes.btnSuccess}
-                      onClick={getRemarks(row)}>
-                      {
-                        loading ? 'Pleaes wait...' : 'Send for Disbursement Approval'
-                      }
-                    </Button>
-                  )
-                }
-                {
-                  row?.status?.toLowerCase() === 'loan_approval' && 'Pending for approval'
-                }
-                {
-                  row?.status?.toLowerCase() === 'disbursement_approval' && 'Pending for disbursement approval'
-                }
-              </TableCell>
-            </TableRow>
+                )}
+              </Table.Td>
+
+              <Table.Td>
+                {row?.status?.toLowerCase() === 'submitted' && editable && (
+                  <Button
+                    variant="outline"
+                    size="xs"
+                    onClick={getRemarks(row)}
+                    disabled={loading}
+                  >
+                    {loading ? 'Please wait...' : 'Send for review'}
+                  </Button>
+                )}
+
+                {row?.status?.toLowerCase() === 'loan_review' && editable && (
+                  <Button
+                    variant="outline"
+                    size="xs"
+                    onClick={getRemarks(row)}
+                    disabled={loading}
+                  >
+                    {loading ? 'Please wait...' : 'Send for Approval'}
+                  </Button>
+                )}
+
+                {row?.status?.toLowerCase() === 'approved' && editable && (
+                  <Button
+                    variant="outline"
+                    size="xs"
+                    onClick={getRemarks(row)}
+                    disabled={loading}
+                  >
+                    {loading ? 'Please wait...' : 'Send for Disbursement Approval'}
+                  </Button>
+                )}
+
+                {row?.status?.toLowerCase() === 'loan_approval' && 'Pending for approval'}
+                
+                {row?.status?.toLowerCase() === 'disbursement_approval' && 'Pending for disbursement approval'}
+              </Table.Td>
+            </Table.Tr>
           ))}
-        </TableBody>
+        </Table.Tbody>
       </Table>
-      {
-        loanData[0]?.status === 'disbursed' && isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.statement) &&
+
+      {loanData[0]?.status === 'disbursed' && isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.statement) && (
         <div style={{ marginTop: 18 }}>
           <AccountStatement id={id} currentUser={currentUser} />
         </div>
-      }
+      )}
 
-      <Dialog
+      <Modal
+        size="lg"
+        centered
         open={dialogState.open}
-        onClose={() => setDialogState({})}
-        aria-labelledby="approval-remarks"
-        aria-describedby="approval-remarks-desc"
+        close={() => setDialogState({})}
+        title={`Remarks: Send for ${dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}`}
       >
-        <DialogTitle id="approval-remarks">Remarks: Send for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}</DialogTitle>
-        <DialogContent>
-          {
-            dialogState.data?.status?.toLowerCase() === 'submitted' && (
-              <div style={{ marginBottom: 20 }}>
-                <DialogContentText id="approval-remarks-desc">
-                  Please choose whom did you want to sent for review.
-                </DialogContentText>
-                <Select
-                  isClearable
-                  name='type'
-                  onChange={setUser}
-                  options={userRole}
-                  menuPlacement='bottom'
-                  menuPosition='fixed'
-                  maxMenuHeight='200px'
+        <Stack mih="320" gap="md">
+          {dialogState.data?.status?.toLowerCase() === 'submitted' && (
+            <Stack gap="4">
+              <Text id="approval-remarks-desc">Please choose whom did you want to sent for review</Text>
+              <Select
+                isClearable
+                name='type'
+                onChange={setUser}
+                options={userRole}
+                maxMenuHeight="200px"
+              />
+            </Stack>
+          )}
+            
+          {dialogState.data?.status?.toLowerCase() === 'loan_review' && (
+            <Stack gap="4">
+              <Text id="approval-remarks-desc">Please choose whom did you want to sent for approval</Text>
 
-                />
-              </div>
-            )
-          }
-          {
-            dialogState.data?.status?.toLowerCase() === 'loan_review' && (
-              <div style={{ marginBottom: 20 }}>
-                <DialogContentText id="approval-remarks-desc">
-                  Please choose whom did you want to sent for approval.
-                </DialogContentText>
-                <Select
-                  isClearable
-                  name='review'
-                  onChange={setUser}
-                  options={userRole}
-                  menuPlacement='bottom'
-                  menuPosition='fixed'
-                  maxMenuHeight='250px'
-                />
-              </div>
-            )
-          }
-          <div>
-            <DialogContentText id="approval-remarks-desc">
-              Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}.
-            </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true} />
+              <Select
+                isClearable
+                name='review'
+                onChange={setUser}
+                options={userRole}
+                maxMenuHeight="250px"
+              />
+            </Stack>
+          )}
+
+          <Stack gap="4">
+            <Text id="approval-remarks-desc">Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}</Text>
+            <TextEditor 
+              setJSON={setRemarks} 
+              toolBar={true} 
+            />
+
             {/* <TextInput
               multiline
               alignTop
@@ -346,18 +324,36 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                 setRemarks(e.target.value);
               }}
             /> */}
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogState({})} color="primary">
-            Cancel
-          </Button>
-          <Button disabled={!remarks || loading} onClick={submitRemarks} color="primary">
-            {loading ? 'Please wait...' : 'Confirm'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+          </Stack>
+          
+          <Flex
+            align="center"
+            justify="end"
+            gap="xs"
+            mt="auto"
+          >
+            <Button 
+              colorScheme="secondary"
+              variant="outline"
+              size="md"
+              onClick={() => setDialogState({})}
+            >
+              Cancel
+            </Button>
+
+            <Button 
+              colorScheme="primary"
+              variant="filled"
+              size="md"
+              onClick={submitRemarks}
+              disabled={!remarks || loading} 
+            >
+              {loading ? 'Please wait...' : 'Confirm'}
+            </Button>
+          </Flex>
+        </Stack>
+      </Modal>
+    </>
   )
 }
 

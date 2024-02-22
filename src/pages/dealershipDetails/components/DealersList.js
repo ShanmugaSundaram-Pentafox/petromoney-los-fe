@@ -183,7 +183,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         showDealerEditForm={showDealerEditForm} />
 
       <RightSideDrawer
-        open={showDealerEditForm}
+        opened={showDealerEditForm}
         onClose={() => setShowDealerEditForm(false)}
       >
         <DealerEditSideWrapper

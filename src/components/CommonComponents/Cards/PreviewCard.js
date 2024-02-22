@@ -215,7 +215,7 @@ export const PreviewCardBank = ({ id, children, onVerify, onEdit, action = true,
                 <div className='card-footer'>
                   {data?.is_active == 1
                     ? (<>
-                      <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankSync}>
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankActivateDeactivate}>
                         <Button
                           size="small"
                           variant="outlined"
@@ -243,7 +243,7 @@ export const PreviewCardBank = ({ id, children, onVerify, onEdit, action = true,
                       </CheckAllowed>
                     </>
                     ) : (
-                      <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankSync}>
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankActivateDeactivate}>
                         <Button
                           size="small"
                           variant="outlined"

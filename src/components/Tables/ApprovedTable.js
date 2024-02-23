@@ -126,7 +126,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
     columnHelper.accessor('field_officer', {
       header: 'Field Officer',
     }),
-    columnHelper.accessor('approved_amount', {
+    columnHelper.accessor('amount_approved', {
       header: 'Approved Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value.getValue()} />

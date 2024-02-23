@@ -65,10 +65,6 @@ const ApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, e
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.wrapperTitle}>
-        <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-        <CloseIcon className={classes.closeIcon} onClick={onClose} />
-      </div>
       <div className={classes.contentWrapper}>
         <DealershipData data={data} readOnly={true} />
         <WorkingSheetDrawer id={id} />

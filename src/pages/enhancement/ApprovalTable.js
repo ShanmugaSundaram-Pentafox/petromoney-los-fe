@@ -16,7 +16,7 @@ import { dateCustomSort } from '../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
-import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification.ts';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 
 const useStyles = makeStyles(theme => ({

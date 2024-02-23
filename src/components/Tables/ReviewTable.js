@@ -86,7 +86,7 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
     columnHelper.accessor('amount_requested', {
       header: 'Req. Amount',
       enableColumnFilter: false,
-      cell: (value) => <Currency value={value} />
+      cell: (value) => <Currency value={value?.getValue()} />
     }),
     columnHelper.accessor('modified_date', {
       header: 'Req. Date',

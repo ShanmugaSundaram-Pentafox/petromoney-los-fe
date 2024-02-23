@@ -1,14 +1,14 @@
 import { notifications } from "@mantine/notifications";
 import notificationVariant from "./notificationVarient";
 
-interface optionsType {
-  message: string;
-  variant: string;
-  id?: string;
-  loading?: boolean;
-  description?: string;
-  autoClose?: boolean;
-}
+// interface optionsType {
+//   message: string;
+//   variant: string;
+//   id?: string;
+//   loading?: boolean;
+//   description?: string;
+//   autoClose?: boolean;
+// }
 
 /**
  * A function to display a notification with a message, variant, and other optional properties.
@@ -20,24 +20,29 @@ interface optionsType {
  * @param {string|null} [description=null] - The description to display in the notification.
  * @param {boolean} [autoClose=true] - Whether the notification should automatically close after 5 seconds.
  */
-export const displayNotification = (
-  options: optionsType
-) => {
+export const displayNotification = ({
+  message,
+  variant,
+  loading,
+  description,
+  id = `notification-${Math.random()}`,
+  autoClose = true,
+}) => {
 
-  let defaultValues: optionsType = {
-    id: `notification-${Math.random()}`,
-    autoClose: true,
-    ...options,
-  }
+  // let defaultValues: optionsType = {
+  //   id: `notification-${Math.random()}`,
+  //   autoClose: true,
+  //   ...options,
+  // }
 
-  var color = notificationVariant[defaultValues?.variant];
+  var color = notificationVariant[variant];
 
   return notifications.show({
-    id: defaultValues?.id,
-    message: defaultValues?.message,
-    title: defaultValues?.description,
-    loading: defaultValues?.loading,
-    autoClose: defaultValues?.autoClose ? 5000 : false,
+    id: id,
+    message: message,
+    title: description,
+    loading: loading,
+    autoClose: autoClose ? 5000 : false,
     styles: (theme) => ({
       root: {
         backgroundColor: color,

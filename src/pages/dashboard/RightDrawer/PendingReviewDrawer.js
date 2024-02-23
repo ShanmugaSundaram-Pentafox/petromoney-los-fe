@@ -86,7 +86,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
 
 
   useMount(() => {
-    if(isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval)) {
+    if (isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval)) {
       getUserRoleForReview('is_approve=1')
         .then(res => {
           let d = [];
@@ -103,7 +103,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   })
 
   const handleApprovalModal = () => {
-    if(info?.amount_requested > 0) {
+    if (info?.amount_requested > 0) {
       setApprovalModal(!approvalModal)
     }
     else {
@@ -164,10 +164,6 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   return (
     <>
       <div className={classes.wrapper}>
-        <div className={classes.wrapperTitle}>
-          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-          <CloseIcon className={classes.closeIcon} onClick={onClose} />
-        </div>
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
           <WorkingSheetDrawer id={id} />
@@ -216,7 +212,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             <TextEditor setJSON={setRemarks} toolBar={true} />
             {
               errorStatus &&
-                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
+              <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
             }
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>

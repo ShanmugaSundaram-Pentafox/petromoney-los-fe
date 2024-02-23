@@ -4,7 +4,7 @@ import DashCard from '../../../components/CommonComponents/Cards/DashCard';
 
 const LoanStats = ({ selectedStatsCard, handleClick, chartData, totalLoans }) => {
   return (
-    <Paper shadow="0" p="lg">
+    <Paper shadow="0" p="xs">
       <>
         <Text fz={'md'} mb="sm" className="text-gray-500">
           Loans&apos; Statistics {totalLoans ? `(${totalLoans})` : null}

@@ -139,10 +139,6 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
   return (
     <>
       <div className={classes.wrapper}>
-        <div className={classes.wrapperTitle}>
-          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-          <CloseIcon className={classes.closeIcon} onClick={onClose} />
-        </div>
         <div className={classes.contentWrapper}>
           <DealershipData data={data} readOnly={true} />
           <WorkingSheetDrawer id={id} />
@@ -169,7 +165,7 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
             <TextEditor setJSON={setRemarks} toolBar={true} />
             {
               errorStatus &&
-                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
+              <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
             }
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0px 5px 0px' }}>

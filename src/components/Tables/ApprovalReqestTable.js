@@ -91,7 +91,7 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
     columnHelper.accessor('field_officer', {
       header: 'Field Officer',
     }),
-    columnHelper.accessor('amount_request', {
+    columnHelper.accessor('amount_requested', {
       header: 'Req. Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />

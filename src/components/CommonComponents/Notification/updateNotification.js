@@ -1,14 +1,14 @@
 import { notifications } from "@mantine/notifications";
 import notificationVariant from "./notificationVarient";
 
-interface optionsType {
-  message: string;
-  variant: string;
-  id?: string;
-  loading?: boolean;
-  description?: string;
-  autoClose?: boolean;
-}
+// interface optionsType {
+//   message: string;
+//   variant: string;
+//   id?: string;
+//   loading?: boolean;
+//   description?: string;
+//   autoClose?: boolean;
+// }
 
 /**
  * Updates the notification with the provided message, color, id, loading, description, and autoClose.
@@ -20,23 +20,28 @@ interface optionsType {
  * @param {string} description - The description of the notification.
  * @param {boolean} autoClose - Whether or not the notification should automatically close.
  */
-export const updatedNotification = (
-  options: optionsType
-) => {
+export const updatedNotification = ({
+  message,
+  variant,
+  id,
+  loading,
+  description,
+  autoClose = true,
+}) => {
 
-  let defaultValues: optionsType = {
-    autoClose: true,
-    ...options,
-  }
+  // let defaultValues: optionsType = {
+  //   autoClose: true,
+  //   ...options,
+  // }
 
-  var color = notificationVariant[defaultValues?.variant];
+  var color = notificationVariant[variant];
 
   return notifications.update({
-    id: defaultValues?.id || 'notification',
-    message: defaultValues?.message,
-    title: defaultValues?.description,
-    loading: defaultValues?.loading,
-    autoClose: defaultValues?.autoClose ? 5000 : false,
+    id: id || 'notification',
+    message: message,
+    title: description,
+    loading: loading,
+    autoClose: autoClose ? 5000 : false,
     styles: (theme) => ({
       root: {
         backgroundColor: color,

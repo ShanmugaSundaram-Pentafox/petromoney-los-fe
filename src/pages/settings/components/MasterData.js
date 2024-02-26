@@ -1,6 +1,6 @@
 import { Box, Paper, SimpleGrid, Text } from '@mantine/core';
 import { Drawer, makeStyles } from '@material-ui/core';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import AssignProducts from './AssignProducts';
 import MasterCity from './MasterCity';
 import MasterCollectionRemarks from './MasterCollectionRemarks';
@@ -9,7 +9,7 @@ import MasterEmailGroup from './MasterEmailGroup';
 import Products from './Products';
 import Zones from './Zones';
 import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
-import {resources_id, action_id} from '../../../config/accessControl';
+import { resources_id, action_id } from '../../../config/accessControl';
 import { ReactComponent as AssetIcon } from '../../../icons/assets.svg';
 import { ReactComponent as BunkIcon } from '../../../icons/bunk.svg';
 import { ReactComponent as BusinessIcon } from '../../../icons/business.svg';
@@ -36,21 +36,21 @@ const useStyles = makeStyles({
     gap: 8,
     cursor: 'pointer',
     transition: 'all 0.35s',
-
+    background: '#8080800d',
     '&:hover': {
       backgroundColor: '#e6e6e6',
     },
   },
 })
 
-function MasterData({currentUser}) {
+function MasterData({ currentUser }) {
   const classes = useStyles();
   const [openForm, setOpenForm] = useState()
   const [customForm, setCustomForm] = useState()
 
   return (
     <Paper p="lg">
-      <SimpleGrid cols={{ base: 3, sm: 4, md: 5, lg: 6 }} spacing="lg">
+      <SimpleGrid cols={{ base: 3, sm: 4, md: 5, lg: 6 }} spacing="md">
         <div>
           <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.zones}>
             <Box className={classes.content} onClick={() => setCustomForm('Zone')}>
@@ -161,16 +161,16 @@ function MasterData({currentUser}) {
       </SimpleGrid>
 
       <RightSideDrawer
-        title={openForm} 
+        title={openForm}
         opened={openForm}
         onClose={() => setOpenForm()}
       >
-        <Contain 
-          title={openForm} 
-          label={'name'} 
-          setStateBtn={openForm === 'State' ? true : false} 
-          regionForm={openForm === 'Region' ? true : false} 
-          assetForm={openForm === 'Asset Type' ? true : false} 
+        <Contain
+          title={openForm}
+          label={'name'}
+          setStateBtn={openForm === 'State' ? true : false}
+          regionForm={openForm === 'Region' ? true : false}
+          assetForm={openForm === 'Asset Type' ? true : false}
           callback={() => setOpenForm()}
         />
       </RightSideDrawer>
@@ -180,7 +180,7 @@ function MasterData({currentUser}) {
         onClose={() => setCustomForm()}
         variant="temporary"
       >
-        <Products currentUser={currentUser} title={customForm} callback={setCustomForm}/>
+        <Products currentUser={currentUser} title={customForm} callback={setCustomForm} />
       </Drawer>
       <Drawer
         anchor="right"
@@ -188,7 +188,7 @@ function MasterData({currentUser}) {
         onClose={() => setCustomForm()}
         variant="temporary"
       >
-        <Zones currentUser={currentUser} title={customForm} callback={setCustomForm}/>
+        <Zones currentUser={currentUser} title={customForm} callback={setCustomForm} />
       </Drawer>
       <Drawer
         anchor="right"

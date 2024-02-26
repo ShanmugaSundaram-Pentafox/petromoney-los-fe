@@ -176,7 +176,7 @@ const Sidebar = props => {
     {
       id: action_id?.navigation.report,
       name: 'Report',
-      href: '/reports',
+      // href: '/reports',
       icon: <DocumentTextIcon className="w-5 h-5" />,
       links: [
         {
@@ -256,7 +256,7 @@ const Sidebar = props => {
         },
         {
           name: 'Passbook',
-          href: '/transports/fastag/details',
+          href: '/transport/fastag/details',
           icon: <BookOpenIcon className="w-5 h-5" />
         }
       ]

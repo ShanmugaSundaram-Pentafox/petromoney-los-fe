@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActionIcon, Box, Grid, Group, Popover, Select, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Grid, Group, Image, Popover, Select, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import ReactTable from './ReactTable';
 import { IconDownload, IconFilter, IconSearch, IconTableRow } from '@tabler/icons-react';
 import { exportToExcel } from "react-json-to-excel";
@@ -48,6 +48,8 @@ const DataTableViewer = ({
   excelDownload = false,
   apiSearch,
   onRowClick,
+  noDataText = "No data yet!",
+  noDataSubText = "No data found in this section",
   page,
   filter = true,
   columnsFilter = true,
@@ -106,104 +108,137 @@ const DataTableViewer = ({
           <Box>
             <Text style={{ fontSize: '16px' }} fw={500}>{title}</Text>
           </Box>
-          <Box mr={'sm'}>
-            <Box style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
-              <TextInput
-                placeholder="Search"
-                onChange={(e) => {
-                  apiSearch
-                    ? apiSearch(e.target.value)
-                    : setSearch(e.target.value);
-                }}
-                mx={0}
-                size='xs'
-                icon={<IconSearch size={16} />}
-              />
-              {columnsFilter
-                ? <Tooltip
-                  label={<Text size={"xs"}>Manage Columns</Text>}
-                  color={"dark"}
-                  transitionProps={{ transition: "pop", duration: 300 }}
-                  withArrow
-                  position='bottom'
-                >
-                  <ActionIcon size={'md'} variant='outline' onClick={open} color='gray.4'>
-                    <IconTableRow size={20} style={{ cursor: 'pointer' }} color='#4196f0' />
-                  </ActionIcon>
-                </Tooltip>
-                : null
-              }
-              {filter
-                ? <Popover opened={opened} onChange={setOpened} position="left-start" withArrow shadow="md">
-                  <Popover.Target>
-                    <Tooltip
-                      label={<Text size={"xs"}>Filter Rows</Text>}
+          {(!loading && Array.isArray(rowData) && !rowData.length)
+            ? null
+            : (
+              <Box mr={'sm'}>
+                <Box style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
+                  <TextInput
+                    placeholder="Search"
+                    onChange={(e) => {
+                      apiSearch
+                        ? apiSearch(e.target.value)
+                        : setSearch(e.target.value);
+                    }}
+                    mx={0}
+                    size='xs'
+                    icon={<IconSearch size={16} />}
+                  />
+                  {columnsFilter
+                    ? <Tooltip
+                      label={<Text size={"xs"}>Manage Columns</Text>}
                       color={"dark"}
                       transitionProps={{ transition: "pop", duration: 300 }}
                       withArrow
                       position='bottom'
                     >
-                      <ActionIcon size={'md'} variant='outline' color='gray.4'>
-                        <IconFilter size={20} onClick={() => setOpened(!opened)} color='#4196f0' />
+                      <ActionIcon size={'md'} variant='outline' onClick={open} color='gray.4'>
+                        <IconTableRow size={20} style={{ cursor: 'pointer' }} color='#4196f0' />
                       </ActionIcon>
                     </Tooltip>
-                  </Popover.Target>
-                  <Popover.Dropdown mr={'md'}>
-                    <Title order={'6'}>Filter</Title>
-                    <Grid w={300} gutter={'sm'}>
-                      {filterHeader?.getHeaderGroups().map((headerGroup) => (headerGroup?.headers?.map((header) =>
-                        header.column.getCanFilter()
-                          ? (
-                            <Grid.Col span={6} key={header.id}>
-                              <Filter column={header.column} table={filterHeader} />
-                            </Grid.Col>
-                          )
-                          : null
-                      )))}
-                    </Grid>
-                  </Popover.Dropdown>
-                </Popover>
-                : null
-              }
-              {excelDownload
-                ? (<Tooltip
-                  label={<Text size={"xs"}>Download</Text>}
-                  color={"dark"}
-                  transitionProps={{ transition: "pop", duration: 300 }}
-                  withArrow
-                  position='bottom'
-                >
-                  <ActionIcon
-                    size={'md'}
-                    variant='outline'
-                    color='gray.4'
-                    loading={downloadQuery?.isLoading}
-                    onClick={() => { downloadQuery ? downloadQuery?.query() : exportToExcel(rowData, title) }}
-                  >
-                    <IconDownload size={20} color='#4196f0' />
-                  </ActionIcon>
-                </Tooltip>)
-                : null}
-              {action ? action : null}
-            </Box>
-          </Box>
+                    : null
+                  }
+                  {filter
+                    ? <Popover opened={opened} onChange={setOpened} position="left-start" withArrow shadow="md">
+                      <Popover.Target>
+                        <Tooltip
+                          label={<Text size={"xs"}>Filter Rows</Text>}
+                          color={"dark"}
+                          transitionProps={{ transition: "pop", duration: 300 }}
+                          withArrow
+                          position='bottom'
+                        >
+                          <ActionIcon size={'md'} variant='outline' color='gray.4'>
+                            <IconFilter size={20} onClick={() => setOpened(!opened)} color='#4196f0' />
+                          </ActionIcon>
+                        </Tooltip>
+                      </Popover.Target>
+                      <Popover.Dropdown mr={'md'}>
+                        <Title order={'6'}>Filter</Title>
+                        <Grid w={300} gutter={'sm'}>
+                          {filterHeader?.getHeaderGroups().map((headerGroup) => (headerGroup?.headers?.map((header) =>
+                            header.column.getCanFilter()
+                              ? (
+                                <Grid.Col span={6} key={header.id}>
+                                  <Filter column={header.column} table={filterHeader} />
+                                </Grid.Col>
+                              )
+                              : null
+                          )))}
+                        </Grid>
+                      </Popover.Dropdown>
+                    </Popover>
+                    : null
+                  }
+                  {excelDownload
+                    ? (<Tooltip
+                      label={<Text size={"xs"}>Download</Text>}
+                      color={"dark"}
+                      transitionProps={{ transition: "pop", duration: 300 }}
+                      withArrow
+                      position='bottom'
+                    >
+                      <ActionIcon
+                        size={'md'}
+                        variant='outline'
+                        color='gray.4'
+                        loading={downloadQuery?.isLoading}
+                        onClick={() => { downloadQuery ? downloadQuery?.query() : exportToExcel(rowData, title) }}
+                      >
+                        <IconDownload size={20} color='#4196f0' />
+                      </ActionIcon>
+                    </Tooltip>)
+                    : null}
+                  {action ? action : null}
+                </Box>
+              </Box>
+            )}
         </Group>
       </Box>
-      <ReactTable
-        columnData={filteredColumnData}
-        rowData={rowData || []}
-        useApiPagination={useAPIPagination}
-        search={search}
-        setSearch={setSearch}
-        setFilterHeader={setFilterHeader}
-        filterHeader={filterHeader}
-        onRowClick={onRowClick}
-        styles={styles}
-        page={page}
-        setPage={setPage}
-        totalNoOfPages={totalNoOfPages}
-        loading={loading}
-      />
+      {!loading && Array.isArray(rowData) && !rowData.length ? (
+        <Box
+          mt="md"
+          p="xl"
+          style={{
+            textAlign: "center",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            gap: 10,
+            height: "60vh",
+          }}
+        >
+          <Image
+            src="https://i.imgur.com/A6KRQAV.png"
+            w={150}
+            h={100}
+            radius="md"
+          />
+          <Box>
+            <Text>{noDataText}</Text>
+            <Text size="sm" sx={{ color: "rgb(0,0,0,0.4)" }}>
+              {noDataSubText}
+            </Text>
+          </Box>
+        </Box>
+      ) : (
+        <ReactTable
+          columnData={filteredColumnData}
+          rowData={rowData || []}
+          useApiPagination={useAPIPagination}
+          search={search}
+          setSearch={setSearch}
+          setFilterHeader={setFilterHeader}
+          filterHeader={filterHeader}
+          onRowClick={onRowClick}
+          styles={styles}
+          page={page}
+          setPage={setPage}
+          totalNoOfPages={totalNoOfPages}
+          loading={loading}
+        />
+      )}
       <ColumnsFilter
         title={title}
         columnData={column}

@@ -48,7 +48,7 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
   const columnHelper = createColumnHelper();
 
   useEffect(() => {
-    // if (!loans || !loans.length) {
+    // if (!loans || !loans?.length) {
     setLoading(true);
     getLoansByStatus('loan_review', filterQry)
       .then(data => {
@@ -116,20 +116,14 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <DataTableViewer
-            rowData={loans}
-            column={column}
-            title={`${title} (${loans?.length})`}
-            excelDownload
-            onRowClick={(i) => onRowClick(i.dealership_id, i, 'loan_review')}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }} >No Pending loans for Review</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <Loader /></div>
-      }
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        title={`${title} (${loans?.length})`}
+        excelDownload
+        loading={loading}
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'loan_review')}
+      />
     </div>
   )
 }

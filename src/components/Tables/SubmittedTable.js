@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {
+const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
@@ -142,24 +142,14 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <DataTableViewer
-            column={column}
-            rowData={loans}
-            title={`${title} (${loans.length})`}
-            excelDownload
-            onRowClick={(i) => onRowClick(i?.dealership_id, i, 'submitted')}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Submitted Records</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <Loader /></div>
-      }
-      {/* <Modal
-        title={'eSign Application Form'}
-        onClose={() => setModalVisible(false)}
-      > */}
+      <DataTableViewer
+        column={column}
+        rowData={loans}
+        title={`${title} (${loans?.length})`}
+        excelDownload
+        loading={loading}
+        onRowClick={(i) => onRowClick(i?.dealership_id, i, 'submitted')}
+      />
       <SignRequestLayout
         dealershipId={dealershipId}
         opened={modalVisible}
@@ -169,9 +159,6 @@ const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, cur
         onClose={() => setModalVisible(false)}
         currentUser={currentUser}
       />
-      {/* </Modal> */}
-      {/* <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
-      </Dialog> */}
     </div>
   )
 }

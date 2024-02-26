@@ -101,17 +101,14 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <DataTableViewer
-            column={column}
-            rowData={loans || []}
-            title={`${title} (${loans.length})`}
-            excelDownload={true}
-            onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursed')}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Disbursed Loans</Paper>)
-      }
+      <DataTableViewer
+        column={column}
+        rowData={loans || []}
+        title={`${title} (${loans?.length})`}
+        excelDownload={true}
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursed')}
+        loading={loading}
+      />
       {
         loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
       }

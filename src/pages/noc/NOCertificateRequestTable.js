@@ -26,6 +26,7 @@ import { getAllNocRequest } from '../../services/noc.services';
 import { isAllowed } from '../../utils/cerbos';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { useQuery } from 'react-query';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -62,7 +63,6 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   const [openModal, setOpenModal] = useState();
   const [openApproveModal, setOpenApproveModal] = useState();
   const [openViewer, setOpenViewer] = useState({ open: false });
-  const [list, setList] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const columnHelper = createColumnHelper();
 
@@ -70,25 +70,21 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     currentUser.role_name,
     rulesList.external_view
   );
-  useEffect(() => {
-    setLoading(true);
-    getAllNocRequest()
-      .then((data) => {
-        let d = data.map((item) => {
-          const parsedDate = parse(item?.issued_date || undefined, 'dd-MM-yyyy', new Date());
-          return {
-            ...item,
-            formated_date: format(parsedDate, 'MMM, yyyy'),
-          }
-        });
-        setList(d);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
+
+  const getAllNOCRequestQuery = useQuery({
+    queryKey: ['noc-request', refresh],
+    queryFn: () => getAllNocRequest(),
+    select: (data) => {
+      let d = data.map((item) => {
+        const parsedDate = parse(item?.issued_date || undefined, 'dd-MM-yyyy', new Date());
+        return {
+          ...item,
+          formated_date: format(parsedDate, 'MMM, yyyy'),
+        }
       });
-  }, [refresh]);
+      return d;
+    }
+  });
 
   const onRowClick = (rowData) => {
     if (rowData?.status == 'approved' || rowData?.status == 'rejected') {
@@ -182,50 +178,40 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     })
   ];
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    customToolbar: () => {
-      return (
-        // noc request raise permissions
-        isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest) ?
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => setOpenModal(true)}
-          >
-            Raise Request
-          </Button> : null
-      );
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 6) {
-        isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) &&
-          onRowClick(list[cellMeta.dataIndex], list[cellMeta.dataIndex]);
-      }
-    },
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => false,
+  //   customToolbar: () => {
+  //     return (
+  //       // noc request raise permissions
+  //       isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest) ?
+  //         <Button
+  //           color="primary"
+  //           variant="contained"
+  //           onClick={() => setOpenModal(true)}
+  //         >
+  //           Raise Request
+  //         </Button> : null
+  //     );
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex !== 6) {
+  //       isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) &&
+  //         onRowClick(list[cellMeta.dataIndex], list[cellMeta.dataIndex]);
+  //     }
+  //   },
+  // };
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(list) ? (
-          <DataTableViewer
-            rowData={list}
-            column={column}
-            styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
-            title={'NOC Application'}
-          />
-        ) : (
-          !loading && <Paper style={{ padding: 10 }}>No Request found</Paper>
-        )
-      }
-      {
-        loading && (
-          <div style={{ textAlign: 'center' }}><CircularProgress /></div>
-        )
-      }
+      <DataTableViewer
+        rowData={getAllNOCRequestQuery?.data}
+        column={column}
+        loading={getAllNOCRequestQuery?.isLoading}
+        styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
+        title={'NOC Application'}
+      />
       <Drawer
         anchor="right"
         open={openModal}

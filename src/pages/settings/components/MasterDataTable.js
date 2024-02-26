@@ -39,129 +39,130 @@ import {
   updateStateById,
 } from '../../../services/common.service';
 import { getStatesMapById, getUnmappedRegions, updateRegionMapById } from '../../../services/master.service';
+import { IconPlus } from '@tabler/icons-react';
 
 const useStyles = makeStyles((theme) => ({
-  sidePanelTitle: {
-    padding: '12px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333',
-  },
-  root: {
-    minWidth: '35vw',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: 10,
-    margin: 10,
-    height: '100%',
-    borderRadius: 5,
-    overflow: 'hidden'
-  },
-  rooting: {
-    position: 'absolute',
-  },
-  backdrop: {
-    position: 'absolute',
-  },
-  title: {
-    display: 'flex',
-    alignItems: 'center',
-    width: '100%',
-    justifyContent: 'space-between',
-    position: 'sticky',
-  },
-  section: {
-    marginTop: 10,
-    overflowY: 'auto',
-  },
-  label: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: 6,
-    alignItems: 'center',
-    '&:hover': {
-      backgroundColor: '#EEEEEE',
-      '& $btn': {
-        visibility: 'visible',
-      },
-    },
-  },
-  divider: {
-    backgroundColor: '#EEEEEE',
-  },
-  drawer: {
-    position: 'absolute',
-  },
-  btn: {
-    visibility: 'hidden',
-    color: '#687980',
-  },
-  nodata: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    height: 380,
-    alignItems: 'center',
-  },
-  editButton: {
-    marginRight: '8px',
-    '&.MuiButton-contained': {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.white
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark
-    }
-  },
-  actionButtonsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '12px 16px'
-  },
-  addForm: {
-    margin: 10,
-    padding: 25,
-    borderRadius: 6,
-    boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
-  },
-  formFooter: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    marginTop: 10
-  },
-  listBtn: {
-    marginTop: 18,
-  },
+  // sidePanelTitle: {
+  //   padding: '12px 16px',
+  //   display: 'flex',
+  //   justifyContent: 'space-between',
+  //   alignItems: 'center',
+  //   zIndex: 0,
+  //   boxShadow: '0 1px 4px -3px #333',
+  // },
+  // root: {
+  //   minWidth: '35vw',
+  //   display: 'flex',
+  //   flexDirection: 'column',
+  //   padding: 10,
+  //   margin: 10,
+  //   height: '100%',
+  //   borderRadius: 5,
+  //   overflow: 'hidden'
+  // },
+  // rooting: {
+  //   position: 'absolute',
+  // },
+  // backdrop: {
+  //   position: 'absolute',
+  // },
+  // title: {
+  //   display: 'flex',
+  //   alignItems: 'center',
+  //   width: '100%',
+  //   justifyContent: 'space-between',
+  //   position: 'sticky',
+  // },
+  // section: {
+  //   marginTop: 10,
+  //   overflowY: 'auto',
+  // },
+  // label: {
+  //   display: 'flex',
+  //   justifyContent: 'space-between',
+  //   padding: 6,
+  //   alignItems: 'center',
+  //   '&:hover': {
+  //     backgroundColor: '#EEEEEE',
+  //     '& $btn': {
+  //       visibility: 'visible',
+  //     },
+  //   },
+  // },
+  // divider: {
+  //   backgroundColor: '#EEEEEE',
+  // },
+  // drawer: {
+  //   position: 'absolute',
+  // },
+  // btn: {
+  //   visibility: 'hidden',
+  //   color: '#687980',
+  // },
+  // nodata: {
+  //   display: 'flex',
+  //   flexDirection: 'column',
+  //   justifyContent: 'center',
+  //   height: 380,
+  //   alignItems: 'center',
+  // },
+  // editButton: {
+  //   marginRight: '8px',
+  //   '&.MuiButton-contained': {
+  //     backgroundColor: theme.palette.success.main,
+  //     color: theme.palette.white
+  //   },
+  //   '&.MuiButton-contained:hover': {
+  //     backgroundColor: theme.palette.success.dark
+  //   }
+  // },
+  // actionButtonsWrapper: {
+  //   display: 'flex',
+  //   justifyContent: 'space-between',
+  //   padding: '12px 16px'
+  // },
+  // addForm: {
+  //   margin: 10,
+  //   padding: 25,
+  //   borderRadius: 6,
+  //   boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
+  // },
+  // formFooter: {
+  //   display: 'flex',
+  //   justifyContent: 'flex-end',
+  //   alignItems: 'center',
+  //   marginTop: 10
+  // },
+  // listBtn: {
+  //   marginTop: 18,
+  // },
 
-  btns: {
-    width: 25,
-    marginLeft: 10,
-    backgroundColor: 'white',
-    border: '1px solid #C8C6C6',
-    borderRadius: 2,
-    cursor: 'pointer',
-    fontSize: '1rem',
-    '&:hover': {
-      border: '1px solid #212121'
-    }
-  },
+  // btns: {
+  //   width: 25,
+  //   marginLeft: 10,
+  //   backgroundColor: 'white',
+  //   border: '1px solid #C8C6C6',
+  //   borderRadius: 2,
+  //   cursor: 'pointer',
+  //   fontSize: '1rem',
+  //   '&:hover': {
+  //     border: '1px solid #212121'
+  //   }
+  // },
 
-  deleteBtn: {
-    width: 25,
-    marginLeft: 10,
-    backgroundColor: 'white',
-    border: '1px solid #FF7878',
-    borderRadius: 2,
-    cursor: 'pointer',
-    color: '#FF5C58',
-    fontSize: '1rem',
-    '&:hover': {
-      border: '1px solid #FF5C58'
-    }
-  },
+  // deleteBtn: {
+  //   width: 25,
+  //   marginLeft: 10,
+  //   backgroundColor: 'white',
+  //   border: '1px solid #FF7878',
+  //   borderRadius: 2,
+  //   cursor: 'pointer',
+  //   color: '#FF5C58',
+  //   fontSize: '1rem',
+  //   '&:hover': {
+  //     border: '1px solid #FF5C58'
+  //   }
+  // },
 
 }));
 
@@ -838,7 +839,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             placeholder="Search"
             value={value}
             onChange={(e) => setValue(e.target.value)}
-          /> 
+          />
         </form>
 
         <Flex mt="md" direction="column">
@@ -847,24 +848,24 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               filteredData.map((item) => {
                 return (
                   <>
-                    <Flex 
-                      justify="space-between" 
+                    <Flex
+                      justify="space-between"
                       align="center"
                       py="6"
                     >
                       <Text>{item.name}</Text>
 
                       <Flex align="center" gap="4">
-                        <ActionIcon 
-                          variant="transparent" 
+                        <ActionIcon
+                          variant="transparent"
                           aria-label="Edit"
                           onClick={() => {
                             handleClose()
-                            {title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true)}
+                            { title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true) }
                             editItem(item, title);
                           }}
                         >
-                          <svg style={{ fill: '#868E96',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                          <svg style={{ fill: '#868E96', width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                           </svg>
                         </ActionIcon>
@@ -872,7 +873,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                         {setStateBtn && item.is_active ? (
                           <Tooltip fz="xs" px="8" py="2.5" zIndex={99999} offset={2} label="Deactivate">
                             <ActionIcon
-                              variant="transparent" 
+                              variant="transparent"
                               aria-label="Deactivate"
                               onClick={() => {
                                 handleClose()
@@ -880,7 +881,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                                 DeactivateItem(item.id)
                               }}
                             >
-                              <svg style={{ fill: '#868E96',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <svg style={{ fill: '#868E96', width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                 <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                               </svg>
@@ -889,7 +890,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                         ) : (
                           <Tooltip fz="xs" px="8" py="2.5" zIndex={99999} offset={2} label="Activate">
                             <ActionIcon
-                              variant="transparent" 
+                              variant="transparent"
                               aria-label="Activate"
                               onClick={() => {
                                 const test = { is_active: 1 }
@@ -911,7 +912,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                                   });
                               }}
                             >
-                              <svg style={{ fill: '#ADB5BD',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <svg style={{ fill: '#ADB5BD', width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
                                 <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
                               </svg>
@@ -919,8 +920,8 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                           </Tooltip>
                         )}
 
-                        <ActionIcon 
-                          variant="transparent" 
+                        <ActionIcon
+                          variant="transparent"
                           aria-label="Delete"
                           onClick={() => {
                             handleClose()
@@ -943,7 +944,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
               <>
                 <div className={classes.nodata}>
                   <Typography variant='h6'>No Data Found</Typography>
-                  
+
                   <div>
                     <Button
                       variant='outlined'
@@ -972,9 +973,9 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             data.map((item) => {
               return (
                 <>
-                  <Flex 
-                    key={item.id ? item.id : item.region} 
-                    justify="space-between" 
+                  <Flex
+                    key={item.id ? item.id : item.region}
+                    justify="space-between"
                     align="center"
                     py="6"
                     styles={{
@@ -987,16 +988,16 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                     <Text>{item.name}</Text>
 
                     <Flex align="center" gap="4">
-                      <ActionIcon 
-                        variant="transparent" 
+                      <ActionIcon
+                        variant="transparent"
                         aria-label="Edit"
                         onClick={() => {
                           handleClose()
-                          {title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true)}
+                          { title === 'Asset Type' ? setOpenAssetForm(true) : setOpenEditForm(true) }
                           editItem(item, title);
                         }}
                       >
-                        <svg style={{ fill: '#868E96',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <svg style={{ fill: '#868E96', width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                           <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                         </svg>
                       </ActionIcon>
@@ -1004,7 +1005,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                       {setStateBtn && item.is_active ? (
                         <Tooltip fz="xs" px="8" py="2.5" zIndex={99999} offset={2} label="Deactivate">
                           <ActionIcon
-                            variant="transparent" 
+                            variant="transparent"
                             aria-label="Deactivate"
                             onClick={() => {
                               handleClose()
@@ -1012,7 +1013,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                               DeactivateItem(item.id)
                             }}
                           >
-                            <svg style={{ fill: '#868E96',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <svg style={{ fill: '#868E96', width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                               <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                             </svg>
@@ -1021,7 +1022,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                       ) : (
                         <Tooltip fz="xs" px="8" py="2.5" zIndex={99999} offset={2} label="Activate">
                           <ActionIcon
-                            variant="transparent" 
+                            variant="transparent"
                             aria-label="Activate"
                             onClick={() => {
                               const test = { is_active: 1 }
@@ -1043,7 +1044,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                                 });
                             }}
                           >
-                            <svg style={{ fill: '#ADB5BD',width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <svg style={{ fill: '#ADB5BD', width: 16, height: 16 }} xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
                               <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
                             </svg>
@@ -1051,8 +1052,8 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                         </Tooltip>
                       )}
 
-                      <ActionIcon 
-                        variant="transparent" 
+                      <ActionIcon
+                        variant="transparent"
                         aria-label="Delete"
                         onClick={() => {
                           handleClose()
@@ -1066,7 +1067,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                       </ActionIcon>
                     </Flex>
                   </Flex>
-                  
+
                   <Divider color="#E9ECEF" />
                 </>
               );
@@ -1093,16 +1094,16 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             <div className={classes.formFooter}>
               <Button
                 onClick={handleClose}
-                // style={{marginTop: 10}}
-                size='small'
+                size={'compact-md'}
+                variant='outline'
               >
                 Cancel
               </Button>
               <Button
                 onClick={submitAdd}
-                style={{ color: '#1EAE98', borderColor: '#1EAE98' }}
-                variant='outlined'
-                size='small'
+                size={'compact-md'}
+                leftSection={<IconPlus size={16} />}
+                ml={'md'}
               >
                 Save
               </Button>
@@ -1126,7 +1127,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             </Grid>
             {
               status === 'State' &&
-                <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+              <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
             }
             <div className={classes.formFooter}>
               <Button
@@ -1352,7 +1353,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             >
               Go back
             </Button>
-          </Tooltip>  
+          </Tooltip>
 
           <Button
             colorScheme="primary"

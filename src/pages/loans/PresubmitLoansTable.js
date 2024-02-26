@@ -1,6 +1,5 @@
-import { Drawer, Fade, IconButton, Modal, Tooltip, Backdrop, Checkbox } from '@material-ui/core';
+import { Drawer, Fade, IconButton, Backdrop } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { Add, Clear } from '@material-ui/icons';
 import LinkIcon from '@material-ui/icons/Link';
@@ -12,9 +11,7 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
-import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../components/Number/Currency';
-import TextInput from '../../components/TextInput/TextInput';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
@@ -23,6 +20,8 @@ import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { ActionIcon, Box, Button, Checkbox, Modal, TextInput, Tooltip } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -72,16 +71,19 @@ const useStyles = makeStyles(theme => ({
 
 const PresubmitLoansTable = ({ currentUser }) => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
   const [dealershipData, setDealershipData] = useState();
   const [loansData, setLoansData] = useState();
-  const [loans, setLoans] = useState([]);
   const [showPanel, setShowPanel] = useState({ status: false, data: '' });
   const [docModal, setDocModal] = useState({ modal: false });
   const [checklistData, setChecklistData] = useState([]);
   const [newValue, setNewValue] = useState('');
   const { enqueueSnackbar } = useSnackbar();
   const columnHelper = createColumnHelper();
+
+  const getPreSubmitLoansQuery = useQuery({
+    queryKey: ['pre-submit-loans'],
+    queryFn: () => getLoansByStatus('pre_submit', ''),
+  })
 
   // getting the list of doc based on the id
   const getDocChecklistQuery = useQuery({
@@ -91,18 +93,6 @@ const PresubmitLoansTable = ({ currentUser }) => {
     onSuccess: (data) => {
       setChecklistData(data);
     },
-  })
-
-  useMount(() => {
-    setLoading(true);
-    getLoansByStatus('pre_submit', '')
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
   })
 
   const onRowClick = (id, selectedLoanData, status) => {
@@ -153,7 +143,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
       header: 'Documents',
       enableColumnFilter: false,
       cell: (value) => (
-        <Tooltip title={'Click to view documents'}>
+        <Tooltip label={'Click to view documents'} color='gray' withArrow>
           <IconButton size="small" color="primary" aria-label="application" onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id })}><LinkIcon /></IconButton>
         </Tooltip>
       )
@@ -231,20 +221,14 @@ const PresubmitLoansTable = ({ currentUser }) => {
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <DataTableViewer
-            column={column}
-            rowData={loans}
-            title={'Pre Submit queue'}
-            excelDownload
-            onRowClick={(i) => onRowClick(i.dealership_id, i, 'pre_submit')}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      <DataTableViewer
+        column={column}
+        rowData={getPreSubmitLoansQuery?.data}
+        title={'Pre Submit queue'}
+        excelDownload
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'pre_submit')}
+        loading={getPreSubmitLoansQuery?.isLoading}
+      />
       <Drawer
         anchor="right"
         ModalProps={{
@@ -257,81 +241,64 @@ const PresubmitLoansTable = ({ currentUser }) => {
       </Drawer>
 
       <Modal
-        aria-labelledby="spring-modal-title"
-        aria-describedby="spring-modal-description"
-        className={classes.modal}
-        open={docModal?.modal}
+        opened={docModal?.modal}
         onClose={() => { setDocModal({}); setChecklistData([]); }}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
+        title={'Document Checklist'}
+        size={'lg'}
       >
-        <Fade in={docModal?.modal}>
-          <div className={classes.paper}>
-            <div>
-              <div className={classes.header} style={{ height: '30px' }}>
-                <h2 id="modal-title">Document Checklist</h2>
-                <IconButton style={{ padding: '8px' }} onClick={() => { setDocModal({}); setChecklistData([]); }}>
-                  <Clear />
-                </IconButton>
-              </div>
-              <p id="modal-description">List of documents that need to collect</p>
-            </div>
-            <div style={{ marginTop: '10px' }} className={classes.outerContent}>
-              {checklistData?.length
-                ? checklistData?.map((item, index) => (
-                  <div key={item}>
-                    <div className={classes.content} style={{ margin: '10px 0', fontWeight: '700', fontSize: '14px' }}>
-                      <p>{(index + 1) + '). '}</p>
-                      <div>{Object.entries(item)?.[0]?.[0]}</div>
-                    </div>
-                    {Object.entries(item)?.[0]?.[1]?.map((value, i) => (
-                      <>
-                        <div key={i} className={classes.header} style={{ marginLeft: '10px' }}>
-                          <div className={classes.content}>
-                            <p>{(index + 1) + '.' + (i + 1) + '). '}</p>
-                            <p style={{ maxWidth: '400px' }}>{Object.entries(value)?.[0]?.[0]}</p>
-                          </div>
-                          <div>
-                            <Checkbox
-                              checked={Boolean(Object.entries(value)?.[0]?.[1])}
-                              size='small'
-                              color="primary"
-                              inputProps={{ 'aria-label': 'secondary checkbox' }}
-                              onChange={() => handleChecked({ index: index, insideIndex: i, title: Object.entries(item)?.[0]?.[0], value: Object.entries(value)?.[0]?.[1], key: Object.entries(value)?.[0]?.[0] })}
-                            />
-                          </div>
-                        </div>
-                      </>
-                    ))}
-                    {Object.entries(item)?.[0]?.[0] == 'Other documents' ? (
-                      <div className={classes.header} style={{ marginLeft: '10px' }}>
-                        <div className={classes.content} style={{ alignItems: 'center' }}>
-                          <TextInput onChange={(e) => setNewValue(e.target.value)} value={newValue} placeholder={'Doc Name'} />
-                          <Tooltip title={'Click to add'}>
-                            <Add style={{ color: 'green', cursor: 'pointer' }} onClick={() => handleOthersAddition(index, item)} />
-                          </Tooltip>
-                        </div>
+        <div>
+          <p id="modal-description">List of documents that need to collect</p>
+        </div>
+        <div style={{ marginTop: '10px' }} className={classes.outerContent}>
+          {checklistData?.length
+            ? checklistData?.map((item, index) => (
+              <div key={item}>
+                <Box className={classes.content} style={{ fontWeight: '700', fontSize: '14px' }} mt={10} mb={4}>
+                  <p>{(index + 1) + '). '}</p>
+                  <div>{Object.entries(item)?.[0]?.[0]}</div>
+                </Box>
+                {Object.entries(item)?.[0]?.[1]?.map((value, i) => (
+                  <>
+                    <Box key={i} className={classes.header} ml={10} mb={4}>
+                      <div className={classes.content}>
+                        <p>{(index + 1) + '.' + (i + 1) + '). '}</p>
+                        <p style={{ maxWidth: '400px' }}>{Object.entries(value)?.[0]?.[0]}</p>
                       </div>
-                    ) : null}
+                      <Checkbox
+                        mr={4}
+                        checked={Boolean(Object.entries(value)?.[0]?.[1])}
+                        size='xs'
+                        styles={{ input: { cursor: 'pointer' } }}
+                        onChange={() => handleChecked({ index: index, insideIndex: i, title: Object.entries(item)?.[0]?.[0], value: Object.entries(value)?.[0]?.[1], key: Object.entries(value)?.[0]?.[0] })}
+                      />
+                    </Box>
+                  </>
+                ))}
+                {Object.entries(item)?.[0]?.[0] == 'Other documents' ? (
+                  <div className={classes.header} style={{ marginLeft: '10px' }}>
+                    <div className={classes.content} style={{ alignItems: 'center' }}>
+                      <TextInput size='xs' onChange={(e) => setNewValue(e.target.value)} value={newValue} placeholder={'Doc Name'} />
+                      <Tooltip label={'Click to add'} color='gray' withArrow>
+                        <ActionIcon size={'md'} onClick={() => handleOthersAddition(index, item)} color='teal'>
+                          <IconPlus />
+                        </ActionIcon>
+                      </Tooltip>
+                    </div>
                   </div>
-                )) : getDocChecklistQuery?.isLoading ? <center><CircularProgress /></center> : <center>No Data to display</center>}
-            </div>
-            <div className={classes.header} style={{ justifyContent: 'right', marginTop: '20px' }}>
-              <LoaderButton
-                variant='contained'
-                size='medium'
-                style={{ color: 'white', marginRight: 8, backgroundColor: 'green' }}
-                isLoading={docModal?.isLoading}
-                onClick={handleDocChecklistUpdate}
-              >
-                Save
-              </LoaderButton>
-            </div>
-          </div>
-        </Fade>
+                ) : null}
+              </div>
+            )) : getDocChecklistQuery?.isLoading ? <center><CircularProgress /></center> : <center>No Data to display</center>}
+        </div>
+        <div className={classes.header} style={{ justifyContent: 'right', marginTop: '20px' }}>
+          <Button
+            size='xs'
+            color='green'
+            loading={docModal?.isLoading}
+            onClick={handleDocChecklistUpdate}
+          >
+            Save
+          </Button>
+        </div>
       </Modal>
     </div>
   )

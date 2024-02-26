@@ -37,13 +37,21 @@ const useStyles = makeStyles(theme => ({
 
 const RejectedTable = ({ title, onRowClick, filterQry }) => {
   const classes = useStyles();
-  const [loans, setLoans] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const columnHelper = createColumnHelper();
+
+  const getEnhancementDataQuery = useQuery({
+    queryKey: ['enhancement-data-rejected', filterQry, page, search],
+    queryFn: () => getEnhancedLoanByStatus('rejected', filterQry, page, search),
+  })
+
+  const getEnhancementPaginationQuery = useQuery({
+    queryKey: ['enhancement-pagination-rejected', filterQry],
+    queryFn: () => getPageDetails('rejected', filterQry),
+  })
 
   const enhancementDownloadQuery = useQuery({
     queryKey: 'enhancement-download-rejected',
@@ -63,26 +71,6 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
     enabled: Boolean(false),
     retry: Boolean(false),
   });
-
-  useEffect(() => {
-    setLoading(true);
-    getEnhancedLoanByStatus('rejected', filterQry, page, search)
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }, [filterQry, page, search]);
-
-  useEffect(() => {
-    getPageDetails('rejected', filterQry)
-      .then((res) => {
-        setPageData(res)
-      })
-      .catch((e) => console.log('getPageCountError >>>', e))
-  }, [filterQry]);
 
   const column = [
     columnHelper.accessor('dealership_id', {
@@ -115,70 +103,68 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
     }),
   ]
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => true,
-    rowsPerPage: 10,
-    filter: false,
-    print: false,
-    sort: false,
-    download: false,
-    viewColumns: false,
-    searchPlaceholder: 'Search by dealreship ID/Name',
-    onSearchChange: (searchText) => {
-      setSearch(searchText)
-    },
-    // customToolbar: () => {
-    //   return (
-    //     <>
-    //       <Tooltip title="Download">
-    //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-    //       </Tooltip>
-    //     </>
-    //   );
-    // },
-    customFooter: () => {
-      return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <MuiTableFooter
-            totalCount={pageData?.total_number_of_pages}
-            pageSize={10}
-            onPageChange={(value) => { setPage(value) }}
-          />
-        </div>
-      )
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'rejected')
-      }
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => true,
+  //   rowsPerPage: 10,
+  //   filter: false,
+  //   print: false,
+  //   sort: false,
+  //   download: false,
+  //   viewColumns: false,
+  //   searchPlaceholder: 'Search by dealreship ID/Name',
+  //   onSearchChange: (searchText) => {
+  //     setSearch(searchText)
+  //   },
+  //   // customToolbar: () => {
+  //   //   return (
+  //   //     <>
+  //   //       <Tooltip title="Download">
+  //   //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+  //   //       </Tooltip>
+  //   //     </>
+  //   //   );
+  //   // },
+  //   customFooter: () => {
+  //     return (
+  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+  //         <MuiTableFooter
+  //           totalCount={pageData?.total_number_of_pages}
+  //           pageSize={10}
+  //           onPageChange={(value) => { setPage(value) }}
+  //         />
+  //       </div>
+  //     )
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex !== 7) {
+  //       onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'rejected')
+  //     }
+  //   },
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   }
+  // };
 
   return (
     <div className={classes.root}>
       <DataTableViewer
-        rowData={loans}
+        rowData={getEnhancementDataQuery?.data}
         column={column}
-        title={`${title} (${loans.length})`}
+        title={`${title} (${getEnhancementDataQuery?.data?.length})`}
         onRowClick={i => onRowClick(i.dealership_id, i, 'rejected')}
         useAPIPagination
         page={page}
         setPage={setPage}
-        totalNoOfPages={pageData?.total_number_of_pages}
+        totalNoOfPages={getEnhancementPaginationQuery?.data?.total_number_of_pages}
         filter={false}
         columnsFilter={false}
+        loading={getEnhancementDataQuery?.isLoading}
         excelDownload
         downloadQuery={{ query: enhancementDownloadQuery?.refetch, isLoading: enhancementDownloadQuery?.isFetching }}
       />
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
     </div>
   )
 }

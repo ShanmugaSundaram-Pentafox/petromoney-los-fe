@@ -23,6 +23,7 @@ import { getRenewalLoans } from '../../services/loans.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { useQuery } from 'react-query';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -56,12 +57,10 @@ const RenewalTable = ({ currentUser }) => {
   const [loanAmount, setLoanAmount] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
   const [type, setType] = useState('');
   const [productTypeId, setProductTypeId] = useState();
   const [rowData, setRowData] = useState();
-  const [loans, setLoans] = useState();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
@@ -69,18 +68,10 @@ const RenewalTable = ({ currentUser }) => {
 
   const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
-  useEffect(() => {
-    setLoading(true)
-    getRenewalLoans()
-      .then((data) => {
-        setLoans(data)
-        setLoading(false)
-      })
-      .catch((e) => {
-        setLoading(false)
-        console.log(e);
-      })
-  }, [])
+  const getRenewalApplicationQuery = useQuery({
+    queryKey: ['renewal-application'],
+    queryFn: () => getRenewalLoans(),
+  })
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -167,19 +158,13 @@ const RenewalTable = ({ currentUser }) => {
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length !== 0 ? (
-          <DataTableViewer
-            title={`Renewal Application`}
-            rowData={loans}
-            column={column}
-            onRowClick={i => setRowData(i)}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Renewal Applications</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      <DataTableViewer
+        title={`Renewal Application`}
+        rowData={getRenewalApplicationQuery?.data}
+        column={column}
+        onRowClick={i => setRowData(i)}
+        loading={getRenewalApplicationQuery?.isLoading}
+      />
       <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
         <SignRequestLayout
           open={modalVisible}

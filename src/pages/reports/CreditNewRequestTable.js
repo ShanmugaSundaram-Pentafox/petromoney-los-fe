@@ -15,19 +15,18 @@ import {
 import { isAllowed } from '../../utils/cerbos';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
-import { Button, Drawer, Grid, Skeleton } from '@mantine/core';
+import { Button, Drawer, Grid, Paper, Skeleton } from '@mantine/core';
 import { PlusIcon } from '@heroicons/react/24/solid';
 
 const CreditNewRequestTable = ({ currentUser }) => {
   const [rowData, setRowData] = useState();
-  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
   const [filterQry, setFilterQry] = useState();
   const [offset, setOffset] = useState(0);
   const columnHelper = createColumnHelper();
   usePageTitle('Credit Reload');
-  const { data: tableData = [], refetch } = useQuery(['new-request', offset], () => getCreditReload({ processed: 0, filterQry: filterQry, currentUser: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false })
+  const { data: tableData = [], refetch, isLoading } = useQuery(['new-request', offset], () => getCreditReload({ processed: 0, filterQry: filterQry, currentUser: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false })
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
   const DisplayValue = ({ value, row }) => {
@@ -138,31 +137,24 @@ const CreditNewRequestTable = ({ currentUser }) => {
 
   return (
     <div>
-      {loading ? (
-        <Grid>
-          <Grid.Col>
-            <Skeleton width='100%' height={400} />
-          </Grid.Col>
-        </Grid>
-      ) : (
-        <>
-          <CreditReload refetch={refetch} currentUser={currentUser} filterQry={setFilterQry} filterList={['zone', 'region', 'product', 'type', 'period']} filterType={'new'} stats={tableData?.stats} />
-          <DataTableViewer
-            title={'New Request'}
-            rowData={tableData?.data}
-            column={column}
-            action={(isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.create) ?
-              <Button
-                size='xs'
-                onClick={() => setOpenModal(true)}
-                leftSection={<PlusIcon className='w-4 h-4' />}
-              >
-                Add
-              </Button> : null
-            )}
-          />
-        </>
-      )}
+      <CreditReload refetch={refetch} currentUser={currentUser} filterQry={setFilterQry} filterList={['zone', 'region', 'product', 'type', 'period']} filterType={'new'} stats={tableData?.stats} />
+      <Paper>
+        <DataTableViewer
+          title={'New Request'}
+          rowData={tableData?.data}
+          loading={isLoading}
+          column={column}
+          action={(isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.create) ?
+            <Button
+              size='xs'
+              onClick={() => setOpenModal(true)}
+              leftSection={<PlusIcon className='w-4 h-4' />}
+            >
+              Add
+            </Button> : null
+          )}
+        />
+      </Paper>
       <Drawer
         position='right'
         opened={statusModal}

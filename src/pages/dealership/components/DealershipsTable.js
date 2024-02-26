@@ -111,22 +111,12 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
 
   return (
     <div>
-      {
-        loading ? (
-          <Grid item xs={12}>
-            <Skeleton variant="rect" width="100%" height={400} />
-          </Grid>
-        ) :
-          Array.isArray(dealerships) && dealerships.length ? (
-            <DataTableViewer
-              rowData={dealerships}
-              column={column}
-              title={`Dealership List`}
-            />
-          ) : (
-            <Paper style={{ marginTop: 10, padding: 10 }}>No Dealers found</Paper>
-          )
-      }
+      <DataTableViewer
+        rowData={dealerships}
+        column={column}
+        title={`Dealership List`}
+        loading={loading}
+      />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { CircularProgress, Paper, Typography, makeStyles } from '@material-ui/core';
+import { CircularProgress, Typography, makeStyles } from '@material-ui/core';
 import moment from 'moment/moment';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo } from 'react';
@@ -7,6 +7,7 @@ import Currency from '../../components/Number/Currency';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Paper } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -62,19 +63,14 @@ const SettledListTable = ({ loans, loading }) => {
   };
 
   return (
-    <div>
-      {Array.isArray(loans) && loans.length ?
-        <DataTableViewer
-          rowData={loans}
-          column={column}
-          title={'Settled'}
-        />
-        : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
-    </div>
+    <Paper>
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        loading={loading}
+        title={'Settled'}
+      />
+    </Paper>
   )
 }
 

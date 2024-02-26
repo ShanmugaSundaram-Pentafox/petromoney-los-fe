@@ -171,14 +171,12 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
         column={column}
         styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
         title={title}
+        loading={loading}
         useAPIPagination
         totalNoOfPages={pageDetailsQuery?.data}
         page={page}
         setPage={setPage}
       />
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
     </div>
   )
 }

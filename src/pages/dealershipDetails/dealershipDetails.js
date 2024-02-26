@@ -127,7 +127,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         orientation="vertical"
         onChange={onChangeTab}
         value={activeTab}
-        // defaultValue={'dealership'}
+        defaultValue={'dealership'}
         classNames={{
           root: 'gap-4',
           tabLabel: 'flex grow items-center gap-2',

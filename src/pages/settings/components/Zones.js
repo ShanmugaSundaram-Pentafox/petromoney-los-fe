@@ -67,7 +67,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: 6,
     boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
   },
-  formFooter :{
+  formFooter: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
@@ -79,14 +79,14 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const ZoneGroup = ({data, setAddForm}) => {
+const ZoneGroup = ({ data, setAddForm }) => {
   const classes = useStyles()
 
-  return(
+  return (
     <div className={classes.label}>
       <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.label}</Typography>
       <Tooltip title='Edit'>
-        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.label, id: data.value})}>
+        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({ action: 'Edit', name: data.label, id: data.value })}>
           <EditIcon fontSize='small' />
         </IconButton>
       </Tooltip>
@@ -102,9 +102,9 @@ const Zones = ({ callback, title, currentUser }) => {
   const [addData, setAddData] = useState()
   const [selectedItem, setSelectedItem] = useState([])
 
-  const { data: zones = [] } = useQuery('zones', () => getZones(), {refetchOnWindowFocus: false})
+  const { data: zones = [] } = useQuery('zones', () => getZones(), { refetchOnWindowFocus: false })
 
-  const { mutate: addZone } = useMutation(data =>!addForm.id ? addZones(data) : editZones(addForm.id, data), {
+  const { mutate: addZone } = useMutation(data => !addForm.id ? addZones(data) : editZones(addForm.id, data), {
     onSuccess: (message) => {
       queryClient.invalidateQueries('zones')
       setAddForm()
@@ -130,7 +130,7 @@ const Zones = ({ callback, title, currentUser }) => {
   })
 
   const updateMapping = (action) => {
-    let body = {state_id: selectedItem}
+    let body = { state_id: selectedItem }
 
     updateZoneMapById(addForm?.id, body, action)
       .then(res => {
@@ -149,8 +149,8 @@ const Zones = ({ callback, title, currentUser }) => {
   }
 
   const handleAdd = (event) => {
-    setAddData({...addData, name: event.target.value.toUpperCase()});
-    setAddForm({...addForm, name: event.target.value.toUpperCase()})
+    setAddData({ ...addData, name: event.target.value.toUpperCase() });
+    setAddForm({ ...addForm, name: event.target.value.toUpperCase() })
   };
 
   const handleSubmit = () => {
@@ -169,7 +169,7 @@ const Zones = ({ callback, title, currentUser }) => {
         <div className={classes.content}>
           {
             zones.map((item, i) => {
-              return(<ZoneGroup data={item} key={i} setAddForm={setAddForm}/>)
+              return (<ZoneGroup data={item} key={i} setAddForm={setAddForm} />)
             })
           }
         </div>
@@ -178,8 +178,8 @@ const Zones = ({ callback, title, currentUser }) => {
         addForm && (
           <div className={classes.addForm}>
             <Typography variant='h5'>{addForm.action} {title}</Typography>
-            <Grid item md={12} style={{marginTop: 15}}>
-              <label style={{marginBottom: 8}}>{title}</label>
+            <Grid item md={12} style={{ marginTop: 15 }}>
+              <label style={{ marginBottom: 8 }}>{title}</label>
               <TextField
                 id={addForm.action}
                 fullWidth
@@ -190,7 +190,7 @@ const Zones = ({ callback, title, currentUser }) => {
             </Grid>
             {
               addForm?.action === 'Edit' &&
-                <TransferList title='States Map' mappedData={() => getZonesMapById(addForm?.id)} unmappedData={getUnmappedStates} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+              <TransferList title='States Map' mappedData={() => getZonesMapById(addForm?.id)} unmappedData={getUnmappedStates} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
             }
             <div className={classes.formFooter}>
               <Button
@@ -201,7 +201,7 @@ const Zones = ({ callback, title, currentUser }) => {
               </Button>
               <Button
                 onClick={handleSubmit}
-                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98' }}
                 variant='outlined'
                 size='small'
               >
@@ -223,9 +223,9 @@ const Zones = ({ callback, title, currentUser }) => {
             <Button
               variant='contained'
               type='submit'
-              startIcon={<AddIcon  />}
+              startIcon={<AddIcon />}
               onClick={() => {
-                setAddForm({action:'Add'})
+                setAddForm({ action: 'Add' })
               }}
               color='primary'
             >

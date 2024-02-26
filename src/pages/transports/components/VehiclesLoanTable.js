@@ -62,19 +62,14 @@ const VehiclesLoanTable = () => {
 
   return (
     <Grid item md={12}>
-      {Array.isArray(data) && data.length ? (
-        <DataTableViewer
-          column={column}
-          rowData={data}
-          title={'Vehicle Loans List'}
-          columnsFilter={false}
-          excelDownload
-        />
-      ) : (!loading && <Paper style={{ padding: 10 }}>No Vehicle Loans</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      <DataTableViewer
+        column={column}
+        rowData={data}
+        title={'Vehicle Loans List'}
+        columnsFilter={false}
+        excelDownload
+        loading={loading}
+      />
     </Grid>
   )
 }

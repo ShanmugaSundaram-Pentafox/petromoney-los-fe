@@ -104,7 +104,8 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
       <DataTableViewer
         column={column}
         rowData={loans || []}
-        title={`${title} (${loans?.length})`}
+        title={title}
+        count={loans?.length}
         excelDownload={true}
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursed')}
         loading={loading}

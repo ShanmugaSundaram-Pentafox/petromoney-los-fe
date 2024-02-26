@@ -255,7 +255,8 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   return (
     <div className={classes.root}>
       <DataTableViewer
-        title={`${title} (${getEnhancementDataQuery?.data?.length})`}
+        title={title}
+        count={getEnhancementDataQuery?.data?.length}
         rowData={getEnhancementDataQuery?.data}
         column={column}
         onRowClick={i => onRowClick(i.dealership_id, i, 'approved')}

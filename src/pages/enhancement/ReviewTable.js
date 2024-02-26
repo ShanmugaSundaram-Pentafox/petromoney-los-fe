@@ -152,7 +152,8 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       <DataTableViewer
         column={column}
         rowData={getEnhancementDataQuery?.data}
-        title={`${title} (${getEnhancementDataQuery?.data?.length})`}
+        title={title}
+        count={getEnhancementDataQuery?.data?.length}
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'review')}
         useAPIPagination
         page={page}

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActionIcon, Box, Grid, Group, Image, Popover, Select, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Grid, Group, Image, Loader, Popover, Select, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import ReactTable from './ReactTable';
 import { IconDownload, IconFilter, IconSearch, IconTableRow } from '@tabler/icons-react';
 import { exportToExcel } from "react-json-to-excel";
@@ -53,6 +53,7 @@ const DataTableViewer = ({
   page,
   filter = true,
   columnsFilter = true,
+  count = false,
   setPage,
   loading = false,
   styles = {},
@@ -105,9 +106,19 @@ const DataTableViewer = ({
     <Box>
       <Box style={{ padding: 10, background: '#ffff', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
         <Group justify='space-between'>
-          <Box>
-            <Text style={{ fontSize: '16px' }} fw={500}>{title}</Text>
-          </Box>
+          <Text style={{ fontSize: '16px' }} fw={500}>
+            <Group gap={4}>
+              {title + " "}
+              {count
+                ? <>
+                  ({loading
+                    ? <Loader mb={4} type='dots' size={'xs'} />
+                    : count})
+                </>
+                : null
+              }
+            </Group>
+          </Text>
           {(!loading && Array.isArray(rowData) && !rowData.length)
             ? null
             : (

@@ -119,7 +119,8 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
       <DataTableViewer
         rowData={loans}
         column={column}
-        title={`${title} (${loans?.length})`}
+        title={title}
+        count={loans?.length}
         excelDownload
         loading={loading}
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'loan_review')}

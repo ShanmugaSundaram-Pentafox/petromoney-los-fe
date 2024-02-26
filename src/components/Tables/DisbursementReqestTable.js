@@ -100,7 +100,8 @@ const DisbursementReqestTable = ({ title, loans = [], setLoansData, onRowClick, 
       <DataTableViewer
         rowData={loans}
         column={column}
-        title={`${title} (${loans?.length})`}
+        title={title}
+        count={loans?.length}
         excelDownload
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
         loading={loading}

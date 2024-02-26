@@ -129,7 +129,8 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
       <DataTableViewer
         column={column}
         rowData={loans}
-        title={`${title} (${loans?.length})`}
+        title={title}
+        count={loans?.length}
         onRowClick={(e) => onRowClick(e.dealership_id, e, 'loan_approval')}
         loading={loading}
         excelDownload

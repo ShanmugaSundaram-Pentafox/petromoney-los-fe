@@ -152,7 +152,8 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
         rowData={getEnhancementDataQuery?.data}
         column={column}
         onRowClick={i => onRowClick(i.dealership_id, i, 'approval')}
-        title={`${title} (${getEnhancementDataQuery?.data?.length})`}
+        title={title}
+        count={getEnhancementDataQuery?.data?.length}
         useAPIPagination
         page={page}
         setPage={setPage}

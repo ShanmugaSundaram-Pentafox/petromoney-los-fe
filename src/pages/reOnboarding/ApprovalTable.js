@@ -173,7 +173,8 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
       <DataTableViewer
         rowData={getReOnboardingDataQuery?.data}
         column={column}
-        title={`${title} (${getReOnboardingDataQuery?.data?.length})`}
+        title={title}
+        count={getReOnboardingDataQuery?.data?.length}
         onRowClick={i => onRowClick(i?.dealership_id, i, 'approval')}
         useAPIPagination
         page={page}

@@ -145,7 +145,8 @@ const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry
       <DataTableViewer
         column={column}
         rowData={loans}
-        title={`${title} (${loans?.length})`}
+        title={title}
+        count={loans?.length}
         excelDownload
         loading={loading}
         onRowClick={(i) => onRowClick(i?.dealership_id, i, 'submitted')}

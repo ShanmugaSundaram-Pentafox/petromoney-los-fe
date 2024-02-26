@@ -181,7 +181,8 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
       <DataTableViewer
         rowData={getReOnboardingDataQuery?.data}
         column={column}
-        title={`${title} (${getReOnboardingDataQuery?.data?.length})`}
+        title={title}
+        count={getReOnboardingDataQuery?.data?.length}
         onRowClick={i => onRowClick(i?.dealership_id, i, 'rejected')}
         useAPIPagination
         page={page}

@@ -85,7 +85,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
       {url ? (
         <Tooltip label={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'}>
           <Grid.Col span={colSpan}>
-            <Box 
+            <Box
               className="group relative h-32 flex items-center justify-center p-4 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 border-dashed rounded transition-colors cursor-pointer"
               onClick={() => csvFileTypes.includes(fileType) ? handleDownload(url) : audioFileTypes.includes(fileType) ? handleDownload(url) : setImageModal({ open: true, image: url, type: fileType })}
             >
@@ -101,36 +101,36 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
               {DocName && (
                 <ActionIconGroup className="absolute bottom-1.5 right-1.5">
                   <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
-                    <ActionIcon 
-                      color="red" 
-                      variant="light" 
+                    <ActionIcon
+                      color="red"
+                      variant="light"
                       aria-label="Delete"
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        setDeleteModal({ open: true, fileId: fileId }) 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteModal({ open: true, fileId: fileId })
                       }}
                     >
                       <IconTrash size={13} />
                     </ActionIcon>
-                  </CheckAllowed>  
+                  </CheckAllowed>
 
                   <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
-                    <ActionIcon 
-                      variant="light" 
+                    <ActionIcon
+                      variant="light"
                       aria-label="Edit"
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name })
                       }}
                     >
                       <IconEdit size={13} />
                     </ActionIcon>
-                  </CheckAllowed>  
+                  </CheckAllowed>
                 </ActionIconGroup>
               )}
             </Box>
-            
-            {file_name && ( 
+
+            {file_name && (
               <Title order={6} lineClamp={1} mt="6" c="gray.7">
                 {file_name}
               </Title>
@@ -140,7 +140,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
               <Text fz="12" mt="4" c="gray.7">
                 {updatedDateTime}
               </Text>
-            )}  
+            )}
           </Grid.Col>
         </Tooltip>
       ) : (
@@ -152,11 +152,11 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
           )}
         </>
       )}
-      
-      <FormDialog 
-        title={DocName} 
-        onDownload={imageModal?.image} 
-        open={imageModal?.open} 
+
+      <FormDialog
+        title={DocName}
+        onDownload={imageModal?.image}
+        open={imageModal?.open}
         onClose={() => setImageModal({ open: false })}
       >
         <FilePreview data={imageModal} />
@@ -214,7 +214,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
 }
 
 const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editable, crimeCheck, currentUser, colSpan }) => {
-  const [collapse, setCollapse] = useState(false);
+  const [collapse, setCollapse] = useState(true);
   const handleCollapse = () => {
     setCollapse(!collapse)
   }
@@ -222,18 +222,18 @@ const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editab
   const showPaperStyle = docName || upload
 
   return (
-    <Paper withBorder={showPaperStyle} radius={showPaperStyle ? 'md': null} mb="md">
+    <Paper withBorder={showPaperStyle} radius={showPaperStyle ? 'md' : null} mb="md">
       {showPaperStyle && (
         <Flex p="sm" align="center" justify="space-between">
           {docName && (
             <Box onClick={() => handleCollapse()} className="flex items-center gap-2 cursor-pointer">
-              <Text 
-                order={3} 
-                fw="600" 
+              <Text
+                order={3}
+                fw="600"
                 className="text-gray-500 hover:text-blue-600"
               >
                 {`${id}. ${docName}`}
-              </Text> 
+              </Text>
 
               <Badge>
                 {file[0].file_url && file?.length || 0}
@@ -247,7 +247,7 @@ const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editab
                 size="xs"
                 variant="outline"
                 leftSection={<IconUpload size={14} />}
-                onClick={upload} 
+                onClick={upload}
               >
                 Upload
               </Button>
@@ -255,24 +255,24 @@ const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editab
           )}
         </Flex>
       )}
-      
-      <Collapse in={!collapse} p={showPaperStyle ? 'sm' : '0'}>
-        <Grid gutter="md">
+
+      <Collapse in={!collapse}>
+        <Grid gutter="md" p={showPaperStyle ? 'sm' : '0'}>
           {file?.map((data, i) => {
             return (
-              <DocPreview 
+              <DocPreview
                 key={i}
-                currentUser={currentUser} 
-                crimeCheck={crimeCheck} 
-                fileId={data?.file_id} 
-                docId={docId} 
-                dealershipId={dealershipId} 
-                fileType={data.file_type || 'pdf'} 
+                currentUser={currentUser}
+                crimeCheck={crimeCheck}
+                fileId={data?.file_id}
+                docId={docId}
+                dealershipId={dealershipId}
+                fileType={data.file_type || 'pdf'}
                 file_name={data.file_name}
                 url={data?.file_url}
                 DocName={docName}
                 updatedDateTime={format(new Date(data?.created_date || data?.modified_date), 'dd/MM/yyyy hh:mm a')}
-                editable={editable} 
+                editable={editable}
                 colSpan={colSpan}
               />
             )

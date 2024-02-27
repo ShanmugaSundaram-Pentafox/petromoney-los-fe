@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Dialog, DialogContent, DialogContentText, DialogTitle, Paper, Tooltip, Typography, makeStyles } from '@material-ui/core';
+import { CircularProgress, Dialog, DialogContent, DialogContentText, DialogTitle, Typography, makeStyles } from '@material-ui/core';
 import moment from 'moment/moment';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
@@ -11,6 +11,7 @@ import { rejectDealerReferralById } from '../../services/dealerships.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Button, Paper, Tooltip } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -79,8 +80,8 @@ const RejectedListTable = ({ loans, loading, fetchData }) => {
       header: 'Action',
       cell: ({ row }) => {
         return (
-          <Tooltip title="click to pushback">
-            <Button variant='outlined' size='small' color='primary'
+          <Tooltip label="click to pushback" color='gray' withArrow>
+            <Button variant='outline' size='compact-xs'
               onClick={() => setModalObj({ open: true, id: row?.original?.dealership_id })}
             >
               Pushback
@@ -105,18 +106,13 @@ const RejectedListTable = ({ loans, loading, fetchData }) => {
   };
 
   return (
-    <div>
-      {Array.isArray(loans) && loans.length ?
-        <DataTableViewer
-          rowData={loans}
-          column={column}
-          title={'Rejected'}
-        />
-        : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+    <Paper>
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        loading={loading}
+        title={'Rejected'}
+      />
       <Dialog
         open={modalObj?.open}
         onClose={() => setModalObj({})}
@@ -143,7 +139,7 @@ const RejectedListTable = ({ loans, loading, fetchData }) => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </Paper>
   )
 }
 

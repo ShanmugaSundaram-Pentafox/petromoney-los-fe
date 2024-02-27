@@ -111,22 +111,13 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
 
   return (
     <div>
-      {
-        loading ? (
-          <Grid item xs={12}>
-            <Skeleton variant="rect" width="100%" height={400} />
-          </Grid>
-        ) :
-          Array.isArray(transports) && transports.length ? (
-            <DataTableViewer
-              title={'Transporter List'}
-              column={column}
-              rowData={transports}
-              onRowClick={i => onRowClick(i?.dealership_id, i)}
-            />
-          ) : (
-            <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
-          )}
+      <DataTableViewer
+        title={'Transporter List'}
+        column={column}
+        rowData={transports}
+        onRowClick={i => onRowClick(i?.dealership_id, i)}
+        loading={loading}
+      />
     </div>
   )
 }

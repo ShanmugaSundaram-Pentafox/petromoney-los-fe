@@ -1,6 +1,4 @@
 import {
-  Typography,
-  Paper,
   FormControl,
   RadioGroup,
   FormControlLabel,
@@ -24,7 +22,7 @@ import {
 import LoaderButton from '../CommonComponents/Button/LoaderButton';
 import { ViewData } from '../CommonComponents/FilePreview';
 import Currency from '../Number/Currency';
-import { Table } from '@mantine/core';
+import { Paper, Table, Text } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   totalamount: {
@@ -128,21 +126,21 @@ const OpportunityReport = () => {
       >
         {({ handleChange, handleSubmit, values, errors }) => (
           <Paper
+            m={8}
+            radius={4}
             style={{
-              margin: 8,
-              borderRadius: 4,
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: '#f3f3f3',
-              gap: '18px'
+              gap: '18px',
+              background: '#f1f5f9',
             }}
           >
             <div className={classes.totalamount}>
               {/* title="Potential Opportunity" */}
               <span style={{ display: 'flex', gap: '5px' }}>
-                <strong style={{ alignSelf: 'flex-end' }}>
-                  <Currency value={total?.total_average_ticket_count} className={classes.currencyvalue} />
-                </strong>
+                <span style={{ alignSelf: 'flex-end' }} className={classes.currencyvalue}>
+                  <Currency value={total?.total_average_ticket_count} />
+                </span>
                 <span className={classes.crs}>Crs</span>
               </span>
               <span className={classes.title}>Potential Opportunity</span>
@@ -204,7 +202,7 @@ const OpportunityReport = () => {
             alignItems: 'flex-end',
           }}
         >
-          <Typography variant="h4">Potential Opportunity</Typography>
+          <Text style={{ fontSize: '16px' }} fw={600}>Potential Opportunity</Text>
           <FormControl component="fieldset">
             <RadioGroup
               row

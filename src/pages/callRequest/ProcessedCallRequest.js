@@ -3,7 +3,7 @@ import MUIDataTable from 'mui-datatables';
 import React, { useMemo } from 'react'
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
-const ProcessedCallRequest = ({ callbackProcessed }) => {
+const ProcessedCallRequest = ({ callbackProcessed, isLoading }) => {
 
   const columnHelper = createColumnHelper();
 
@@ -51,6 +51,7 @@ const ProcessedCallRequest = ({ callbackProcessed }) => {
         rowData={callbackProcessed}
         column={column}
         title={'Processed'}
+        loading={isLoading}
       />
     </div>
   )

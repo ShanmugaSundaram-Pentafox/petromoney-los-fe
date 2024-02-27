@@ -151,37 +151,25 @@ const UsersTable = ({ title, data, withRole, currentUser }) => {
   }
   return (
     <div>
-      {Array.isArray(data) && data.length ? (
-        // <MUIDataTable
-        //   title={
-        //     <Typography className={classes.title} variant="h4" component="h4">
-        //       {title}
-        //     </Typography>
-        //   }
-        //   data={data}
-        //   columns={columns}
-        //   options={options}
-        // />
-        <DataTableViewer
-          rowData={data}
-          column={
-            withRole ?
+      <DataTableViewer
+        rowData={data}
+        column={
+          withRole ?
+            [
+              ...column,
+              columnHelper.accessor('role_name', {
+                header: 'Role',
+              })
+            ] :
+            isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userStatus) ?
               [
                 ...column,
-                columnHelper.accessor('role_name', {
-                  header: 'Role',
-                })
+                ...actionColumn
               ] :
-              isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userStatus) ?
-                [
-                  ...column,
-                  ...actionColumn
-                ] :
-                column
-          }
-          title={title}
-        />
-      ) : null}
+              column
+        }
+        title={title}
+      />
       <Drawer
         anchor="right"
         open={openModal}

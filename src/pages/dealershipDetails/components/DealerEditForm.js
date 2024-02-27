@@ -1,8 +1,5 @@
 import DateFnsUtils from '@date-io/date-fns';
 import { CircularProgress, Divider, Popover, Tooltip } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
@@ -24,6 +21,8 @@ import { logger } from '../../../config/logger';
 import { getRelationshipList } from '../../../services/common.service';
 import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.service';
 import { validateId } from '../../../services/dealerships.service';
+import { Box, Flex, Grid, Space, Switch, Text, Title } from '@mantine/core';
+import { TextInput as MantineTextInput } from '../../../components/Mantine/TextInput/TextInput';
 
 
 const useStyles = makeStyles({
@@ -183,136 +182,183 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
       {
         readOnly ? (
           <>
-            <Typography variant="h6" style={{ marginTop: 8 }}>Personal Details</Typography>
-            <Grid container spacing={2} className={classes.readOnlyWrapper}>
-              <Grid item md={6}>
-                <Box className={classes.box} >
-                  <ViewData title='ID' value={values.id} />
-                  <ViewData title='Date of Birth' value={values.dob} />
-                  <ViewData title='Address' value={values.address} />
-                  <ViewData title='State' value={values.state_name} />
-                  <ViewData title='Marital Status' value={values.marital_status} />
-                  <ViewData title='Mobile' value={values.mobile} />
-                  <ViewData title='Email' value={values.email} />
-                </Box>
-              </Grid>
-              <Grid item md={6}>
-                <Box className={classes.box} >
-                  <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
-                  <ViewData title={'Father\'s Name'} value={values.father_name} />
-                  <ViewData title='Gender' value={values.gender} />
-                  <ViewData title='City' value={values.city_name} />
-                  <ViewData title='Pincode' value={values.pincode} />
-                  <ViewData title='Residing since' value={values.residing_since} />
-                </Box>
-              </Grid>
-            </Grid>
-            <Divider />
-            <Typography variant="h6" style={{ marginTop: 8 }}>KYC Details</Typography>
-            <Grid container spacing={2} className={classes.readOnlyWrapper}>
-              <Grid title='Click to view PAN details' item md={6}>
+            <Title order={4} mb="lg">KYC Details</Title>
+            <Grid gutter="sm" mb="lg">
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <Tooltip title={values?.pan_verified ? 'Click to view PAN details' : 'Verify your PAN to get the details'}>
-                  <div onClick={(event) => values?.pan_verified == 1 ? setAnchorEl(event.currentTarget) : null}>
+                  <Box onClick={(event) => values?.pan_verified == 1 ? setAnchorEl(event.currentTarget) : null}>
                     <ViewData title='PAN' value={values.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success' : 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'} />} />
-                  </div>
+                  </Box>
                 </Tooltip>
-              </Grid>
-              <Grid item md={6}>
-                <ViewData title='Aadhaar' value={values.aadhar} endIcon={<CustomToken variant={values?.aadhar_verified ? 'success' : 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'} />} />
-              </Grid>
+              </Grid.Col>
+
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData 
+                  title='Aadhaar' 
+                  value={values.aadhar} 
+                  endIcon={<CustomToken variant={values?.aadhar_verified ? 'success' : 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'} />} 
+                />
+              </Grid.Col>
             </Grid>
-            <Divider />
-            {
-              values?.profile_image_url || values?.pan_file_url || values?.aadhar_file_url ? (
-                <div className={classes.readOnlyWrapper}>
-                  <Typography variant="h6" style={{ marginTop: 8 }}>Attachments</Typography>
-                  <div style={{ display: 'flex', marginTop: 16 }}>
-                    {values.profile_image_url && <DocAttachment tooltip='View Profile' imgUrl={values?.profile_image_url} docName='Profile' style={{ marginRight: 20 }} />}
-                    {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN' style={{ marginRight: 20 }} />}
-                    {values.aadhar_file_url && <DocAttachment tooltip='View Aadhaar' imgUrl={values?.aadhar_file_url} docName='Aadhaar' style={{ marginRight: 20 }} />}
-                  </div>
-                </div>
-              ) : (
-                <div className={classes.readOnlyWrapper}>
-                  <Typography variant="h6">Attachments</Typography>
-                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                    <Typography variant="h6">No Attachments Found</Typography>
-                  </div>
-                </div>
-              )
-            }
+
+            <Divider my="lg" />
+            <Title order={4} my="lg">Personal Details</Title>
+            <Grid gutter="sm" mb="lg">
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='ID' value={values.id} />
+              </Grid.Col>  
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Date of Birth' value={values.dob} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Address' value={values.address} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='State' value={values.state_name} />
+              </Grid.Col>  
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Marital Status' value={values.marital_status} />
+              </Grid.Col>  
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Mobile' value={values.mobile} />
+              </Grid.Col>  
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Email' value={values.email} />
+              </Grid.Col> 
+
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>  
+                <ViewData title={'Father\'s Name'} value={values.father_name} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>  
+                <ViewData title='Gender' value={values.gender} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='City' value={values.city_name} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Pincode' value={values.pincode} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Residing since' value={values.residing_since} />
+              </Grid.Col>
+            </Grid>
+            
+
+            <Divider my="lg" />
+
+            {values?.profile_image_url || values?.pan_file_url || values?.aadhar_file_url ? (
+              <>
+                <Title order={4} my="lg">Attachments</Title>
+                <Flex gap="xs" mb="lg">
+                  {values.profile_image_url && (
+                    <DocAttachment 
+                      tooltip='View Profile' 
+                      imgUrl={values?.profile_image_url} 
+                      docName='Profile' 
+                    />
+                  )}
+                  {values.pan_file_url && (
+                    <DocAttachment 
+                      tooltip='View PAN' 
+                      imgUrl={values?.pan_file_url} 
+                      docName='PAN' 
+                    />
+                  )}
+                  {values.aadhar_file_url && (
+                    <DocAttachment 
+                      tooltip='View Aadhaar' 
+                      imgUrl={values?.aadhar_file_url} 
+                      docName='Aadhaar' 
+                    />
+                  )}
+                </Flex>
+              </>
+            ) : (
+              <>
+                <Title order={4} mb="lg">Attachments</Title>
+                <Flex h="40" align="center" justify="center" mb="lg">
+                  <Text>No Attachments Found</Text>
+                </Flex>
+              </>
+            )}
           </>
         ) : (
-          <Grid container style={{ marginTop: 10 }}>
-            <>
-              <Grid {...gridItem} md={12} >
-                <Typography variant="title"><strong>KYC Details</strong></Typography>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
+          <>
+            <Title order={4} mb="lg">KYC Details</Title>
+            <Grid gutter="sm" mb="lg">
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <MantineTextInput
                   label="PAN Number"
                   name="pan"
                   value={values.pan?.toUpperCase()}
-                  disabled={(currentUser.role_id !== 1) && (panValidateData?.loading || values?.pan_verified)}
                   error={errors.pan}
-                  helperText={errors.pan}
+                  disabled={(currentUser.role_id !== 1) && (panValidateData?.loading || values?.pan_verified)}
                   readOnly={readOnly}
                   onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={ValidateProps(panValidateData)}
+                  // InputProps={ValidateProps(panValidateData)}
                 />
-                {
-                  !values?.pan_verified || values?.pan !== data?.pan ?
-                    <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
-                }
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
+                
+                {!values?.pan_verified || values?.pan !== data?.pan ? (
+                  <Box 
+                    component="span" 
+                    className="cursor-pointer"
+                    onClick={() => handleValidate('pan', values?.pan)}
+                  >
+                    <Text fz="xs" fw="600" c="indigo.5" span>Validate PAN</Text>
+                  </Box>
+                ) : null}
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <MantineTextInput
                   number
                   label="Aadhaar"
                   name="aadhar"
                   value={values.aadhar}
                   disabled={aadharValidateData?.loading || values?.aadhar_verified}
-                  helperText={errors.aadhar}
                   readOnly={readOnly}
                   error={errors.aadhar}
                   onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
-                  InputProps={ValidateProps(aadharValidateData)}
+                  // InputProps={ValidateProps(aadharValidateData)}
                 />
-                {
-                  !values?.aadhar_verified || values?.aadhar !== data?.aadhar ?
-                    <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}>Validate Aadhaar</Typography> : null
-                }
-              </Grid>
-              <Grid {...gridItem} md={12} >
-                <Typography variant="title"><strong>Personal Details</strong></Typography>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
+                {!values?.aadhar_verified || values?.aadhar !== data?.aadhar ? (
+                  <Box 
+                    component="span" 
+                    className="cursor-pointer"
+                    onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}
+                  >
+                    <Text fz="xs" fw="600" c="indigo.5" span>Validate Aadhaar</Text>
+                  </Box>
+                ) : null}
+              </Grid.Col>
+            </Grid> 
+
+            <Divider my="lg" />
+            <Title order={4} my="lg">Personal Details</Title>
+            <Grid gutter="sm" mb="lg">
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <MantineTextInput
                   label="First Name"
                   name="first_name"
                   error={errors.first_name}
                   readOnly={readOnly}
                   value={values.first_name?.toUpperCase()}
-                  helperText={errors.first_name}
                   onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
                 />
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <MantineTextInput
                   label="Last Name"
                   name="last_name"
                   readOnly={readOnly}
                   error={errors.last_name}
-                  helperText={errors.last_name}
                   value={values.last_name?.toUpperCase()}
                   onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
                 />
-              </Grid>
-              <Grid {...gridItem} md={6}>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   label="Father's Name"
                   name="father_name"
@@ -323,8 +369,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                   InputLabelProps={{ shrink: true }}
                 />
-              </Grid>
-              <Grid {...gridItem} md={6}>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardDatePicker
                     variant='inline'
@@ -358,8 +404,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
 
                   />
                 </MuiPickersUtilsProvider>
-              </Grid>
-              <Grid {...gridItem} md={6}>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   select
                   label="Gender"
@@ -378,8 +424,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <option value={'MALE'}>Male</option>
                   <option value={'FEMALE'}>Female</option>
                 </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   label="Address"
                   name="address"
@@ -391,8 +437,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   rows={3}
                   InputLabelProps={{ shrink: true }}
                 />
-              </Grid>
-              <Grid {...gridItem} md={6}>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   number
                   label="Pincode"
@@ -404,8 +450,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                   InputLabelProps={{ shrink: true }}
                 />
-              </Grid>
-              <Grid {...gridItem} md={6}>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   select
                   label="City"
@@ -430,8 +476,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     })
                   }
                 </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   select
                   name='state'
@@ -456,31 +502,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     })
                   }
                 </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  select
-                  label="Marital Status"
-                  name="marital_status"
-                  error={errors.marital_status}
-                  helperText={errors.marital_status}
-                  readOnly={readOnly}
-                  value={values.marital_status}
-                  onChange={onChange}
-                  disabled={readOnly}
-                  SelectProps={{
-                    native: true,
-                  }}
-                  InputLabelProps={{ shrink: true }}
-                >
-                  <option value="null">Choose Marital Status</option>
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
-                  <option value="Divorced">Divorced</option>
-                  <option value="Widowed">Widowed</option>
-                </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   select
                   label="Residing Since"
@@ -505,35 +528,55 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     </>
                   }
                 </TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
-                  number
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <MantineTextInput
+                  type="number"
                   label="Mobile"
                   name="mobile"
                   readOnly={readOnly}
                   value={values.mobile}
                   onChange={onChange}
                   error={errors.mobile}
-                  helperText={errors.mobile}
-                  InputLabelProps={{ shrink: true }}
-                ></TextInput>
-              </Grid>
-              <Grid {...gridItem} md={6}>
-                <TextInput
+                />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <MantineTextInput
                   label="Email"
                   name="email"
                   readOnly={readOnly}
                   error={errors.email}
-                  helperText={errors.email}
                   defaultValue={values.email}
                   onChange={onChange}
-                  InputLabelProps={{ shrink: true }}
                 />
-              </Grid>
-              {modelType === 'COAPPLICANT' || modelType === 'GUARANTOR' ?
+              </Grid.Col>
+              
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <TextInput
+                  select
+                  label="Marital Status"
+                  name="marital_status"
+                  error={errors.marital_status}
+                  helperText={errors.marital_status}
+                  readOnly={readOnly}
+                  value={values.marital_status}
+                  onChange={onChange}
+                  disabled={readOnly}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                >
+                  <option value="null">Choose Marital Status</option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Divorced">Divorced</option>
+                  <option value="Widowed">Widowed</option>
+                </TextInput>
+              </Grid.Col>
+              {modelType === 'COAPPLICANT' || modelType === 'GUARANTOR' ? (
                 <>
-                  <Grid {...gridItem} md={6}>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
                     <TextInput
                       select
                       label="Relation To"
@@ -558,8 +601,8 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                         })
                       }
                     </TextInput>
-                  </Grid>
-                  <Grid {...gridItem} md={6}>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, sm: 6 }}>
                     <TextInput
                       select
                       label="Relationship type"
@@ -583,75 +626,89 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                         })
                       }
                     </TextInput>
-                  </Grid>
-                </> : null}
-              <Grid {...gridItem}>
-                <Grid container spacing={2}>
-                  <Grid {...gridItem} md={6}>
-                    <Typography component="div">
-                      <Grid component="label" container alignItems="center" style={{ marginBottom: '10px', marginTop: '6px' }} spacing={2}>
-                        <Grid md={12} style={{ paddingLeft: '8px' }}>Mobile number on Whatsapp?</Grid>
-                        <Grid style={{ paddingLeft: '8px' }}>No</Grid>
-                        <Grid>
-                          <Switch
-                            checked={state.checkedA}
-                            onChange={handleChange}
-                            name="checkedA"
-                            color="primary"
-                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                            InputLabelProps={{ shrink: true }}
-                          />
-                        </Grid>
-                        <Grid>Yes</Grid>
-                      </Grid>
-                    </Typography>
-                  </Grid>
-                  <Grid {...gridItem} md={6}>
-                    <Typography component="div" >
-                      <Grid component="label" container style={{ marginBottom: '8px', marginTop: '6px' }} alignItems="center" spacing={2}>
-                        <Grid md={12} style={{ paddingLeft: 8, fontSize: 12 }}>Mobile number linked with AADHAAR?</Grid>
-                        <Grid style={{ paddingLeft: '8px' }}>No</Grid>
-                        <Grid>
-                          <Switch
-                            checked={state.checkedB}
-                            onChange={handleChange}
-                            color="primary"
-                            name="checkedB"
-                            inputProps={{ 'aria-label': 'secondary checkbox' }}
-                          />
-                        </Grid>
-                        <Grid>Yes</Grid>
-                      </Grid>
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid {...gridItem} md={12} >
-                <Typography variant="title"><strong>Attachments</strong></Typography>
-              </Grid>
-              <div className={classes.attachmentContainer}>
-                <DocAttachment action={true} imgUrl={values?.profile_image_url} docName='Profile' onUpload={() => docUpload('Profile')} onDelete={() => onDocDelete('profile')} disabled={!values?.profile_image_url} />
-                <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete('pan')} disabled={!values?.pan_file_url} />
-                <DocAttachment action={true} imgUrl={values?.aadhar_file_url} docName='Aadhaar' onUpload={() => docUpload('AADHAR')} onDelete={() => onDocDelete('aadhar')} disabled={!values?.aadhar_file_url} />
-              </div>
-              {
-                showUpload && (
-                  <FileUpload
-                    handleSave={(value) => {
-                      handleSave(value, fileType)
-                      showUpload && setShowUpload(false);
-                    }}
-                    FILE_FORMAT={[...FILE_FORMAT_IMG, ...FILE_FORMAT_PDF]}
-                    title='Upload Documents'
-                    open={showUpload}
-                    onCloseUploader={() => { setShowUpload(false) }}
+                  </Grid.Col>
+                </> 
+              ) : null}
+            </Grid>  
+
+            <Grid gutter="sm" mb="lg">
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <Space h="24" />
+                <Flex h="36" align="center" justify="space-between">
+                  <Text fz="xs">Mobile number on Whatsapp?</Text>
+                  <Switch
+                    color="indigo"
+                    size="md"
+                    checked={state.checkedA}
+                    onChange={handleChange}
+                    onLabel="Yes" 
+                    offLabel="No"
                   />
-                )
-              }
-            </>
-          </Grid>
+                </Flex>
+              </Grid.Col>
+
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <Space h="24" />
+                <Flex h="36" align="center" justify="space-between">
+                  <Text fz="xs">Mobile number linked with Aadhaar?</Text>
+                  <Switch
+                    color="indigo"
+                    size="md"
+                    checked={state.checkedB}
+                    onChange={handleChange}
+                    onLabel="Yes" 
+                    offLabel="No"
+                  />
+                </Flex>
+              </Grid.Col>
+            </Grid>
+
+            <Divider my="lg" />
+            <Title order={4} my="lg">Attachments</Title>
+
+            <Flex gap="xs" mb="lg">
+              <DocAttachment 
+                action={true} 
+                imgUrl={values?.profile_image_url} 
+                docName='Profile' 
+                onUpload={() => docUpload('Profile')} 
+                onDelete={() => onDocDelete('profile')} 
+                disabled={!values?.profile_image_url} 
+              />
+              <DocAttachment 
+                action={true} 
+                imgUrl={values?.pan_file_url} 
+                docName='PAN Card'
+                onUpload={() => docUpload('PAN')} 
+                onDelete={() => onDocDelete('pan')} 
+                disabled={!values?.pan_file_url} 
+              />
+              <DocAttachment 
+                action={true} 
+                imgUrl={values?.aadhar_file_url} 
+                docName='Aadhaar' 
+                onUpload={() => docUpload('AADHAR')} 
+                onDelete={() => onDocDelete('aadhar')} 
+                disabled={!values?.aadhar_file_url} 
+              />
+            </Flex>
+            
+            {showUpload && (
+              <FileUpload
+                handleSave={(value) => {
+                  handleSave(value, fileType)
+                  showUpload && setShowUpload(false);
+                }}
+                FILE_FORMAT={[...FILE_FORMAT_IMG, ...FILE_FORMAT_PDF]}
+                title='Upload Documents'
+                open={showUpload}
+                onCloseUploader={() => { setShowUpload(false) }}
+              />
+            )}
+          </>
         )
       }
+
       {/* This popup is to show the actual pan details returned from the external API */}
       <Popover
         id={anchorEl ? 'simple-popover' : undefined}

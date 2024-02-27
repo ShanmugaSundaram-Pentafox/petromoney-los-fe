@@ -126,20 +126,15 @@ const ApprovalReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <DataTableViewer
-            column={column}
-            rowData={loans}
-            title={`${title} (${loans.length})`}
-            onRowClick={(e) => onRowClick(e.dealership_id, e, 'loan_approval')}
-            excelDownload
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }} >No Pending Initial Approvals</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <Loader /></div>
-      }
+      <DataTableViewer
+        column={column}
+        rowData={loans}
+        title={title}
+        count={loans?.length}
+        onRowClick={(e) => onRowClick(e.dealership_id, e, 'loan_approval')}
+        loading={loading}
+        excelDownload
+      />
       <SignRequestLayout
         dealershipId={dealershipId}
         opened={modalVisible}

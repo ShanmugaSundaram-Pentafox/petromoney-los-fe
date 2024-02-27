@@ -100,20 +100,15 @@ const RejectedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <DataTableViewer
-            column={column}
-            rowData={loans || []}
-            title={`${title} (${loans.length})`}
-            excelDownload={true}
-            onRowClick={(i) => onRowClick(i.dealership_id, i, 'rejected')}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Rejected Applications</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      <DataTableViewer
+        column={column}
+        rowData={loans || []}
+        title={title}
+        count={loans?.length}
+        excelDownload={true}
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'rejected')}
+        loading={loading}
+      />
     </div>
   )
 }

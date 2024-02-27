@@ -35,29 +35,20 @@ const useStyles = makeStyles(theme => ({
 
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
-  const [loans, setLoans] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
-  const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const columnHelper = createColumnHelper();
 
   const pageDetailsQuery = useQuery({
     queryKey: ['renewal_rejectedRecordCount', filterQry, search],
     queryFn: () => getPageDetails('rejected', filterQry),
-  })
+  });
 
-  useEffect(() => {
-    setLoading(true);
-    getRenewalLoanByStatus('rejected', filterQry, page, search)
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }, [filterQry, page, search])
+  const getRenewalDataQuery = useQuery({
+    queryKey: ['renewal_rejected', filterQry, page, search],
+    queryFn: () => getRenewalLoanByStatus('rejected', filterQry, page, search),
+  });
 
   const onDownloadClick = () => {
     downloadRenewalData('rejected', filterQry)
@@ -118,56 +109,57 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     }),
   ]
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => true,
-    rowsPerPage: 10,
-    filter: false,
-    print: false,
-    sort: false,
-    download: false,
-    viewColumns: false,
-    searchPlaceholder: 'Search by dealreship ID/Name',
-    onSearchChange: (searchText) => {
-      setSearch(searchText)
-    },
-    customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage, textLabels) => {
-      return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <MuiTableFooter
-            totalCount={pageDetailsQuery?.data?.total_number_of_pages}
-            pageSize={10}
-            onPageChange={(value) => { setPage(value) }}
-          />
-        </div>
-      )
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'rejected')
-      }
-    },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-          </Tooltip>
-        </>
-      );
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => true,
+  //   rowsPerPage: 10,
+  //   filter: false,
+  //   print: false,
+  //   sort: false,
+  //   download: false,
+  //   viewColumns: false,
+  //   searchPlaceholder: 'Search by dealreship ID/Name',
+  //   onSearchChange: (searchText) => {
+  //     setSearch(searchText)
+  //   },
+  //   customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage, textLabels) => {
+  //     return (
+  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+  //         <MuiTableFooter
+  //           totalCount={pageDetailsQuery?.data?.total_number_of_pages}
+  //           pageSize={10}
+  //           onPageChange={(value) => { setPage(value) }}
+  //         />
+  //       </div>
+  //     )
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex !== 7) {
+  //       onRowClick(getRenewalDataQuery?.data[cellMeta.dataIndex].dealership_id, getRenewalDataQuery?.data[cellMeta.dataIndex], 'rejected')
+  //     }
+  //   },
+  //   customToolbar: () => {
+  //     return (
+  //       <>
+  //         <Tooltip title="Download">
+  //           <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+  //         </Tooltip>
+  //       </>
+  //     );
+  //   },
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   }
+  // };
 
   return (
     <div className={classes.root}>
       <DataTableViewer
-        rowData={loans}
+        rowData={getRenewalDataQuery?.data}
         column={column}
+        loading={getRenewalDataQuery?.isLoading}
         title={title}
         onRowClick={i => onRowClick(i?.dealership_id, i, 'rejected')}
         useAPIPagination
@@ -176,9 +168,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
         filter={false}
       />
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
     </div>
   )
 }

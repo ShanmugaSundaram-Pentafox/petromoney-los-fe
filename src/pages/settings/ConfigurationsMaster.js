@@ -18,7 +18,7 @@ const useStyles = makeStyles({
     gap: 8,
     cursor: 'pointer',
     transition: 'all 0.35s',
-
+    background: '#8080800d',
     '&:hover': {
       backgroundColor: '#e6e6e6',
     },
@@ -31,7 +31,7 @@ function ConfigurationsMaster({ currentUser }) {
 
   return (
     <Paper p="lg">
-      <SimpleGrid cols={{ base: 3, sm: 4, md: 5, lg: 6 }} spacing="lg">
+      <SimpleGrid cols={{ base: 3, sm: 4, md: 5, lg: 6 }} spacing="md">
         <div>
           <Box component="a" href="#/rbac" className={classes.content}>
             <AccessIcon className={classes.icons} />

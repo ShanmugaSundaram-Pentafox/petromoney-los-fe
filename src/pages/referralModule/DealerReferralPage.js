@@ -1,4 +1,4 @@
-import { Badge, Box, Grid } from '@material-ui/core'
+import { Box, Grid } from '@material-ui/core'
 import React, { useState } from 'react'
 import { useQuery } from 'react-query'
 import ReferralTable from './ReferralTable'
@@ -6,6 +6,7 @@ import RejectedListTable from './RejectedTable'
 import SettledListTable from './SettledListTable'
 import { getDealershipReferral, getDealershipReferralRejectedList, getDealershipReferralSettledList } from '../../services/dealerships.service'
 import { PaperWrapper } from '../reports/CreditReload'
+import { Badge, Tabs } from '@mantine/core'
 
 const DealerReferralPage = ({ currentUser }) => {
 
@@ -39,34 +40,28 @@ const DealerReferralPage = ({ currentUser }) => {
   );
 
   return (
-    <>
-      <PaperWrapper>
-        <Box borderRadius={4} bgcolor="background.paper">
-          <Grid container>
-            <Grid onClick={() => { setSelectedTab('new') }} className={selectedTab === 'new' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={4}>
-              <Badge badgeContent={referralList?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
-                <div>New</div>
-              </Badge>
-            </Grid>
-            <Grid onClick={() => { setSelectedTab('settled') }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === 'settled' ? 'inactive' : 'active'} item md={4}>
-              <div>Settled</div>
-            </Grid>
-            <Grid onClick={() => { setSelectedTab('rejected') }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === 'rejected' ? 'inactive' : 'active'} item md={4}>
-              <div>Rejected</div>
-            </Grid>
-          </Grid>
-        </Box>
-      </PaperWrapper>
-      {selectedTab === 'new' &&
-        <ReferralTable currentUser={currentUser} loans={referralList} loading={referralListLoading} fetchData={refetchReferralList}  />
-      }
-      {selectedTab === 'settled' &&
-        <SettledListTable loans={settledList} loading={settledListLoading} fetchData={refetchSettledList}  />
-      }
-      {selectedTab === 'rejected' &&
-        <RejectedListTable loans={rejectedList} loading={rejectedListLoading} fetchData={refetchRejectedList}  />
-      }
-    </>
+    <Tabs value={selectedTab} onChange={setSelectedTab} variant="pills" >
+      <Tabs.List grow>
+        <Tabs.Tab value="new">
+          New<Badge variant={selectedTab === 'new' && 'white'} ml={'xs'}>{referralList?.length}</Badge>
+        </Tabs.Tab>
+        <Tabs.Tab value="settled">
+          Settled
+        </Tabs.Tab>
+        <Tabs.Tab value="rejected">
+          Rejected
+        </Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value='new'>
+        <ReferralTable currentUser={currentUser} loans={referralList} loading={referralListLoading} fetchData={refetchReferralList} />
+      </Tabs.Panel>
+      <Tabs.Panel value='settled'>
+        <SettledListTable loans={settledList} loading={settledListLoading} fetchData={refetchSettledList} />
+      </Tabs.Panel>
+      <Tabs.Panel value='rejected'>
+        <RejectedListTable loans={rejectedList} loading={rejectedListLoading} fetchData={refetchRejectedList} />
+      </Tabs.Panel>
+    </Tabs>
   )
 }
 

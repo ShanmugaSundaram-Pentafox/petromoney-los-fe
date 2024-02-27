@@ -38,10 +38,8 @@ const useStyles = makeStyles(theme => ({
 
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
-  const [loans, setLoans] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
-  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const columnHelper = createColumnHelper();
@@ -49,6 +47,11 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const pageDetailsQuery = useQuery({
     queryKey: ['renewal_approvalRecordCount', filterQry, search],
     queryFn: () => getPageDetails('approval', filterQry),
+  });
+
+  const getRenewalDataQuery = useQuery({
+    queryKey: ['renewal_approval', filterQry, page, search],
+    queryFn: () => getRenewalLoanByStatus('approval', filterQry, page, search),
   });
 
   const renewalDownloadQuery = useQuery({
@@ -69,18 +72,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     enabled: Boolean(false),
     retry: Boolean(false),
   });
-
-  useEffect(() => {
-    setLoading(true);
-    getRenewalLoanByStatus('approval', filterQry, page, search)
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }, [filterQry, page, search])
 
   const handleReminder = () => {
     sendRenewalReminder('approval')
@@ -137,77 +128,75 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     })
   ]
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => true,
-    rowsPerPage: 10,
-    filter: false,
-    print: false,
-    sort: false,
-    download: false,
-    viewColumns: false,
-    searchPlaceholder: 'Search by dealreship ID/Name',
-    onSearchChange: (searchText) => {
-      setSearch(searchText)
-    },
-    customFooter: () => {
-      return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <MuiTableFooter
-            totalCount={pageDetailsQuery?.data?.total_number_of_pages}
-            pageSize={10}
-            onPageChange={(value) => { setPage(value) }}
-          />
-        </div>
-      )
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approval')
-      }
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    },
-    // customToolbar: () => {
-    //   return (
-    //     <>
-    //       <Tooltip label="Download" withArrow >
-    //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-    //       </Tooltip>
-    //       <Button
-    //         color='primary'
-    //         variant='contained'
-    //         onClick={() => setOpenModal(true)}
-    //       >
-    //         Send Reminder
-    //       </Button>
-    //     </>
-    //   );
-    // },
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => true,
+  //   rowsPerPage: 10,
+  //   filter: false,
+  //   print: false,
+  //   sort: false,
+  //   download: false,
+  //   viewColumns: false,
+  //   searchPlaceholder: 'Search by dealreship ID/Name',
+  //   onSearchChange: (searchText) => {
+  //     setSearch(searchText)
+  //   },
+  //   customFooter: () => {
+  //     return (
+  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+  //         <MuiTableFooter
+  //           totalCount={pageDetailsQuery?.data?.total_number_of_pages}
+  //           pageSize={10}
+  //           onPageChange={(value) => { setPage(value) }}
+  //         />
+  //       </div>
+  //     )
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex !== 7) {
+  //       onRowClick(getRenewalDataQuery?.data[cellMeta.dataIndex].dealership_id, getRenewalDataQuery?.data[cellMeta.dataIndex], 'approval')
+  //     }
+  //   },
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   },
+  //   // customToolbar: () => {
+  //   //   return (
+  //   //     <>
+  //   //       <Tooltip label="Download" withArrow >
+  //   //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+  //   //       </Tooltip>
+  //   //       <Button
+  //   //         color='primary'
+  //   //         variant='contained'
+  //   //         onClick={() => setOpenModal(true)}
+  //   //       >
+  //   //         Send Reminder
+  //   //       </Button>
+  //   //     </>
+  //   //   );
+  //   // },
+  // };
 
   return (
     <div className={classes.root}>
       <DataTableViewer
-        rowData={loans}
+        rowData={getRenewalDataQuery?.data}
         column={column}
         title={title}
         onRowClick={i => onRowClick(i.dealership_id, i, 'approval')}
         useAPIPagination
         page={page}
         setPage={setPage}
+        loading={getRenewalDataQuery?.isLoading}
         totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
         filter={false}
         action={<Button size='xs' onClick={() => setOpenModal(true)}>Send Reminder</Button>}
         downloadQuery={{ query: renewalDownloadQuery?.refetch, isLoading: renewalDownloadQuery?.isFetching }}
         excelDownload
       />
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
       <Modal
         opened={openModal}
         onClose={() => setOpenModal(false)}

@@ -155,20 +155,13 @@ const CollectionRemarks = () => {
         </div >
 
       </Box>
-      {
-        isFetching ? (
-          <Grid item xs={12}>
-            <Skeleton variant='rect' width='100%' height={400} />
-          </Grid>
-        ) : (
-          <DataTableViewer
-            rowData={testData}
-            title={'Remarks'}
-            column={column}
-            onRowClick={i => { setRowData(i); setOpenModal(true) }}
-          />
-        )
-      }
+      <DataTableViewer
+        rowData={testData}
+        title={'Remarks'}
+        column={column}
+        loading={isFetching}
+        onRowClick={i => { setRowData(i); setOpenModal(true) }}
+      />
       <Drawer
         anchor="right"
         open={openModal}

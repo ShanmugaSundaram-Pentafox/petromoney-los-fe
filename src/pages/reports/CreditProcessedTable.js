@@ -18,11 +18,11 @@ import {
 } from '../../services/users.service';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Paper } from '@mantine/core';
 
 
 const CreditProcessedTable = ({ currentUser }) => {
   const [rowData, setRowData] = useState();
-  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
   const [filterQry, setFilterQry] = useState();
@@ -140,81 +140,67 @@ const CreditProcessedTable = ({ currentUser }) => {
     }),
   ]
 
-  const options = {
-    print: false,
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    rowsPerPage: 25,
-    filter: false,
-    download: false,
-    search: false,
-    viewColumns: false,
-    setRowProps: (row, dataIndex) => {
-      if (row[12]) {
-        return { style: { backgroundColor: '#ffb99b69' } }
-      }
-      if (data?.data?.[dataIndex]?.reload_type === 'express') {
-        return { style: { backgroundColor: '#ff21161a' } }
-      }
-    },
-    customToolbar: () => {
-      return (
-        <Button
-          color='primary'
-          variant='contained'
-          onClick={() => setOpenModal(true)}
-        >
-          Add
-        </Button>
-      );
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex === 0 || cellMeta.colIndex === 1) {
-        let d = [];
-        d.push({
-          ...data?.data[cellMeta.dataIndex],
-          payment_proof_attachment: typeof (data?.data[cellMeta.dataIndex]?.payment_proof_attachment) === 'string' ? JSON.parse(data?.data[cellMeta.dataIndex]?.payment_proof_attachment) : (data?.data[cellMeta.dataIndex]?.payment_proof_attachment || [])
-        })
-        setRowData(d[0])
-        setStatusModal(true)
-      }
-    },
-  };
+  // const options = {
+  //   print: false,
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   rowsPerPage: 25,
+  //   filter: false,
+  //   download: false,
+  //   search: false,
+  //   viewColumns: false,
+  //   setRowProps: (row, dataIndex) => {
+  //     if (row[12]) {
+  //       return { style: { backgroundColor: '#ffb99b69' } }
+  //     }
+  //     if (data?.data?.[dataIndex]?.reload_type === 'express') {
+  //       return { style: { backgroundColor: '#ff21161a' } }
+  //     }
+  //   },
+  //   customToolbar: () => {
+  //     return (
+  //       <Button
+  //         color='primary'
+  //         variant='contained'
+  //         onClick={() => setOpenModal(true)}
+  //       >
+  //         Add
+  //       </Button>
+  //     );
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex === 0 || cellMeta.colIndex === 1) {
+  //       let d = [];
+  //       d.push({
+  //         ...data?.data[cellMeta.dataIndex],
+  //         payment_proof_attachment: typeof (data?.data[cellMeta.dataIndex]?.payment_proof_attachment) === 'string' ? JSON.parse(data?.data[cellMeta.dataIndex]?.payment_proof_attachment) : (data?.data[cellMeta.dataIndex]?.payment_proof_attachment || [])
+  //       })
+  //       setRowData(d[0])
+  //       setStatusModal(true)
+  //     }
+  //   },
+  // };
   return (
     <div>
-      {loading ? (
-        <Grid item xs={12}>
-          <Skeleton variant='rect' width='100%' height={400} />
-        </Grid>
-      ) : (
-        <>
-          <CreditReload
-            currentUser={currentUser}
-            filterQry={setFilterQry}
-            refetch={refetch}
-            filterList={['period', 'type']}
-            filterType={'processed'}
-            handleDownload={handleDownload}
-            fileData={fileData?.data[0]}
-            downloadLoading={downloadLoading}
-            searchLoading={searchLoading}
-          />
-          {/* <MUIDataTable
-            title={'Processed'}
-            columns={columns}
-            options={options}
-            data={error ? [] : data?.data}
-            components={{
-              TableFooter: () => <TableFooter offset={offset} stats={data?.stats} handleIncrease={() => setOffset(offset + 1)} handleDecrease={() => setOffset(offset - 1)} />
-            }}
-          /> */}
-          <DataTableViewer
-            rowData={error ? [] : data?.data}
-            column={column}
-            title={'Processed'}
-          />
-        </>
-      )}
+      <CreditReload
+        currentUser={currentUser}
+        filterQry={setFilterQry}
+        refetch={refetch}
+        filterList={['period', 'type']}
+        filterType={'processed'}
+        handleDownload={handleDownload}
+        fileData={fileData?.data[0]}
+        downloadLoading={downloadLoading}
+        searchLoading={searchLoading}
+      />
+      <Paper>
+        <DataTableViewer
+          rowData={error ? [] : data?.data}
+          column={column}
+          loading={searchLoading}
+          title={'Processed'}
+        />
+      </Paper>
       <Drawer
         anchor='right'
         open={statusModal}

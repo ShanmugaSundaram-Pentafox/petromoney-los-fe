@@ -97,20 +97,15 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick, fil
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <DataTableViewer
-            rowData={loans}
-            column={column}
-            title={`${title} (${loans.length})`}
-            excelDownload
-            onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No pending Disbursement Approved applications</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        title={title}
+        count={loans?.length}
+        excelDownload
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
+        loading={loading}
+      />
     </div>
   )
 }

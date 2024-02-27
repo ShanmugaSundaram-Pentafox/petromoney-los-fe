@@ -127,7 +127,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         orientation="vertical"
         onChange={onChangeTab}
         value={activeTab}
-        // defaultValue={'dealership'}
+        defaultValue={'dealership'}
         classNames={{
           root: 'gap-4',
           tabLabel: 'flex grow items-center gap-2',
@@ -141,8 +141,8 @@ const DealershipDetails = ({ currentUser, match }) => {
                 key={1}
                 value={item?.value}
               >
-                <Badge size="sm" circle variant={(item?.value) === activeTab ? "white" : "filled"} color="blue.3">{i + 1}</Badge>
-                <Text c={(item?.value) === activeTab ? "blue.9" : "gray"}>{item?.name}</Text>
+                <Badge size="sm" circle variant={item?.value === activeTab ? "white" : "filled"} color="blue.3">{i + 1}</Badge>
+                <Text c={(item?.value) === activeTab ? "blue.9" : "#2b2b2b"}>{item?.name}</Text>
               </Tabs.Tab>
             )
           })

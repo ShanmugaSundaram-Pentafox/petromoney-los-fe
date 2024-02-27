@@ -69,11 +69,8 @@ const useStyles = makeStyles(theme => ({
 
 const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }) => {
   const classes = useStyles();
-  const [loans, setLoans] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageData, setPageData] = useState();
   const [search, setSearch] = useState();
-  const [loading, setLoading] = useState(false);
   const [type, setType] = useState('');
   const [loanId, setloanId] = useState();
   const [enhancementId, setEnhancementId] = useState();
@@ -87,6 +84,16 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   const documentPopover = Boolean(anchorEl?.document);
   const documentId = documentPopover ? 'document-popover' : undefined;
   const columnHelper = createColumnHelper();
+
+  const getEnhancementDataQuery = useQuery({
+    queryKey: ['enhancement-data-approved', filterQry, page, search],
+    queryFn: () => getEnhancedLoanByStatus('approved', filterQry, page, search),
+  })
+
+  const getEnhancementPaginationQuery = useQuery({
+    queryKey: ['enhancement-pagination-approved', filterQry],
+    queryFn: () => getPageDetails('approved', filterQry),
+  })
 
   const enhancementDownloadQuery = useQuery({
     queryKey: 'enhancement-download-approved',
@@ -107,62 +114,9 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
     retry: Boolean(false),
   });
 
-  useEffect(() => {
-    setLoading(true);
-    getEnhancementApprovedData();
-  }, [filterQry, page, search])
-
   const handleClose = () => {
     setAnchorEl({});
   };
-
-  const getEnhancementApprovedData = () => {
-    getEnhancedLoanByStatus('approved', filterQry, page, search)
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }
-
-  useEffect(() => {
-    getPageDetails('approved', filterQry)
-      .then((res) => {
-        setPageData(res)
-      })
-      .catch((e) => console.log('getPageCountError >>>', e))
-  }, [filterQry])
-
-
-  const onDownloadClick = () => {
-    downloadEnhancementData('approved', filterQry)
-      .then(data => {
-        getSignedUrl(data[0]?.url)
-          .then((res) => {
-            window.open(res?.url, '_blank');
-          })
-          .catch(e => {
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
-          })
-      })
-      .catch(e => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
 
   const syncData = () => {
     getEnhancementSync(enhancementId)
@@ -173,9 +127,9 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
             horizontal: 'right',
           },
           variant: 'success',
-        })
-        getEnhancementApprovedData()
-        setOpenDialog(false)
+        });
+        getEnhancementDataQuery?.refetch();
+        setOpenDialog(false);
       })
       .catch(err => {
         enqueueSnackbar(err, {
@@ -253,70 +207,69 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
     })
   ]
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => true,
-    rowsPerPage: 10,
-    filter: false,
-    print: false,
-    sort: false,
-    download: false,
-    viewColumns: false,
-    searchPlaceholder: 'Search by dealreship ID/Name',
-    onSearchChange: (searchText) => {
-      setSearch(searchText)
-    },
-    // customToolbar: () => {
-    //   return (
-    //     <>
-    //       <Tooltip title="Download">
-    //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-    //       </Tooltip>
-    //     </>
-    //   );
-    // },
-    customFooter: () => {
-      return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <MuiTableFooter
-            totalCount={pageData?.total_number_of_pages}
-            pageSize={10}
-            onPageChange={(value) => { setPage(value) }}
-          />
-        </div>
-      )
-    },
-    onCellClick: (colData, cellMeta) => {
-      if ((cellMeta.colIndex !== 8) && (cellMeta.colIndex !== 7)) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
-      }
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => true,
+  //   rowsPerPage: 10,
+  //   filter: false,
+  //   print: false,
+  //   sort: false,
+  //   download: false,
+  //   viewColumns: false,
+  //   searchPlaceholder: 'Search by dealreship ID/Name',
+  //   onSearchChange: (searchText) => {
+  //     setSearch(searchText)
+  //   },
+  //   // customToolbar: () => {
+  //   //   return (
+  //   //     <>
+  //   //       <Tooltip title="Download">
+  //   //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+  //   //       </Tooltip>
+  //   //     </>
+  //   //   );
+  //   // },
+  //   customFooter: () => {
+  //     return (
+  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+  //         <MuiTableFooter
+  //           totalCount={pageData?.total_number_of_pages}
+  //           pageSize={10}
+  //           onPageChange={(value) => { setPage(value) }}
+  //         />
+  //       </div>
+  //     )
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if ((cellMeta.colIndex !== 8) && (cellMeta.colIndex !== 7)) {
+  //       onRowClick(getEnhancementDataQuery?.data[cellMeta.dataIndex].dealership_id, getEnhancementDataQuery?.data[cellMeta.dataIndex], 'approved')
+  //     }
+  //   },
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   }
+  // };
 
   return (
     <div className={classes.root}>
       <DataTableViewer
-        title={`${title} (${loans.length})`}
-        rowData={loans}
+        title={title}
+        count={getEnhancementDataQuery?.data?.length}
+        rowData={getEnhancementDataQuery?.data}
         column={column}
         onRowClick={i => onRowClick(i.dealership_id, i, 'approved')}
         useAPIPagination
         page={page}
         setPage={setPage}
-        totalNoOfPages={pageData?.total_number_of_pages}
+        totalNoOfPages={getEnhancementPaginationQuery?.data?.total_number_of_pages}
         filter={false}
         columnsFilter={false}
+        loading={getEnhancementDataQuery?.isLoading}
         excelDownload
         downloadQuery={{ query: enhancementDownloadQuery?.refetch, isLoading: enhancementDownloadQuery?.isFetching }}
       />
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
       <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
         <SignRequestLayout
           dealershipId={dealershipId}
@@ -357,27 +310,27 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
         }}
       >
         <div className={classes.itemLists}>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
+          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
             <div className={classes.listIcon}>
               <DescriptionIcon style={{ width: 19, color: 'blue' }} />
             </div>
             <Typography>Sanction Letter</Typography>
           </div>
-          {loans?.[anchorEl?.r?.rowIndex?.enhancement_category] != 'decrease' ?
-            <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['current_loan_amount']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['new_product_id']) }}>
+          {getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex?.enhancement_category] != 'decrease' ?
+            <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['current_loan_amount']); setProductTypeId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['new_product_id']) }}>
               <div className={classes.listIcon} >
                 <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
               </div>
               <Typography>Loan Agreement</Typography>
             </div> : null
           }
-          <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
+          <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
             <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
               <ESignIcon width={17} style={{ color: 'blue' }} />
             </div>
             <Typography>eSign Application</Typography>
           </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['current_loan_amount']); }}>
+          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['current_loan_amount']); }}>
             <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
               <AssignmentIcon style={{ width: 19, color: 'blue' }} />
             </div>

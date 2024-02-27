@@ -1,6 +1,5 @@
-import { Button, Drawer, Tooltip } from '@material-ui/core';
+import { Drawer } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
@@ -14,6 +13,7 @@ import Currency from '../../components/Number/Currency';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Button, Paper, Tooltip } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -94,8 +94,8 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
       header: 'Action',
       cell: ({ row }) => {
         return (
-          <Tooltip title="click to add settlement">
-            <Button variant='outlined' size='small' color='primary'
+          <Tooltip label="click to add settlement" color='gray' withArrow>
+            <Button variant='outline' size='compact-xs' style={{ fontSize: '12px' }}
               onClick={() => { setOpen({ open: true, id: row?.original?.dealership_id }); setRowData(row?.original) }}
             >
               Add settlement
@@ -106,46 +106,40 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
     }),
   ]
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex === 7) {
-        setRowData(loans[cellMeta.dataIndex])
-      }
-      else {
-        (currentUser.role_id == 1 || currentUser.role_id == 9) &&
-          onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex]);
-      }
-    },
-    filter: false,
-    viewColumns: false,
-    print: false,
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => false,
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex === 7) {
+  //       setRowData(loans[cellMeta.dataIndex])
+  //     }
+  //     else {
+  //       (currentUser.role_id == 1 || currentUser.role_id == 9) &&
+  //         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex]);
+  //     }
+  //   },
+  //   filter: false,
+  //   viewColumns: false,
+  //   print: false,
+  // };
 
   return (
-    <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <DataTableViewer
-            rowData={loans}
-            column={column}
-            title={'Referral List'}
-            onRowClick={i => {
-              (currentUser.role_id == 1 || currentUser.role_id == 9) &&
-                onRowClick(i?.dealership_id, i);
-            }}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+    <Paper>
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        loading={loading}
+        title={'Referral List'}
+        onRowClick={i => {
+          (currentUser.role_id == 1 || currentUser.role_id == 9) &&
+            onRowClick(i?.dealership_id, i);
+        }}
+      />
       <Drawer
         anchor="right"
         ModalProps={{
@@ -161,7 +155,7 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
           }
         </div>
       </Drawer>
-    </div>
+    </Paper>
   )
 }
 

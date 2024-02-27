@@ -5,7 +5,7 @@ import NumberFormat from 'react-number-format';
 const Currency = ({ value, ...props }) => {
   const amount = typeof value == 'string' ? parseInt(value?.replace(/,|₹/g, '')) : parseInt(value)
   return (
-    <span style={{ fontFamily: 'sans-serif' }}>₹&nbsp;<span style={{ fontFamily: 'Poppins, sans-serif' }}>{Intl.NumberFormat('en-IN').format(Math.round(parseFloat(value) * 100) / 100) || 0}</span></span>
+    <span style={{ fontFamily: 'sans-serif' }}>₹&nbsp;<span style={{ fontFamily: 'Poppins, sans-serif' }}>{value ? Intl.NumberFormat('en-IN').format(Math.round(parseFloat(value) * 100) / 100) : 0}</span></span>
   );
 };
 

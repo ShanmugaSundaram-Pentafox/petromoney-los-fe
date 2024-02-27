@@ -201,17 +201,13 @@ const UnresolvedTable = ({ currentUser }) => {
   return (
     <>
       <Grid item md={12}>
-        {Array.isArray(data) ? (
-          <DataTableViewer
-            rowData={data}
-            column={column}
-            title={'Unresolved withheld loans'}
-          />
-        ) : (!isLoading && <Paper style={{ padding: 10 }}>No unresolved withheld loans found</Paper>)
-        }
-        {
-          isLoading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-        }
+        <DataTableViewer
+          rowData={data}
+          column={column}
+          loading={isLoading}
+          title={'Unresolved withheld loans'}
+          noDataText='No un-resolved loans found'
+        />
       </Grid>
       <Drawer
         anchor="right"

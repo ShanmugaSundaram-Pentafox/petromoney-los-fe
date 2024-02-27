@@ -275,7 +275,7 @@ const ReactTable = ({
                                     color="blue.1"
                                     onClick={() => table.setPageIndex(0)}
                                 >
-                                    <IconChevronsLeft size={16} />
+                                    <IconChevronsLeft size={16} color="gray" />
                                 </ActionIcon>
                             )}
                             {table.getState().pagination.pageIndex != 0 && (
@@ -313,7 +313,7 @@ const ReactTable = ({
                                         color="blue.1"
                                         onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                                     >
-                                        <IconChevronsRight size={16} />
+                                        <IconChevronsRight size={16} color="gray" />
                                     </ActionIcon>
                                 )}
                             {data?.length ? (

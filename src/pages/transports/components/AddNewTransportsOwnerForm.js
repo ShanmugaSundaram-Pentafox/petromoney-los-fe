@@ -118,7 +118,7 @@ const AddNewTransportsOwnerForm = ({
   const queryClient = useQueryClient()
   const currentYear = date.getFullYear();
   const currentYearDiff = date.getFullYear() - 1970;
-  
+
   const {
     values,
     errors,
@@ -355,10 +355,10 @@ const AddNewTransportsOwnerForm = ({
                 <Grid.Col span={{ base: 12, sm: 6 }}>
                   <ViewData title='Owner ID' value={values.t_owner_id} />
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>  
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <ViewData title='Date of Birth' value={values.dob} />
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>  
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <ViewData title='Address' value={values.address} />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -373,7 +373,7 @@ const AddNewTransportsOwnerForm = ({
                 <Grid.Col span={{ base: 12, sm: 6 }}>
                   <ViewData title='Name' value={values.first_name} />
                 </Grid.Col>
-                <Grid.Col span={{ base: 12, sm: 6 }}>  
+                <Grid.Col span={{ base: 12, sm: 6 }}>
                   <ViewData title='Gender' value={values.gender} />
                 </Grid.Col>
                 <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -395,85 +395,85 @@ const AddNewTransportsOwnerForm = ({
               <Title order={4} mb="lg">KYC Details</Title>
               <Grid gutter="sm">
                 <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <ViewData 
+                  <ViewData
                     title='PAN'
-                    value={values.pan} 
+                    value={values.pan}
                     endIcon={
-                      <CustomToken variant={values?.pan_verified ? 'success' : 'error'} 
+                      <CustomToken variant={values?.pan_verified ? 'success' : 'error'}
                         label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'}
-                        icon={values?.pan_verified ? 'tick' : 'cross'} 
+                        icon={values?.pan_verified ? 'tick' : 'cross'}
                       />
-                    } 
+                    }
                   />
                 </Grid.Col>
 
                 <Grid.Col span={{ base: 12, sm: 6 }}>
-                  <ViewData 
-                    title='Aadhar' 
-                    value={values.aadhar} 
+                  <ViewData
+                    title='Aadhar'
+                    value={values.aadhar}
                     endIcon={
-                      <CustomToken 
-                        variant={values?.aadhar_verified ? 'success' : 'error'} 
-                        label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} 
-                        icon={values?.aadhar_verified ? 'tick' : 'cross'} 
+                      <CustomToken
+                        variant={values?.aadhar_verified ? 'success' : 'error'}
+                        label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'}
+                        icon={values?.aadhar_verified ? 'tick' : 'cross'}
                       />
-                    } 
+                    }
                   />
                 </Grid.Col>
               </Grid>
-              
+
               <Divider my="lg" />
 
               {values?.profile_image_url ||
                 values?.pan_file_url ||
                 values?.aadhar_f_file_url ||
                 values?.aadhar_b_file_url ? (
-                  <>
-                    <Title order={4} mb="lg">Attachments</Title>
-                    <Flex gap="xs" mb="lg">
-                      {values.profile_image_url && (
-                        <DocAttachment 
-                          tooltip='View Profile' 
-                          imgUrl={values?.profile_image_url} 
-                          docName='Profile' 
-                        />
-                      )}
-                      {values.pan_file_url && (
-                        <DocAttachment 
-                          tooltip='View PAN' 
-                          imgUrl={values?.pan_file_url} 
-                          docName='PAN' 
-                        />
-                      )}
-                      {values.aadhar_f_file_url && (
-                        <DocAttachment 
-                          tooltip='View Aadhar Front' 
-                          imgUrl={values?.aadhar_f_file_url} 
-                          docName='Aadhar front' 
-                        />
-                      )}
-                      {values.aadhar_b_file_url && (
-                        <DocAttachment 
-                          tooltip='View Aadhar Back' 
-                          imgUrl={values?.aadhar_b_file_url} 
-                          docName='Aadhar back' 
-                        />
-                      )}
-                    </Flex>
-                  </>
-                ) : (
-                  <>
-                    <Title order={4} mb="lg">Attachments</Title>
-                    <Flex h="40" align="center" justify="center" mb="lg">
-                      <Text>No Attachments Found</Text>
-                    </Flex>
-                  </>
-                )}
+                <>
+                  <Title order={4} mb="lg">Attachments</Title>
+                  <Flex gap="xs" mb="lg">
+                    {values.profile_image_url && (
+                      <DocAttachment
+                        tooltip='View Profile'
+                        imgUrl={values?.profile_image_url}
+                        docName='Profile'
+                      />
+                    )}
+                    {values.pan_file_url && (
+                      <DocAttachment
+                        tooltip='View PAN'
+                        imgUrl={values?.pan_file_url}
+                        docName='PAN'
+                      />
+                    )}
+                    {values.aadhar_f_file_url && (
+                      <DocAttachment
+                        tooltip='View Aadhar Front'
+                        imgUrl={values?.aadhar_f_file_url}
+                        docName='Aadhar front'
+                      />
+                    )}
+                    {values.aadhar_b_file_url && (
+                      <DocAttachment
+                        tooltip='View Aadhar Back'
+                        imgUrl={values?.aadhar_b_file_url}
+                        docName='Aadhar back'
+                      />
+                    )}
+                  </Flex>
+                </>
+              ) : (
+                <>
+                  <Title order={4} mb="lg">Attachments</Title>
+                  <Flex h="40" align="center" justify="center" mb="lg">
+                    <Text>No Attachments Found</Text>
+                  </Flex>
+                </>
+              )}
             </>
           ) : (
             <form onSubmit={handleSubmit}>
               <Title order={4} mb="lg">KYC Details</Title>
-              
+
               <Grid gutter="sm">
                 <Grid.Col span={{ base: 12, sm: 6 }}>
                   <MantineTextInput
@@ -484,12 +484,12 @@ const AddNewTransportsOwnerForm = ({
                     error={errors.pan}
                     readOnly={readOnly}
                     onChange={handleChange}
-                    // InputProps={ValidateProps(panValidateData)}
+                  // InputProps={ValidateProps(panValidateData)}
                   />
 
                   {!values?.pan_verified || values?.pan !== rowData?.pan ? (
-                    <Box 
-                      component="span" 
+                    <Box
+                      component="span"
                       className="cursor-pointer"
                       onClick={() => handleValidate('pan', values?.pan)}
                     >
@@ -497,7 +497,7 @@ const AddNewTransportsOwnerForm = ({
                     </Box>
                   ) : null}
 
-                  
+
                 </Grid.Col>
 
                 <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -509,12 +509,12 @@ const AddNewTransportsOwnerForm = ({
                     readOnly={readOnly}
                     error={errors.aadhar}
                     onChange={handleChange}
-                    // InputProps={ValidateProps(aadharValidateData)}
+                  // InputProps={ValidateProps(aadharValidateData)}
                   />
-                  
+
                   {!values?.aadhar_verified || values?.aadhar !== rowData?.aadhar ? (
-                    <Box 
-                      component="span" 
+                    <Box
+                      component="span"
                       className="cursor-pointer"
                       onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}
                     >
@@ -523,7 +523,7 @@ const AddNewTransportsOwnerForm = ({
                   ) : null}
 
                 </Grid.Col>
-              </Grid>  
+              </Grid>
 
               <Title order={4} my="lg">Personal Details</Title>
               <Grid gutter="sm">
@@ -548,7 +548,7 @@ const AddNewTransportsOwnerForm = ({
                     onChange={handleChange}
                   />
                 </Grid.Col>
-                
+
                 <Grid.Col span={{ base: 12, sm: 6 }}>
                   <MuiPickersUtilsProvider utils={DateFnsUtils}>
                     <KeyboardDatePicker
@@ -680,7 +680,7 @@ const AddNewTransportsOwnerForm = ({
                     }
                   </TextInput>
                 </Grid.Col>
-                
+
                 <Grid.Col span={{ base: 12, sm: 6 }}>
                   <TextInput
                     select
@@ -762,9 +762,10 @@ const AddNewTransportsOwnerForm = ({
                     <Switch
                       color="indigo"
                       size="md"
+                      name='checkedA'
                       checked={state.checkedA}
                       onChange={handleStateChange}
-                      onLabel="Yes" 
+                      onLabel="Yes"
                       offLabel="No"
                     />
                   </Flex>
@@ -776,9 +777,10 @@ const AddNewTransportsOwnerForm = ({
                     <Switch
                       color="indigo"
                       size="md"
+                      name='checkedB'
                       checked={state.checkedB}
                       onChange={handleStateChange}
-                      onLabel="Yes" 
+                      onLabel="Yes"
                       offLabel="No"
                     />
                   </Flex>
@@ -787,39 +789,39 @@ const AddNewTransportsOwnerForm = ({
 
               <Title order={4} my="lg">Attachments</Title>
               <Flex gap="xs" mb="lg">
-                <DocAttachment 
-                  action={true} 
-                  imgUrl={values?.profile_image_url} 
+                <DocAttachment
+                  action={true}
+                  imgUrl={values?.profile_image_url}
                   docName='Profile'
-                  onUpload={() => docUpload('Profile')} 
-                  onDelete={() => onDocDelete({ profile_image_url: '' })} 
-                  disabled={!values?.profile_image_url} 
+                  onUpload={() => docUpload('Profile')}
+                  onDelete={() => onDocDelete({ profile_image_url: '' })}
+                  disabled={!values?.profile_image_url}
                 />
-                <DocAttachment 
-                  action={true} 
-                  imgUrl={values?.pan_file_url} 
-                  docName='PAN Card' 
-                  onUpload={() => docUpload('PAN')} 
-                  onDelete={() => onDocDelete({ pan_file_url: '' })} 
-                  disabled={!values?.pan_file_url} 
+                <DocAttachment
+                  action={true}
+                  imgUrl={values?.pan_file_url}
+                  docName='PAN Card'
+                  onUpload={() => docUpload('PAN')}
+                  onDelete={() => onDocDelete({ pan_file_url: '' })}
+                  disabled={!values?.pan_file_url}
                 />
-                <DocAttachment 
-                  action={true} 
-                  imgUrl={values?.aadhar_f_file_url} 
-                  docName='Aadhar Front' 
-                  onUpload={() => docUpload('Front')} 
-                  onDelete={() => onDocDelete({ aadhar_f_file_url: '' })} 
-                  disabled={!values?.aadhar_f_file_url} 
+                <DocAttachment
+                  action={true}
+                  imgUrl={values?.aadhar_f_file_url}
+                  docName='Aadhar Front'
+                  onUpload={() => docUpload('Front')}
+                  onDelete={() => onDocDelete({ aadhar_f_file_url: '' })}
+                  disabled={!values?.aadhar_f_file_url}
                 />
-                <DocAttachment 
-                  action={true} 
-                  imgUrl={values?.aadhar_b_file_url} 
-                  docName='Aadhar Back' 
-                  onUpload={() => docUpload('Back')} 
-                  onDelete={() => onDocDelete({ aadhar_b_file_url: '' })} 
-                  disabled={!values?.aadhar_b_file_url} 
+                <DocAttachment
+                  action={true}
+                  imgUrl={values?.aadhar_b_file_url}
+                  docName='Aadhar Back'
+                  onUpload={() => docUpload('Back')}
+                  onDelete={() => onDocDelete({ aadhar_b_file_url: '' })}
+                  disabled={!values?.aadhar_b_file_url}
                 />
-              </Flex> 
+              </Flex>
             </form>
           )}
 

@@ -212,21 +212,16 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
   ];
 
   return (
-    <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length !== 0 ? (
-          <DataTableViewer
-            column={column}
-            rowData={loans}
-            excelDownload={true}
-            title={`${title} (${loans.length})`}
-            onRowClick={(i) => onRowClick(i.dealership_id, i, 'approved')}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Approved Applications</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <Loader /></div>
-      }
+    <div>
+      <DataTableViewer
+        column={column}
+        rowData={loans}
+        excelDownload={true}
+        title={title}
+        count={loans?.length}
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'approved')}
+        loading={loading}
+      />
       <SignRequestLayout
         dealershipId={dealershipId}
         loanId={loanId}
@@ -239,13 +234,6 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
         callback={getLoansTable}
         currentUser={currentUser}
       />
-      <Popover
-        id={id}
-        open={open}
-        onClose={handleClose}
-      >
-        <DocCheckListDetailsTable title={rowData} />
-      </Popover>
     </div>
   )
 }

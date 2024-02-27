@@ -77,11 +77,9 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [loanAmount, setLoanAmount] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [type, setType] = useState('');
-  const [loans, setLoans] = useState([]);
   const [page, setPage] = useState(1);
   const [productTypeId, setProductTypeId] = useState();
   const [search, setSearch] = useState();
-  const [loading, setLoading] = useState(false);
   const actionable = !permissionCheck(currentUser?.role_name, rulesList?.external_view);
   const [openDialog, setOpenDialog] = useState(false);
   const [renewalId, setRenewalId] = useState();
@@ -94,6 +92,11 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const pageDetailsQuery = useQuery(
     ['renewal_approvedRecordCount', filterQry, search],
     () => getPageDetails('approved', filterQry),
+  );
+
+  const getRenewalDataQuery = useQuery(
+    ['renewal_approved', filterQry, page, search],
+    () => getRenewalLoanByStatus('approved', filterQry, page, search),
   );
 
   const renewalDownloadQuery = useQuery({
@@ -114,18 +117,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     enabled: Boolean(false),
     retry: Boolean(false),
   });
-
-  useEffect(() => {
-    setLoading(true);
-    getRenewalLoanByStatus('approved', filterQry, page, search)
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }, [filterQry, page, search])
 
   const handleClose = () => {
     setAnchorEl({});
@@ -245,59 +236,60 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     })
   ]
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => true,
-    rowsPerPage: 10,
-    filter: false,
-    print: false,
-    download: false,
-    sort: false,
-    viewColumns: false,
-    searchPlaceholder: 'Search by dealreship ID/Name',
-    onSearchChange: (searchText) => {
-      setSearch(searchText)
-    },
-    customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage, textLabels) => {
-      return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <MuiTableFooter
-            totalCount={pageDetailsQuery?.data?.total_number_of_pages}
-            pageSize={10}
-            onPageChange={(value) => { setPage(value) }}
-          />
-        </div>
-      )
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex != 8 && cellMeta.colIndex != 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
-      }
-    },
-    // customToolbar: () => {
-    //   return (
-    //     <>
-    //       <Tooltip title="Download">
-    //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-    //       </Tooltip>
-    //     </>
-    //   );
-    // },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => true,
+  //   rowsPerPage: 10,
+  //   filter: false,
+  //   print: false,
+  //   download: false,
+  //   sort: false,
+  //   viewColumns: false,
+  //   searchPlaceholder: 'Search by dealreship ID/Name',
+  //   onSearchChange: (searchText) => {
+  //     setSearch(searchText)
+  //   },
+  //   customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage, textLabels) => {
+  //     return (
+  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+  //         <MuiTableFooter
+  //           totalCount={pageDetailsQuery?.data?.total_number_of_pages}
+  //           pageSize={10}
+  //           onPageChange={(value) => { setPage(value) }}
+  //         />
+  //       </div>
+  //     )
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex != 8 && cellMeta.colIndex != 7) {
+  //       onRowClick(getRenewalDataQuery?.data[cellMeta.dataIndex].dealership_id, getRenewalDataQuery?.data[cellMeta.dataIndex], 'approved')
+  //     }
+  //   },
+  //   // customToolbar: () => {
+  //   //   return (
+  //   //     <>
+  //   //       <Tooltip title="Download">
+  //   //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
+  //   //       </Tooltip>
+  //   //     </>
+  //   //   );
+  //   // },
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   }
+  // };
 
   return (
     <div className={classes.root}>
       <DataTableViewer
-        rowData={loans}
+        rowData={getRenewalDataQuery?.data}
         column={column}
         title={title}
         onRowClick={i => onRowClick(i?.dealership_id, i, 'approved')}
         useAPIPagination
+        loading={getRenewalDataQuery?.isLoading}
         page={page}
         setPage={setPage}
         totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
@@ -305,9 +297,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         downloadQuery={{ query: renewalDownloadQuery?.refetch, isLoading: renewalDownloadQuery?.isFetching }}
         excelDownload
       />
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
       <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
         <SignRequestLayout
           dealershipId={dealershipId}
@@ -348,25 +337,25 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         }}
       >
         <div className={classes.itemLists}>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
+          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getRenewalDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
             <div className={classes.listIcon}>
               <DescriptionIcon style={{ width: 19, color: 'blue' }} />
             </div>
             <Typography>Sanction Letter</Typography>
           </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['current_loan_amount']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['new_product_id']) }}>
+          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getRenewalDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(getRenewalDataQuery?.data?.[anchorEl?.r?.rowIndex]['current_loan_amount']); setProductTypeId(getRenewalDataQuery?.data?.[anchorEl?.r?.rowIndex]['new_product_id']) }}>
             <div className={classes.listIcon} >
               <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
             </div>
             <Typography>Loan Agreement</Typography>
           </div>
-          <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
+          <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(getRenewalDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
             <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
               <ESignIcon width={17} style={{ color: 'blue' }} />
             </div>
             <Typography>eSign Application</Typography>
           </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['current_loan_amount']); }}>
+          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getRenewalDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(getRenewalDataQuery?.data?.[anchorEl?.r?.rowIndex]['current_loan_amount']); }}>
             <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
               <AssignmentIcon style={{ width: 19, color: 'blue' }} />
             </div>

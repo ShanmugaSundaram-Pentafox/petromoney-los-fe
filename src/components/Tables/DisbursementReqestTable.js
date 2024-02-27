@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
+const DisbursementReqestTable = ({ title, loans = [], setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
   const columnHelper = createColumnHelper();
@@ -97,20 +97,15 @@ const DisbursementReqestTable = ({ title, loans, setLoansData, onRowClick, filte
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <DataTableViewer
-            rowData={loans}
-            column={column}
-            title={`${title} (${loans.length})`}
-            excelDownload
-            onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }} >No Pending Disbursement Approvals</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        title={title}
+        count={loans?.length}
+        excelDownload
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
+        loading={loading}
+      />
     </div>
   )
 }

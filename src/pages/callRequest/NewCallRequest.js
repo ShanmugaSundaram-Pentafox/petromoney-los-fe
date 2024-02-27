@@ -20,7 +20,7 @@ const useStyles = makeStyles({
   }
 })
 
-const NewCallRequest = ({ callbackData }) => {
+const NewCallRequest = ({ callbackData, isLoading }) => {
   const classes = useStyles();
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
@@ -123,6 +123,7 @@ const NewCallRequest = ({ callbackData }) => {
         rowData={callbackData}
         column={column}
         title={'New Request'}
+        loading={isLoading}
       />
       <Dialog onClose={() => { setRowData(); setRemark(); setError() }} open={rowData} maxWidth='xs' fullWidth>
         <DialogContent>

@@ -64,16 +64,19 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
   const column = [
     columnHelper.accessor('id', {
       header: 'ID',
+      enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
     }),
     columnHelper.accessor('name', {
       header: 'Name',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('sales_area', {
       header: 'Sales Area',
     }),
     columnHelper.accessor('loan_application_submitted_date', {
       header: 'Submitted Date',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? format(new Date(value?.getValue()), 'dd-MMM-yyyy') : '-'}</span>
     }),
     columnHelper.accessor('region', {
@@ -84,12 +87,11 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
     }),
     columnHelper.accessor('gst', {
       header: 'GST',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('pan', {
       header: 'PAN',
-    }),
-    columnHelper.accessor('pan', {
-      header: 'PAN',
+      enableColumnFilter: false,
     }),
   ]
 

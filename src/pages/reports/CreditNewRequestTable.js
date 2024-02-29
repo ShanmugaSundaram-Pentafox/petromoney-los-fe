@@ -47,39 +47,47 @@ const CreditNewRequestTable = ({ currentUser }) => {
   const column = [
     columnHelper.accessor('dealership_id', {
       header: 'Dealership Id',
+      enableColumnFilter: false,
       cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.dealership_id} />
     }),
     columnHelper.accessor('name', {
       header: 'Name',
+      enableColumnFilter: false,
       cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.name} />
     }),
     columnHelper.accessor('request_id', {
       header: 'Request Id',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('product_name', {
       header: 'Scheme',
     }),
     columnHelper.accessor('created_date', {
       header: 'Requested Date',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('region', {
       header: 'Region',
     }),
     columnHelper.accessor('amount', {
       header: 'Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
     }),
     columnHelper.accessor('account_no', {
       header: 'Account Number',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('last_modified_by', {
       header: 'Submitted (or) Modified By',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('origin', {
       header: 'Origin',
     }),
     columnHelper.accessor('status', {
       header: 'Status',
+      enableColumnFilter: false,
       cell: (value) => {
         if (value?.getValue() === 'Declined') {
           return (

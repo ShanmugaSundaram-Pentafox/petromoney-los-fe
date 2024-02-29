@@ -22,7 +22,7 @@ const ResolvedTable = () => {
 
   const column = [
     columnHelper.accessor('id', {
-      header: 'Dealership Id'
+      header: 'Dealership Id',
     }),
     columnHelper.accessor('name', {
       header: 'Name',
@@ -82,6 +82,7 @@ const ResolvedTable = () => {
       <Grid item md={12}>
         <DataTableViewer
           rowData={data}
+          filter={false}
           column={column}
           title={`Resolved Withheld Loans`}
           loading={isLoading}

@@ -46,21 +46,22 @@ module.exports = {
       { 'vars': 'all', 'varsIgnorePattern': '^_', 'args': 'after-used', 'argsIgnorePattern': '^_' }
     ],
     'max-len': ['warn', { code: 200 }],
-    'import/order': ['warn', {
-      alphabetize: {
-        caseInsensitive: true,
-        order: 'asc'
-      },
-      groups: [
-        'builtin',
-        'external',
-        'index',
-        'sibling',
-        'parent',
-        'internal'
-      ]
-    }
-    ],
+    'import/order': 'off',
+    // 'import/order': ['warn', {
+    //   alphabetize: {
+    //     caseInsensitive: true,
+    //     order: 'asc'
+    //   },
+    //   groups: [
+    //     'builtin',
+    //     'external',
+    //     'index',
+    //     'sibling',
+    //     'parent',
+    //     'internal'
+    //   ]
+    // }
+    //],
     'no-restricted-imports': ['warn', {
       paths: [
         {

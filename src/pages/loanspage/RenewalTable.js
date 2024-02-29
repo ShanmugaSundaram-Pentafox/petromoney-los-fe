@@ -80,10 +80,12 @@ const RenewalTable = ({ currentUser }) => {
   const column = [
     columnHelper.accessor('dealership_id', {
       header: 'Dealership Id',
+      enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue}</RouterLink>
     }),
     columnHelper.accessor('name', {
       header: 'Name',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }),
     columnHelper.accessor('type', {
@@ -96,14 +98,17 @@ const RenewalTable = ({ currentUser }) => {
     }),
     columnHelper.accessor('amount_approved', {
       header: 'Approved Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
     }),
     columnHelper.accessor('amount_date', {
       header: 'Approved Date',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
     }),
     columnHelper.accessor('action', {
       header: 'Attachment',
+      enableColumnFilter: false,
       cell: ({ row }) => {
         return (
           <div>
@@ -119,6 +124,7 @@ const RenewalTable = ({ currentUser }) => {
     }),
     columnHelper.accessor('action', {
       header: 'Documents',
+      enableColumnFilter: false,
       cell: ({ row }) => {
         return (
           <div style={{ minWidth: 70 }}>

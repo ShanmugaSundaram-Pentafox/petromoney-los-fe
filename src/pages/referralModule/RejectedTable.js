@@ -110,6 +110,7 @@ const RejectedListTable = ({ loans, loading, fetchData }) => {
       <DataTableViewer
         rowData={loans}
         column={column}
+        filter={false}
         loading={loading}
         title={'Rejected'}
       />

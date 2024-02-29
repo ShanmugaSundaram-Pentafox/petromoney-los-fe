@@ -1,7 +1,7 @@
 import { Badge, Box, Button, Checkbox, Grid, Group, TextInput, Title } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import DraggableList from "../DND/DraggableList";
-import { IconSearch } from "@tabler/icons-react";
+import { IconSearch, IconX } from "@tabler/icons-react";
 
 const FilterModal = ({
   columnData,
@@ -51,11 +51,13 @@ const FilterModal = ({
         <Grid.Col span={6} p={10 * 2} pb={0} pl={10} pt={20} >
           <Title order={6}>Column Options</Title>
           <TextInput
-            mt={10}
-            mb={10}
+            my={10}
             placeholder="Search"
+            size="xs"
+            value={search}
             onChange={(e) => setSearch(e.target.value)}
-            icon={<IconSearch size={16} />}
+            leftSection={<IconSearch size={16} />}
+            rightSection={search?.length ? <IconX style={{ cursor: 'pointer' }} size={12} onClick={() => setSearch('')} /> : null}
           />
           <Box style={{
             overflow: 'auto',
@@ -67,7 +69,7 @@ const FilterModal = ({
             <Checkbox.Group value={filteredData} onChange={setFilteredData}>
               <Group>
                 {
-                  demoData?.map((item, i) => <Checkbox key={i} style={{ minWidth: '90%' }} styles={(theme) => ({ label: { cursor: 'pointer' }, input: { cursor: 'pointer' } })} mt={8} ml={8} value={item} label={item} />)
+                  demoData?.map((item, i) => <Checkbox key={i} style={{ minWidth: '90%' }} size="xs" styles={(theme) => ({ label: { cursor: 'pointer' }, input: { cursor: 'pointer' } })} mt={8} ml={8} value={item} label={item} />)
                 }
               </Group>
             </Checkbox.Group>
@@ -79,12 +81,14 @@ const FilterModal = ({
             <Badge variant="light" ml={'xs'} color="indigo">{filteredData?.length}</Badge>
           </Box>
           <TextInput
-            mt={10}
-            mb={10}
+            my={10}
             mr={10}
+            size="xs"
             placeholder="Search"
+            value={search}
             onChange={(e) => setColumnSearch(e.target.value)}
-            icon={<IconSearch size={16} />}
+            leftSection={<IconSearch size={16} />}
+            rightSection={search?.length ? <IconX style={{ cursor: 'pointer' }} size={12} onClick={() => setSearch('')} /> : null}
           />
           <DraggableList
             containerStyle={{
@@ -97,17 +101,13 @@ const FilterModal = ({
           />
         </Grid.Col>
       </Grid>
-      <Box
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: "10px",
-        }}
+      <Group
+        justify="flex-end"
         mt={"md"}
       >
         <Button
           variant='outline'
-          size='sm'
+          size='xs'
           onClick={onClose}
         >
           Cancel
@@ -116,12 +116,12 @@ const FilterModal = ({
           style={{ minWidth: 90 }}
           color='green'
           variant='filled'
-          size='sm'
+          size='xs'
           onClick={() => onUpdateColumn(appropriation)}
         >
           Save
         </Button>
-      </Box>
+      </Group>
     </Box>
   )
 }

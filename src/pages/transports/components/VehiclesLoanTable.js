@@ -65,6 +65,7 @@ const VehiclesLoanTable = () => {
       <DataTableViewer
         column={column}
         rowData={data}
+        filter={false}
         title={'Vehicle Loans List'}
         columnsFilter={false}
         excelDownload

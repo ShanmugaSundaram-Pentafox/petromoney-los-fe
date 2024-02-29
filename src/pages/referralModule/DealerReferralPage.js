@@ -6,7 +6,7 @@ import RejectedListTable from './RejectedTable'
 import SettledListTable from './SettledListTable'
 import { getDealershipReferral, getDealershipReferralRejectedList, getDealershipReferralSettledList } from '../../services/dealerships.service'
 import { PaperWrapper } from '../reports/CreditReload'
-import { Badge, Tabs } from '@mantine/core'
+import { Badge, Loader, Tabs } from '@mantine/core'
 
 const DealerReferralPage = ({ currentUser }) => {
 
@@ -43,7 +43,7 @@ const DealerReferralPage = ({ currentUser }) => {
     <Tabs value={selectedTab} onChange={setSelectedTab} variant="pills" >
       <Tabs.List grow>
         <Tabs.Tab value="new">
-          New<Badge variant={selectedTab === 'new' && 'white'} ml={'xs'}>{referralList?.length}</Badge>
+          New<Badge variant={selectedTab === 'new' && 'white'} ml={'xs'}>{referralListLoading ? <Loader type='dots' size={'xs'} /> : referralList?.length}</Badge>
         </Tabs.Tab>
         <Tabs.Tab value="settled">
           Settled

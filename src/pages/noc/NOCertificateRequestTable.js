@@ -1,18 +1,12 @@
 import {
-  Button,
   Drawer,
   IconButton,
 } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/styles';
 import { format, parse } from 'date-fns';
-import MUIDataTable from 'mui-datatables';
-import { useSnackbar } from 'notistack';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ApproveNocForm from './ApproveNocForm';
 import RequestNocForm from './RequestNocForm';
 import CustomToken from '../../components/CommonComponents/CustomToken';
@@ -27,6 +21,8 @@ import { isAllowed } from '../../utils/cerbos';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
+import { Button } from '@mantine/core';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -63,7 +59,6 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   const [openModal, setOpenModal] = useState();
   const [openApproveModal, setOpenApproveModal] = useState();
   const [openViewer, setOpenViewer] = useState({ open: false });
-  const { enqueueSnackbar } = useSnackbar();
   const columnHelper = createColumnHelper();
 
   const actionable = !permissionCheck(
@@ -88,13 +83,10 @@ const NOCertificateRequestTable = ({ currentUser }) => {
 
   const onRowClick = (rowData) => {
     if (rowData?.status == 'approved' || rowData?.status == 'rejected') {
-      enqueueSnackbar(`NOC is already ${rowData?.status}`, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'warning',
-      });
+      displayNotification({
+        message: `NOC is already ${rowData?.status}`,
+        variant: 'warning'
+      })
     }
     else {
       setOpenApproveModal(true);
@@ -104,19 +96,23 @@ const NOCertificateRequestTable = ({ currentUser }) => {
 
   const column = [
     columnHelper.accessor('dealership_id', {
-      header: 'Dealership Id'
+      header: 'Dealership Id',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('name', {
-      header: 'Name'
+      header: 'Name',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('applicant_code', {
-      header: 'Applicant Code'
+      header: 'Applicant Code',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('noc_type', {
       header: 'Type'
     }),
     columnHelper.accessor('disbursed_amount', {
       header: 'Disbursed Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
     }),
     columnHelper.accessor('product_name', {
@@ -126,7 +122,8 @@ const NOCertificateRequestTable = ({ currentUser }) => {
       header: 'Issued Month'
     }),
     columnHelper.accessor('remarks', {
-      header: 'Remarks'
+      header: 'Remarks',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('status', {
       header: 'Status',
@@ -148,6 +145,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     }),
     columnHelper.accessor('noc_letter_url', {
       header: 'Documents',
+      enableColumnFilter: false,
       cell: ({ row }) => {
         return (
           <div style={{ minWidth: 70 }}>
@@ -210,6 +208,16 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         column={column}
         loading={getAllNOCRequestQuery?.isLoading}
         styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
+        action={
+          isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest)
+            ? <Button
+              size='xs'
+              onClick={() => setOpenModal(true)}
+            >
+              Raise Request
+            </Button>
+            : null
+        }
         title={'NOC Application'}
       />
       <Drawer

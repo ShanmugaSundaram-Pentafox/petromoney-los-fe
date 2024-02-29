@@ -123,6 +123,7 @@ const NewCallRequest = ({ callbackData, isLoading }) => {
         rowData={callbackData}
         column={column}
         title={'New Request'}
+        filter={false}
         loading={isLoading}
       />
       <Dialog onClose={() => { setRowData(); setRemark(); setError() }} open={rowData} maxWidth='xs' fullWidth>

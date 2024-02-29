@@ -80,14 +80,17 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const column = [
     columnHelper.accessor('customer_code', {
       header: 'Customer Code',
+      enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
     }),
     columnHelper.accessor('prospect_code', {
       header: 'Prospect Code',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()}</span>
     }),
     columnHelper.accessor('customer_name', {
       header: 'Customer Name',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('region', {
       header: 'Region',
@@ -97,18 +100,22 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
     }),
     columnHelper.accessor('disbursal_date', {
       header: 'Disbursal Data',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
     }),
     columnHelper.accessor('due_date', {
       header: 'Due Data',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
     }),
     columnHelper.accessor('loan_amount', {
       header: 'Loan Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
     }),
     columnHelper.accessor('principle_amount', {
       header: 'Principle Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
     }),
     columnHelper.accessor('loan_status', {
@@ -117,10 +124,12 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
     }),
     columnHelper.accessor('last_receipt_date', {
       header: 'Last Receipt Date',
+      enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
     }),
     columnHelper.accessor('dpd', {
       header: 'DPD',
+      enableColumnFilter: false,
     }),
   ];
 

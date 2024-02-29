@@ -19,6 +19,7 @@ import {
   rejectNocRequestbyDealershipID,
 } from '../../services/noc.services';
 import CheckAllowed from '../rbac/CheckAllowed';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -72,30 +73,23 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
   const classes = useStyles();
   const [remark, setRemark] = useState('');
   const [loading, setLoading] = useState({ approve: false, reject: false });
-  const { enqueueSnackbar } = useSnackbar();
 
   const handleReject = () => {
     setLoading({ ...loading, reject: true })
     rejectNocRequestbyDealershipID(data?.dealership_id, remark)
       .then((message) => {
-        enqueueSnackbar(message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: message,
           variant: 'success',
-        });
+        })
         setLoading({ ...loading, reject: false });
         callback();
       })
       .catch((e) => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: e,
           variant: 'error',
-        });
+        })
         setLoading({ ...loading, reject: false });
         callback();
       });
@@ -105,24 +99,18 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
     setLoading({ ...loading, approve: true })
     approveNocRequestbyDealershipID(data?.dealership_id, remark)
       .then((message) => {
-        enqueueSnackbar(message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: message,
           variant: 'success',
-        });
+        })
         setLoading({ ...loading, approve: false });
         callback();
       })
       .catch((e) => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
+        displayNotification({
+          message: e,
+          variant: 'success',
+        })
         setLoading({ ...loading, approve: false });
         callback();
       });

@@ -20,6 +20,7 @@ import { deleteRemarks, getAllWithheldLoans, resolveRemarks } from '../../servic
 import CheckAllowed from '../rbac/CheckAllowed';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Box, Group } from '@mantine/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -124,29 +125,31 @@ const UnresolvedTable = ({ currentUser }) => {
     columnHelper.accessor('region', {
       header: 'Region',
     }),
-    columnHelper.accessor('comments', {
+    columnHelper.accessor('action', {
       header: 'Reason',
-      cell: (value) => {
+      cell: ({ row }) => {
         return (
-          value?.getValue()?.map((remark, i) => {
+          row?.original?.comments?.map((remark, i) => {
             return (
-              <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
-                <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.comment && remark.comment}</div>
-                <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.resolve}>
-                  <div onClick={() => { setWithheldModal({ modal: true, type: 'resolve', id: remark.id }) }} style={{ marginLeft: 12 }}>
-                    <Tooltip title="Click to resolve">
-                      <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
-                    </Tooltip>
-                  </div>
-                </CheckAllowed>
-                <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.delete}>
-                  <div onClick={() => { setWithheldModal({ modal: true, type: 'delete', id: remark.id }) }} style={{ marginLeft: 12 }}>
-                    <Tooltip title='Click to delete'>
-                      <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
-                    </Tooltip>
-                  </div>
-                </CheckAllowed>
-              </div>
+              <Group key={i}>
+                <div style={{ width: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remark.comment && remark.comment}</div>
+                <Box>
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.resolve}>
+                    <div onClick={() => { setWithheldModal({ modal: true, type: 'resolve', id: remark.id }) }} style={{ marginLeft: 12 }}>
+                      <Tooltip title="Click to resolve">
+                        <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
+                      </Tooltip>
+                    </div>
+                  </CheckAllowed>
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.delete}>
+                    <div onClick={() => { setWithheldModal({ modal: true, type: 'delete', id: remark.id }) }} style={{ marginLeft: 12 }}>
+                      <Tooltip title='Click to delete'>
+                        <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
+                      </Tooltip>
+                    </div>
+                  </CheckAllowed>
+                </Box>
+              </Group>
             )
           })
         )
@@ -203,6 +206,7 @@ const UnresolvedTable = ({ currentUser }) => {
       <Grid item md={12}>
         <DataTableViewer
           rowData={data}
+          filter={false}
           column={column}
           loading={isLoading}
           title={'Unresolved withheld loans'}

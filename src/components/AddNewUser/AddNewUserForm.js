@@ -163,6 +163,7 @@ const AddNewUserForm = ({ callback, action }) => {
                 {...inputProps}
                 type='text'
                 name='password'
+                description='Default password is Petromall@2020'
                 label='Password (Optional)'
                 value={values.password}
                 error={errors.password}
@@ -174,7 +175,7 @@ const AddNewUserForm = ({ callback, action }) => {
                   color: '#868E96'
                 }}
               >
-                {errors.password || 'Default password is Petromall@2020'}
+                {errors.password}
               </Text>
             </Grid.Col>
           </Grid>

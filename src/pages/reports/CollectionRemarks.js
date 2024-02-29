@@ -50,9 +50,11 @@ const CollectionRemarks = () => {
   const column = [
     columHelper.accessor('cust_code', {
       header: 'Dealership Id',
+      enableColumnFilter: false,
     }),
     columHelper.accessor('applicant_name', {
       header: 'Applicant Name',
+      enableColumnFilter: false,
     }),
     columHelper.accessor('cust_region', {
       header: 'Region',
@@ -62,30 +64,38 @@ const CollectionRemarks = () => {
     }),
     columHelper.accessor('tot_disb_amt', {
       header: 'Total Disbursed Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value.getValue()} />
     }),
     columHelper.accessor('tot_due', {
       header: 'Total Due',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value.getValue()} />
     }),
     columHelper.accessor('tot_overdue', {
       header: 'Total Overdue',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value.getValue()} />
     }),
     columHelper.accessor('loan_data', {
       header: 'Details',
+      enableColumnFilter: false,
     }),
     columHelper.accessor('tot_prin_due', {
       header: 'Total Principle Due',
+      enableColumnFilter: false,
     }),
     columHelper.accessor('tot_prin_overdue', {
       header: 'Total Principle Overdue',
+      enableColumnFilter: false,
     }),
     columHelper.accessor('tot_int_overdue', {
       header: 'Total Interest Overdue',
+      enableColumnFilter: false,
     }),
     columHelper.accessor('tot_penal_overdue', {
       header: 'Total Penal Overdue',
+      enableColumnFilter: false,
     }),
   ]
 

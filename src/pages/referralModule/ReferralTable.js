@@ -133,6 +133,7 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
       <DataTableViewer
         rowData={loans}
         column={column}
+        filter={false}
         loading={loading}
         title={'Referral List'}
         onRowClick={i => {

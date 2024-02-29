@@ -25,34 +25,30 @@ const ColumnsFilter = ({
   }
 
   return (
-    <Box>
-      {
-        columnData?.length ? (
-          <Modal
-            size={'xl'}
-            opened={opened}
-            onClose={onClose}
-            lockScroll
-            title={
-              <div>
-                <Title order={3}>Manage columns</Title>
-                <Text color={COLORS.text.light1} size={'sm'}>
-                  Select the columns you would like to see on {title}
-                </Text>
-              </div>
-            }
-            style={{ position: 'absolute', zIndex: 9999 }}
-          >
-            <FilterModal
-              filteredColumnData={filteredColumnData}
-              columnData={columnData}
-              onUpdateColumn={onUpdateColumn}
-              onClose={onClose}
-            />
-          </Modal>
-        ) : null
-      }
-    </Box>
+    columnData?.length ? (
+      <Modal
+        size={'xl'}
+        opened={opened}
+        onClose={onClose}
+        lockScroll
+        title={
+          <div>
+            <Title order={3}>Manage columns</Title>
+            <Text color={COLORS.text.light1} size={'sm'}>
+              Select the columns you would like to see on {title}
+            </Text>
+          </div>
+        }
+        style={{ position: 'absolute', zIndex: 9999 }}
+      >
+        <FilterModal
+          filteredColumnData={filteredColumnData}
+          columnData={columnData}
+          onUpdateColumn={onUpdateColumn}
+          onClose={onClose}
+        />
+      </Modal>
+    ) : null
   )
 }
 

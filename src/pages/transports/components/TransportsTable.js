@@ -114,6 +114,7 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
       <DataTableViewer
         title={'Transporter List'}
         column={column}
+        filter={false}
         rowData={transports}
         onRowClick={i => onRowClick(i?.dealership_id, i)}
         loading={loading}

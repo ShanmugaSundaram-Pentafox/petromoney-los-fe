@@ -73,7 +73,6 @@ const DisbursementReqestTable = ({ title, loans = [], setLoansData, onRowClick, 
     }),
     columnHelper.accessor('type', {
       header: 'Type',
-      enableColumnFilter: false,
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
     }),
     columnHelper.accessor('region', {

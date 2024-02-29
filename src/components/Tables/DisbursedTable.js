@@ -60,6 +60,7 @@ const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =
     }),
     columnHelper.accessor('applicant_code', {
       header: 'Customer Code',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('name', {
       header: 'Name',

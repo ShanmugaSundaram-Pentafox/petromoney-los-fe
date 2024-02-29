@@ -50,6 +50,7 @@ const ProcessedCallRequest = ({ callbackProcessed, isLoading }) => {
       <DataTableViewer
         rowData={callbackProcessed}
         column={column}
+        filter={false}
         title={'Processed'}
         loading={isLoading}
       />

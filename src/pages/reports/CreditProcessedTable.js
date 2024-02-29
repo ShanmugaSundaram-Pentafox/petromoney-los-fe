@@ -82,45 +82,55 @@ const CreditProcessedTable = ({ currentUser }) => {
   const column = [
     columnHelper.accessor('dealership_id', {
       header: 'Dealership Id',
+      enableColumnFilter: false,
       cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.dealership_id} />
     }),
     columnHelper.accessor('name', {
       header: 'Name',
+      enableColumnFilter: false,
       cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.dealership_id} />
     }),
     columnHelper.accessor('request_id', {
       header: 'Request Id',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('product_name', {
       header: 'Scheme',
     }),
     columnHelper.accessor('utr', {
       header: 'UTR',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('created_date', {
       header: 'Requested Date',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('region', {
       header: 'Region',
     }),
     columnHelper.accessor('amount', {
       header: 'Amount',
+      enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
     }),
     columnHelper.accessor('account_no', {
       header: 'Account number',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('created_by', {
       header: 'Created By',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('last_modified_by', {
       header: 'Processed By',
+      enableColumnFilter: false,
     }),
     columnHelper.accessor('origin', {
       header: 'Origin',
     }),
     columnHelper.accessor('status', {
       header: 'Status',
+      enableColumnFilter: false,
       cell: (value) => {
         if (value?.getValue() === 'Declined') {
           return (
@@ -137,6 +147,7 @@ const CreditProcessedTable = ({ currentUser }) => {
     }),
     columnHelper.accessor('disbursed_declined_date', {
       label: 'Disbursed / Declined Date',
+      enableColumnFilter: false,
     }),
   ]
 

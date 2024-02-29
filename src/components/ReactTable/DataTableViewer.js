@@ -13,26 +13,34 @@ const Filter = ({
   const firstValue = table
     .getPreFilteredRowModel()
     .flatRows[0]?.getValue(column.id)
-
-  const columnFilterValue = column.getFilterValue()
-
+  const columnFilterValue = column.getFilterValue();
   const sortedUniqueValues = useMemo(
     () =>
       typeof firstValue === 'number'
         ? []
-        : Array.from(column.getFacetedUniqueValues().keys()).sort(),
+        : Array.from(column.getFacetedUniqueValues().keys()).sort()?.map((i) => (i?.replace(/_/g, " "))),
     [column.getFacetedUniqueValues()]
-  )
+  );
 
   return (
     <>
       <Text size='xs' c={'gray'}>{column.columnDef.header}</Text>
       <Select
-        value={columnFilterValue ? columnFilterValue : 'All'}
-        defaultValue={'All'}
-        onChange={(e) => { e === 'All' ? column.setFilterValue() : column.setFilterValue(e) }}
+        size='xs'
+        styles={{
+          dropdown: {
+            boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px'
+          },
+          option: {
+            textTransform: 'capitalize'
+          }
+        }}
+        placeholder='All'
+        comboboxProps={{ offset: 2 }}
+        value={columnFilterValue}
+        onChange={(e) => { column.setFilterValue(e) }}
         clearable
-        data={['All', ...sortedUniqueValues]}
+        data={sortedUniqueValues?.filter(i => i !== undefined) || []}
         maxDropdownHeight={200}
       />
     </>
@@ -75,7 +83,7 @@ const DataTableViewer = ({
     /** It searches for an element in the actualColumn array that has a header property equal to the current element in the filteredColumn array. */
     /** If a matching element is found, the function returns the array of objects. */
     return filteredColumn?.reduce((temp, actItem) => {
-      return temp.concat(
+      return temp?.concat(
         actualColumn?.find((item) => actItem === item?.header)
       );
     }, []);
@@ -119,7 +127,7 @@ const DataTableViewer = ({
               }
             </Group>
           </Text>
-          {(!loading && Array.isArray(rowData) && !rowData.length)
+          {(!loading && Array.isArray(rowData) && !rowData?.length)
             ? null
             : (
               <Box mr={'sm'}>
@@ -150,7 +158,18 @@ const DataTableViewer = ({
                     : null
                   }
                   {filter
-                    ? <Popover opened={opened} onChange={setOpened} position="left-start" withArrow shadow="md">
+                    ? <Popover
+                      opened={opened}
+                      onChange={setOpened}
+                      position="left-start"
+                      withArrow
+                      shadow="md"
+                      styles={{
+                        dropdown: {
+                          boxShadow: 'rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px'
+                        }
+                      }}
+                    >
                       <Popover.Target>
                         <Tooltip
                           label={<Text size={"xs"}>Filter Rows</Text>}
@@ -165,7 +184,6 @@ const DataTableViewer = ({
                         </Tooltip>
                       </Popover.Target>
                       <Popover.Dropdown mr={'md'}>
-                        <Title order={'6'}>Filter</Title>
                         <Grid w={300} gutter={'sm'}>
                           {filterHeader?.getHeaderGroups().map((headerGroup) => (headerGroup?.headers?.map((header) =>
                             header.column.getCanFilter()

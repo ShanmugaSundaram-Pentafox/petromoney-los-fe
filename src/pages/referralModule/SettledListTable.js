@@ -66,6 +66,7 @@ const SettledListTable = ({ loans, loading }) => {
     <Paper>
       <DataTableViewer
         rowData={loans}
+        filter={false}
         column={column}
         loading={loading}
         title={'Settled'}

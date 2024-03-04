@@ -42,11 +42,11 @@ export const RightSideDrawer = ({
       {/* Drawer content */}
       {footerAction ? (
         <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
-          {children}  
+          {children}
         </div>
-      ) : 
+      ) :
         children
-      } 
+      }
 
       {/* Sticky footer */}
       {footerAction && (
@@ -69,7 +69,7 @@ export const RightSideDrawer = ({
               variant="outline"
               onClick={footerAction.left.onClick}
             >
-              {footerAction.left.buttonName ?? 'Go back'} 
+              {footerAction.left.buttonName ?? 'Go back'}
             </Button>
 
 

@@ -2,6 +2,8 @@
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/dropzone/styles.css';
+import '@mantine/tiptap/styles.css';
+import '@mantine/notifications/styles.css';
 
 import { MantineProvider } from '@mantine/core';
 import { ThemeProvider } from '@material-ui/styles';
@@ -17,6 +19,7 @@ import Routes from './routes/routes';
 import { store, persistor } from './store';
 import theme from './theme';
 import defaultTheme from './theme/mantine-theme/mantineTheme';
+import { Notifications } from '@mantine/notifications';
 
 const actionStyle = {
   cursor: 'pointer',
@@ -38,6 +41,7 @@ const onClickClose = key => {
 function App() {
   return (
     <MantineProvider theme={defaultTheme}>
+      <Notifications position='top-right' zIndex={999999} />
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <ThemeProvider theme={theme}>

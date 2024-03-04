@@ -1,5 +1,6 @@
-import { notifications } from "@mantine/notifications";
-import notificationVariant from "./notificationVarient";
+import { notifications } from '@mantine/notifications';
+import notificationVariant from './notificationVarient';
+import classes from './Notification.module.css'
 
 // interface optionsType {
 //   message: string;
@@ -47,16 +48,10 @@ export const displayNotification = ({
       root: {
         backgroundColor: color,
         borderColor: color,
-
-        "&::before": { backgroundColor: theme.white },
       },
-
       title: { color: theme.white },
       description: { color: theme.white },
-      closeButton: {
-        color: theme.white,
-        '&:hover': { backgroundColor: color }
-      },
     }),
+    classNames: classes,
   });
 };

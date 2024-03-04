@@ -1,4 +1,4 @@
-import { Text } from '@mantine/core';
+import { Loader, Text } from '@mantine/core';
 import { Avatar, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/styles';
@@ -59,7 +59,7 @@ export const ViewData = ({ title, value, endIcon }) => {
     <>
       <Text size="sm" fw="600" c="gray.7">{title}</Text>
 
-      <Text 
+      <Text
         size="sm"
         c="gray.6"
         className="flex items-center gap-2"
@@ -75,7 +75,7 @@ export const ViewData = ({ title, value, endIcon }) => {
 export const AvatarCard = ({ file, title, tooltip }) => {
   const classes = useStyles()
   const [imageModal, setImageModal] = useState({})
-  
+
   return (
     <>
       <div onClick={() => setImageModal({ open: true, image: file, type: file?.endsWith('.pdf') })} style={{ margin: 10, paddingLeft: 10 }} tabIndex={0} role="button" onKeyDown={'click'}>
@@ -95,39 +95,45 @@ export const AvatarCard = ({ file, title, tooltip }) => {
 
 
 const FilePreview = ({ data, title }) => {
-  const [signedUrl, setSignedUrl] = useState()
+  const [signedUrl, setSignedUrl] = useState();
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (data?.image) {
+      setLoading(true);
       getSignedUrl(data?.image)
         .then((res) => {
           setSignedUrl(res?.url)
         })
         .catch((err) => console.log('err >>>>>', err))
+        .finally(() => setLoading(false));
     }
 
   }, [data?.image])
   return (
-    <PreviewWrapper>
-      {
-        (data?.type == true || data?.type == 'pdf') ?
-          (title == 'Leegality') ? (
-            <div className="iframe-container">
-              <iframe title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
-            </div>
-          ) : (
-            <div style={{ width: '45vw', height: '80vh',paddingTop:16 }}>
-              <iframe style={{ width: '100%', height: '100%' }} title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
-            </div>
-          )
-          :
-          // eslint-disable-next-line react/jsx-indent
-          <img 
-            className="image" 
-            src={signedUrl} 
-            alt='viewer' 
-          />
-      }
-    </PreviewWrapper>
+    loading
+      ? <Loader size={100} />
+      : <PreviewWrapper>
+        {
+          (data?.type == true || data?.type == 'pdf') ?
+            (title == 'Leegality') ? (
+              <div className="iframe-container">
+                <iframe title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
+              </div>
+            ) : (
+              <div style={{ width: '45vw', height: '80vh', paddingTop: 16 }}>
+                <iframe style={{ width: '100%', height: '100%' }} title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
+              </div>
+            )
+            :
+            // eslint-disable-next-line react/jsx-indent
+            <img
+              className="image"
+              src={signedUrl}
+              alt='viewer'
+            />
+        }
+      </PreviewWrapper>
   )
 
 }

@@ -1,10 +1,5 @@
 import { Box, Table } from '@mantine/core';
 import { Select as MSelect } from '@material-ui/core';
-// import Table from '@material-ui/core/Table';
-// import TableBody from '@material-ui/core/TableBody';
-// import TableCell from '@material-ui/core/TableCell';
-// import TableHead from '@material-ui/core/TableHead';
-// import TableRow from '@material-ui/core/TableRow';
 import React, { useState, useEffect } from 'react';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
@@ -111,7 +106,7 @@ const LoanInfo = ({
               <Table.Td scope="row" component="th">
                 <strong>{selectedProduct?.interest}</strong>
               </Table.Td>
-              
+
               <Table.Td scope="row" component="th">
                 <strong>{selectedProduct?.penal_interest}</strong>
               </Table.Td>

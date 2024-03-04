@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ActionIcon, Box, Grid, Group, Image, Loader, Popover, Select, Text, TextInput, Title, Tooltip } from '@mantine/core';
 import ReactTable from './ReactTable';
-import { IconDownload, IconFilter, IconSearch, IconTableRow } from '@tabler/icons-react';
+import { IconDownload, IconFilter, IconSearch, IconTableRow, IconX } from '@tabler/icons-react';
 import { exportToExcel } from "react-json-to-excel";
 import ColumnsFilter from '../Filter/ColumnFilter';
 import { useDisclosure } from '@mantine/hooks';
@@ -135,13 +135,14 @@ const DataTableViewer = ({
                   <TextInput
                     placeholder="Search"
                     onChange={(e) => {
-                      apiSearch
-                        ? apiSearch(e.target.value)
-                        : setSearch(e.target.value);
+                      setSearch(e.target.value);
+                      apiSearch && apiSearch(e.target.value)
                     }}
+                    value={search}
                     mx={0}
                     size='xs'
                     icon={<IconSearch size={16} />}
+                    rightSection={<IconX size={12} color={'#ccc'} style={{ cursor: 'pointer' }} onClick={() => setSearch('')} />}
                   />
                   {columnsFilter
                     ? <Tooltip
@@ -157,8 +158,8 @@ const DataTableViewer = ({
                     </Tooltip>
                     : null
                   }
-                  {filter
-                    ? <Popover
+                  {filter ?
+                    <Popover
                       opened={opened}
                       onChange={setOpened}
                       position="left-start"
@@ -256,7 +257,7 @@ const DataTableViewer = ({
           columnData={filteredColumnData}
           rowData={rowData || []}
           useApiPagination={useAPIPagination}
-          search={search}
+          search={apiSearch ? null : search}
           setSearch={setSearch}
           setFilterHeader={setFilterHeader}
           filterHeader={filterHeader}

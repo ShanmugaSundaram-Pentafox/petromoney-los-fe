@@ -294,7 +294,7 @@ const LoansTable = ({ currentUser, value, filterQry }) => {
       </Drawer> */}
 
       <RightSideDrawer
-        size="lg"
+        size="60%"
         opened={showPanel.status}
         onClose={() => setShowPanel({ status: false })}
         title={compProps.data?.id}

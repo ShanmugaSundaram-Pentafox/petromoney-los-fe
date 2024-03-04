@@ -1,7 +1,4 @@
-import { Drawer, Fade, IconButton, Backdrop } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
-import { Add, Clear } from '@material-ui/icons';
 import LinkIcon from '@material-ui/icons/Link';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -10,18 +7,17 @@ import { useSnackbar } from 'notistack';
 import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { useMount } from 'react-use';
 import Currency from '../../components/Number/Currency';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
 import { getDocumentsChecklistById, getLoansByStatus, updateDocumentChecklistById } from '../../services/loans.service';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
 import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { ActionIcon, Box, Button, Checkbox, Modal, TextInput, Tooltip } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { IconLink, IconPlus } from '@tabler/icons-react';
+import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -144,7 +140,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
       enableColumnFilter: false,
       cell: (value) => (
         <Tooltip label={'Click to view documents'} color='gray' withArrow>
-          <IconButton size="small" color="primary" aria-label="application" onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id })}><LinkIcon /></IconButton>
+          <ActionIcon size="xs" variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id })}><IconLink /></ActionIcon>
         </Tooltip>
       )
     })
@@ -229,16 +225,13 @@ const PresubmitLoansTable = ({ currentUser }) => {
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'pre_submit')}
         loading={getPreSubmitLoansQuery?.isLoading}
       />
-      <Drawer
-        anchor="right"
-        ModalProps={{
-          onBackdropClick: () => { setShowPanel({ status: false, data: '' }) }
-        }}
-        open={showPanel.status}
-        variant={'temporary'}
+      <RightSideDrawer
+        size={'70%'}
+        opened={showPanel.status}
+        onClose={() => { setShowPanel({ status: false, data: '' }) }}
       >
-        <div className={classes.sidePanelWrapper}><SubmittedDrawer id={showPanel?.id} status={showPanel?.data} editable={showPanel?.editable} currentUser={currentUser} data={dealershipData} onClose={() => { setShowPanel({ status: false, data: '' }) }} selectedLoanData={loansData} /></div>
-      </Drawer>
+        <SubmittedDrawer id={showPanel?.id} status={showPanel?.data} editable={showPanel?.editable} currentUser={currentUser} data={dealershipData} onClose={() => { setShowPanel({ status: false, data: '' }) }} selectedLoanData={loansData} />
+      </RightSideDrawer>
 
       <Modal
         opened={docModal?.modal}

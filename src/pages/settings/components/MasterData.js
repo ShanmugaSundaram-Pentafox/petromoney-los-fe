@@ -1,5 +1,5 @@
-import { Box, Paper, SimpleGrid, Text } from '@mantine/core';
-import { Drawer, makeStyles } from '@material-ui/core';
+import { Box, Drawer, Paper, SimpleGrid, Text } from '@mantine/core';
+import { makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import AssignProducts from './AssignProducts';
 import MasterCity from './MasterCity';
@@ -174,54 +174,48 @@ function MasterData({ currentUser }) {
           callback={() => setOpenForm()}
         />
       </RightSideDrawer>
-      <Drawer
-        anchor="right"
-        open={customForm === 'Products'}
+      <RightSideDrawer
+        opened={customForm === 'Products'}
         onClose={() => setCustomForm()}
-        variant="temporary"
+        title={customForm}
       >
         <Products currentUser={currentUser} title={customForm} callback={setCustomForm} />
-      </Drawer>
-      <Drawer
-        anchor="right"
-        open={customForm === 'Zone'}
+      </RightSideDrawer>
+      <RightSideDrawer
+        opened={customForm === 'Zone'}
         onClose={() => setCustomForm()}
-        variant="temporary"
+        title={customForm}
       >
         <Zones currentUser={currentUser} title={customForm} callback={setCustomForm} />
-      </Drawer>
-      <Drawer
-        anchor="right"
-        open={customForm === 'assign_products'}
+      </RightSideDrawer>
+      <RightSideDrawer
+        opened={customForm === 'assign_products'}
         onClose={() => setCustomForm()}
-        variant="temporary"
+        title={'Select Role to Assign Product'}
       >
         <AssignProducts currentUser={currentUser} title='Select Role to Assign Product' callback={setCustomForm} />
-      </Drawer>
-      <Drawer
-        anchor="right"
-        open={customForm === 'city'}
+      </RightSideDrawer>
+      <RightSideDrawer
+        opened={customForm === 'city'}
         onClose={() => setCustomForm()}
-        variant="temporary"
+        title={'City'}
       >
         <MasterCity currentUser={currentUser} title='City' callback={setCustomForm} />
-      </Drawer>
-      <Drawer
-        anchor="right"
-        open={customForm === 'collection_remark'}
+      </RightSideDrawer>
+      <RightSideDrawer
+        opened={customForm === 'collection_remark'}
         onClose={() => setCustomForm()}
-        variant="temporary"
+        title={'Collection Remarks'}
       >
         <MasterCollectionRemarks currentUser={currentUser} title='Collection Remarks' callback={setCustomForm} />
-      </Drawer>
-      <Drawer
-        anchor="right"
-        open={customForm === 'email_groups'}
+      </RightSideDrawer>
+      <RightSideDrawer
+        opened={customForm === 'email_groups'}
         onClose={() => setCustomForm()}
-        variant="temporary"
+        title={'Email Groups'}
       >
         <MasterEmailGroup currentUser={currentUser} title='Email Groups' callback={setCustomForm} />
-      </Drawer>
+      </RightSideDrawer>
     </Paper>
   );
 }

@@ -96,7 +96,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
 
   return (
     <>
-      <Flex justify="end" mb="40">
+      <Flex justify="end" mb="10">
         {activeApplicant?.length > 1 && (
           <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.applicantSwap}>
             <Flex align="center" gap="sm">

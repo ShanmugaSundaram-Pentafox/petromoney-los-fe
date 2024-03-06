@@ -1,4 +1,4 @@
-import { Loader, Text } from '@mantine/core';
+import { Image, Loader, Text } from '@mantine/core';
 import { Avatar, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/styles';
@@ -54,7 +54,7 @@ const PreviewWrapper = styled.div`
   }
 `;
 
-export const ViewData = ({ title, value, endIcon }) => {
+export const ViewData = ({ title, value, endIcon, loading = false }) => {
   return (
     <>
       <Text size="sm" fw="600" c="gray.7">{title}</Text>
@@ -64,9 +64,9 @@ export const ViewData = ({ title, value, endIcon }) => {
         c="gray.6"
         className="flex items-center gap-2"
       >
-        {value ? value : '-'}
+        {loading ? <Loader size={'xs'} type='dots' /> : (value ? value : '-')}
 
-        {endIcon}
+        {!loading ? endIcon : null}
       </Text>
     </>
   )
@@ -111,9 +111,15 @@ const FilePreview = ({ data, title }) => {
 
   }, [data?.image])
   return (
-    loading
-      ? <Loader size={100} />
-      : <PreviewWrapper>
+    loading ? (
+      < Image
+        src={null}
+        h={'auto'}
+        maw={500}
+        fallbackSrc={'https://placehold.co/600x400?text=Loading...'}
+      />
+    ) : (
+      <PreviewWrapper>
         {
           (data?.type == true || data?.type == 'pdf') ?
             (title == 'Leegality') ? (
@@ -127,13 +133,15 @@ const FilePreview = ({ data, title }) => {
             )
             :
             // eslint-disable-next-line react/jsx-indent
-            <img
-              className="image"
+            <Image
               src={signedUrl}
-              alt='viewer'
+              h={'auto'}
+              maw={500}
+              fallbackSrc={'https://placehold.co/600x400?text=Not%20%20Found!'}
             />
         }
       </PreviewWrapper>
+    )
   )
 
 }

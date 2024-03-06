@@ -8,7 +8,7 @@ import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loa
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import classes from './SideDrawer.module.css';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
-import { Alert, Button, Modal, Text } from '@mantine/core';
+import { Alert, Button, Group, Modal, Text } from '@mantine/core';
 import RichTextEditorBox from '../../../components/RichTexEditor/RichTextEditorBox';
 import { IconInfoCircle } from '@tabler/icons-react';
 
@@ -91,6 +91,8 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
       <Modal
         opened={openModal}
         onClose={handlePendingApprovalModal}
+        zIndex={9999}
+        size={'lg'}
       >
         <Text fz={'sm'}>
           Please enter your remarks for approval.
@@ -101,13 +103,15 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
             ? <Alert variant='light' color='orange' title='Error!' icon={<IconInfoCircle />}>{errorStatus}</Alert>
             : null
         }
-        <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0px 5px 0px' }}>
-          <Button variant='outline' style={{ marginRight: 8 }} onClick={handlePendingApprovalModal}>Cancel</Button>
+        <Group justify={'center'} gap={10} mt={20}>
+          <Button variant='outline' size='xs' onClick={handlePendingApprovalModal}>Cancel</Button>
           <Button
             loading={loading}
+            size='xs'
             onClick={updateLoanStatus}
+            color='green'
           >Confirm</Button>
-        </div>
+        </Group>
       </Modal>
     </>
   );

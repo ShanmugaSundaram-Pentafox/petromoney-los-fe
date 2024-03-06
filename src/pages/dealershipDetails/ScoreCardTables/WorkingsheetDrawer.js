@@ -50,10 +50,10 @@ const WorkingSheetDrawer = ({ id }) => {
                 </Accordion.Panel>
               </Accordion.Item>
             )
-          })} 
+          })}
         </Accordion>
       ) : (
-        <Flex h="256" align="center" justify="center">
+        <Flex h="60" align="center" justify="center">
           <Text c="gray.6" fz="sm">No data found!</Text>
         </Flex>
       )}

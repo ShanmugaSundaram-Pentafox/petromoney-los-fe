@@ -83,7 +83,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
   return (
     <>
       {url ? (
-        <Tooltip label={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'}>
+        <Tooltip label={DocName ? `${file_name} (${updatedDateTime})` : 'click to view'} withArrow color={'gray'}>
           <Grid.Col span={colSpan}>
             <Box
               className="group relative h-32 flex items-center justify-center p-4 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 border-dashed rounded transition-colors cursor-pointer"

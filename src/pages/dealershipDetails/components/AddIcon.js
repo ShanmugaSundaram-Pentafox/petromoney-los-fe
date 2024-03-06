@@ -17,15 +17,15 @@ const AddIconButton = ({ onClickAddMenu }) => {
   };
 
   return (
-    <Menu 
-      shadow="md" 
-      width={180} 
-      position="bottom-end" 
+    <Menu
+      shadow="md"
+      width={180}
+      position="bottom-end"
       withArrow
       transitionProps={{ transition: 'rotate-left', duration: 150 }}
     >
       <Menu.Target>
-        <Button leftSection={<IconPlus size={20} />}>
+        <Button size='xs' leftSection={<IconPlus size={16} />}>
           Add
         </Button>
       </Menu.Target>
@@ -35,7 +35,7 @@ const AddIconButton = ({ onClickAddMenu }) => {
           <Menu.Item
             key={option}
             onClick={(event) => {
-              const text = event.target.textContent === 'Add Dealer' ? 'DEALER' : event.target.textContent==='Add Guarantor' ? 'GUARANTOR' : 'COAPPLICANT'
+              const text = event.target.textContent === 'Add Dealer' ? 'DEALER' : event.target.textContent === 'Add Guarantor' ? 'GUARANTOR' : 'COAPPLICANT'
               handleMenuItemClick(event, index, text)
             }}
           >

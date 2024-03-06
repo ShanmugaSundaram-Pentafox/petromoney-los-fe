@@ -28,7 +28,7 @@ import { deleteDealershipDocument, getDealershipLoansById, validateId } from '..
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
-const DealershipInfo = ({ data, currentUser }) => {
+const DealershipInfo = ({ data, currentUser, isLoading }) => {
   const [readOnly, setReadOnly] = useState(true);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
@@ -290,111 +290,149 @@ const DealershipInfo = ({ data, currentUser }) => {
       </div>
     })
   }
-
+  console.log(loading);
   return (
     <>
       {readOnly ? (
         <>
           <Grid gutter="lg">
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData 
-                title='Name' 
-                value={values?.name} 
-              />
-            </Grid.Col>
-            
-            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData 
-                title='Address' 
-                value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')} 
+              <ViewData
+                title='Name'
+                value={values?.name}
+                loading={isLoading}
               />
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData 
-                title='PAN' 
-                value={values?.pan} 
+              <ViewData
+                loading={isLoading}
+                title='Address'
+                value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='PAN'
+                value={values?.pan}
                 endIcon={
-                  <CustomToken 
-                    variant={values?.pan_verified ? 'success' : 'error'} 
-                    label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} 
+                  <CustomToken
+                    variant={values?.pan_verified ? 'success' : 'error'}
+                    label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'}
                     icon={values?.pan_verified ? 'tick' : 'cross'}
                   />
-                } 
+                }
               />
             </Grid.Col>
 
             {values?.gst_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData 
-                  title='Effective Date of registration' 
-                  value={dataJSON?.gst?.rgdt} 
-                /> 
+                <ViewData
+                  loading={isLoading}
+                  title='Effective Date of registration'
+                  value={dataJSON?.gst?.rgdt}
+                />
               </Grid.Col>
             ) : null}
-            
+
             {values?.gst_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData 
-                  title='Legal Trade Name' 
-                  value={dataJSON?.gst?.tradeNam} 
-                /> 
+                <ViewData
+                  loading={isLoading}
+                  title='Legal Trade Name'
+                  value={dataJSON?.gst?.tradeNam}
+                />
               </Grid.Col>
             ) : null}
-            
+
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData 
-                title='State' 
+              <ViewData
+                loading={isLoading}
+                title='State'
                 value={(states?.data?.find(function (state) {
                   if (state.id == values?.state)
                     return true;
-                }))?.name} 
+                }))?.name}
               />
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData title='Region' value={values?.region_name} />
-            </Grid.Col>  
-              
-            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData title='GST' value={values?.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success' : 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'} />} />
+              <ViewData
+                loading={isLoading}
+                title='Region'
+                value={values?.region_name}
+              />
             </Grid.Col>
-              
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='GST'
+                value={values?.gst}
+                endIcon={<CustomToken variant={values?.gst_verified ? 'success' : 'error'}
+                  label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'}
+                  icon={values?.gst_verified ? 'tick' : 'cross'} />}
+              />
+            </Grid.Col>
+
             {values?.gst_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData title='Taxpayer Type' value={dataJSON?.gst?.dty} />
-              </Grid.Col>  
+                <ViewData
+                  loading={isLoading}
+                  title='Taxpayer Type'
+                  value={dataJSON?.gst?.dty}
+                />
+              </Grid.Col>
             ) : null}
 
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData 
-                title='Business type' 
+              <ViewData
+                loading={isLoading}
+                title='Business type'
                 value={businessTypes.data?.find(function (type, index) {
                   if (type.id == values?.business_type)
                     return true;
-                })?.name} 
+                })?.name}
               />
             </Grid.Col>
-            
+
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData title='OMC' value={omcs?.find(item => { return item?.id === values?.omc })?.name} />
+              <ViewData
+                loading={isLoading}
+                title='OMC'
+                value={omcs?.find(item => { return item?.id === values?.omc })?.name}
+              />
             </Grid.Col>
 
             {values?.gst_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData title='Legal Business Name' value={dataJSON?.gst?.lgnm} />
+                <ViewData
+                  loading={isLoading}
+                  title='Legal Business Name'
+                  value={dataJSON?.gst?.lgnm}
+                />
               </Grid.Col>
             ) : null}
 
             {values?.gst_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData title='GSTIN Status' value={dataJSON?.gst?.sts} />
+                <ViewData
+                  loading={isLoading}
+                  title='GSTIN Status'
+                  value={dataJSON?.gst?.sts}
+                />
               </Grid.Col>
             ) : null}
-            
+
             {data?.renewal_fee_payment_status ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData title='Renewal Fee Status' value={data?.renewal_fee_payment_status?.toUpperCase()} />
+                <ViewData
+                  loading={isLoading}
+                  title='Renewal Fee Status'
+                  value={data?.renewal_fee_payment_status?.toUpperCase()}
+                />
               </Grid.Col>
             ) : null}
 
@@ -403,36 +441,60 @@ const DealershipInfo = ({ data, currentUser }) => {
             </Grid.Col>
 
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              {values?.udyam_verified ? <ViewData title='UDYAM No.' value={dataJSON?.udyam?.udyamRegistrationNo} /> : '-'}
+              {values?.udyam_verified ? <ViewData
+                loading={isLoading}
+                title='UDYAM No.'
+                value={dataJSON?.udyam?.udyamRegistrationNo}
+              /> : '-'}
             </Grid.Col>
 
             {values?.udyam_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData title='Name of Enterprise' value={dataJSON?.udyam?.profile?.name} />
+                <ViewData
+                  loading={isLoading}
+                  title='Name of Enterprise'
+                  value={dataJSON?.udyam?.profile?.name}
+                />
               </Grid.Col>
             ) : null}
 
             {values?.udyam_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData title='Organization Type' value={dataJSON?.udyam?.profile?.organizationType} />
+                <ViewData
+                  loading={isLoading}
+                  title='Organization Type'
+                  value={dataJSON?.udyam?.profile?.organizationType}
+                />
               </Grid.Col>
             ) : null}
 
             {values?.udyam_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData title='Gender' value={dataJSON?.udyam?.profile?.gender} />
+                <ViewData
+                  loading={isLoading}
+                  title='Gender'
+                  value={dataJSON?.udyam?.profile?.gender}
+                />
               </Grid.Col>
             ) : null}
 
             {values?.udyam_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData title='Date of Incorporation' value={dataJSON?.udyam?.profile?.dateOfIncorporation} />
+                <ViewData
+                  loading={isLoading}
+                  title='Date of Incorporation'
+                  value={dataJSON?.udyam?.profile?.dateOfIncorporation}
+                />
               </Grid.Col>
             ) : null}
 
             {values?.udyam_verified ? (
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData title='Classification Year' value={dataJSON?.udyam?.enterpriseType?.[0]?.classificationYear} />
+                <ViewData
+                  loading={isLoading}
+                  title='Classification Year'
+                  value={dataJSON?.udyam?.enterpriseType?.[0]?.classificationYear}
+                />
               </Grid.Col>
             ) : null}
           </Grid>
@@ -440,27 +502,27 @@ const DealershipInfo = ({ data, currentUser }) => {
           {values?.pan_file_url || values?.gst_file_url ? (
             <Box mt="sm">
               <Title order={3} mb="md">Attachments</Title>
-              
+
               <Flex gap="xs">
                 {values.pan_file_url && (
-                  <DocAttachment 
-                    tooltip='View PAN' 
-                    imgUrl={values?.pan_file_url} 
-                    docName='PAN Card' 
+                  <DocAttachment
+                    tooltip='View PAN'
+                    imgUrl={values?.pan_file_url}
+                    docName='PAN Card'
                   />
                 )}
                 {values.gst_file_url && (
-                  <DocAttachment 
-                    tooltip='View GST' 
-                    imgUrl={values?.gst_file_url} 
-                    docName='GST' 
+                  <DocAttachment
+                    tooltip='View GST'
+                    imgUrl={values?.gst_file_url}
+                    docName='GST'
                   />
                 )}
                 {values.udyam_file_url && (
-                  <DocAttachment 
-                    tooltip='View UDYAM' 
-                    imgUrl={values?.udyam_file_url} 
-                    docName='UDYAM' 
+                  <DocAttachment
+                    tooltip='View UDYAM'
+                    imgUrl={values?.udyam_file_url}
+                    docName='UDYAM'
                   />
                 )}
               </Flex>
@@ -635,37 +697,37 @@ const DealershipInfo = ({ data, currentUser }) => {
                   <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => { !udyamQuery?.isLoading && getUDYAMDetails() }}>Validate Udyam</Typography> : null
               }
             </Grid.Col>
-          </Grid> 
+          </Grid>
 
-          <Space h="xl" /> 
+          <Space h="xl" />
 
           {dataJSON?.gst?.gstin || gstValidateData?.details ? (
             <Card padding="lg" radius="md" withBorder mb="xl">
               <Card.Section withBorder inheritPadding py="xs">
                 <Text fw={600}>GST Details</Text>
               </Card.Section>
-              
-              <Grid mt="lg" gutter="lg"> 
+
+              <Grid mt="lg" gutter="lg">
                 <Grid.Col span={{ base: 12, lg: 6 }}>
                   <ViewData title='Effective Date of registration' value={dataJSON?.gst?.rgdt || gstValidateData?.details?.rgdt} />
                 </Grid.Col>
-                
+
                 <Grid.Col span={{ base: 12, lg: 6 }}>
                   <ViewData title='Taxpayer Type' value={dataJSON?.gst?.dty || gstValidateData?.details?.dty} />
                 </Grid.Col>
-                
+
                 <Grid.Col span={{ base: 12, lg: 6 }}>
                   <ViewData title='Legal Business Name' value={dataJSON?.gst?.lgnm || gstValidateData?.details?.lgnm} />
                 </Grid.Col>
-                
+
                 <Grid.Col span={{ base: 12, lg: 6 }}>
                   <ViewData title='GSTIN Status' value={dataJSON?.gst?.sts || gstValidateData?.details?.sts} />
                 </Grid.Col>
-                
+
                 <Grid.Col span={{ base: 12, lg: 6 }}>
                   <ViewData title='Legal Trade Name' value={dataJSON?.gst?.tradeNam || gstValidateData?.details?.tradeNam} />
                 </Grid.Col>
-              </Grid> 
+              </Grid>
             </Card>
           ) : null}
 
@@ -698,42 +760,42 @@ const DealershipInfo = ({ data, currentUser }) => {
             </Card>
           ) : null}
 
-          
+
           <Title order={3} mb="md">Attachments</Title>
           <Flex gap="sm">
-            <DocAttachment 
-              action={true} 
-              imgUrl={values?.pan_file_url} 
+            <DocAttachment
+              action={true}
+              imgUrl={values?.pan_file_url}
               docName='PAN Card'
-              onUpload={() => docUpload('PAN')} 
-              onDelete={() => onDocDelete({ pan_file_url: '' })} 
-              disabled={!values?.pan_file_url} 
-              style={{ marginRight: 15 }} 
-            />
-            
-            <DocAttachment 
-              action={true} 
-              imgUrl={values?.gst_file_url} 
-              docName='GST' 
-              onUpload={() => docUpload('GST')} 
-              onDelete={() => onDocDelete({ gst_file_url: '' })} 
-              disabled={!values?.gst_file_url} 
-              style={{ marginRight: 15 }} 
+              onUpload={() => docUpload('PAN')}
+              onDelete={() => onDocDelete({ pan_file_url: '' })}
+              disabled={!values?.pan_file_url}
+              style={{ marginRight: 15 }}
             />
 
-            <DocAttachment 
-              action={true} 
-              imgUrl={values?.udyam_file_url} 
-              docName='UDYAM' 
-              onUpload={() => docUpload('UDYAM')} 
-              onDelete={() => onDocDelete({ udyam_file_url: '' })} 
-              disabled={!values?.udyam_file_url} 
-              style={{ marginRight: 15 }} 
+            <DocAttachment
+              action={true}
+              imgUrl={values?.gst_file_url}
+              docName='GST'
+              onUpload={() => docUpload('GST')}
+              onDelete={() => onDocDelete({ gst_file_url: '' })}
+              disabled={!values?.gst_file_url}
+              style={{ marginRight: 15 }}
+            />
+
+            <DocAttachment
+              action={true}
+              imgUrl={values?.udyam_file_url}
+              docName='UDYAM'
+              onUpload={() => docUpload('UDYAM')}
+              onDelete={() => onDocDelete({ udyam_file_url: '' })}
+              disabled={!values?.udyam_file_url}
+              style={{ marginRight: 15 }}
             />
           </Flex>
-        </>  
+        </>
       )}
-      
+
 
       {showUpload && (
         <FileUpload
@@ -744,7 +806,7 @@ const DealershipInfo = ({ data, currentUser }) => {
           onCloseUploader={onCloseUploader}
         />
       )}
-      
+
       {!readOnly ? (
         <Flex gap="sm" mt="xl">
           <Button
@@ -758,7 +820,7 @@ const DealershipInfo = ({ data, currentUser }) => {
 
           <Button
             onClick={handleSubmit}
-            loading={loading}
+            loading={isLoading}
           >
             Save
           </Button>
@@ -784,13 +846,13 @@ const DealershipInfo = ({ data, currentUser }) => {
       <RightSideDrawer
         opened={crimeData}
         onClose={() => setCrimeData()}
-        title={`Credit Information (${data?.pan || '-'})`} 
+        title={`Credit Information (${data?.pan || '-'})`}
       >
-        <CrimeInfoSideWrapper 
-          dealershipId={data?.id} 
-          data={crimeData} 
-          currentUser={currentUser} 
-          onClose={() => setCrimeData()} 
+        <CrimeInfoSideWrapper
+          dealershipId={data?.id}
+          data={crimeData}
+          currentUser={currentUser}
+          onClose={() => setCrimeData()}
         />
       </RightSideDrawer>
     </>

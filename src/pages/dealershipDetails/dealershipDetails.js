@@ -150,7 +150,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         </Tabs.List>
 
         <Tabs.Panel value={'dealership'}>
-          <DealershipInfo data={dealershipData.data} currentUser={currentUser} />
+          <DealershipInfo data={dealershipData.data} isLoading={dealershipData?.isLoading} currentUser={currentUser} />
         </Tabs.Panel>
         <Tabs.Panel value={'dealer'}>
           <DealersList id={id} titleAlign="left" currentUser={currentUser} />

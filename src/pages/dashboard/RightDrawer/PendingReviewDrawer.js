@@ -155,9 +155,10 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
           }
         </Box>
         <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>
-          <Button variant='outline' style={{ marginRight: 8 }} onClick={handleApprovalModal}>Cancel</Button>
+          <Button variant='outline' size='xs' style={{ marginRight: 8 }} onClick={handleApprovalModal}>Cancel</Button>
           <Button
             color='green'
+            size='xs'
             loading={loading}
             onClick={updateLoanStatus}
           >Confirm</Button>

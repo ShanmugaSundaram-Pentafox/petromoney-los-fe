@@ -1,4 +1,4 @@
-import { makeStyles, IconButton, Typography, Divider, Button, Grid, TextField, Tooltip, Paper } from '@material-ui/core'
+import { makeStyles, Typography, Divider, Paper } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
@@ -11,6 +11,7 @@ import { logger } from '../../../config/logger';
 import { addZones, editZones, getZones } from '../../../services/common.service';
 import { getUnmappedStates, getZonesMapById, updateZoneMapById } from '../../../services/master.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { ActionIcon, Box, Button, TextInput, Tooltip } from '@mantine/core';
 
 const useStyles = makeStyles(() => ({
   sidePanelFormWrapper: {
@@ -85,10 +86,10 @@ const ZoneGroup = ({ data, setAddForm }) => {
   return (
     <div className={classes.label}>
       <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.label}</Typography>
-      <Tooltip title='Edit'>
-        <IconButton size='small' className={classes.btn} onClick={() => setAddForm({ action: 'Edit', name: data.label, id: data.value })}>
+      <Tooltip label='Edit' withArrow color='gray'>
+        <ActionIcon size='xs' className={classes.btn} onClick={() => setAddForm({ action: 'Edit', name: data.label, id: data.value })}>
           <EditIcon fontSize='small' />
-        </IconButton>
+        </ActionIcon>
       </Tooltip>
     </div>
   )
@@ -159,12 +160,6 @@ const Zones = ({ callback, title, currentUser }) => {
 
   return (
     <>
-      <Typography className={classes.sidePanelTitle} variant="h4">
-        <div>{title}</div>
-        <IconButton onClick={() => callback(false)} size='small'>
-          <CloseIcon />
-        </IconButton>
-      </Typography>
       <Paper className={classes.root}>
         <div className={classes.content}>
           {
@@ -178,16 +173,15 @@ const Zones = ({ callback, title, currentUser }) => {
         addForm && (
           <div className={classes.addForm}>
             <Typography variant='h5'>{addForm.action} {title}</Typography>
-            <Grid item md={12} style={{ marginTop: 15 }}>
+            <Box mt={15}>
               <label style={{ marginBottom: 8 }}>{title}</label>
-              <TextField
+              <TextInput
                 id={addForm.action}
                 fullWidth
-                variant='outlined'
                 value={addForm?.name}
                 onChange={handleAdd}
               />
-            </Grid>
+            </Box>
             {
               addForm?.action === 'Edit' &&
               <TransferList title='States Map' mappedData={() => getZonesMapById(addForm?.id)} unmappedData={getUnmappedStates} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
@@ -195,15 +189,15 @@ const Zones = ({ callback, title, currentUser }) => {
             <div className={classes.formFooter}>
               <Button
                 onClick={() => setAddForm()}
-                size='small'
+                size='xs'
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleSubmit}
-                style={{ color: '#1EAE98', borderColor: '#1EAE98' }}
-                variant='outlined'
-                size='small'
+                variant='outline'
+                size='xs'
+                color='teal'
               >
                 Save
               </Button>
@@ -215,19 +209,17 @@ const Zones = ({ callback, title, currentUser }) => {
         <Divider />
         <div className={classes.actionButtonsWrapper}>
           <div>
-            <Button variant='outlined' onClick={() => callback(false)}>
+            <Button variant='outline' onClick={() => callback(false)}>
               Back
             </Button>
           </div>
           <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.zonesAdd}>
             <Button
-              variant='contained'
               type='submit'
-              startIcon={<AddIcon />}
+              leftSection={<AddIcon />}
               onClick={() => {
                 setAddForm({ action: 'Add' })
               }}
-              color='primary'
             >
               Add
             </Button>

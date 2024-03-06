@@ -199,9 +199,9 @@ const GuarantorsTable = ({
                   }
                   {
                     !row.pan_file_url && !row.aadhar_file_url &&
-                      <TableCell style={{ border: 0 }} align="center">
-                        -
-                      </TableCell>
+                    <TableCell style={{ border: 0 }} align="center">
+                      -
+                    </TableCell>
                   }
                 </TableCell>
 
@@ -269,8 +269,8 @@ const GuarantorsTable = ({
             <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
           </DialogContent>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
-            <Button size='medium' variant='outlined' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
-            <Button variant='contained' size='medium' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
+            <Button size='xs' variant='outline' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
+            <Button size='xs' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
               {openDialog?.data?.is_active == 1 ? 'Deactivate' : 'Activate'}
             </Button>
           </div>
@@ -293,8 +293,8 @@ const GuarantorsTable = ({
             />
           </DialogContent>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 20, marginTop: 20 }}>
-            <Button size='medium' variant='outlined' onClick={() => setopenChangeTypeDialog(false)}>Cancel</Button>
-            <Button variant='contained' size='medium' style={{ backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => saveApplicantTypeUpdate(rowData)}>Update</Button>
+            <Button size='xs' variant='outline' onClick={() => setopenChangeTypeDialog(false)}>Cancel</Button>
+            <Button size='xs' style={{ backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => saveApplicantTypeUpdate(rowData)}>Update</Button>
           </div>
         </Dialog>
         <Drawer anchor="right" open={rowData && !openChangeTypeDialog} variant="temporary">

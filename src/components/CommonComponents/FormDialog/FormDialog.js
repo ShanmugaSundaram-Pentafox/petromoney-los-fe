@@ -74,16 +74,15 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-const FormDialog = (props) => {
-  const {
-    title,
-    children,
-    actions,
-    open,
-    onClose,
-    onDownload,
-    maxWidth,
-  } = props;
+const FormDialog = ({
+  title,
+  children,
+  actions,
+  open,
+  onClose,
+  onDownload,
+  maxWidth = '60%'
+}) => {
 
   return (
     <Modal
@@ -92,6 +91,7 @@ const FormDialog = (props) => {
       maw={maxWidth}
       size={'auto'}
       title={title}
+      zIndex={99999}
       onDownload={onDownload}
     >
       {children}

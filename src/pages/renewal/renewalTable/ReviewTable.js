@@ -158,7 +158,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
         }
       }, {
         label: 'Approved Amount',
-        name: 'new_loan_amount',
+        name: 'approved_amount',
         options: {
           filter: false,
           sort: true,

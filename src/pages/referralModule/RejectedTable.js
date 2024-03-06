@@ -1,15 +1,13 @@
-import { CircularProgress, Dialog, DialogContent, DialogContentText, DialogTitle, Typography, makeStyles } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, makeStyles } from '@material-ui/core';
 import moment from 'moment/moment';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../components/Number/Currency';
 import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { rejectDealerReferralById } from '../../services/dealerships.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { Button, Paper, Tooltip } from '@mantine/core';
 
@@ -22,7 +20,6 @@ const RejectedListTable = ({ loans, loading, fetchData }) => {
   const classes = useStyles();
   const [modalObj, setModalObj] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const columnHelper = createColumnHelper();
 
   const handlePushback = () => {
     rejectDealerReferralById({ id: modalObj?.id, data: { remarks: modalObj?.remarks, status: 'pushback' } })
@@ -50,34 +47,36 @@ const RejectedListTable = ({ loans, loading, fetchData }) => {
   }
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
+      key: 'dealership_id',
       header: 'Dealership Id',
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }),
-    columnHelper.accessor('name', {
+    }, {
+      key: 'name',
       header: 'Dealership Name',
       cell: (value) => <span>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('loan_disbursed_date', {
+    }, {
+      key: 'loan_disbursed_date',
       header: 'Disbursed Date',
       cell: (value) => <span>{moment(value?.getValue()).format('DD/MM/YYYY')}</span>
-    }),
-    columnHelper.accessor('created_by', {
+    }, {
+      key: 'created_by',
       header: 'Created By',
-    }),
-    columnHelper.accessor('referred_dealership_id', {
+    }, {
+      key: 'referred_dealership_id',
       header: 'Referred By Id',
-    }),
-    columnHelper.accessor('referred_dealership_name', {
+    }, {
+      key: 'referred_dealership_name',
       header: 'Referred By Name',
       cell: (value) => <span>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('current_eligible_bonus', {
+    }, {
+      key: 'current_eligible_bonus',
       header: 'Bonus Amount',
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('action', {
+    }, {
+      key: 'action',
       header: 'Action',
+      isHeaderDownload: false,
       cell: ({ row }) => {
         return (
           <Tooltip label="click to pushback" color='gray' withArrow>
@@ -89,7 +88,7 @@ const RejectedListTable = ({ loans, loading, fetchData }) => {
           </Tooltip>
         )
       }
-    }),
+    },
   ]
 
   const options = {

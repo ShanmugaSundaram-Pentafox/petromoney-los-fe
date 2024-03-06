@@ -1,10 +1,6 @@
-import { Grid, Paper } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
-import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/styles';
 import { format } from 'date-fns';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { useMount } from 'react-use';
@@ -12,7 +8,6 @@ import { createStructuredSelector } from 'reselect';
 import { getAllDealership } from '../../../services/dealerships.service';
 import { setAllDealerships } from '../../../store/dealership/dealership.actions';
 import { selectAllDealerships } from '../../../store/dealership/dealership.selector';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 // import { decrypt } from '../../../services/crypto.service';
 
@@ -59,40 +54,41 @@ const DealershipsTable = ({ dealerships, setAllDealerships }) => {
   // const [ data, setData ] = useState([]);
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
-  const columnHelper = createColumnHelper();
 
   const column = [
-    columnHelper.accessor('id', {
+    {
+      key: 'id',
       header: 'ID',
       enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }),
-    columnHelper.accessor('name', {
+    }, {
+      key: 'name',
       header: 'Name',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('sales_area', {
+    }, {
+      key: 'sales_area',
       header: 'Sales Area',
-    }),
-    columnHelper.accessor('loan_application_submitted_date', {
+      isHeaderDisplay: false,
+    }, {
+      key: 'loan_application_submitted_date',
       header: 'Submitted Date',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? format(new Date(value?.getValue()), 'dd-MMM-yyyy') : '-'}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
-    }),
-    columnHelper.accessor('pincode', {
+    }, {
+      key: 'pincode',
       header: 'Pincode',
-    }),
-    columnHelper.accessor('gst', {
+    }, {
+      key: 'gst',
       header: 'GST',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('pan', {
+    }, {
+      key: 'pan',
       header: 'PAN',
       enableColumnFilter: false,
-    }),
+    },
   ]
 
   useMount(() => {

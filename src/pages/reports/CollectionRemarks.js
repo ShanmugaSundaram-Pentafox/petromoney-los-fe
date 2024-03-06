@@ -1,16 +1,13 @@
-import { Drawer, Grid, TextField, IconButton, Tooltip, Box, Typography, makeStyles } from '@material-ui/core';
+import { Drawer, TextField, IconButton, Tooltip, Box, Typography, makeStyles } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import SearchIcon from '@material-ui/icons/Search';
-import { Skeleton } from '@material-ui/lab';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useQuery } from 'react-query';
 import Select from 'react-select'
 import { CollectionRemarksDrawer } from './CollectionRemarksDrawer';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getCollectionRemarkData } from '../../services/users.service';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 
@@ -45,58 +42,58 @@ const CollectionRemarks = () => {
   const classes = useStyles();
   const filterOption = [{ value: 'name', label: 'Dealership Name' }, { value: 'id', label: 'Dealership ID' }];
   const { data: testData = [], isFetching } = useQuery(['remark-Data', searchData], () => getCollectionRemarkData(searchData), { refetchOnWindowFocus: false, enabled: searchData ? true : false });
-  const columHelper = createColumnHelper();
 
   const column = [
-    columHelper.accessor('cust_code', {
+    {
+      key: 'cust_code',
       header: 'Dealership Id',
       enableColumnFilter: false,
-    }),
-    columHelper.accessor('applicant_name', {
+    }, {
+      key: 'applicant_name',
       header: 'Applicant Name',
       enableColumnFilter: false,
-    }),
-    columHelper.accessor('cust_region', {
+    }, {
+      key: 'cust_region',
       header: 'Region',
-    }),
-    columHelper.accessor('omc', {
+    }, {
+      key: 'omc',
       header: 'OMC',
-    }),
-    columHelper.accessor('tot_disb_amt', {
+    }, {
+      key: 'tot_disb_amt',
       header: 'Total Disbursed Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value.getValue()} />
-    }),
-    columHelper.accessor('tot_due', {
+    }, {
+      key: 'tot_due',
       header: 'Total Due',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value.getValue()} />
-    }),
-    columHelper.accessor('tot_overdue', {
+    }, {
+      key: 'tot_overdue',
       header: 'Total Overdue',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value.getValue()} />
-    }),
-    columHelper.accessor('loan_data', {
+    }, {
+      key: 'loan_data',
       header: 'Details',
       enableColumnFilter: false,
-    }),
-    columHelper.accessor('tot_prin_due', {
+    }, {
+      key: 'tot_prin_due',
       header: 'Total Principle Due',
       enableColumnFilter: false,
-    }),
-    columHelper.accessor('tot_prin_overdue', {
+    }, {
+      key: 'tot_prin_overdue',
       header: 'Total Principle Overdue',
       enableColumnFilter: false,
-    }),
-    columHelper.accessor('tot_int_overdue', {
+    }, {
+      key: 'tot_int_overdue',
       header: 'Total Interest Overdue',
       enableColumnFilter: false,
-    }),
-    columHelper.accessor('tot_penal_overdue', {
+    }, {
+      key: 'tot_penal_overdue',
       header: 'Total Penal Overdue',
       enableColumnFilter: false,
-    }),
+    },
   ]
 
   const onChangeSearch = () => {

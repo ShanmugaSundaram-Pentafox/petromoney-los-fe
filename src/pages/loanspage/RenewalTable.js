@@ -1,16 +1,12 @@
 import { Dialog, Popover } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import DescriptionIcon from '@material-ui/icons/Description';
 import LinkIcon from '@material-ui/icons/Link';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import DocCheckListDetailsTable from '../../components/Attachment/DocCheckListDetailsTable';
 import SignRequestLayout from '../../components/Leegality/SignRequestLayout';
@@ -20,10 +16,9 @@ import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { getRenewalLoans } from '../../services/loans.service';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
+import { IconLink } from '@tabler/icons-react';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -64,7 +59,6 @@ const RenewalTable = ({ currentUser }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
-  const columnHelper = createColumnHelper();
 
   const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
@@ -78,42 +72,44 @@ const RenewalTable = ({ currentUser }) => {
   };
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
+      key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue}</RouterLink>
-    }),
-    columnHelper.accessor('name', {
+    }, {
+      key: 'name',
       header: 'Name',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    }),
-    columnHelper.accessor('type', {
+    }, {
+      key: 'type',
       header: 'Type',
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
-    }),
-    columnHelper.accessor('amount_approved', {
+    }, {
+      key: 'amount_approved',
       header: 'Approved Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('amount_date', {
+    }, {
+      key: 'amount_date',
       header: 'Approved Date',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
-    }),
-    columnHelper.accessor('action', {
+    }, {
+      key: 'action',
       header: 'Attachment',
+      isHeaderDownload: false,
       enableColumnFilter: false,
       cell: ({ row }) => {
         return (
           <div>
             <Tooltip title="click to view documents checklist">
-              <LinkIcon style={{ color: 'grey' }} onClick={(event) => {
+              <IconLink style={{ color: 'grey' }} onClick={(event) => {
                 setAnchorEl(event.currentTarget);
                 setDealershipId(row?.original?.attachment)
               }} />
@@ -121,9 +117,10 @@ const RenewalTable = ({ currentUser }) => {
           </div>
         )
       }
-    }),
-    columnHelper.accessor('action', {
+    }, {
+      key: 'action',
       header: 'Documents',
+      isHeaderDownload: false,
       enableColumnFilter: false,
       cell: ({ row }) => {
         return (
@@ -146,21 +143,21 @@ const RenewalTable = ({ currentUser }) => {
           </div>
         )
       }
-    })
+    },
   ]
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    onCellClick: (colData, cellMeta) => {
-      setRowData(loans[cellMeta.dataIndex])
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => false,
+  //   onCellClick: (colData, cellMeta) => {
+  //     setRowData(loans[cellMeta.dataIndex])
+  //   },
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   }
+  // };
 
   return (
     <div className={classes.root}>

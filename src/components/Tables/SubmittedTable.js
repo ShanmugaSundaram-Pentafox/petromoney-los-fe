@@ -14,9 +14,8 @@ import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 import { permissionCheck } from '../UserCan/UserCan';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../ReactTable/DataTableViewer';
-import { ActionIcon, Loader, Modal, Paper, Tooltip } from '@mantine/core';
+import { ActionIcon, Tooltip } from '@mantine/core';
 
 
 const useStyles = makeStyles(theme => ({
@@ -60,7 +59,6 @@ const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry
   const [type, setType] = useState('');
   const [loading, setLoading] = useState(false);
   const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
-  const columnHelper = createColumnHelper();
 
   useEffect(() => {
     setLoading(true);
@@ -75,43 +73,46 @@ const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry
   }, [filterQry])
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
       header: 'Dealership Id',
+      key: 'dealership_id',
       enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }),
-    columnHelper.accessor('name', {
+    }, {
       header: 'Name',
       enableColumnFilter: false,
+      key: 'name',
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    }),
-    columnHelper.accessor('type', {
+    }, {
       header: 'Type',
+      key: 'type',
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
       header: 'Region',
+      key: 'region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
-    }),
-    columnHelper.accessor('field_officer', {
+    }, {
       header: 'Field Officer',
-    }),
-    columnHelper.accessor('amount_requested', {
+      key: 'field_officer',
+    }, {
       header: 'Req. Amount',
+      key: 'amount_requested',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('created_date', {
+    }, {
       header: 'Req. Date',
+      key: 'created_date',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
-    }),
-    columnHelper.accessor('application_state', {
+    }, {
       header: 'Application State',
+      key: 'application_state',
       cell: (value) => <span>{value?.getValue() || '-'}</span>
-    }),
-    columnHelper.accessor('action', {
+    }, {
       header: 'Documents',
+      key: 'action',
+      isHeaderDisplay: Boolean(actionable),
+      isHeaderDownload: false,
       enableColumnFilter: false,
       cell: ({ row }) => (
         <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
@@ -122,7 +123,7 @@ const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry
           </Tooltip>
         </CheckAllowed>
       )
-    })
+    },
   ]
 
   const options = {

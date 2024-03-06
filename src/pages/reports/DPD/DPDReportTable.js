@@ -1,12 +1,9 @@
 import { Button, Tooltip } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
@@ -14,7 +11,6 @@ import Currency from '../../../components/Number/Currency';
 import { getSignedUrl } from '../../../services/common.service';
 import { getDpdPageDetails, getDpdReportData, } from '../../../services/report.service';
 import { dateCustomSort } from '../../../utils/commonFunctions.util';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 
 
@@ -42,7 +38,6 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [download, setDownload] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const columnHelper = createColumnHelper();
 
   const pageDetailsQuery = useQuery({
     queryKey: ['dpd_pageCount', filterQry, search],
@@ -78,59 +73,60 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
   }, [filterQry, page, search, download])
 
   const column = [
-    columnHelper.accessor('customer_code', {
+    {
+      key: 'customer_code',
       header: 'Customer Code',
       enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }),
-    columnHelper.accessor('prospect_code', {
+    }, {
+      key: 'prospect_code',
       header: 'Prospect Code',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('customer_name', {
+    }, {
+      key: 'customer_name',
       header: 'Customer Name',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
-    }),
-    columnHelper.accessor('omc', {
+    }, {
+      key: 'omc',
       header: 'OMC',
-    }),
-    columnHelper.accessor('disbursal_date', {
+    }, {
+      key: 'disbursal_date',
       header: 'Disbursal Data',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
-    }),
-    columnHelper.accessor('due_date', {
+    }, {
+      key: 'due_date',
       header: 'Due Data',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
-    }),
-    columnHelper.accessor('loan_amount', {
+    }, {
+      key: 'loan_amount',
       header: 'Loan Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('principle_amount', {
+    }, {
+      key: 'principle_amount',
       header: 'Principle Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('loan_status', {
+    }, {
+      key: 'loan_status',
       header: 'Loan Status',
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    }),
-    columnHelper.accessor('last_receipt_date', {
+    }, {
+      key: 'last_receipt_date',
       header: 'Last Receipt Date',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
-    }),
-    columnHelper.accessor('dpd', {
+    }, {
+      key: 'dpd',
       header: 'DPD',
       enableColumnFilter: false,
-    }),
+    },
   ];
 
   const options = {
@@ -182,6 +178,7 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
         title={title}
         loading={loading}
         useAPIPagination
+        apiSearch={setSearch}
         totalNoOfPages={pageDetailsQuery?.data}
         page={page}
         setPage={setPage}

@@ -18,7 +18,6 @@ import { URL } from '../../../config/serverUrls';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
-
 const AddOmcDetailsForm = ({ open, onClose, data: init_data, dealer_id, isEdit, currentUser, callback, editable }) => {
   const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
   const [loading, setLoading] = useState(false)
@@ -92,13 +91,13 @@ const AddOmcDetailsForm = ({ open, onClose, data: init_data, dealer_id, isEdit, 
         })
     }
   });
-  
+
   const inputProps = {
     direction: 'column',
     alignTop: true,
     onChange: handleChange,
   }
-  
+
   return (
     <RightSideDrawer
       size="lg"
@@ -141,7 +140,7 @@ const AddOmcDetailsForm = ({ open, onClose, data: init_data, dealer_id, isEdit, 
           </Grid.Col>
           <Grid.Col span={{ base: 12, sm: 6 }}>
             <ViewData title='Dealership agreement valid till' value={values?.agreement_valid_till} style={{ marginBottom: 6 }} />
-          </Grid.Col> 
+          </Grid.Col>
         </Grid>
       ) : (
         <form onSubmit={handleSubmit}>

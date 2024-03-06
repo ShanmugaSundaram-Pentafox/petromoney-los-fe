@@ -1,37 +1,25 @@
-import { Grid, Paper } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState } from 'react';
+import { Grid, } from '@material-ui/core';
+import React from 'react';
 import { useQuery } from 'react-query';
 import { getAllWithheldLoans } from '../../services/withheld.services';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
-const useStyles = makeStyles((theme) => ({
-  title: {
-    fontWeight: 500,
-  },
-}))
-
 const ResolvedTable = () => {
-  const classes = useStyles()
   const { data = [], isLoading } = useQuery('withheld-loans', () => getAllWithheldLoans(1), { refetchOnWindowFocus: false });
-  const columnHelper = createColumnHelper();
 
   const column = [
-    columnHelper.accessor('id', {
+    {
+      key: 'id',
       header: 'Dealership Id',
-    }),
-    columnHelper.accessor('name', {
+    }, {
+      key: 'name',
       header: 'Name',
       cell: (value) => <span>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
-    }),
-    columnHelper.accessor('comments', {
+    }, {
+      key: 'comments',
       header: 'Reason',
       cell: (value) => {
         return (
@@ -44,7 +32,7 @@ const ResolvedTable = () => {
           })
         )
       },
-    }),
+    },
   ];
 
   // const options = {

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import CreditReload from './CreditReload';
 import CreditReloadForm from './CreditReloadForm';
@@ -13,9 +13,8 @@ import {
   getCreditReload,
 } from '../../services/users.service';
 import { isAllowed } from '../../utils/cerbos';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
-import { Button, Drawer, Grid, Paper, Skeleton } from '@mantine/core';
+import { Button, Drawer, Paper } from '@mantine/core';
 import { PlusIcon } from '@heroicons/react/24/solid';
 
 const CreditNewRequestTable = ({ currentUser }) => {
@@ -24,7 +23,6 @@ const CreditNewRequestTable = ({ currentUser }) => {
   const [statusModal, setStatusModal] = useState(false);
   const [filterQry, setFilterQry] = useState();
   const [offset, setOffset] = useState(0);
-  const columnHelper = createColumnHelper();
   usePageTitle('Credit Reload');
   const { data: tableData = [], refetch, isLoading } = useQuery(['new-request', offset], () => getCreditReload({ processed: 0, filterQry: filterQry, currentUser: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false })
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
@@ -45,47 +43,48 @@ const CreditNewRequestTable = ({ currentUser }) => {
   }
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
+      key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
       cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.dealership_id} />
-    }),
-    columnHelper.accessor('name', {
+    }, {
+      key: 'name',
       header: 'Name',
       enableColumnFilter: false,
       cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.name} />
-    }),
-    columnHelper.accessor('request_id', {
+    }, {
+      key: 'request_id',
       header: 'Request Id',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('product_name', {
+    }, {
+      key: 'product_name',
       header: 'Scheme',
-    }),
-    columnHelper.accessor('created_date', {
+    }, {
+      key: 'created_date',
       header: 'Requested Date',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
-    }),
-    columnHelper.accessor('amount', {
+    }, {
+      key: 'amount',
       header: 'Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('account_no', {
+    }, {
+      key: 'account_no',
       header: 'Account Number',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('last_modified_by', {
+    }, {
+      key: 'last_modified_by',
       header: 'Submitted (or) Modified By',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('origin', {
+    }, {
+      key: 'origin',
       header: 'Origin',
-    }),
-    columnHelper.accessor('status', {
+    }, {
+      key: 'status',
       header: 'Status',
       enableColumnFilter: false,
       cell: (value) => {
@@ -101,7 +100,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
         }
         else return <CustomToken label={value?.getValue()} variant='success' />
       }
-    }),
+    },
   ]
 
   const options = {

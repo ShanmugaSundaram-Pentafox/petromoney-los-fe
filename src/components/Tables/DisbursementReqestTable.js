@@ -1,19 +1,13 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NavLink as RouterLink } from 'react-router-dom';
 // import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
 import Currency from '../Number/Currency';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../ReactTable/DataTableViewer';
 
 const useStyles = makeStyles(theme => ({
@@ -46,7 +40,6 @@ const useStyles = makeStyles(theme => ({
 const DisbursementReqestTable = ({ title, loans = [], setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
-  const columnHelper = createColumnHelper();
 
   useEffect(() => {
     setLoading(true);
@@ -61,37 +54,38 @@ const DisbursementReqestTable = ({ title, loans = [], setLoansData, onRowClick, 
   }, [filterQry])
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
+      key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }),
-    columnHelper.accessor('name', {
+    }, {
+      key: 'name',
       header: 'Name',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    }),
-    columnHelper.accessor('type', {
+    }, {
+      key: 'type',
       header: 'Type',
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
-    }),
-    columnHelper.accessor('field_officer', {
+    }, {
+      key: 'field_officer',
       header: 'Field Officer',
-    }),
-    columnHelper.accessor('amount_approved', {
+    }, {
+      key: 'amount_approved',
       header: 'Approved Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value} />
-    }),
-    columnHelper.accessor('modified_date', {
+    }, {
+      key: 'modified_date',
       header: 'Approved Date',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
-    }),
+    },
   ]
 
   return (

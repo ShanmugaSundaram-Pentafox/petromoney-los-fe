@@ -1,23 +1,17 @@
 import { makeStyles, } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
-import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../../components/Number/Currency';
 import { getSignedUrl } from '../../../services/common.service';
 import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, sendRenewalReminder } from '../../../services/renewal.service';
-import { dateCustomSort } from '../../../utils/commonFunctions.util';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
-import { Button, Modal, Group, Text, Tooltip } from '@mantine/core';
+import { Button, Modal, Group, Text, } from '@mantine/core';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles(theme => ({
@@ -42,7 +36,6 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
   const [search, setSearch] = useState();
   const [openModal, setOpenModal] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const columnHelper = createColumnHelper();
 
   const pageDetailsQuery = useQuery({
     queryKey: ['renewal_reviewRecordCount', filterQry, search],
@@ -126,34 +119,35 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
   }
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
+      key: 'dealership_id',
       header: 'Dealership Id',
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }),
-    columnHelper.accessor('dealership_name', {
+    }, {
+      key: 'dealership_name',
       header: 'Name',
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    }),
-    columnHelper.accessor('old_product_name', {
+    }, {
+      key: 'old_product_name',
       header: 'Old Scheme',
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('new_product_name', {
+    }, {
+      key: 'new_product_name',
       header: 'New Scheme',
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
-    }),
-    columnHelper.accessor('new_loan_amount', {
+    }, {
+      key: 'new_loan_amount',
       header: 'Disbursed Amount',
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('renewal_month', {
+    }, {
+      key: 'renewal_month',
       header: 'Month Of Renewal',
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
-    })
+    },
   ]
 
   // const options = {
@@ -216,6 +210,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
         title={title}
         onRowClick={i => onRowClick(i.dealership_id, i, 'review')}
         useAPIPagination
+        apiSearch={setSearch}
         loading={getRenewalDataQuery?.isLoading}
         page={page}
         setPage={setPage}

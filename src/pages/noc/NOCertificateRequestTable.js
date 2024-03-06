@@ -18,7 +18,6 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { getAllNocRequest } from '../../services/noc.services';
 import { isAllowed } from '../../utils/cerbos';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { Button } from '@mantine/core';
@@ -59,7 +58,6 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   const [openModal, setOpenModal] = useState();
   const [openApproveModal, setOpenApproveModal] = useState();
   const [openViewer, setOpenViewer] = useState({ open: false });
-  const columnHelper = createColumnHelper();
 
   const actionable = !permissionCheck(
     currentUser.role_name,
@@ -95,37 +93,38 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   };
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
+      key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('name', {
+    }, {
+      key: 'name',
       header: 'Name',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('applicant_code', {
+    }, {
+      key: 'applicant_code',
       header: 'Applicant Code',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('noc_type', {
+    }, {
+      key: 'noc_type',
       header: 'Type'
-    }),
-    columnHelper.accessor('disbursed_amount', {
+    }, {
+      key: 'disbursed_amount',
       header: 'Disbursed Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('product_name', {
+    }, {
+      key: 'product_name',
       header: 'Scheme'
-    }),
-    columnHelper.accessor('formated_date', {
+    }, {
+      key: 'formated_date',
       header: 'Issued Month'
-    }),
-    columnHelper.accessor('remarks', {
+    }, {
+      key: 'remarks',
       header: 'Remarks',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('status', {
+    }, {
+      key: 'status',
       header: 'Status',
       cell: (value) => {
         if (value?.getValue() == 'rejected') {
@@ -142,10 +141,11 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           );
         } else return <CustomToken label={value?.getValue()} variant="warn" />;
       },
-    }),
-    columnHelper.accessor('noc_letter_url', {
+    }, {
+      key: 'noc_letter_url',
       header: 'Documents',
       enableColumnFilter: false,
+      isHeaderDownload: false,
       cell: ({ row }) => {
         return (
           <div style={{ minWidth: 70 }}>
@@ -173,7 +173,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           </div>
         );
       },
-    })
+    },
   ];
 
   // const options = {

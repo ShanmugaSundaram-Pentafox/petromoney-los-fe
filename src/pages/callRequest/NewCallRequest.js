@@ -1,11 +1,9 @@
 import { Button, Dialog, DialogContent, makeStyles, Typography } from '@material-ui/core';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../../components/TextInput/TextInput';
 import { resolveCallbackRequest } from '../../services/callrequest.service';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const useStyles = makeStyles({
@@ -27,7 +25,6 @@ const NewCallRequest = ({ callbackData, isLoading }) => {
   const [rowData, setRowData] = useState();
   const [remark, setRemark] = useState();
   const [error, setError] = useState();
-  const columnHelper = createColumnHelper();
 
   const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData?.request_id), {
     onSuccess: (message) => {
@@ -66,11 +63,12 @@ const NewCallRequest = ({ callbackData, isLoading }) => {
   }
 
   const column = [
-    columnHelper.accessor('dealer_id', {
+    {
+      key: 'dealer_id',
       header: 'Customer Code',
       cell: (value) => <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.getValue()}</div>
-    }),
-    columnHelper.accessor('dealer_name', {
+    }, {
+      key: 'dealer_name',
       header: 'Cust Name / Request',
       cell: ({ row }) => {
         return (
@@ -83,30 +81,36 @@ const NewCallRequest = ({ callbackData, isLoading }) => {
           </div>
         )
       }
-    }),
-    columnHelper.accessor('dealership_id', {
+    }, {
+      key: 'dealership_id',
       header: 'Dealership Id',
       cell: (value) => <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.getValue()}</div>
-    }),
-    columnHelper.accessor('dealership_name', {
+    }, {
+      key: 'dealership_name',
       header: 'Dealership Name',
-    }),
-    columnHelper.accessor('created_date', {
+    }, {
+      key: 'created_date',
       header: 'Requested On',
-    }),
-    columnHelper.accessor('region_value', {
+    }, {
+      key: 'region_value',
       header: 'Region',
-    }),
-    columnHelper.accessor('mobile', {
+    }, {
+      key: 'mobile',
       header: 'Mobile',
-    }),
-    columnHelper.accessor('request_id', {
+    }, {
+      key: 'request_id',
       header: 'Request Id',
-    }),
-    columnHelper.accessor('action', {
+      isHeaderDisplay: false,
+    }, {
+      key: 'action',
       header: 'Action',
+      isHeaderDownload: false,
       cell: ({ row }) => <Button variant='outlined' size='small' color='secondary' onClick={() => setRowData(row?.original)}>Resolve</Button>
-    }),
+    }, {
+      key: 'count',
+      header: 'Count',
+      isHeaderDisplay: false,
+    }
   ]
 
   const options = {

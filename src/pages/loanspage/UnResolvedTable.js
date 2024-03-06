@@ -1,14 +1,11 @@
-import { Grid, Drawer, Paper, Tooltip, Dialog, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { Grid, Drawer, Tooltip, Dialog, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
-import Typography from '@material-ui/core/Typography';
 import { DeleteOutlineRounded } from '@material-ui/icons';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { useMount } from 'react-use';
 import AddBlackListForm from './AddBlackListForm';
@@ -18,7 +15,6 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { getAllDealership } from '../../services/dealerships.service';
 import { deleteRemarks, getAllWithheldLoans, resolveRemarks } from '../../services/withheld.services';
 import CheckAllowed from '../rbac/CheckAllowed';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { Box, Group } from '@mantine/core';
 
@@ -36,7 +32,6 @@ const UnresolvedTable = ({ currentUser }) => {
   const [withheldModal, setWithheldModal] = useState(false);
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
-  const columnHelper = createColumnHelper();
   const { data = [], isLoading } = useQuery('withheld-loans', () => getAllWithheldLoans(0), { refetchOnWindowFocus: false })
 
   useMount(() => {
@@ -115,18 +110,20 @@ const UnresolvedTable = ({ currentUser }) => {
   }
 
   const column = [
-    columnHelper.accessor('id', {
+    {
+      key: 'id',
       header: 'Dealership Id'
-    }),
-    columnHelper.accessor('name', {
+    }, {
+      key: 'name',
       header: 'Name',
       cell: (value) => <span>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
-    }),
-    columnHelper.accessor('action', {
+    }, {
+      key: 'action',
       header: 'Reason',
+      isHeaderDownload: false,
       cell: ({ row }) => {
         return (
           row?.original?.comments?.map((remark, i) => {
@@ -154,7 +151,7 @@ const UnresolvedTable = ({ currentUser }) => {
           })
         )
       },
-    }),
+    },
   ]
 
   const options = {

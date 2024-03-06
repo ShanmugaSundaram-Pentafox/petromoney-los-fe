@@ -323,7 +323,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
 
         <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.pdReport}>
           <Button
-            onClick={handleDownload} 
+            onClick={handleDownload}
             leftSection={<IconReport size={18} />}
             loading={loading}
             loaderProps={{ type: 'dots' }}
@@ -340,7 +340,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
               {list.action ? (
                 <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={list.action}>
                   <Tooltip position="bottom" label={`click to edit ${list.name}`}>
-                    <Box 
+                    <Box
                       className="h-28 bg-gray-50 hover:bg-gray-200 flex flex-col items-center justify-between px-2 py-6 rounded-lg cursor-pointer transition-transform transform hover:-translate-y-0.5 duration-500"
                       onClick={list.onClick}
                     >
@@ -351,7 +351,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                 </CheckAllowed>
               ) : (
                 <Tooltip position="bottom" label={`click to edit ${list.name}`}>
-                  <Box 
+                  <Box
                     className="h-28 bg-gray-50 hover:bg-gray-200 flex flex-col items-center justify-between px-2 py-6 rounded-lg cursor-pointer transition-transform transform hover:-translate-y-0.5 duration-500"
                     onClick={list.onClick}
                   >
@@ -363,24 +363,24 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
             </div>
           )
         })}
-      </SimpleGrid> 
-
+      </SimpleGrid>
+      {console.log(omcData)}
       {/* Right Side Drawer Starts Here */}
       {externalView && !omcEdit ? (
-        <EmptySideDrawer 
-          title="OMC Details" 
-          callback={handleEdit} 
-        /> 
+        <EmptySideDrawer
+          title="OMC Details"
+          callback={handleEdit}
+        />
       ) : (
-        <AddOmcDetailsForm 
+        <AddOmcDetailsForm
           open={openOmcForm}
           onClose={() => setOpenOmcForm(false)}
-          dealer_id={id} 
-          isEdit={omcEdit ? null : 'Edit'}
-          callback={handleEdit} 
-          currentUser={currentUser} 
-          data={omcData} 
-          editable={externalView} 
+          dealer_id={id}
+          isEdit={omcData ? null : 'Edit'}
+          callback={handleEdit}
+          currentUser={currentUser}
+          data={omcData}
+          editable={externalView}
         />
       )}
       {/* Right Side Drawer Ends Here */}

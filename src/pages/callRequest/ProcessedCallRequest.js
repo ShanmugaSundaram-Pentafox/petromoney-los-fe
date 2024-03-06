@@ -1,40 +1,37 @@
-import { createColumnHelper } from '@tanstack/react-table';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo } from 'react'
+import React from 'react'
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const ProcessedCallRequest = ({ callbackProcessed, isLoading }) => {
 
-  const columnHelper = createColumnHelper();
-
   const column = [
-    columnHelper.accessor('dealer_id', {
+    {
+      key: 'dealer_id',
       header: 'Customer Code',
       cell: (value) => <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.getValue()}</div>
-    }),
-    columnHelper.accessor('dealer_name', {
+    }, {
+      key: 'dealer_name',
       header: 'Cust Name / Request',
       cell: (value) => <div>{value?.getValue()?.toUpperCase()}</div>
-    }),
-    columnHelper.accessor('dealership_id', {
+    }, {
+      key: 'dealership_id',
       header: 'Dealership Id',
       cell: (value) => <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.getValue()}</div>
-    }),
-    columnHelper.accessor('dealership_name', {
+    }, {
+      key: 'dealership_name',
       header: 'Dealership Name',
-    }),
-    columnHelper.accessor('region_value', {
+    }, {
+      key: 'region_value',
       header: 'Region',
-    }),
-    columnHelper.accessor('mobile', {
+    }, {
+      key: 'mobile',
       header: 'Mobile',
-    }),
-    columnHelper.accessor('created_date', {
+    }, {
+      key: 'created_date',
       header: 'Requested On',
-    }),
-    columnHelper.accessor('processed_by', {
+    }, {
+      key: 'processed_by',
       header: 'Processed By',
-    }),
+    },
   ]
 
   const options = {

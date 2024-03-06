@@ -1,43 +1,40 @@
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import { NavLink as RouterLink } from 'react-router-dom';
-import RightDrawer from './RightDrawer'
 import { action_id, resources_id } from '../../../config/accessControl';
 import { isAllowed } from '../../../utils/cerbos';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 import { Paper, Tooltip } from '@mantine/core';
 import { IconCheck, IconEdit, IconX } from '@tabler/icons-react';
 
 const UsersTable = ({ title, data, withRole, currentUser, loading }) => {
-  const [rowData, setRowData] = useState({});
-  const columnHelper = createColumnHelper();
 
   const column = [
-    columnHelper.accessor('id', {
+    {
+      key: 'id',
       header: 'User Id',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('first_name', {
+    }, {
+      key: 'first_name',
       header: 'Name',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('mobile', {
+    }, {
+      key: 'mobile',
       header: 'Mobile Number',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('email', {
+    }, {
+      key: 'email',
       header: 'Email',
       enableColumnFilter: false,
-    }),
-    columnHelper.accessor('role_name', {
+    }, {
+      key: 'role_name',
       header: 'Role',
-      cell: (value) => <span>{value?.getValue() ? value?.getValue()?.replace(/_/g, ' ') : '-'}</span>
-    }),
+    },
   ]
 
   const actionColumn = [
-    columnHelper.accessor('status', {
+    {
+      key: 'status',
       header: 'Status',
       cell: (value) => {
         if (value?.getValue() === 'Active') {
@@ -54,10 +51,11 @@ const UsersTable = ({ title, data, withRole, currentUser, loading }) => {
           )
         }
       }
-    }),
-    columnHelper.accessor('action', {
+    }, {
+      key: 'action',
       header: 'Action',
       enableColumnFilter: false,
+      isHeaderDownload: false,
       cell: ({ row }) => {
         return (
           <RouterLink to={{
@@ -70,7 +68,7 @@ const UsersTable = ({ title, data, withRole, currentUser, loading }) => {
           </RouterLink>
         )
       }
-    }),
+    },
   ]
   return (
     <Paper>
@@ -81,9 +79,6 @@ const UsersTable = ({ title, data, withRole, currentUser, loading }) => {
           withRole ?
             [
               ...column,
-              columnHelper.accessor('role_name', {
-                header: 'Role',
-              })
             ] :
             isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userStatus) ?
               [

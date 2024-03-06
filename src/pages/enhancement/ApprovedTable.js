@@ -1,30 +1,24 @@
 import { Button, Tooltip, Dialog, DialogContent, DialogActions, Popover } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { green } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { List } from '@material-ui/icons';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import DescriptionIcon from '@material-ui/icons/Description';
 import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import CustomToken from '../../components/CommonComponents/CustomToken';
-import MuiTableFooter from '../../components/CommonComponents/MuiTableFooter';
 import SignRequestLayout from '../../components/Leegality/SignRequestLayout';
 import Currency from '../../components/Number/Currency';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
 import { getSignedUrl } from '../../services/common.service';
 import { downloadEnhancementData, getEnhancedLoanByStatus, getEnhancementSync, getPageDetails } from '../../services/enhancement.service';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
@@ -83,7 +77,6 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   const [anchorEl, setAnchorEl] = React.useState({});
   const documentPopover = Boolean(anchorEl?.document);
   const documentId = documentPopover ? 'document-popover' : undefined;
-  const columnHelper = createColumnHelper();
 
   const getEnhancementDataQuery = useQuery({
     queryKey: ['enhancement-data-approved', filterQry, page, search],
@@ -145,36 +138,38 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
 
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
+      key: 'dealership_id',
       header: 'Dealership Id',
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }),
-    columnHelper.accessor('dealership_name', {
+    }, {
+      key: 'dealership_name',
       header: 'Name',
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    }),
-    columnHelper.accessor('old_product_name', {
+    }, {
+      key: 'old_product_name',
       header: 'Old Product Type',
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('new_product_name', {
+    }, {
+      key: 'new_product_name',
       header: 'New Product Type',
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
-    }),
-    columnHelper.accessor('old_loan_amount', {
+    }, {
+      key: 'old_loan_amount',
       header: 'Old Loan Amount',
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('new_loan_amount', {
+    }, {
+      key: 'new_loan_amount',
       header: 'New Loan Amount',
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('action', {
+    }, {
+      key: 'action',
       header: 'Sync',
+      isHeaderDownload: false,
       cell: ({ row }) => {
         return (
           row?.original?.is_sync == 1 ?
@@ -188,9 +183,10 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
             </div>
         )
       }
-    }),
-    columnHelper.accessor('action', {
+    }, {
+      key: 'action',
       header: 'Documents',
+      isHeaderDownload: false,
       cell: ({ row }) => {
         return (
           row?.original?.['is_document_signed'] ? (
@@ -204,7 +200,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
           )
         )
       }
-    })
+    },
   ]
 
   // const options = {
@@ -261,6 +257,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
         column={column}
         onRowClick={i => onRowClick(i.dealership_id, i, 'approved')}
         useAPIPagination
+        apiSearch={setSearch}
         page={page}
         setPage={setPage}
         totalNoOfPages={getEnhancementPaginationQuery?.data?.total_number_of_pages}

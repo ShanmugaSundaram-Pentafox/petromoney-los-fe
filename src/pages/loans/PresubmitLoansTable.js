@@ -1,10 +1,9 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
-import LinkIcon from '@material-ui/icons/Link';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import Currency from '../../components/Number/Currency';
@@ -13,7 +12,6 @@ import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
 import { getDocumentsChecklistById, getLoansByStatus, updateDocumentChecklistById } from '../../services/loans.service';
 import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { ActionIcon, Box, Button, Checkbox, Modal, TextInput, Tooltip } from '@mantine/core';
 import { IconLink, IconPlus } from '@tabler/icons-react';
@@ -74,7 +72,6 @@ const PresubmitLoansTable = ({ currentUser }) => {
   const [checklistData, setChecklistData] = useState([]);
   const [newValue, setNewValue] = useState('');
   const { enqueueSnackbar } = useSnackbar();
-  const columnHelper = createColumnHelper();
 
   const getPreSubmitLoansQuery = useQuery({
     queryKey: ['pre-submit-loans'],
@@ -102,48 +99,50 @@ const PresubmitLoansTable = ({ currentUser }) => {
   }
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
+      key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }),
-    columnHelper.accessor('name', {
+    }, {
+      key: 'name',
       header: 'Name',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    }),
-    columnHelper.accessor('type', {
+    }, {
+      key: 'type',
       header: 'Type',
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
-    }),
-    columnHelper.accessor('amount_requested', {
+    }, {
+      key: 'amount_requested',
       header: 'Req. Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('created_date', {
+    }, {
+      key: 'created_date',
       header: 'Req. Date',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
-    }),
-    columnHelper.accessor('application_state', {
+    }, {
+      key: 'application_state',
       header: 'Application State',
       // enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() || '-'}</span>
-    }),
-    columnHelper.accessor('action', {
+    }, {
+      key: 'action',
       header: 'Documents',
+      isHeaderDownload: false,
       enableColumnFilter: false,
       cell: (value) => (
         <Tooltip label={'Click to view documents'} color='gray' withArrow>
           <ActionIcon size="xs" variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id })}><IconLink /></ActionIcon>
         </Tooltip>
       )
-    })
+    },
   ]
 
   // used to check and uncheck the checkbox

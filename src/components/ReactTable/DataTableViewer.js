@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActionIcon, Box, Grid, Group, Image, Loader, Popover, Select, Text, TextInput, Title, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Grid, Group, Image, Loader, Popover, Select, Text, TextInput, Tooltip } from '@mantine/core';
 import ReactTable from './ReactTable';
 import { IconDownload, IconFilter, IconSearch, IconTableRow, IconX } from '@tabler/icons-react';
-import { exportToExcel } from "react-json-to-excel";
 import ColumnsFilter from '../Filter/ColumnFilter';
 import { useDisclosure } from '@mantine/hooks';
+import { useJsonToCsv } from 'react-json-csv';
+import { generateCSVHeader, generateTableHeader } from '../../utils/tableHeader.util';
 
 const Filter = ({
   column,
@@ -72,6 +73,7 @@ const DataTableViewer = ({
   const [filterHeader, setFilterHeader] = useState();
   const [opened, setOpened] = useState();
   const [openFilterModal, { open, close }] = useDisclosure(false);
+  const { saveAsCsv } = useJsonToCsv()
   // const { tableData, setTableData } = useTableInfo();
   // const { tableData, saveTableData } = useTableColumnsStore(store => ({
   //   tableData: store?.getTableData(localKey),
@@ -89,23 +91,31 @@ const DataTableViewer = ({
     }, []);
   };
 
+  const getTableColumns = useMemo(() => {
+    return generateTableHeader({ data: column });
+  }, [column])
+
+  const getCSVColumns = useMemo(() => {
+    return generateCSVHeader({ data: column });
+  }, [column])
+
   useEffect(() => {
-    if ((column?.length)) {
+    if ((getTableColumns?.length)) {
       // if (tableData) {
-      //   const addData = addCellKey(tableData, column)
+      //   const addData = addCellKey(tableData, getTableColumns)
       //   const buffer = addData?.map(item => item?.header)
       //   setFilteredColumnData(addData)
       //   saveTableData({ [localKey]: buffer });
       // }
       // else
-      setFilteredColumnData(column)
+      setFilteredColumnData(getTableColumns)
     }
     else
-      setFilteredColumnData(column)
-  }, [column])
+      setFilteredColumnData(getTableColumns)
+  }, [getTableColumns])
 
   const onUpdateFilter = (data) => {
-    const addData = addCellKey(data, column);
+    const addData = addCellKey(data, getTableColumns);
     setFilteredColumnData(addData);
     // saveTableData({ [localKey]: data })
   }
@@ -127,7 +137,7 @@ const DataTableViewer = ({
               }
             </Group>
           </Text>
-          {(!loading && Array.isArray(rowData) && !rowData?.length)
+          {(!loading && Array.isArray(rowData) && !rowData?.length && !search)
             ? null
             : (
               <Box mr={'sm'}>
@@ -142,7 +152,7 @@ const DataTableViewer = ({
                     mx={0}
                     size='xs'
                     icon={<IconSearch size={16} />}
-                    rightSection={<IconX size={12} color={'#ccc'} style={{ cursor: 'pointer' }} onClick={() => setSearch('')} />}
+                    rightSection={<IconX size={12} color={'#ccc'} style={{ cursor: 'pointer' }} onClick={() => { setSearch(''); apiSearch && apiSearch() }} />}
                   />
                   {columnsFilter
                     ? <Tooltip
@@ -213,7 +223,15 @@ const DataTableViewer = ({
                         variant='outline'
                         color='gray.4'
                         loading={downloadQuery?.isLoading}
-                        onClick={() => { downloadQuery ? downloadQuery?.query() : exportToExcel(rowData, title) }}
+                        onClick={() => {
+                          downloadQuery
+                            ? downloadQuery?.query()
+                            : saveAsCsv({
+                              data: rowData,
+                              fields: getCSVColumns,
+                              fileName: title,
+                            })
+                        }}
                       >
                         <IconDownload size={20} color='#4196f0' />
                       </ActionIcon>

@@ -1,19 +1,11 @@
-import { Button, Tooltip } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
-import MuiTableFooter from '../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../components/Number/Currency';
 import { getSignedUrl } from '../../services/common.service';
 import { downloadEnhancementData, getEnhancedLoanByStatus, getPageDetails } from '../../services/enhancement.service';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
@@ -40,7 +32,6 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const { enqueueSnackbar } = useSnackbar();
-  const columnHelper = createColumnHelper();
 
   const getReOnboardingDataQuery = useQuery({
     queryKey: ['re-onboarding-data-approval', filterQry, page, search],
@@ -93,34 +84,35 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
   }
 
   const column = [
-    columnHelper.accessor('dealership_id', {
+    {
+      key: 'dealership_id',
       header: 'Dealership Id',
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }),
-    columnHelper.accessor('dealership_name', {
+    }, {
+      key: 'dealership_name',
       header: 'Name',
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    }),
-    columnHelper.accessor('old_product_name', {
+    }, {
+      key: 'old_product_name',
       header: 'Old Product Scheme',
       cell: value => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('new_product_name', {
+    }, {
+      key: 'new_product_name',
       header: 'New Product Scheme',
       cell: value => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }),
-    columnHelper.accessor('region', {
+    }, {
+      key: 'region',
       header: 'Region',
       cell: value => <span>{value?.getValue() ? value?.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
-    }),
-    columnHelper.accessor('old_loan_amount', {
+    }, {
+      key: 'old_loan_amount',
       header: 'Old Loan Amount',
       cell: value => <Currency value={value?.getValue()} />
-    }),
-    columnHelper.accessor('new_loan_amount', {
+    }, {
+      key: 'new_loan_amount',
       header: 'New Loan Amount',
       cell: value => <Currency value={value?.getValue()} />
-    }),
+    },
   ];
 
   // const options = {
@@ -177,6 +169,7 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
         count={getReOnboardingDataQuery?.data?.length}
         onRowClick={i => onRowClick(i?.dealership_id, i, 'approval')}
         useAPIPagination
+        apiSearch={setSearch}
         page={page}
         setPage={setPage}
         totalNoOfPages={getReOnboardingPaginationQuery?.data?.total_number_of_pages}

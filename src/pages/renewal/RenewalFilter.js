@@ -142,7 +142,6 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
     if (filterType != 'dpd') {
       getStats(qry)
     }
-    console.log(qry);
     filterQry(qry)
   }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedMonth, selectedEntity])
   const getStats = (qry) => {

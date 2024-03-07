@@ -142,6 +142,7 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
     if (filterType != 'dpd') {
       getStats(qry)
     }
+    console.log(qry);
     filterQry(qry)
   }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedMonth, selectedEntity])
   const getStats = (qry) => {
@@ -181,7 +182,7 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
             filters.includes('zone') &&
-              <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
+              <Selector title="Zone" options={zones} value={selectedZones} setValue={(e) => { setSelectedZones(e); (selectedRegion?.[0]?.value != 0 && setSelectedRegion([{ label: 'ALL', value: 0 }])) }} />
           }
           {
             filters.includes('region') &&

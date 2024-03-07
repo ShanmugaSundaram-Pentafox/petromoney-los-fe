@@ -146,7 +146,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         }
       }, {
         label: 'New Loan Amount',
-        name: 'new_loan_amount',
+        name: 'approved_amount',
         options: {
           filter: false,
           sort: true,
@@ -167,11 +167,11 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     selectableRows: 'none',
     isRowSelectable: () => true,
     rowsPerPage: 10,
-    filter:false,
-    print:false,
-    sort:false,
-    download:false,
-    viewColumns:false,
+    filter: false,
+    print: false,
+    sort: false,
+    download: false,
+    viewColumns: false,
     searchPlaceholder: 'Search by dealreship ID/Name',
     onSearchChange: (searchText) => {
       setSearch(searchText)

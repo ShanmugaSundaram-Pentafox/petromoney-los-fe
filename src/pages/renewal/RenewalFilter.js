@@ -50,6 +50,7 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
     let today = new Date();
     let year = today.getFullYear(); // to get the current year
     let month = today.getMonth(); // to get the current month if it is with January being 0 and December being 11. 
+    selectedMonth && setSelectedMonth([{ label: 'ALL', value: 0 }]);
     setSelectedPeriodType(type)
     switch (type) {
     case 'D':

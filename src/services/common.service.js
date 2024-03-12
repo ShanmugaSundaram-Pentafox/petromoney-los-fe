@@ -864,6 +864,22 @@ export const getProductsMaster = () => {
   });
 };
 
+export const getEntities = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('entities')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((err) => {
+        reject(err.message);
+      });
+  });
+};
+
 export const getZones = (filter) => {
   return new Promise((resolve, reject) => {
     let apiUrl = 'zones';

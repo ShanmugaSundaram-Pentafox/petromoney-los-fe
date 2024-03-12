@@ -156,8 +156,8 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
         }
       }, {
-        label: 'Disbursed Amount',
-        name: 'new_loan_amount',
+        label: 'Approved Amount',
+        name: 'approved_amount',
         options: {
           filter: false,
           sort: true,
@@ -181,7 +181,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
           }),
           customBodyRender: value => {
             return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          } 
+          }
         }
       },
     ]

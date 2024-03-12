@@ -1,5 +1,4 @@
 import Box from '@material-ui/core/Box';
-import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/styles';
@@ -13,6 +12,8 @@ import SubmittedTable from './SubmittedTable';
 import UserCan, { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
+import { Drawer } from '@mantine/core';
+import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 
 const useStyles = makeStyles(theme => ({
@@ -38,7 +39,7 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
     setLoansData(selectedLoanData);
     getDealershipById(id)
       .then(data => {
-        setDealershipData({...data, 'product_id': selectedLoanData?.new_product_id})
+        setDealershipData({ ...data, 'product_id': selectedLoanData?.new_product_id })
       })
       .catch(e => null);
 
@@ -109,20 +110,16 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
           </Grid>
         )}
       />
-      <Drawer
-        anchor="right"
-        ModalProps={{
-          onBackdropClick: () => { setShowPanel({ status: false }) }
-        }}
-        open={showPanel.status}
-        variant={'temporary'}
+      <RightSideDrawer
+        opened={showPanel.status}
+
       >
         <div className={classes.sidePanelWrapper}>
           {
             showPanel.data && <EnhancementDrawer {...compProps} />
           }
         </div>
-      </Drawer>
+      </RightSideDrawer>
     </Box>
   )
 }

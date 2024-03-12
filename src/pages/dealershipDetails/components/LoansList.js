@@ -1,4 +1,4 @@
-import { Flex, Stack, Table, Text, Title } from '@mantine/core';
+import { Flex, Stack, Table, Text, Title, Select as MantineSelect } from '@mantine/core';
 import { Select as MSelect } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
@@ -30,7 +30,18 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const readOnly = permissionCheck(currentUser.role_name, rulesList.external_view);
   const { enqueueSnackbar } = useSnackbar();
   const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id), { refetchOnWindowFocus: false })
-  const { data: status } = useQuery(['dealership-status', id], () => getApplicationStatusById(id), { refetchOnWindowFocus: false })
+  const { data: status } = useQuery(
+    ['dealership-status', id],
+    () => getApplicationStatusById(id),
+    {
+      onSuccess: (data) => {
+        const re = data?.find(d => d.id == loanData[0]?.application_state_id)
+        setSelectedStatus({ ...re, value: `${re?.id}-${re?.application_state}`, disabled: data !== 'loan_approval' } || {})
+      },
+      enabled: Boolean(loanData?.[0]?.id),
+      refetchOnWindowFocus: false
+    }
+  );
 
   useEffect(() => {
     if (!isLoading) {
@@ -54,10 +65,11 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
         }
       }
     }
-    if (loanData[0]?.application_state_id) {
-      const re = status?.find(d => d.id == loanData[0]?.application_state_id)
-      setSelectedStatus({ ...re, disabled: status !== 'loan_approval' } || {})
-    }
+    // if (loanData[0]?.application_state_id && status?.length) {
+    //   console.log(selectedStatus);
+    //   const re = status?.find(d => d.id == loanData[0]?.application_state_id)
+    //   setSelectedStatus({ ...re, value: re?.id } || {});
+    // }
   }, [status, loanData])
 
   const processLoan = loan => {
@@ -141,7 +153,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   return (
     <>
       <Title order={3} mb="lg">Loans</Title>
-      
+
       <Table fz="xs" aria-label="Dealers">
         <Table.Thead>
           <Table.Tr>
@@ -159,9 +171,9 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
           {Array.isArray(loanData) && loanData?.map(row => (
             <Table.Tr key={row.id}>
               <Table.Td className="whitespace-nowrap">{row.type}</Table.Td>
-              
+
               <Table.Td><Currency value={row.amount_requested} /></Table.Td>
-              
+
               <Table.Td>
                 <Tooltip title={row.approval_remarks} arrow>
                   <Currency value={row.amount_approved} />
@@ -173,30 +185,48 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                   <Currency value={row.amount_disbursed} />
                 </Tooltip>
               </Table.Td>
-              
+
               <Table.Td>{row.status}</Table.Td>
-              
+
               <Table.Td>
                 {row?.status?.toLowerCase() !== 'disbursed' && row?.status?.toLowerCase() !== 'rejected' && (
-                  <MSelect
+                  <MantineSelect
                     fullWidth
-                    native
-                    placeholder={'Select status'}
-                    value={selectedStatus?.id}
+                    placeholder='Select Status'
+                    value={selectedStatus?.value}
                     disabled={!isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
-                    onChange={e => {
-                      const d = status?.find(i => i.id == e.target.value)
-                      setSelectedStatus(d)
+                    onChange={(_value, option) => {
+                      setSelectedStatus(option)
                       updateApplicationStatus({
-                        application_state: e.target.value
+                        application_state: option?.id
                       })
                     }}
-                  >
-                    <option value=''>-</option>
-                    {
-                      status?.map((item, i) => item.application_state !== row.application_state && <option key={i} value={item.id}>{item.application_state}</option>)
-                    }
-                  </MSelect>
+                    size='xs'
+                    data={status?.map((i) => ({
+                      label: i?.application_state,
+                      value: `${i?.id}-${i?.application_state}`,
+                      ...i,
+                    }))}
+                  />
+                  // <MSelect
+                  //   fullWidth
+                  //   native
+                  //   placeholder={'Select status'}
+                  //   value={selectedStatus?.id}
+                  //   disabled={!isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
+                  //   onChange={e => {
+                  //     const d = status?.find(i => i.id == e.target.value)
+                  //     setSelectedStatus(d)
+                  //     updateApplicationStatus({
+                  //       application_state: e.target.value
+                  //     })
+                  //   }}
+                  // >
+                  //   <option value=''>-</option>
+                  //   {
+                  //     status?.map((item, i) => item.application_state !== row.application_state && <option key={i} value={item.id}>{item.application_state}</option>)
+                  //   }
+                  // </MSelect>
                 )}
               </Table.Td>
 
@@ -235,7 +265,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                 )}
 
                 {row?.status?.toLowerCase() === 'loan_approval' && 'Pending for approval'}
-                
+
                 {row?.status?.toLowerCase() === 'disbursement_approval' && 'Pending for disbursement approval'}
               </Table.Td>
             </Table.Tr>
@@ -269,7 +299,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               />
             </Stack>
           )}
-            
+
           {dialogState.data?.status?.toLowerCase() === 'loan_review' && (
             <Stack gap="4">
               <Text id="approval-remarks-desc">Please choose whom did you want to sent for approval</Text>
@@ -286,9 +316,9 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
 
           <Stack gap="4">
             <Text id="approval-remarks-desc">Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}</Text>
-            <TextEditor 
-              setJSON={setRemarks} 
-              toolBar={true} 
+            <TextEditor
+              setJSON={setRemarks}
+              toolBar={true}
             />
 
             {/* <TextInput
@@ -305,14 +335,14 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               }}
             /> */}
           </Stack>
-          
+
           <Flex
             align="center"
             justify="end"
             gap="xs"
             mt="auto"
           >
-            <Button 
+            <Button
               colorScheme="secondary"
               variant="outline"
               size="md"
@@ -321,12 +351,12 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               Cancel
             </Button>
 
-            <Button 
+            <Button
               colorScheme="primary"
               variant="filled"
               size="md"
               onClick={submitRemarks}
-              disabled={!remarks || loading} 
+              disabled={!remarks || loading}
             >
               {loading ? 'Please wait...' : 'Confirm'}
             </Button>

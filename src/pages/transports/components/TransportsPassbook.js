@@ -78,12 +78,11 @@ const useStyles = makeStyles({
     },
   },
   inputFile: {
-    width: '0.1px',
-    height: '0.1px',
+    width: '120px',
+    height: '75px',
     opacity: 0,
     overflow: 'hidden',
     position: 'absolute',
-    zIndex: -1,
   },
 
   label: {

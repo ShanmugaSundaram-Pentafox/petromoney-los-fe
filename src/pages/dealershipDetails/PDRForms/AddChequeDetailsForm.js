@@ -28,12 +28,11 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 4,
   },
   inputFile: {
-    width: '0.1px',
-    height: '0.1px',
+    width: '120px',
+    height: '75px',
     opacity: 0,
     overflow: 'hidden',
     position: 'absolute',
-    zIndex: -1,
   },
   editButton: {
     marginRight: '8px',
@@ -76,11 +75,11 @@ const AddChequeDetailsForm = ({ data, collectionId, callback, currentUser, title
   }, [bankData])
   const { values, errors, handleChange, handleSubmit, setFieldValue } = useFormik({
     initialValues: {
-      applicant_type:data?.applicant_type,
-      amount_filled:data?.amount_filled,
-      id:data?.cheque_id,
-      pdc_bank_details_id:data?.bank_id,
-      cheque_number:data?.cheque_number,
+      applicant_type: data?.applicant_type,
+      amount_filled: data?.amount_filled,
+      id: data?.cheque_id,
+      pdc_bank_details_id: data?.bank_id,
+      cheque_number: data?.cheque_number,
     },
     validateOnChange: false,
     validateOnBlur: true,

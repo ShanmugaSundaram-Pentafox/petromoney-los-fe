@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     zIndex: 0,
-    cursor:'pointer',
+    cursor: 'pointer',
     boxShadow: '0 1px 4px -3px #333'
   },
   sidePanelFormWrapper: {
@@ -179,7 +179,7 @@ const Cheque = ({ dealershipId, dealershipData, callback, currentUser }) => {
             <Typography variant='h6' style={{ marginBottom: 12 }}>Cheque Details</Typography>
             {
               (tableData?.length > 0) ? (
-                <ShowChequeListTable collectionId={collectionDetails?.id} refetch={handleFetch}  data={tableData} dealershipId={dealershipId} currentUser={currentUser} />
+                <ShowChequeListTable collectionId={collectionDetails?.id} refetch={handleFetch} data={tableData} dealershipId={dealershipId} currentUser={currentUser} />
               ) : (
                 <Typography variant='h6' style={{ fontSize: 11, color: '#888', marginRight: 20, alignItems: 'center' }}>No Cheque details found</Typography>
               )

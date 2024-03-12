@@ -332,12 +332,11 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                                   name='file'
                                   id='proof1'
                                   style={{
-                                    width: '0.1px',
-                                    height: '0.1px',
+                                    width: '120px',
+                                    height: '75px',
                                     opacity: 0,
                                     overflow: 'hidden',
                                     position: 'absolute',
-                                    zIndex: -1,
                                   }}
                                   accept="image/jpeg,image/png,application/pdf"
                                   onChange={(e) => { onChangeHandler(e, 'proof1') }}
@@ -375,12 +374,11 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                                         id='proof2'
                                         accept="image/jpeg,image/png,application/pdf"
                                         style={{
-                                          width: '0.1px',
-                                          height: '0.1px',
+                                          width: '120px',
+                                          height: '75px',
                                           opacity: 0,
                                           overflow: 'hidden',
                                           position: 'absolute',
-                                          zIndex: -1,
                                         }}
                                         onChange={(e) => { onChangeHandler(e, 'proof2') }}
                                       />
@@ -414,12 +412,11 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                                             id='proof3'
                                             accept="image/jpeg,image/png,application/pdf"
                                             style={{
-                                              width: '0.1px',
-                                              height: '0.1px',
+                                              width: '120px',
+                                              height: '75px',
                                               opacity: 0,
                                               overflow: 'hidden',
                                               position: 'absolute',
-                                              zIndex: -1,
                                             }}
                                             onChange={(e) => { onChangeHandler(e, 'proof3') }}
                                           />

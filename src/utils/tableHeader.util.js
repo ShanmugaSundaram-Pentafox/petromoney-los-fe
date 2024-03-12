@@ -17,7 +17,7 @@ export const generateTableHeader = ({ data }) => {
     return columnHelper.accessor(item?.key, {
       header: item?.header,
       cell: item?.cell ? item?.cell : Cell,
-      enableColumnFilter: item?.enableColumnFilter || false,
+      enableColumnFilter: item?.enableColumnFilter || item?.key !== 'action' ? true : false,
       key: `${index}-${item?.header}`,
     });
   });

@@ -6,11 +6,6 @@ import { getEnhancementStatusList, getStatusWiseRecordCount } from '../../servic
 import LoanStats from '../dashboard/components/LoanStats';
 import RenewalFilter from '../renewal/RenewalFilter';
 
-const currencyFormat = (value) => {
-  const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
-  return money;
-}
-
 const ReOnboardingList = ({ currentUser }) => {
   usePageTitle('Re Opening Loans');
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);

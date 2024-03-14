@@ -8,7 +8,6 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import RenewalDrawerFooter from './RenewalDrawerFooter';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getDealershipById } from '../../../services/dealerships.service';
 import { getRenewalFeeStatus, updateRenewalLoanStatus } from '../../../services/renewal.service';

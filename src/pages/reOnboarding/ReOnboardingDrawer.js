@@ -7,7 +7,6 @@ import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { getDealershipById } from '../../services/dealerships.service';
 import { updateEnhancementLoanStatus } from '../../services/enhancement.service';

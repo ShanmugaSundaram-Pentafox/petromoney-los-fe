@@ -3,7 +3,6 @@ import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import React, { useState } from 'react';
 import { resources_id } from '../../../config/accessControl';
 import { isAllowed } from '../../../utils/cerbos';

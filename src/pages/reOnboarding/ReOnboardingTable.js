@@ -54,7 +54,6 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
     onClose: () => { setShowPanel({ status: false }) },
     selectedLoanData: loansData,
   }
-  console.log(value);
   return (
     <Box pt={2}>
       <UserCan

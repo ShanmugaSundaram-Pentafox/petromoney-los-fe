@@ -13,6 +13,7 @@ import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getDealershipById } from '../../../services/dealerships.service';
 import RenewalDrawer from '../renewalDrawer/RenewalDrawer';
+import DisbursementApprovalTable from './DisbursementApprovalTable';
 
 
 const useStyles = makeStyles(theme => ({
@@ -44,7 +45,7 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
 
     setShowPanel({ status: true, data: status, id: id, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
   }
-  
+
   const compProps = {
     id: showPanel?.id,
     status: showPanel?.data,
@@ -103,6 +104,15 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
                     <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
+            {
+              value === 'Disb. Approval' ? (
+                <Grid item xs={12}>
+                  <Paper className={classes.tableContainer}>
+                    <DisbursementApprovalTable title={'Disbursement Approval Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
                 </Grid>
               ) : null

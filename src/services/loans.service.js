@@ -257,21 +257,6 @@ export const getDocumentsChecklistById = ({ id }) => {
       })
   })
 }
-export const getDeferralDetails = () => {
-  return new Promise((resolve, reject) => {
-    apiCall(`master/pre_disbursal_document_checklist`)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
-        } else {
-          reject(message);
-        }
-      })
-      .catch((e) => {
-        reject(e?.message || e);
-      })
-  })
-}
 
 export const updateDocumentChecklistById = ({ id, data }) => {
   return new Promise((resolve, reject) => {

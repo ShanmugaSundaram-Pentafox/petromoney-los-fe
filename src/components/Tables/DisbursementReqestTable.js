@@ -9,6 +9,10 @@ import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
 import DataTableViewer from '../ReactTable/DataTableViewer';
+import { ActionIcon, Tooltip } from '@mantine/core';
+import { IconLink } from '@tabler/icons-react';
+import DDMSModal from '../Deferal-Devation/DDMSModal';
+import CustomToken from '../CommonComponents/CustomToken';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,6 +44,9 @@ const useStyles = makeStyles(theme => ({
 const DisbursementReqestTable = ({ title, loans = [], setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
   const [loading, setLoading] = useState(false);
+  const [docModal, setDocModal] = useState({ modal: false });
+
+  // const disbursementApprovalDataQuery = useQuery({})
 
   useEffect(() => {
     setLoading(true);
@@ -79,27 +86,48 @@ const DisbursementReqestTable = ({ title, loans = [], setLoansData, onRowClick, 
       key: 'amount_approved',
       header: 'Approved Amount',
       enableColumnFilter: false,
-      cell: (value) => <Currency value={value} />
+      cell: (value) => <Currency value={value?.getValue()} />
     }, {
       key: 'modified_date',
       header: 'Approved Date',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+    }, {
+      key: 'action',
+      header: 'Action',
+      enableColumnFilter: false,
+      cell: (value) => {
+        if (value?.row?.original?.is_pdc_completed) {
+          return (
+            <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
+          )
+        } else {
+          return (
+            <Tooltip label={'Click to view checklist'} color='gray' withArrow>
+              <ActionIcon size="xs" variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed })}><IconLink /></ActionIcon>
+            </Tooltip>
+          )
+        }
+      }
     },
   ]
 
   return (
-    <div className={classes.root}>
-      <DataTableViewer
-        rowData={loans}
-        column={column}
-        title={title}
-        count={loans?.length}
-        excelDownload
-        onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
-        loading={loading}
-      />
-    </div>
+    <>
+      <div className={classes.root}>
+        <DataTableViewer
+          rowData={loans}
+          column={column}
+          title={title}
+          count={loans?.length}
+          excelDownload
+          onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
+          loading={loading}
+        />
+      </div>
+
+      <DDMSModal opened={Boolean(docModal?.modal)} onClose={() => setDocModal({})} modalObj={docModal} />
+    </>
   )
 }
 

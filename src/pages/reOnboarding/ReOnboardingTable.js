@@ -13,6 +13,7 @@ import SubmittedTable from './SubmittedTable';
 import UserCan, { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
+import DisbursementApprovalTable from './DisbursementApprovalTable';
 
 
 const useStyles = makeStyles(theme => ({
@@ -38,7 +39,7 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
     setLoansData(selectedLoanData);
     getDealershipById(id)
       .then(data => {
-        setDealershipData({...data, 'product_id': selectedLoanData?.new_product_id})
+        setDealershipData({ ...data, 'product_id': selectedLoanData?.new_product_id })
       })
       .catch(e => null);
 
@@ -53,6 +54,7 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
     onClose: () => { setShowPanel({ status: false }) },
     selectedLoanData: loansData,
   }
+  console.log(value);
   return (
     <Box pt={2}>
       <UserCan
@@ -64,7 +66,7 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
               value === 'submit' ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
+                    <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{ ...filterQry, category: true }} />
                   </Paper>
                 </Grid>
               ) : null
@@ -73,7 +75,7 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
               value === 'review' ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <ReviewTable title={'Pending for Review'} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
+                    <ReviewTable title={'Pending for Review'} onRowClick={showDealershipInfo} filterQry={{ ...filterQry, category: true }} />
                   </Paper>
                 </Grid>
               ) : null
@@ -82,7 +84,7 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
               value === 'approval' ? (
                 <Grid item md={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovalTable title={'Pending for Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
+                    <ApprovalTable title={'Pending for Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{ ...filterQry, category: true }} />
                   </Paper>
                 </Grid>
               ) : null
@@ -91,7 +93,7 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
               value === 'approved' ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <ApprovedTable title={'Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
+                    <ApprovedTable title={'Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{ ...filterQry, category: true }} />
                   </Paper>
                 </Grid>
 
@@ -101,7 +103,16 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
               value === 'rejected' ? (
                 <Grid item xs={12}>
                   <Paper className={classes.tableContainer}>
-                    <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{...filterQry, category: true}} />
+                    <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{ ...filterQry, category: true }} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
+            {
+              value === 'Disb. Approval' ? (
+                <Grid item xs={12}>
+                  <Paper className={classes.tableContainer}>
+                    <DisbursementApprovalTable title={'Disbursement Approval Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={{ ...filterQry, category: true }} />
                   </Paper>
                 </Grid>
               ) : null

@@ -77,7 +77,7 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const Products = ({title, callback, currentUser}) => {
+const Products = ({ title, callback, currentUser }) => {
   const classes = useStyles()
   const queryClient = useQueryClient()
   const [addNewProduct, setAddNewProduct] = useState()
@@ -86,7 +86,7 @@ const Products = ({title, callback, currentUser}) => {
 
   const { data: products = [] } = useQuery(['products'], () => getProductsMaster())
 
-  const { mutate: updateProduct, mutate: addProduct } = useMutation(data =>  action === 'update' ? updateProductbyId(data.product_id, data) : insertNewProduct(data) , {
+  const { mutate: updateProduct, mutate: addProduct } = useMutation(data => action === 'update' ? updateProductbyId(data.product_id, data) : insertNewProduct(data), {
     onSuccess: (message) => {
       queryClient.invalidateQueries(['products'])
       setAddNewProduct(false);
@@ -149,9 +149,9 @@ const Products = ({title, callback, currentUser}) => {
       tenure: Yup.number().nullable().required('Enter Tenure').max(365, 'Tenure Should be less than 365 days'),
     }),
     onSubmit: values => {
-      let data = {...values, roi: values.interest}
+      let data = { ...values, roi: values.interest }
       delete data['interest']
-      if(action === 'update'){
+      if (action === 'update') {
         updateProduct(data)
       } else {
         addProduct(data)
@@ -160,24 +160,24 @@ const Products = ({title, callback, currentUser}) => {
   });
 
   const EditItem = (data) => {
-    setValues({...data})
+    setValues({ ...data })
     setAction('update')
     setAddNewProduct(true)
   }
 
   const handleActive = (i, id) => {
     const activeData = i === 0 ? '1' : '0';
-    if(activeData === '0'){
-      const data = {is_active: activeData, is_show: '0'}
+    if (activeData === '0') {
+      const data = { is_active: activeData, is_show: '0' }
       activate(id, data)
     } else {
-      const data = {is_active: activeData}
+      const data = { is_active: activeData }
       activate(id, data)
     }
   }
 
   const handleShow = (i, id) => {
-    const data = {is_show: i === 0 ? '1' : '0'}
+    const data = { is_show: i === 0 ? '1' : '0' }
     activate(id, data)
   }
 
@@ -196,7 +196,7 @@ const Products = ({title, callback, currentUser}) => {
               <Grid container spacing={2}>
                 <Grid item md={6}>
                   <label>Product Name</label>
-                  <TextInput 
+                  <TextInput
                     name='product_name'
                     value={values.product_name}
                     onChange={handleChange}
@@ -217,7 +217,7 @@ const Products = ({title, callback, currentUser}) => {
                 </Grid>
                 <Grid item md={6}>
                   <label>Penal Interest</label>
-                  <TextInput 
+                  <TextInput
                     type="number"
                     name='penal_interest'
                     value={values.penal_interest}
@@ -228,7 +228,7 @@ const Products = ({title, callback, currentUser}) => {
                 </Grid>
                 <Grid item md={6}>
                   <label>Processing Fee</label>
-                  <TextInput 
+                  <TextInput
                     type="number"
                     name='processing_fee'
                     value={values.processing_fee}
@@ -239,7 +239,7 @@ const Products = ({title, callback, currentUser}) => {
                 </Grid>
                 <Grid item md={6}>
                   <label>Tenure</label>
-                  <TextInput 
+                  <TextInput
                     type="number"
                     name='tenure'
                     value={values.tenure}
@@ -249,9 +249,9 @@ const Products = ({title, callback, currentUser}) => {
                   />
                 </Grid>
               </Grid>
-              <div style={{display: 'flex', justifyContent:'flex-end', marginTop: 15}}>
-                <Button variant="outlined" size="medium" onClick={() => {setAddNewProduct(false); setValues({});}}>Back</Button>
-                <Button color="secondary" size="medium" variant="contained" style={{marginLeft: 6}} onClick={handleSubmit}>Save</Button>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 15 }}>
+                <Button variant="outlined" size="medium" onClick={() => { setAddNewProduct(false); setValues({}); }}>Back</Button>
+                <Button color="secondary" size="medium" variant="contained" style={{ marginLeft: 6 }} onClick={handleSubmit}>Save</Button>
               </div>
             </div>
           ) : (
@@ -263,51 +263,51 @@ const Products = ({title, callback, currentUser}) => {
                     <TableCell>Rate of Interest</TableCell>
                     <TableCell>Penal Interest</TableCell>
                     <TableCell>Processing Fee</TableCell>
-                    <TableCell>Tenure<br/>(days)</TableCell>
+                    <TableCell>Tenure<br />(days)</TableCell>
                     {
                       isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.productsUpdate) &&
-                        <TableCell align="center">Actions</TableCell>
+                      <TableCell align="center">Actions</TableCell>
                     }
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {
-                                        products?.map((item,i) => {
-                                          return(
-                                            <TableRow className={classes.rowItem} key={i}>
-                                              <TableCell>{item.product_name}</TableCell>
-                                              <TableCell>{`${item.interest}%`}</TableCell>
-                                              <TableCell>{`${item.penal_interest}%`}</TableCell>
-                                              <TableCell>{`${item.processing_fee}%`}</TableCell>
-                                              <TableCell>{`${item.tenure}`}</TableCell>
-                                              <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.productsUpdate}>
-                                                <TableCell>
-                                                  <IconButton size="small" className={classes.btn}>
-                                                    <Tooltip title="Edit">
-                                                      <EditIcon fontSize="small" style={{color: 'rgb(0,0,0,0.4)'}} onClick={() => EditItem(item)}/>
-                                                    </Tooltip>
-                                                  </IconButton>
-                                                  {
-                                                    item.is_active === 1 && (
-                                                      <IconButton size="small" className={classes.btn} onClick={() => handleShow(item.is_show, item.product_id)} >
-                                                        <Tooltip title={ item.is_show !== 0 ? 'Disable on App' : 'Show on App'}>
-                                                          <PhoneAndroidIcon fontSize="small" style={item.is_show === 0 ? { color: '#C9CCD5'} : {color: '#93D9A3'}}></PhoneAndroidIcon>
-                                                        </Tooltip>
-                                                      </IconButton>
-                                                    )
-                                                  }
-                                                  <IconButton size="small" className={classes.btn} onClick={() => {
-                                                    handleActive(item.is_active, item.product_id);
-                                                  }}>
-                                                    <Tooltip title={item.is_active === 0 ? 'Activate' : 'Deactivate'}>
-                                                      <CheckCircleTwoTone style={item.is_active === 0 ? { color: '#C9CCD5'} :{ color: '#93D9A3' }}/>
-                                                    </Tooltip>
-                                                  </IconButton>
-                                                </TableCell>
-                                              </CheckAllowed>
-                                            </TableRow>
-                                          )
-                                        })
+                    products?.map((item, i) => {
+                      return (
+                        <TableRow className={classes.rowItem} key={i}>
+                          <TableCell>{item.product_name}</TableCell>
+                          <TableCell>{`${item.interest}%`}</TableCell>
+                          <TableCell>{`${item.penal_interest}%`}</TableCell>
+                          <TableCell>{`${item.processing_fee}%`}</TableCell>
+                          <TableCell>{`${item.tenure}`}</TableCell>
+                          <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.productsUpdate}>
+                            <TableCell>
+                              <IconButton size="small" className={classes.btn}>
+                                <Tooltip title="Edit">
+                                  <EditIcon fontSize="small" style={{ color: 'rgb(0,0,0,0.4)' }} onClick={() => EditItem(item)} />
+                                </Tooltip>
+                              </IconButton>
+                              {
+                                item.is_active === 1 && (
+                                  <IconButton size="small" className={classes.btn} onClick={() => handleShow(item.is_show, item.product_id)} >
+                                    <Tooltip title={item.is_show !== 0 ? 'Disable on App' : 'Show on App'}>
+                                      <PhoneAndroidIcon fontSize="small" style={item.is_show === 0 ? { color: '#C9CCD5' } : { color: '#93D9A3' }}></PhoneAndroidIcon>
+                                    </Tooltip>
+                                  </IconButton>
+                                )
+                              }
+                              <IconButton size="small" className={classes.btn} onClick={() => {
+                                handleActive(item.is_active, item.product_id);
+                              }}>
+                                <Tooltip title={item.is_active === 0 ? 'Activate' : 'Deactivate'}>
+                                  <CheckCircleTwoTone style={item.is_active === 0 ? { color: '#C9CCD5' } : { color: '#93D9A3' }} />
+                                </Tooltip>
+                              </IconButton>
+                            </TableCell>
+                          </CheckAllowed>
+                        </TableRow>
+                      )
+                    })
                   }
                 </TableBody>
               </Table>
@@ -331,7 +331,7 @@ const Products = ({title, callback, currentUser}) => {
             <Button
               variant="contained"
               color="primary"
-              startIcon={<AddIcon  />}
+              startIcon={<AddIcon />}
               onClick={() => { setAddNewProduct(true); }}
               style={{ marginBottom: 12 }}
             >

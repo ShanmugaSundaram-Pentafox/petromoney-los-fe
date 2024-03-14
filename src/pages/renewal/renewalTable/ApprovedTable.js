@@ -1,13 +1,10 @@
 import { Button, Dialog, DialogActions, DialogContent, Popover } from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { List } from '@material-ui/icons';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import DescriptionIcon from '@material-ui/icons/Description';
-import SyncIcon from '@material-ui/icons/Sync';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -197,23 +194,23 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       header: 'Month Of Renewal',
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
     }, {
-      key: 'action',
-      header: 'Sync',
-      isHeaderDownload: false,
-      cell: ({ row }) => {
-        return (
-          row?.original?.is_sync == 1 ?
-            <Tooltip title='Already synced'>
-              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
-            </Tooltip> :
-            <div>
-              <Tooltip title="click to sync">
-                <SyncIcon style={{ color: 'grey' }} onClick={() => { setOpenDialog(true); setRenewalId(row?.original?.['loan_id']) }} />
-              </Tooltip>
-            </div>
-        )
-      },
-    }, {
+      //   key: 'action',
+      //   header: 'Sync',
+      //   isHeaderDownload: false,
+      //   cell: ({ row }) => {
+      //     return (
+      //       row?.original?.is_sync == 1 ?
+      //         <Tooltip title='Already synced'>
+      //           <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+      //         </Tooltip> :
+      //         <div>
+      //           <Tooltip title="click to sync">
+      //             <SyncIcon style={{ color: 'grey' }} onClick={() => { setOpenDialog(true); setRenewalId(row?.original?.['loan_id']) }} />
+      //           </Tooltip>
+      //         </div>
+      //     )
+      //   },
+      // }, {
       key: 'action',
       header: 'Documents',
       isHeaderDownload: false,

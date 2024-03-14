@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, Button, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/CloseRounded';
@@ -16,6 +16,7 @@ import LoanInfo from '../../dashboard/RightDrawer/LoanInfo';
 import DealershipInfo from '../../dealershipDetails/components/DealershipInfo';
 import DealersList from '../../dealershipDetails/components/DealersList';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
+import { Button } from '@mantine/core';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
   if (isReject) {
@@ -106,7 +107,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
 
   const getRenewalFeeDetails = useQuery({
     queryKey: ['renewal-fee-details', selectedLoanData?.loan_id],
-    queryFn: () => getRenewalFeeStatus({dealership_id: selectedLoanData?.loan_id}),
+    queryFn: () => getRenewalFeeStatus({ dealership_id: selectedLoanData?.loan_id }),
     enabled: Boolean(selectedLoanData?.loan_id),
   })
 
@@ -195,7 +196,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
     {
       id: 0,
       name: 'Loan Info',
-      component: <LoanInfo type='renewal' updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={{...data, ...selectedLoanData, product_id: selectedLoanData?.new_product_id || selectedLoanData?.product_id}} newInfo={selectedLoanData} />
+      component: <LoanInfo type='renewal' updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={{ ...data, ...selectedLoanData, product_id: selectedLoanData?.new_product_id || selectedLoanData?.product_id }} newInfo={selectedLoanData} />
     },
     {
       id: 1,
@@ -206,7 +207,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
       id: 2,
       name: 'PD Sheet',
       component: <WorkingSheetDrawer id={id} />
-    }  
+    }
   ]
   const handleClick = (id) => {
     if (id == collapse)
@@ -223,7 +224,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           <CloseIcon className={classes.closeIcon} onClick={onClose} />
         </div>
         <div className={classes.contentWrapper}>
-          <DealershipInfo data={{...dealershipData?.data, ...getRenewalFeeDetails?.data?.[0]}} currentUser={currentUser} />
+          <DealershipInfo data={{ ...dealershipData?.data, ...getRenewalFeeDetails?.data?.[0] }} currentUser={currentUser} />
           <Divider />
           <div>
             {
@@ -264,8 +265,9 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
             }
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button variant='outlined' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
-            <LoaderButton
+            <Button variant='outline' size='xs' onClick={closeReviewModal} mr={8}>Cancel</Button>
+            <Button onClick={() => updateLoanStatus()} loading={loading} size='xs'>Confirm</Button>
+            {/* <LoaderButton
               variant='contained'
               color='primary'
               buttonLabel='Confirm'
@@ -273,7 +275,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
               isLoading={loading}
               loadingText="Submitting..."
               onClick={() => updateLoanStatus()}
-            >Confirm</LoaderButton>
+            >Confirm</LoaderButton> */}
           </div>
         </DialogContent>
       </Dialog>

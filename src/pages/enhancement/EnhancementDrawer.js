@@ -1,13 +1,11 @@
-import { Dialog, DialogContent, DialogContentText, Button, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
-import CloseIcon from '@material-ui/icons/CloseRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { getDealershipById } from '../../services/dealerships.service';
 import { updateEnhancementLoanStatus } from '../../services/enhancement.service';
@@ -17,6 +15,7 @@ import DealershipInfo from '../dealershipDetails/components/DealershipInfo';
 import DealersList from '../dealershipDetails/components/DealersList';
 import WorkingSheetDrawer from '../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import RenewalDrawerFooter from '../renewal/renewalDrawer/RenewalDrawerFooter';
+import { Button } from '@mantine/core';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
   if (isReject) {
@@ -52,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
+    height: '90vh',
   },
   dialog: {
     minWidth: '30vw'
@@ -60,6 +59,7 @@ const useStyles = makeStyles(theme => ({
   contentWrapper: {
     padding: 12,
     flex: 1,
+    width: '100%',
     overflow: 'auto',
     overflowX: 'hidden'
   },
@@ -200,10 +200,6 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
   return (
     <>
       <div className={classes.wrapper}>
-        <div className={classes.wrapperTitle}>
-          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-          <CloseIcon className={classes.closeIcon} onClick={onClose} />
-        </div>
         <div className={classes.contentWrapper}>
           <DealershipInfo viewOnly={true} data={dealershipData?.data} currentUser={currentUser} />
           <Divider />
@@ -246,8 +242,9 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
             }
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button variant='outlined' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
-            <LoaderButton
+            <Button size='xs' variant='outline' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
+            <Button size='xs' loading={loading} onClick={() => updateLoanStatus()} color='green'>Cancel</Button>
+            {/* <LoaderButton
               variant='contained'
               color='primary'
               buttonLabel='Confirm'
@@ -255,7 +252,7 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
               isLoading={loading}
               loadingText="Submitting..."
               onClick={() => updateLoanStatus()}
-            >Confirm</LoaderButton>
+            >Confirm</LoaderButton> */}
           </div>
         </DialogContent>
       </Dialog>

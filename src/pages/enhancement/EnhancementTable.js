@@ -12,8 +12,8 @@ import SubmittedTable from './SubmittedTable';
 import UserCan, { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
-import { Drawer } from '@mantine/core';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
+import DisbursementApprovalTable from './DisbursementApprovalTable';
 
 
 const useStyles = makeStyles(theme => ({
@@ -107,12 +107,23 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
                 </Grid>
               ) : null
             }
+            {
+              value === 'Disb. Approval' ? (
+                <Grid item xs={12}>
+                  <Paper className={classes.tableContainer}>
+                    <DisbursementApprovalTable title={'Disbursement Approval Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                  </Paper>
+                </Grid>
+              ) : null
+            }
           </Grid>
         )}
       />
       <RightSideDrawer
         opened={showPanel.status}
-
+        size={'70%'}
+        onClose={() => setShowPanel({ modal: false })}
+        title={showPanel?.id}
       >
         <div className={classes.sidePanelWrapper}>
           {

@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, Button, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
 import CloseIcon from '@material-ui/icons/CloseRounded';
@@ -17,6 +17,7 @@ import DealershipInfo from '../dealershipDetails/components/DealershipInfo';
 import DealersList from '../dealershipDetails/components/DealersList';
 import WorkingSheetDrawer from '../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import RenewalDrawerFooter from '../renewal/renewalDrawer/RenewalDrawerFooter';
+import { Button } from '@mantine/core';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
   if (isReject) {
@@ -246,16 +247,8 @@ const ReOnboardingDrawer = ({ id, selectedLoanData, status, currentUser, data, o
             }
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button variant='outlined' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
-            <LoaderButton
-              variant='contained'
-              color='primary'
-              buttonLabel='Confirm'
-              size='medium'
-              isLoading={loading}
-              loadingText="Submitting..."
-              onClick={() => updateLoanStatus()}
-            >Confirm</LoaderButton>
+            <Button size='xs' variant='outlined' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
+            <Button size='xs' loading={loading} onClick={() => updateLoanStatus()} color='green'>Confirm</Button>
           </div>
         </DialogContent>
       </Dialog>

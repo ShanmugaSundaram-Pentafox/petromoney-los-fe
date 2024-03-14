@@ -27,7 +27,9 @@ const EnhancementList = ({ currentUser }) => {
               const matchingItem = res.find((el) => el.status === item.status);
               return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : { name: item?.status, count: 0 };
             });
-            setChartData(cdata);
+            let result = [...cdata]
+            result?.splice((cdata?.indexOf(cdata?.find(i => i?.name === 'approved')) + 1), 0, { name: 'Disb. Approval', count: res.find((el) => el.status === 'disbursement_approval')?.record_count })
+            setChartData(result);
           })
           .catch(err => {
             console.log(err);

@@ -1,4 +1,4 @@
-import { Flex, Stack, Table, Text, Title, Select as MantineSelect } from '@mantine/core';
+import { Flex, Stack, Table, Text, Title, Button, Select as MantineSelect, Group } from '@mantine/core';
 import { Select as MSelect } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
@@ -6,10 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import Select from 'react-select';
 import AccountStatement from './AccountStatement';
-import { Button } from '../../../components/Mantine/Button/Button';
 import { Modal } from '../../../components/Mantine/Modal/Modal';
 import Currency from '../../../components/Number/Currency';
-import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
@@ -18,6 +16,7 @@ import { getDealershipLoansById } from '../../../services/dealerships.service';
 import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import apiCall from '../../../utils/api.util';
 import { isAllowed } from '../../../utils/cerbos';
+import RichTextEditorBox from '../../../components/RichTexEditor/RichTextEditorBox';
 
 const LoansList = ({ id, currentUser, titleAlign }) => {
   const queryClient = useQueryClient()
@@ -284,44 +283,41 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
         centered
         open={dialogState.open}
         close={() => setDialogState({})}
-        title={`Remarks: Send for ${dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}`}
+        title={`Remarks: Send for ${dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Pre Disbursement Approval'}`}
       >
-        <Stack mih="320" gap="md">
-          {dialogState.data?.status?.toLowerCase() === 'submitted' && (
-            <Stack gap="4">
-              <Text id="approval-remarks-desc">Please choose whom did you want to sent for review</Text>
-              <Select
-                isClearable
-                name='type'
-                onChange={setUser}
-                options={userRole}
-                maxMenuHeight="200px"
-              />
-            </Stack>
-          )}
-
-          {dialogState.data?.status?.toLowerCase() === 'loan_review' && (
-            <Stack gap="4">
-              <Text id="approval-remarks-desc">Please choose whom did you want to sent for approval</Text>
-
-              <Select
-                isClearable
-                name='review'
-                onChange={setUser}
-                options={userRole}
-                maxMenuHeight="250px"
-              />
-            </Stack>
-          )}
-
+        {dialogState.data?.status?.toLowerCase() === 'submitted' && (
           <Stack gap="4">
-            <Text id="approval-remarks-desc">Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}</Text>
-            <TextEditor
-              setJSON={setRemarks}
-              toolBar={true}
+            <Text id="approval-remarks-desc">Please choose whom did you want to sent for review</Text>
+            <Select
+              isClearable
+              name='type'
+              onChange={setUser}
+              options={userRole}
+              maxMenuHeight="200px"
             />
+          </Stack>
+        )}
 
-            {/* <TextInput
+        {dialogState.data?.status?.toLowerCase() === 'loan_review' && (
+          <Stack gap="4">
+            <Text id="approval-remarks-desc">Please choose whom did you want to sent for approval</Text>
+
+            <Select
+              isClearable
+              name='review'
+              onChange={setUser}
+              options={userRole}
+              maxMenuHeight="250px"
+            />
+          </Stack>
+        )}
+
+        <Text id="approval-remarks-desc">Please enter your remarks for sending this for {dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Disbursement Approval'}</Text>
+        <RichTextEditorBox
+          onChange={setRemarks}
+        />
+
+        {/* <TextInput
               multiline
               alignTop
               direction='column'
@@ -334,34 +330,24 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
                 setRemarks(e.target.value);
               }}
             /> */}
-          </Stack>
-
-          <Flex
-            align="center"
-            justify="end"
-            gap="xs"
-            mt="auto"
+        <Group justify='flex-end' mt={'md'}>
+          <Button
+            variant="outline"
+            size="xs"
+            onClick={() => setDialogState({})}
           >
-            <Button
-              colorScheme="secondary"
-              variant="outline"
-              size="md"
-              onClick={() => setDialogState({})}
-            >
-              Cancel
-            </Button>
+            Cancel
+          </Button>
 
-            <Button
-              colorScheme="primary"
-              variant="filled"
-              size="md"
-              onClick={submitRemarks}
-              disabled={!remarks || loading}
-            >
-              {loading ? 'Please wait...' : 'Confirm'}
-            </Button>
-          </Flex>
-        </Stack>
+          <Button
+            size="xs"
+            color={'green'}
+            onClick={submitRemarks}
+            loading={loading}
+          >
+            Confirm
+          </Button>
+        </Group>
       </Modal>
     </>
   )

@@ -1,4 +1,4 @@
-import { Paper, Text, Title } from '@mantine/core';
+import { Paper, Text } from '@mantine/core';
 import React from 'react';
 import DashCard from '../../../components/CommonComponents/Cards/DashCard';
 
@@ -7,7 +7,7 @@ const LoanStats = ({ selectedStatsCard, handleClick, chartData, totalLoans }) =>
     <Paper shadow="0" p="xs">
       <>
         <Text fz={'md'} mb="sm" className="text-gray-500">
-          Loans&apos; Statistics {totalLoans ? `(${totalLoans})` : null}
+          Loan Statistics {totalLoans ? `(${totalLoans})` : null}
         </Text>
 
         {chartData.length ? (

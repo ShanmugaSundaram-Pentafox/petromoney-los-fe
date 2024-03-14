@@ -21,13 +21,15 @@ const ReOnboardingList = ({ currentUser }) => {
   const handleClick = (name) => {
     getEnhancementStatusList()
       .then((status) => {
-        getStatusWiseRecordCount({...filterQry, category: true})
+        getStatusWiseRecordCount({ ...filterQry, category: true })
           .then(res => {
             const cdata = status?.map((item) => {
               const matchingItem = res.find((el) => el.status === item.status);
               return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : { name: item?.status, count: 0 };
             });
-            setChartData(cdata);
+            let result = [...cdata]
+            result?.splice((cdata?.indexOf(cdata?.find(i => i?.name === 'approved')) + 1), 0, { name: 'Disb. Approval', count: res.find((el) => el.status === 'disbursement_approval')?.record_count })
+            setChartData(result);
           })
           .catch(err => {
             console.log(err);
@@ -58,7 +60,7 @@ const ReOnboardingList = ({ currentUser }) => {
           />
         </Grid>
       </Grid>
-      <ReOnboardingTable currentUser={currentUser} value={selectedStatsCard} filterQry={{...filterQry, category: true}} />
+      <ReOnboardingTable currentUser={currentUser} value={selectedStatsCard} filterQry={{ ...filterQry, category: true }} />
     </div>
   );
 }

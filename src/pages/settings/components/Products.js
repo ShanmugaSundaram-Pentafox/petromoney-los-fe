@@ -9,10 +9,11 @@ import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from 'react-query';
+import Select from 'react-select';
 import * as Yup from 'yup';
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
-import { getProductsMaster, updateProductbyId, insertNewProduct } from '../../../services/common.service';
+import { getProductsMaster, updateProductbyId, insertNewProduct, getEntities } from '../../../services/common.service';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -85,6 +86,17 @@ const Products = ({ title, callback, currentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const { data: products = [] } = useQuery(['products'], () => getProductsMaster())
+  const { data: entities = [] } = useQuery(['entities'], () => getEntities(),
+    {
+      select: (data) => {
+        const result = data?.map((i) => ({
+          value: i?.id,
+          label: i?.entity_name,
+          ...i,
+        }));
+        return result;
+      }
+    })
 
   const { mutate: updateProduct, mutate: addProduct } = useMutation(data => action === 'update' ? updateProductbyId(data.product_id, data) : insertNewProduct(data), {
     onSuccess: (message) => {
@@ -137,7 +149,7 @@ const Products = ({ title, callback, currentUser }) => {
       })
   }
 
-  const { values, errors, handleChange, handleSubmit, setValues } = useFormik({
+  const { values, errors, handleChange, handleSubmit, setValues, setFieldValue } = useFormik({
     validateOnChange: false,
     validateOnBlur: false,
     initialValues: {},
@@ -145,6 +157,7 @@ const Products = ({ title, callback, currentUser }) => {
       product_name: Yup.string().nullable().required('Enter Product Name'),
       interest: Yup.number().nullable().required('Enter Rate of Interest').max(100, 'ROI Should be less than 100%'),
       penal_interest: Yup.number().nullable().required('Enter Penal Interest').max(100, 'Penal Interest Should be less than 100%'),
+      product_type_id: Yup.number().nullable().required('Select Entity'),
       processing_fee: Yup.number().nullable().required('Enter Processing Fee').max(50, 'Processing Fee Should be less than 50%'),
       tenure: Yup.number().nullable().required('Enter Tenure').max(365, 'Tenure Should be less than 365 days'),
     }),
@@ -203,6 +216,20 @@ const Products = ({ title, callback, currentUser }) => {
                     error={errors.product_name}
                     helperText={errors.product_name}
                   />
+                </Grid>
+                <Grid item md={6}>
+                  <div>
+                    <label>Entity Type</label>
+                    <Select
+                      name='product_type_id'
+                      styles={{ control: (provider) => ({ ...provider, height: '20px' }) }}
+                      value={entities?.find((i => i?.id == values?.product_type_id))}
+                      options={entities}
+                      onChange={(e) => setFieldValue('product_type_id', e?.id)}
+                      error={errors.product_type_id}
+                    />
+                    {errors.product_type_id ? <div style={{ fontSize: 12, color: 'red' }}>{errors.product_type_id}</div> : null}
+                  </div>
                 </Grid>
                 <Grid item md={6}>
                   <label>Rate of Interest</label>
@@ -340,7 +367,7 @@ const Products = ({ title, callback, currentUser }) => {
           </CheckAllowed>
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 

@@ -172,6 +172,46 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
                       }
                     </Table.Td>
                   </Table.Tr>
+                  <Table.Tr>
+                    <Table.Td>
+                      Bank Name
+                    </Table.Td>
+                    <Table.Td>
+                      {dealership?.bank_name}
+                    </Table.Td>
+                  </Table.Tr>
+                  <Table.Tr>
+                    <Table.Td>
+                      Branch Name
+                    </Table.Td>
+                    <Table.Td>
+                      {dealership?.bank_branch}
+                    </Table.Td>
+                  </Table.Tr>
+                  <Table.Tr>
+                    <Table.Td>
+                      Bank A/C Number
+                    </Table.Td>
+                    <Table.Td>
+                      {dealership?.account_no}
+                    </Table.Td>
+                  </Table.Tr>
+                  <Table.Tr>
+                    <Table.Td>
+                      IFS Code
+                    </Table.Td>
+                    <Table.Td>
+                      {dealership?.ifsc}
+                    </Table.Td>
+                  </Table.Tr>
+                  <Table.Tr>
+                    <Table.Td>
+                      Bank A/C Type
+                    </Table.Td>
+                    <Table.Td>
+                      {dealership?.account_type}
+                    </Table.Td>
+                  </Table.Tr>
                 </>}
                 <Table.Tr>
                   <Table.Td>Loan Amount</Table.Td>

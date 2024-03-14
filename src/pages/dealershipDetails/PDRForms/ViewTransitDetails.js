@@ -1,4 +1,5 @@
-import { Box, Typography, makeStyles } from '@material-ui/core';
+import { Box, Tooltip, Typography, makeStyles } from '@material-ui/core';
+import { Attachment } from '@material-ui/icons';
 import { TimelineOppositeContent } from '@material-ui/lab';
 import Timeline from '@material-ui/lab/Timeline';
 import TimelineConnector from '@material-ui/lab/TimelineConnector';
@@ -7,8 +8,10 @@ import TimelineDot from '@material-ui/lab/TimelineDot';
 import TimelineItem from '@material-ui/lab/TimelineItem';
 import TimelineSeparator from '@material-ui/lab/TimelineSeparator';
 import moment from 'moment/moment';
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
+import FilePreview from '../../../components/CommonComponents/FilePreview';
+import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
 import { getTransitDetailsById } from '../../../services/pdc.service';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,9 +27,10 @@ const useStyles = makeStyles((theme) => ({
 
 const ViewTransitDetails = ({ dealershipId }) => {
   const classes = useStyles();
-  const { data: remarks } = useQuery(['pdc-transit-details',dealershipId], () => getTransitDetailsById(dealershipId), {
+  const [imageModal, setImageModal] = useState({});
+  const { data: remarks } = useQuery(['pdc-transit-details', dealershipId], () => getTransitDetailsById(dealershipId), {
     refetchOnWindowFocus: false,
-  })
+  });
 
   return (
     <div>
@@ -59,23 +63,33 @@ const ViewTransitDetails = ({ dealershipId }) => {
                     </Box>
                     <Box mt={'-2px'} ml={20}>
                       <p style={{ fontSize: 9 }}>
-                        {moment(remark?.event_date).format('DD-MM-YYYY') } {moment(remark?.event_date, 'HH:mm:ss').format('hh:mm:ss A')}
+                        {moment(remark?.event_date).format('DD-MM-YYYY')} {moment(remark?.event_date, 'HH:mm:ss').format('hh:mm:ss A')}
                       </p>
                     </Box>
                   </Box>
-                  <div style={{ marginTop: 4 }}>
-                    {remark?.pdc_cheque_ids ?
-                      <Typography size='xs'>
+                  {remark?.pdc_cheque_ids ?
+                    <div style={{ marginTop: 4, display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <Typography size='xs' >
                         Cheque IDs: {remark?.pdc_cheque_ids}
-                      </Typography> : null
-                    }
-                  </div>
+                      </Typography>
+                      {remark?.pod
+                        ? <Tooltip title={'Click to view the '}>
+                          <Attachment style={{ color: '#b0b0b0', cursor: 'pointer' }} onClick={() => setImageModal({ open: true, image: remark?.pod, type: remark?.pod?.endsWith('.pdf') })} />
+                        </Tooltip>
+                        : null
+                      }
+                    </div>
+                    : null
+                  }
                 </TimelineContent>
               </TimelineItem>
             )
           })
         }
       </Timeline>
+      <FormDialog className={classes.dialogBox} title={''} onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
+        <FilePreview data={imageModal} />
+      </FormDialog>
     </div>
   );
 }

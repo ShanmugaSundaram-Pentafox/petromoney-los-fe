@@ -131,7 +131,7 @@ const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry
     selectableRows: 'none',
     isRowSelectable: () => false,
     onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
+      if (cellMeta.colIndex !== 8) {
         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'submitted')
       }
     },

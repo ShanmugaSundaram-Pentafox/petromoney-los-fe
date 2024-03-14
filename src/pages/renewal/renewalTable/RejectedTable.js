@@ -41,34 +41,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     queryFn: () => getRenewalLoanByStatus('rejected', filterQry, page, search),
   });
 
-  const onDownloadClick = () => {
-    downloadRenewalData('rejected', filterQry)
-      .then(data => {
-        getSignedUrl(data[0]?.url)
-          .then((res) => {
-            window.open(res?.url, '_blank');
-          })
-          .catch(e => {
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
-          })
-      })
-      .catch(e => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
-
   const column = [
     {
       key: 'dealership_id',
@@ -100,51 +72,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
       cell: (value) => <Currency value={value?.getValue()} />
     },
   ]
-
-  // const options = {
-  //   selectableRowsHeader: false,
-  //   selectableRows: 'none',
-  //   isRowSelectable: () => true,
-  //   rowsPerPage: 10,
-  //   filter: false,
-  //   print: false,
-  //   sort: false,
-  //   download: false,
-  //   viewColumns: false,
-  //   searchPlaceholder: 'Search by dealreship ID/Name',
-  //   onSearchChange: (searchText) => {
-  //     setSearch(searchText)
-  //   },
-  //   customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage, textLabels) => {
-  //     return (
-  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-  //         <MuiTableFooter
-  //           totalCount={pageDetailsQuery?.data?.total_number_of_pages}
-  //           pageSize={10}
-  //           onPageChange={(value) => { setPage(value) }}
-  //         />
-  //       </div>
-  //     )
-  //   },
-  //   onCellClick: (colData, cellMeta) => {
-  //     if (cellMeta.colIndex !== 7) {
-  //       onRowClick(getRenewalDataQuery?.data[cellMeta.dataIndex].dealership_id, getRenewalDataQuery?.data[cellMeta.dataIndex], 'rejected')
-  //     }
-  //   },
-  //   customToolbar: () => {
-  //     return (
-  //       <>
-  //         <Tooltip title="Download">
-  //           <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-  //         </Tooltip>
-  //       </>
-  //     );
-  //   },
-  //   customSort: (data, dataIndex, rowIndex) => {
-  //     let dateIndex = 5
-  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-  //   }
-  // };
 
   return (
     <div className={classes.root}>

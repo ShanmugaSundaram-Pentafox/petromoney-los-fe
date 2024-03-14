@@ -3,7 +3,6 @@ import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import toInteger from 'lodash-es/toInteger';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
@@ -18,13 +17,13 @@ import PersonalDiscussionReport from './components/PDReport';
 import ScoreCard from './components/ScoreCard';
 import SolarEnquiryForm from './components/SolarEnquiryForm';
 import LeegalityLayout from '../../components/Leegality/LeegalityLayout';
-import { permissionCheck } from '../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../config/accessControl';
-import { rulesList } from '../../config/userRules';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
+import DeferralHome from './components/DeferralHome';
+import DeviationHome from './components/DeviationHome';
 
 
 const DealershipDetails = ({ currentUser, match }) => {
@@ -76,6 +75,16 @@ const DealershipDetails = ({ currentUser, match }) => {
       id: action_id?.dealershipNavigation?.fleetOperator,
       name: 'Fleet Operators',
       value: 'fleet_operators'
+    },
+    {
+      id: action_id?.dealershipNavigation?.fleetOperator,
+      name: 'Deferral',
+      value: 'deferral'
+    },
+    {
+      id: action_id?.dealershipNavigation?.fleetOperator,
+      name: 'Deviation',
+      value: 'deviation'
     },
   ]
 
@@ -141,8 +150,8 @@ const DealershipDetails = ({ currentUser, match }) => {
                 key={1}
                 value={item?.value}
               >
-                <Badge size="sm" circle variant={item?.value === activeTab ? "white" : "filled"} color="blue.3">{i + 1}</Badge>
-                <Text c={(item?.value) === activeTab ? "blue.9" : "#2b2b2b"}>{item?.name}</Text>
+                <Badge size="sm" circle variant={item?.value === activeTab ? 'white' : 'filled'} color="blue.3">{i + 1}</Badge>
+                <Text c={(item?.value) === activeTab ? 'blue.9' : '#2b2b2b'}>{item?.name}</Text>
               </Tabs.Tab>
             )
           })
@@ -172,6 +181,12 @@ const DealershipDetails = ({ currentUser, match }) => {
         </Tabs.Panel>
         <Tabs.Panel value={'fleet_operators'}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'deferral'}>
+          <DeferralHome id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'deviation'}>
+          <DeviationHome id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
         </Tabs.Panel>
       </Tabs>
 

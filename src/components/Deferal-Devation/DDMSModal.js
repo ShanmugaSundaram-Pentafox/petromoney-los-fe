@@ -1,4 +1,4 @@
-import { Box, Button, Group, Loader, Modal, Table } from '@mantine/core';
+import { Button, Group, Loader, Modal, Table } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { getDDMSChecklist, getDeferralDetails, updateDeferralDetails } from '../../services/ddms.service';
@@ -20,7 +20,7 @@ const DDMSModal = ({
     enabled: Boolean(opened),
     cacheTime: 0,
     select: (data) => {
-      return { data: JSON.parse(data?.[0]?.checklist_mapping || "[]") || [], submitted: true }
+      return { data: JSON.parse(data?.[0]?.checklist_mapping || '[]') || [], submitted: true }
       // return { data: [], submitted: true }
     }
   })
@@ -79,7 +79,14 @@ const DDMSModal = ({
       checklist_id: i?.id,
       deferral_deviation_mapping: i?.status === 'deferral/deviation' ? i?.deferral_deviation_mapping : [],
       status: i?.status,
-    }))
+    }));
+    if (result?.filter((i) => (i?.status === 'deferral/deviation' && !i?.deferral_deviation_mapping?.length))?.length) {
+      displayNotification({
+        message: 'Please select any deferral/deviation mapping, It cant be null',
+        variant: 'warning',
+      });
+      return;
+    }
     const body = {
       data: {
         checklist_mapping: result,
@@ -94,7 +101,7 @@ const DDMSModal = ({
     let result = [...deferral];
     result?.splice(deferral?.indexOf(deferral?.find(i => i?.id === arr?.id)), 1, {
       ...arr,
-      "status": val,
+      'status': val,
     })
     setDeferral(result)
   };
@@ -104,7 +111,7 @@ const DDMSModal = ({
     result?.splice(
       deferral?.indexOf(deferral?.find(i => i?.id === arr?.id)),
       1,
-      { ...deferral?.find(i => i?.id === arr?.id), "deferral_deviation_mapping": val })
+      { ...deferral?.find(i => i?.id === arr?.id), 'deferral_deviation_mapping': val })
     setDeferral(result)
   }
 

@@ -6,6 +6,7 @@ import ColumnsFilter from '../Filter/ColumnFilter';
 import { useDisclosure } from '@mantine/hooks';
 import { useJsonToCsv } from 'react-json-csv';
 import { generateCSVHeader, generateTableHeader } from '../../utils/tableHeader.util';
+import StatusList from '../CommonComponents/StatusList';
 
 const Filter = ({
   column,
@@ -19,7 +20,7 @@ const Filter = ({
     () =>
       typeof firstValue === 'number'
         ? []
-        : Array.from(column.getFacetedUniqueValues().keys()).sort()?.map((i) => (i?.replace(/_/g, " "))),
+        : Array.from(column.getFacetedUniqueValues().keys()).sort()?.map((i) => (i?.replace(/_/g, ' '))),
     [column.getFacetedUniqueValues()]
   );
 
@@ -56,9 +57,10 @@ const DataTableViewer = ({
   title,
   excelDownload = false,
   apiSearch,
+  showStatusTab,
   onRowClick,
-  noDataText = "No data yet!",
-  noDataSubText = "No data found in this section",
+  noDataText = 'No data yet!',
+  noDataSubText = 'No data found in this section',
   page,
   filter = true,
   columnsFilter = true,
@@ -119,14 +121,19 @@ const DataTableViewer = ({
     setFilteredColumnData(addData);
     // saveTableData({ [localKey]: data })
   }
-
+  
   return (
     <Box>
       <Box style={{ padding: 10, background: '#ffff', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
+        {
+          showStatusTab && (
+            <StatusList />
+          )
+        }
         <Group justify='space-between'>
           <Text style={{ fontSize: '16px' }} fw={500}>
             <Group gap={4}>
-              {title + " "}
+              {title + ' '}
               {count
                 ? <>
                   ({loading
@@ -156,9 +163,9 @@ const DataTableViewer = ({
                   />
                   {columnsFilter
                     ? <Tooltip
-                      label={<Text size={"xs"}>Manage Columns</Text>}
-                      color={"dark"}
-                      transitionProps={{ transition: "pop", duration: 300 }}
+                      label={<Text size={'xs'}>Manage Columns</Text>}
+                      color={'dark'}
+                      transitionProps={{ transition: 'pop', duration: 300 }}
                       withArrow
                       position='bottom'
                     >
@@ -183,9 +190,9 @@ const DataTableViewer = ({
                     >
                       <Popover.Target>
                         <Tooltip
-                          label={<Text size={"xs"}>Filter Rows</Text>}
-                          color={"dark"}
-                          transitionProps={{ transition: "pop", duration: 300 }}
+                          label={<Text size={'xs'}>Filter Rows</Text>}
+                          color={'dark'}
+                          transitionProps={{ transition: 'pop', duration: 300 }}
                           withArrow
                           position='bottom'
                         >
@@ -212,9 +219,9 @@ const DataTableViewer = ({
                   }
                   {excelDownload
                     ? (<Tooltip
-                      label={<Text size={"xs"}>Download</Text>}
-                      color={"dark"}
-                      transitionProps={{ transition: "pop", duration: 300 }}
+                      label={<Text size={'xs'}>Download</Text>}
+                      color={'dark'}
+                      transitionProps={{ transition: 'pop', duration: 300 }}
                       withArrow
                       position='bottom'
                     >
@@ -248,13 +255,13 @@ const DataTableViewer = ({
           mt="md"
           p="xl"
           style={{
-            textAlign: "center",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
+            textAlign: 'center',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
             gap: 10,
-            height: "60vh",
+            height: '60vh',
           }}
         >
           <Image
@@ -265,7 +272,7 @@ const DataTableViewer = ({
           />
           <Box>
             <Text>{noDataText}</Text>
-            <Text size="sm" sx={{ color: "rgb(0,0,0,0.4)" }}>
+            <Text size="sm" sx={{ color: 'rgb(0,0,0,0.4)' }}>
               {noDataSubText}
             </Text>
           </Box>

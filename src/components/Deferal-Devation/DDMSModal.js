@@ -12,8 +12,9 @@ const DDMSModal = ({
   queryKey = ''
 }) => {
   const [deferral, setDeferral] = useState([]);
+  const [checklistCategory, setCheckListCategory] = useState([]);
   const queryClient = useQueryClient()
-
+  console.log(checklistCategory);
   const deferralDetailsQuery = useQuery({
     queryKey: ['deferral-details', modalObj?.id],
     queryFn: () => getDeferralDetails({ id: modalObj?.id }),
@@ -102,8 +103,12 @@ const DDMSModal = ({
     result?.splice(deferral?.indexOf(deferral?.find(i => i?.id === arr?.id)), 1, {
       ...arr,
       'status': val,
+      'deferral_deviation_mapping': val === 'deferral/deviation' ? arr?.deferral_deviation_mapping : []
     })
     setDeferral(result)
+    // let oldMapping = [...checklistCategory?.[arr?.category]?.deferral_deviation_mapping]?.filter((i) => i);
+    // let newMapping = [...arr?.deferral_deviation_mapping]?.filter(i => i);
+    // setCheckListCategory(old => ({ ...old, [arr?.category]: val === 'deferral/deviation' ? [...oldMapping, ...newMapping] : [] }))
   };
 
   const handleDeferralMapping = (arr, val) => {
@@ -113,6 +118,7 @@ const DDMSModal = ({
       1,
       { ...deferral?.find(i => i?.id === arr?.id), 'deferral_deviation_mapping': val })
     setDeferral(result)
+    // setCheckListCategory(old => ({ ...old, [arr?.category]: [...val, ...old?.[arr?.category]] }))
   }
 
   return (
@@ -141,10 +147,12 @@ const DDMSModal = ({
                   </Table.Thead>
                   {JSON.parse(item?.checklist)?.map((value, i) => (
                     <Table.Tr key={`${item}-${i}`}>
+                      {/* {console.log(item)} */}
                       <DDMSTable
                         value={value}
                         index={index}
                         innerIndex={i}
+                        headerValue={item}
                         deferral={deferral?.find(i => i?.id === value?.id)}
                         deferralStatus={deferral?.find(i => i?.id === value?.id)?.status}
                         dealershipId={modalObj?.id}

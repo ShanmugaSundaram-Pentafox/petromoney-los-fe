@@ -43,12 +43,16 @@ const ReactTable = ({
     setSortingValue,
     apiSorting = false,
     isSortingRemoval = true,
-    styles,
+    styles = {
+        overflowX: 'auto',
+        whiteSpace: 'nowrap',
+        maxWidth: '100vw',
+    },
 }) => {
     const [data, setData] = useState([]);
     const [columnFilter, setColumnFilter] = useState([]);
     const [debounce] = useDebouncedValue(search, 400);
-
+    console.log();
     const fuzzyFilter = (row, columnId, value, addMeta) => {
         const itemRank = rankItem(row.getValue(columnId), value);
         console.log(itemRank);
@@ -140,9 +144,6 @@ const ReactTable = ({
                         mb={10}
                         verticalSpacing='6px'
                         style={{
-                            overflowX: 'auto',
-                            whiteSpace: 'nowrap',
-                            maxWidth: '100vw',
                             ...styles,
                         }}
                     >

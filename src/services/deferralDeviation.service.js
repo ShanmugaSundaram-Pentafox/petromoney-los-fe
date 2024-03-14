@@ -84,8 +84,8 @@ export const getDocumentChecklistMaster = () => {
     apiCall('master/pre_disbursal_document_checklist')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          const active_app = data.filter(it => it?.is_active == 1)
-          const result = active_app.map((item) => ({
+          // const active_app = data.filter(it => it?.is_active == 1)
+          const result = data.map((item) => ({
             value: item?.id?.toString(),
             label: item?.name
           }));

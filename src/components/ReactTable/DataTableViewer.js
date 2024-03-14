@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActionIcon, Box, Grid, Group, Image, Loader, Popover, Select, Text, TextInput, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Grid, Group, Image, Loader, Popover, ScrollArea, Select, Text, TextInput, Tooltip } from '@mantine/core';
 import ReactTable from './ReactTable';
 import { IconDownload, IconFilter, IconSearch, IconTableRow, IconX } from '@tabler/icons-react';
 import ColumnsFilter from '../Filter/ColumnFilter';

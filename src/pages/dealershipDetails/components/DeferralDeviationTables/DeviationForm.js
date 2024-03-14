@@ -1,23 +1,25 @@
-import { Flex, Grid } from '@mantine/core';
-
-
+import { Flex, Grid, Group, Select, Text } from '@mantine/core';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { Button } from '../../../../components/Mantine/Button/Button';
-import { Selector } from '../../../../components/CommonComponents/FilterCard';
 import { useQuery } from 'react-query';
 import { addDeferralDeviation, getAllDeferralApplicantsByDealershipId, getDocumentChecklistMaster } from '../../../../services/deferralDeviation.service';
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
+import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
 
 const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
   const [loading, setLoading] = useState(false);
-  const [applicantData, setApplicantData] = useState()
-  const [checkListData, setCheckListData] = useState()
-  const { data: applicantsData, } = useQuery(['dealership-applicants', dealershipId], () => getAllDeferralApplicantsByDealershipId(dealershipId), {
+  const [error, setError] = useState();
+
+  const { data: applicantsData, } = useQuery(['dealership-applicants-list', dealershipId], () => getAllDeferralApplicantsByDealershipId(dealershipId), {
     initialData: [],
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    select: (data) => {
+      return [...data, { label: dealershipName, value: dealershipId?.toString() }]
+    }
   })
-  const { data: checklist } = useQuery(['dealership-checklist'], () => getDocumentChecklistMaster(), {
+
+  const { data: checklist } = useQuery(['dealership-checklist-list'], () => getDocumentChecklistMaster(), {
     initialData: [],
     refetchOnWindowFocus: false
   })
@@ -26,32 +28,46 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
     close();
   };
 
-  const { handleSubmit, setFieldValue } = useFormik({
+  const { handleSubmit, setFieldValue, values } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
-      setLoading(true);
-      let payload = { ...values, type: 'deviation', party_name: dealershipName, remarks: 'remakrs', party_id: dealershipId, applicant_id: applicantData.value, applicant_type: applicantData.category, applicant_name: applicantData?.label, checklist_id: checkListData?.value, checklist_name: checkListData.label }
-      addDeferralDeviation(payload)
-        .then((res) => {
-          handleClose();
-          refetch();
-          displayNotification({
-            message: res,
-            variant: 'success',
-          });
+      if (values?.remarks) {
+        setLoading(true);
+        let payload = {
+          ...values,
+          type: 'deviation',
+          party_name: dealershipName,
+          party_id: dealershipId,
+          applicant_id: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.value,
+          applicant_type: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.category,
+          applicant_name: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.label,
+          checklist_id: values?.checkListData?.value,
+          checklist_name: values?.checkListData?.label
+        }
+        addDeferralDeviation(payload)
+          .then((res) => {
+            handleClose();
+            refetch();
+            displayNotification({
+              message: res,
+              variant: 'success',
+            });
 
-        })
-        .catch((err) => {
-          displayNotification({
-            message: err,
-            variant: 'error',
-          });
-        })
-        .finally(() => {
-          setLoading(false);
-        })
+          })
+          .catch((err) => {
+            displayNotification({
+              message: err,
+              variant: 'error',
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+          })
+      } else {
+        setError('Remarks is mandatory');
+      }
     }
   });
 
@@ -59,53 +75,18 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Selector title="Applicant" width={300} isMulti={false} options={applicantsData} value={applicantData} setValue={setApplicantData} />
+          <Select size='xs' searchable label="Applicant" data={applicantsData} defaultSearchValue={dealershipId?.toString()} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue("applicantData", option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Selector title="Document Type" width={300} isMulti={false} options={checklist} value={checkListData} setValue={setCheckListData} />
+          <Select size='xs' searchable label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue("checkListData", option)} />
         </Grid.Col>
-        {/* <Grid.Col span={{ base: 12, sm: 6 }}>
-          <label>Dealership agreement valid till</label>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDatePicker
-              fullWidth
-              hideTabs={true}
-              variant='inline'
-              inputVariant='outlined'
-              format='dd-MM-yyyy'
-              maxDate={new Date('2050-01-01')}
-              readOnly={readOnly}
-              disabled={readOnly || editable}
-              error={errors.due_date}
-              helperText={errors.due_date}
-              animateYearScrolling={true}
-              // invalidDateMessage='Invalid Date Format'
-              margin='normal'
-              id='date-picker'
-              autoOk={true}
-              value={validDate}
-              onChange={handleValidDateChange}
-              keyboardButtonProps={{
-                'aria-label': 'change date'
-              }}
-              PopoverProps={{
-                anchorOrigin: {
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }
-              }}
-            />
-          </MuiPickersUtilsProvider>
-        </Grid.Col> */}
+        <Grid.Col>
+          <RichTextEditorBox onChange={e => { setFieldValue("remarks", e); setError(); }} />
+          {error ? <Text size='xs' c={'red'}>{error}</Text> : null}
+        </Grid.Col>
       </Grid>
-      <Flex
-        gap="md"
-        mt={48}
-        justify="flex-end"
-        align="flex-end"
-        direction="row">
+      <Group justify='flex-end' mt={'md'}>
         <Button
-          // colorScheme="primary"
           size="xs"
           variant='outline'
           onClick={handleClose}
@@ -113,7 +94,6 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
           Cancel
         </Button>
         <Button
-          // colorScheme="primary"
           color='green'
           size="xs"
           onClick={loading ? () => null : handleSubmit}
@@ -121,7 +101,7 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
         >
           Add Deviation
         </Button>
-      </Flex>
+      </Group>
     </form>
   )
 }

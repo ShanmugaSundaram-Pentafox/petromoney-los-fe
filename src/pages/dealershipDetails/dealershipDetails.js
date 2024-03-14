@@ -1,4 +1,4 @@
-import { Tabs, Badge, Text } from '@mantine/core';
+import { Tabs, Badge, Text, Box } from '@mantine/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -131,7 +131,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
 
   return (
-    <>
+    <Box style={{ maxWidth: 1200 }}>
       <Tabs
         color="blue.1"
         variant="pills"
@@ -219,7 +219,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Box>
   );
 };
 

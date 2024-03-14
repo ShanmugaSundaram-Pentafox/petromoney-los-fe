@@ -1,4 +1,4 @@
-import { Flex, Grid, Select } from '@mantine/core';
+import { Flex, Grid, Group, Select, Text } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
@@ -7,16 +7,18 @@ import { useQuery, } from 'react-query';
 import { addDeferralDeviation, getAllDeferralApplicantsByDealershipId, getDocumentChecklistMaster } from '../../../../services/deferralDeviation.service';
 import moment from 'moment';
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
+import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
 
 
 const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
   const [loading, setLoading] = useState(false)
-  const [validDate, setValidDate] = useState(new Date())
-  const [applicantData, setApplicantData] = useState()
-  const [checkListData, setCheckListData] = useState()
+
   const { data: applicantsData } = useQuery(['dealership-applicants-list', dealershipId], () => getAllDeferralApplicantsByDealershipId(dealershipId), {
     initialData: [],
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    select: (data) => {
+      return [...data, { label: dealershipName, value: dealershipId?.toString() }]
+    }
   })
   const { data: checklist } = useQuery(['dealership-checklist-list'], () => getDocumentChecklistMaster(), {
     initialData: [],
@@ -27,40 +29,48 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
     close();
   };
 
-  const { errors, handleSubmit, isValid } = useFormik({
+  const { handleSubmit, setFieldError, errors, values, setFieldValue } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
-    // validationSchema: Yup.object().shape({
-    //   applicant_id: Yup.string().nullable('Choose Proper User Role').required('Choose Proper User Role'),
-    //   due_date: Yup.string().nullable('Enter first name').matches(/^[A-Za-z_ ]+$/, 'Enter valid name').required('Enter first name'),
-    //   last_name: Yup.string().nullable('Enter last name').min(1).matches(/^[A-Za-z_ ]+$/, 'Enter valid name').required('Enter last name'),
-    //   mobile: Yup.string().nullable('Enter mobile number').matches(/^\d{10}$/, 'Enter valid mobile number').required('Enter mobile number'),
-    //   email: Yup.string().nullable('Enter email').email('Enter valid email').required('Enter email'),
-    //   password: Yup.string(),
-    // }),
     onSubmit: values => {
-      setLoading(true);
-      let payload = { ...values, type: 'deferral', party_name: dealershipName, remarks: 'testing with remarks', due_date: moment(validDate)?.format('YYYY-MM-DD'), party_id: dealershipId, applicant_id: applicantData?.value, applicant_type: applicantData?.category, applicant_name: applicantData?.label, checklist_id: checkListData?.value, checklist_name: checkListData?.label }
-      addDeferralDeviation(payload)
-        .then((res) => {
-          handleClose();
-          refetch();
-          displayNotification({
-            message: res,
-            variant: 'success',
-          });
+      if (values?.remarks) {
+        setLoading(true);
+        let payload = {
+          ...values,
+          type: 'deferral',
+          party_name: dealershipName,
+          remarks: 'testing with remarks',
+          due_date: moment(values?.validDate)?.format('YYYY-MM-DD'),
+          party_id: dealershipId,
+          applicant_id: values?.applicantData?.value === dealershipId ? null : values?.applicantData?.value,
+          applicant_type: values?.applicantData?.value === dealershipId ? null : values?.applicantData?.category,
+          applicant_name: values?.applicantData?.value === dealershipId ? null : values?.applicantData?.label,
+          checklist_id: values?.checkListData?.value,
+          checklist_name: values?.checkListData?.label
+        }
+        addDeferralDeviation(payload)
+          .then((res) => {
+            handleClose();
+            refetch();
+            displayNotification({
+              message: res,
+              variant: 'success',
+            });
 
-        })
-        .catch((err) => {
-          displayNotification({
-            message: err,
-            variant: 'error',
-          });
-        })
-        .finally(() => {
-          setLoading(false);
-        })
+          })
+          .catch((err) => {
+            displayNotification({
+              message: err,
+              variant: 'error',
+            });
+          })
+          .finally(() => {
+            setLoading(false);
+          })
+      } else {
+        setFieldError('remarks', 'Please enter remarks');
+      }
     }
   });
 
@@ -68,23 +78,22 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select data={applicantsData} size='xs' label={"Applicant"} value={applicantData?.value || null} onChange={(_value, option) => setApplicantData(option)} />
+          <Select searchable data={applicantsData} defaultValue={dealershipId?.toString()} size='xs' label={"Applicant"} value={values?.applicantData?.value || null} onChange={(_value, option) => setFieldValue("applicantData", option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select data={checklist} size='xs' label={"Document Type"} value={checkListData?.value || null} onChange={(_value, option) => setCheckListData(option)} />
+          <Select searchable data={checklist} size='xs' label={"Document Type"} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue("checkListData", option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <DateInput value={validDate} onChange={setValidDate} minDate={new Date()} size='xs' label={'Dealership agreement valid till'} />
+          <DateInput value={values?.validDate} onChange={(e) => setFieldError("validDate", e)} minDate={new Date()} size='xs' label={'Dealership agreement valid till'} />
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <label>Remarks</label>
+          <RichTextEditorBox onChange={(e) => { setFieldValue("remarks", e); errors?.remarks && setFieldError('remarks', null); }} />
+          <Text size='xs' c={'red'}>{errors?.remarks}</Text>
         </Grid.Col>
       </Grid>
-      <Flex
-        gap="md"
-        mt={48}
-        justify="flex-end"
-        align="flex-end"
-        direction="row">
+      <Group justify='flex-end' mt={'md'}>
         <Button
-          // colorScheme="primary"
           size="xs"
           variant='outline'
           onClick={handleClose}
@@ -92,7 +101,6 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
           Cancel
         </Button>
         <Button
-          // colorScheme="primary"
           color='green'
           size="xs"
           onClick={loading ? () => null : handleSubmit}
@@ -100,7 +108,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
         >
           Add Deferral
         </Button>
-      </Flex>
+      </Group>
     </form>
   )
 }

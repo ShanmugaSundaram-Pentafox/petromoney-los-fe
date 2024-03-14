@@ -17,7 +17,7 @@ const DeviationTable = ({ id, dealershipName }) => {
   });
 
   const { data: deviationData = [], isLoading: deviationDataIsLoading, refetch: deviationDataRefetch } = useQuery({
-    queryKey: ['get-deviation'],
+    queryKey: ['get-deviation', activeTab],
     queryFn: () => getDeferralDataList(id, 'deviation', activeTab),
     refetchOnWindowFocus: false
   });

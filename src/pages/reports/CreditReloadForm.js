@@ -1,18 +1,11 @@
 import { green } from '@material-ui/core/colors';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import * as Yup from 'yup';
-import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../components/Number/Currency';
 import TextInput from '../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../config/accessControl';
@@ -23,6 +16,7 @@ import { getBankDetailsbyID } from '../../services/PDReport.services';
 import { isAllowed } from '../../utils/cerbos';
 import { Box, Button, Grid, Text, Title, Alert, Checkbox, Group } from '@mantine/core';
 import { IconCheck, IconInfoCircle } from '@tabler/icons-react';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles((theme) => ({
   // sidePanelFormWrapper: {
@@ -111,7 +105,6 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [expressCRR, setExpressCRR] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
   const [bankId, setBankId] = useState();
   const { data: bankData = [] } = useQuery(['bank-data', selectedValue], () => getBankDetailsbyID(selectedValue), {
     refetchOnWindowFocus: false,
@@ -174,38 +167,29 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
             if (res.status === 'SUCCESS') {
               setLoading(false)
               callback()
-              enqueueSnackbar(res.message, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
+              displayNotification({
+                message: res?.message,
                 variant: 'success',
-              });
+              })
               setTimeout(() => {
                 window.location.reload(false)
               }, 1000);
             }
             else {
               setLoading(false)
-              enqueueSnackbar(res.message, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
+              displayNotification({
+                message: res?.message,
                 variant: 'error',
-              });
+              })
 
             }
           })
           .catch(e => {
             setLoading(false)
-            enqueueSnackbar(e.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
+            displayNotification({
+              message: e?.message,
               variant: 'error',
-            });
+            })
           })
       }
       else {

@@ -10,14 +10,14 @@ const DDMSTable = ({
   value,
   innerIndex,
   dealershipId,
-  checklistData,
+  headerValue,
   handleDeferralMapping,
   handleDataChange,
 }) => {
 
   const getDeferralMappingQuery = useQuery({
     queryKey: ['deferral-mapping', index, innerIndex, deferralStatus],
-    queryFn: () => getDeferralMappingById({ dealershipId, id: deferral?.id }),
+    queryFn: () => getDeferralMappingById({ dealershipId, id: headerValue?.category_id }),
     enabled: Boolean(dealershipId && deferralStatus === 'deferral/deviation'),
     select: (data) => {
       return data?.map(item => ({

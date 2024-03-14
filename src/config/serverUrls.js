@@ -1,5 +1,5 @@
 export const URL = {
-  base: process.env.REACT_APP_API_BASE,
+  base: 'http://192.168.1.109:5000/api/',
   login: 'login/user',
   verifyMobileNumber: 'login/otp',
   resendOtp: 'otp/resend',

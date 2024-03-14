@@ -13,13 +13,16 @@ const DeferralTable = ({ id, dealershipName }) => {
   const { data: statusList = [], isLoading: statusListLoading, refetch: statusListRefetch } = useQuery({
     queryKey: ['get-deferral-stats'],
     queryFn: () => getStatsData(id, 'deferral'),
-    refetchOnWindowFocus: false
+    // select: (data) => {
+    //   console.log(data);
+    //   data?.length > 0 && setActiveTab(data[0]?.current_status);
+    //   return data;
+    // }
   });
 
   const { data: deferralData = [], isLoading: deferralDataIsLoading, refetch: deferralDataRefetch } = useQuery({
-    queryKey: ['get-deferral'],
+    queryKey: ['get-deferral', activeTab],
     queryFn: () => getDeferralDataList(id, 'deferral', activeTab),
-    refetchOnWindowFocus: false
   });
 
   const handleTabChange = (value) => {
@@ -28,6 +31,7 @@ const DeferralTable = ({ id, dealershipName }) => {
 
   useEffect(() => {
     if (statusList && statusList.length > 0) {
+      console.log(statusList);
       setActiveTab(statusList[0].current_status);
     }
   }, [statusList]);
@@ -115,6 +119,7 @@ const DeferralTable = ({ id, dealershipName }) => {
       <DataTableViewer
         column={column}
         rowData={deferralData}
+        // styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
         title={'Deferral'}
         showAction={<Button
           onClick={() => setOpenModal(true)}
@@ -122,14 +127,14 @@ const DeferralTable = ({ id, dealershipName }) => {
           size='xs'
         >
           Add Deferral
-        </Button>}
-        onRowClick={(e) => { }}
+        </Button>
+        }
+        onRowClick={false}
         loading={deferralDataIsLoading}
         showStatusTab={statusListView}
         excelDownload
         filter={false}
       />
-
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deferral Data" centered>
         <DeferralForm refetch={() => { statusListRefetch(); deferralDataRefetch(); }} dealershipName={dealershipName} dealershipId={id} close={() => setOpenModal(false)} />
       </Modal>

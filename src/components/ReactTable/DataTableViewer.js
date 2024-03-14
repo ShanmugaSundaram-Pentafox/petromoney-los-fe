@@ -70,6 +70,7 @@ const DataTableViewer = ({
   styles = {},
   totalNoOfPages,
   action = false,
+  showAction = false,
 }) => {
   const [search, setSearch] = useState();
   const [filterHeader, setFilterHeader] = useState();
@@ -121,15 +122,10 @@ const DataTableViewer = ({
     setFilteredColumnData(addData);
     // saveTableData({ [localKey]: data })
   }
-  
+
   return (
     <Box>
       <Box style={{ padding: 10, background: '#ffff', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
-        {
-          showStatusTab && (
-            <StatusList />
-          )
-        }
         <Group justify='space-between'>
           <Text style={{ fontSize: '16px' }} fw={500}>
             <Group gap={4}>
@@ -245,11 +241,16 @@ const DataTableViewer = ({
                     </Tooltip>)
                     : null}
                   {action ? action : null}
+                  {showAction ? showAction : null}
                 </Box>
               </Box>
             )}
+          {(!loading && Array.isArray(rowData) && !rowData?.length && showAction) ? showAction : null}
         </Group>
       </Box>
+      {showStatusTab ? <Box>
+        {showStatusTab}
+      </Box> : null}
       {!loading && Array.isArray(rowData) && !rowData.length ? (
         <Box
           mt="md"

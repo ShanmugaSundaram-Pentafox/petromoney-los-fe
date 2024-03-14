@@ -43,7 +43,7 @@ export const getDeferralDataList = (id, type, status) => {
       // customDomain: "https://ddms-uat-api.petromoney.in/"
     })
       .then(res => {
-        console.log('data ->',res)
+        console.log('data ->', res)
         if (res?.status === 'SUCCESS') {
           resolve(res?.data);
         } else {
@@ -63,7 +63,7 @@ export const getAllDeferralApplicantsByDealershipId = id => {
         if (status === 'SUCCESS') {
           const active_app = data.filter(it => it?.is_active == 1)
           const result = active_app.map(item => ({
-            value: item?.id,
+            value: item?.id?.toString(),
             label: item?.first_name,
             category: item?.category?.toLowerCase(),
           }));
@@ -86,7 +86,7 @@ export const getDocumentChecklistMaster = () => {
         if (status === 'SUCCESS') {
           const active_app = data.filter(it => it?.is_active == 1)
           const result = active_app.map((item) => ({
-            value: item?.id,
+            value: item?.id?.toString(),
             label: item?.name
           }));
           resolve(result || []);
@@ -104,7 +104,7 @@ export const getDocumentChecklistMaster = () => {
 
 export const addDeferralDeviation = (payload) => {
   return new Promise((resolve, reject) => {
-    apiCall(`deferral-deviation/${payload?.party_id}/submit`,{
+    apiCall(`deferral-deviation/${payload?.party_id}/submit`, {
       method: 'POST',
       body: payload,
     })

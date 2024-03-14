@@ -7,7 +7,6 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import Currency from '../Number/Currency';
-import { createColumnHelper } from '@tanstack/react-table';
 import DataTableViewer from '../ReactTable/DataTableViewer';
 
 const useStyles = makeStyles(theme => ({

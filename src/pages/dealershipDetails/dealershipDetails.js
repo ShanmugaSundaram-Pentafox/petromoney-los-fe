@@ -24,6 +24,8 @@ import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
 import DeferralHome from './components/DeferralHome';
 import DeviationHome from './components/DeviationHome';
+import DeferralTable from './components/DeferralDeviationTables/DeferralTable';
+import DeviationTable from './components/DeferralDeviationTables/DeviationTable';
 
 
 const DealershipDetails = ({ currentUser, match }) => {
@@ -183,10 +185,10 @@ const DealershipDetails = ({ currentUser, match }) => {
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
         </Tabs.Panel>
         <Tabs.Panel value={'deferral'}>
-          <DeferralHome id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
+          <DeferralTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
         </Tabs.Panel>
         <Tabs.Panel value={'deviation'}>
-          <DeviationHome id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
+          <DeviationTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
         </Tabs.Panel>
       </Tabs>
 

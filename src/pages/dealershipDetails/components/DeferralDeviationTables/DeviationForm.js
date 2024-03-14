@@ -2,22 +2,18 @@ import { Flex, Grid } from '@mantine/core';
 
 
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { Button } from '../../../../components/Mantine/Button/Button';
 import { Selector } from '../../../../components/CommonComponents/FilterCard';
-import { useQuery,useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { addDeferralDeviation, getAllDeferralApplicantsByDealershipId, getDocumentChecklistMaster } from '../../../../services/deferralDeviation.service';
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 
-const DeviationForm = ({ dealershipId,dealershipName, close, editable }) => {
-  const [readOnly, setReadOnly] = useState(false);
+const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
   const [loading, setLoading] = useState(false);
-  const queryClient = useQueryClient();
-  const [validDate, setValidDate] = useState(new Date())
   const [applicantData, setApplicantData] = useState()
   const [checkListData, setCheckListData] = useState()
-  const { data: applicantsData, refetch } = useQuery(['dealership-applicants', dealershipId], () => getAllDeferralApplicantsByDealershipId(dealershipId), {
+  const { data: applicantsData, } = useQuery(['dealership-applicants', dealershipId], () => getAllDeferralApplicantsByDealershipId(dealershipId), {
     initialData: [],
     refetchOnWindowFocus: false
   })
@@ -26,28 +22,21 @@ const DeviationForm = ({ dealershipId,dealershipName, close, editable }) => {
     refetchOnWindowFocus: false
   })
 
-  const handleEdit = () => {
-    setReadOnly(!readOnly)
-  };
   const handleClose = () => {
     close();
   };
 
-  const handleValidDateChange = (date) => {
-    setValidDate(date)
-  }
-  const { enqueueSnackbar } = useSnackbar();
-
-  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
+  const { handleSubmit, setFieldValue } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
-      let payload = { ...values, type: 'deviation',party_name:dealershipName,remarks:'remakrs', party_id: dealershipId, applicant_id: applicantData.value, applicant_type: applicantData.category, applicant_name: applicantData?.label, checklist_id: checkListData?.value, checklist_name: checkListData.label }
+      setLoading(true);
+      let payload = { ...values, type: 'deviation', party_name: dealershipName, remarks: 'remakrs', party_id: dealershipId, applicant_id: applicantData.value, applicant_type: applicantData.category, applicant_name: applicantData?.label, checklist_id: checkListData?.value, checklist_name: checkListData.label }
       addDeferralDeviation(payload)
         .then((res) => {
-          queryClient.invalidateQueries(['get-deferral','get-deferral-stats','data-status-list']);
           handleClose();
+          refetch();
           displayNotification({
             message: res,
             variant: 'success',
@@ -60,14 +49,11 @@ const DeviationForm = ({ dealershipId,dealershipName, close, editable }) => {
             variant: 'error',
           });
         })
+        .finally(() => {
+          setLoading(false);
+        })
     }
   });
-
-  const inputProps = {
-    direction: 'column',
-    alignTop: true,
-    onChange: handleChange,
-  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -120,17 +106,16 @@ const DeviationForm = ({ dealershipId,dealershipName, close, editable }) => {
         direction="row">
         <Button
           // colorScheme="primary"
-          size="md"
-          variant='transparent'
+          size="xs"
+          variant='outline'
           onClick={handleClose}
-          loading={loading}
         >
           Cancel
         </Button>
         <Button
           // colorScheme="primary"
           color='green'
-          size="md"
+          size="xs"
           onClick={loading ? () => null : handleSubmit}
           loading={loading}
         >

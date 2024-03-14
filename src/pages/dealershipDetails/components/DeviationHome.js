@@ -36,13 +36,13 @@ const tabStyle = ({ color }) => ({
 })
 
 
-const DeviationHome = ({id}) => {
+const DeviationHome = ({ id }) => {
   const [activeTab, setActiveTab] = useState('approval');
-  const [ openModal,setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
 
   const { data: statusList, isLoading, refetch } = useQuery({
     queryKey: ['get-deferral-stats'],
-    queryFn: () => getStatsData(id,'deviation'),
+    queryFn: () => getStatsData(id, 'deviation'),
     refetchOnWindowFocus: false
   });
 
@@ -88,8 +88,8 @@ const DeviationHome = ({id}) => {
         </Button>
         {/* </CheckAllowed> */}
       </Flex>
-      <Modal size={'lg'} opened={openModal} onClose={()=> {setOpenModal(false)}} title="Create Deviation Data" centered>
-        <DeviationForm dealershipId={id}  close={()=>setOpenModal(false)} />
+      <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deviation Data" centered>
+        <DeviationForm dealershipId={id} close={() => setOpenModal(false)} />
       </Modal>
       <Tabs
         value={activeTab}
@@ -123,7 +123,7 @@ const DeviationHome = ({id}) => {
               (activeTab === item.current_status) && (
                 <>
                   <Tabs.Panel value={item?.current_status} >
-                    <DeviationTable dealershipId={id} status={item?.current_status} refetchStats={refetch}  />
+                    <DeviationTable dealershipId={id} status={item?.current_status} refetchStats={refetch} />
                   </Tabs.Panel>
                 </>
               )

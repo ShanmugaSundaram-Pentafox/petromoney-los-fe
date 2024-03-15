@@ -14,7 +14,7 @@ const DDMSModal = ({
   const [deferral, setDeferral] = useState([]);
   const [checklistCategory, setCheckListCategory] = useState([]);
   const queryClient = useQueryClient()
-  console.log(checklistCategory);
+
   const deferralDetailsQuery = useQuery({
     queryKey: ['deferral-details', modalObj?.id],
     queryFn: () => getDeferralDetails({ id: modalObj?.id }),

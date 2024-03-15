@@ -121,6 +121,7 @@ const DeferralTable = ({ id, dealershipName }) => {
         rowData={deferralData}
         // styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
         title={'Deferral'}
+        styles={null}
         showAction={<Button
           onClick={() => setOpenModal(true)}
           leftSection={<IconPlus size={18} />}

@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActionIcon, Box, Grid, Group, Image, Loader, Popover, ScrollArea, Select, Text, TextInput, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Grid, Group, Image, Loader, Popover, Select, Text, TextInput, Tooltip } from '@mantine/core';
 import ReactTable from './ReactTable';
 import { IconDownload, IconFilter, IconSearch, IconTableRow, IconX } from '@tabler/icons-react';
 import ColumnsFilter from '../Filter/ColumnFilter';
 import { useDisclosure } from '@mantine/hooks';
 import { useJsonToCsv } from 'react-json-csv';
 import { generateCSVHeader, generateTableHeader } from '../../utils/tableHeader.util';
-import StatusList from '../CommonComponents/StatusList';
 
 const Filter = ({
   column,
@@ -67,7 +66,11 @@ const DataTableViewer = ({
   count = false,
   setPage,
   loading = false,
-  styles = {},
+  styles = {
+    overflowX: 'auto',
+    whiteSpace: 'nowrap',
+    maxWidth: '100vw',
+  },
   totalNoOfPages,
   action = false,
   showAction = false,

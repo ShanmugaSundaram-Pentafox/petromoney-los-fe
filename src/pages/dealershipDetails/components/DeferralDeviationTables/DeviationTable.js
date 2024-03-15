@@ -118,6 +118,7 @@ const DeviationTable = ({ id, dealershipName }) => {
         rowData={deviationData}
         title={'Deviations'}
         onRowClick={false}
+        styles={null}
         loading={deviationDataIsLoading}
         showAction={
           <Button

@@ -13,6 +13,7 @@ import { ActionIcon, Tooltip } from '@mantine/core';
 import { IconLink } from '@tabler/icons-react';
 import DDMSModal from '../Deferal-Devation/DDMSModal';
 import CustomToken from '../CommonComponents/CustomToken';
+import { useQuery } from 'react-query';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,22 +44,18 @@ const useStyles = makeStyles(theme => ({
 
 const DisbursementReqestTable = ({ title, loans = [], setLoansData, onRowClick, filterQry }) => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
   const [docModal, setDocModal] = useState({ modal: false });
 
-  // const disbursementApprovalDataQuery = useQuery({})
+  const disbursementApprovalDataQuery = useQuery({
+    queryKey: ['disbursement-approval-query'],
+    queryFn: () => getLoansByStatus('disbursement_approval', filterQry),
+  })
 
   useEffect(() => {
-    setLoading(true);
-    getLoansByStatus('disbursement_approval', filterQry)
-      .then(data => {
-        setLoansData('disbursement_approval', data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }, [filterQry])
+    if (disbursementApprovalDataQuery?.data?.length) {
+      setLoansData(disbursementApprovalDataQuery?.data)
+    }
+  }, [disbursementApprovalDataQuery?.data])
 
   const column = [
     {
@@ -116,17 +113,17 @@ const DisbursementReqestTable = ({ title, loans = [], setLoansData, onRowClick, 
     <>
       <div className={classes.root}>
         <DataTableViewer
-          rowData={loans}
+          rowData={disbursementApprovalDataQuery?.data}
           column={column}
           title={title}
           count={loans?.length}
           excelDownload
           onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
-          loading={loading}
+          loading={disbursementApprovalDataQuery?.isLoading}
         />
       </div>
 
-      <DDMSModal opened={Boolean(docModal?.modal)} onClose={() => setDocModal({})} modalObj={docModal} />
+      <DDMSModal opened={Boolean(docModal?.modal)} onClose={() => setDocModal({})} modalObj={docModal} queryKey='disbursement-approval-query' />
     </>
   )
 }

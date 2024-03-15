@@ -79,7 +79,7 @@ const DocList = ({ id, currentUser }) => {
   const [rowData, setRowData] = useState();
   const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
-  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id), {refetchOnWindowFocus: false})
+  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id), { refetchOnWindowFocus: false })
 
   const { enqueueSnackbar } = useSnackbar();
   const onCloseUploader = () => {
@@ -98,10 +98,10 @@ const DocList = ({ id, currentUser }) => {
     files.map(file => {
       const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
       formData.append(`file-${id}`, file);
-      formData.append('fileName', fileName);
+      formData.append(rowData?.kyc_file_name ? rowData?.kyc_file_name : 'fileName', fileName);
       formData.append('id', rowData.doc_id);
     });
-    
+
     fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
       body: formData,

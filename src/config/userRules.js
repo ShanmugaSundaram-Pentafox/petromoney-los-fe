@@ -301,5 +301,15 @@ export const rulesForUserRoles = {
       rulesList.financial_view,
       rulesList.dashboard,
     ]
-  }
+  },
+  GOSREE: {
+    static: [
+      rulesList.external_view,
+      rulesList.pdr_view,
+      rulesList.credit_view,
+      rulesList.dealership_view,
+      rulesList.financial_view,
+      rulesList.dashboard,
+    ]
+  },
 }

@@ -2,6 +2,8 @@ import { Box, Group, Loader, MultiSelect, Select, Table, Tooltip } from '@mantin
 import React from 'react'
 import { useQuery } from 'react-query';
 import { getDeferralMappingById } from '../../services/ddms.service';
+import classes from './DDMS.module.css'
+import { IconTrash } from '@tabler/icons-react';
 
 const DDMSTable = ({
   deferral,
@@ -12,6 +14,7 @@ const DDMSTable = ({
   dealershipId,
   headerValue,
   handleDeferralMapping,
+  handleDelete,
   handleDataChange,
 }) => {
 
@@ -31,9 +34,8 @@ const DDMSTable = ({
   return (
     <>
       <Table.Td>
-        <Group gap={4} ml={4}>
-          <p>{(index + 1) + '.' + (innerIndex + 1) + '). '}</p>
-          <p style={{ maxWidth: '400px' }}>{value?.name}</p>
+        <Group gap={4} ml={12}>
+          <p style={{ maxWidth: '400px', whiteSpace: 'wrap' }}>{(index + 1) + '.' + (innerIndex + 1) + ' ' + value?.name}</p>
         </Group>
       </Table.Td>
       <Table.Td>
@@ -65,6 +67,7 @@ const DDMSTable = ({
               value={getDeferralMappingQuery?.isLoading ? [] : deferral?.deferral_deviation_mapping || []}
               size='xs'
               clearable
+              // disabled={getDeferralMappingQuery?.isFetching}
               rightSection={getDeferralMappingQuery?.isFetching && <Loader size={14} type='dots' />}
               onChange={(e) => {
                 handleDeferralMapping(value, e)
@@ -84,6 +87,11 @@ const DDMSTable = ({
           )
           : <center>-</center>
         }
+      </Table.Td>
+      <Table.Td>
+        <Tooltip label={'Click to delete'} withArrow color='gray'>
+          <IconTrash size={16} color='red' className={classes?.trash} onClick={() => handleDelete(innerIndex)} />
+        </Tooltip>
       </Table.Td>
     </>
   )

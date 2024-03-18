@@ -48,7 +48,7 @@ const ReactTable = ({
   const [data, setData] = useState([]);
   const [columnFilter, setColumnFilter] = useState([]);
   const [debounce] = useDebouncedValue(search, 400);
-  console.log();
+
   const fuzzyFilter = (row, columnId, value, addMeta) => {
     const itemRank = rankItem(row.getValue(columnId), value);
     console.log(itemRank);
@@ -187,7 +187,7 @@ const ReactTable = ({
                 <Table.Tr
                   style={{
                     cursor:
-                                            typeof onRowClick === 'function' ? 'pointer' : 'default',
+                      typeof onRowClick === 'function' ? 'pointer' : 'default',
                   }}
                   key={row.id}
                 >
@@ -196,8 +196,8 @@ const ReactTable = ({
                       key={cell.id}
                       onClick={event => {
                         typeof onRowClick === 'function' &&
-                                                    cell?.column?.id != 'action' &&
-                                                    (onRowClick(row?.original), event.stopPropagation());
+                          cell?.column?.id != 'action' &&
+                          (onRowClick(row?.original), event.stopPropagation());
                       }}
                     >
                       {flexRender(
@@ -352,22 +352,22 @@ const ReactTable = ({
                 </ActionIcon>
               )}
               {table.getPageCount() != 0 &&
-                                table.getPageCount() !=
-                                table.getState().pagination.pageIndex + 1 && (
-                                  <ActionIcon
+                table.getPageCount() !=
+                table.getState().pagination.pageIndex + 1 && (
+                  <ActionIcon
                   variant='light'
                   color='blue.1'
                   onClick={() => table.nextPage()}
                 >
                   <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                                      {table.getState().pagination.pageIndex + 2}
-                                    </Text>
+                      {table.getState().pagination.pageIndex + 2}
+                    </Text>
                 </ActionIcon>
               )}
               {table.getPageCount() != 0 &&
-                                table.getPageCount() !=
-                                table.getState().pagination.pageIndex + 1 && (
-                                  <ActionIcon
+                table.getPageCount() !=
+                table.getState().pagination.pageIndex + 1 && (
+                  <ActionIcon
                   variant='light'
                   color='blue.1'
                   onClick={() => table.setPageIndex(table.getPageCount() - 1)}

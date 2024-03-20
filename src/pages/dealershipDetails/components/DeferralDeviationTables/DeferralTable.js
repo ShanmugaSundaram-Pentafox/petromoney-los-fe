@@ -119,7 +119,6 @@ const DeferralTable = ({ id, dealershipName }) => {
       <DataTableViewer
         column={column}
         rowData={deferralData}
-        // styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
         title={'Deferral'}
         styles={null}
         showAction={<Button

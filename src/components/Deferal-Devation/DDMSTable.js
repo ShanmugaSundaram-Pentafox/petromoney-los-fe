@@ -1,9 +1,11 @@
-import { Box, Group, Loader, MultiSelect, Select, Table, Tooltip } from '@mantine/core';
-import React from 'react'
+import { Box, Button, Group, Loader, Modal, MultiSelect, Select, Table, Tooltip } from '@mantine/core';
+import React, { useState } from 'react'
 import { useQuery } from 'react-query';
 import { getDeferralMappingById } from '../../services/ddms.service';
 import classes from './DDMS.module.css'
-import { IconTrash } from '@tabler/icons-react';
+import { IconInfoCircle, IconTrash } from '@tabler/icons-react';
+import RichTextEditorBox from '../RichTexEditor/RichTextEditorBox';
+import { displayNotification } from '../CommonComponents/Notification/displayNotification';
 
 const DDMSTable = ({
   deferral,
@@ -18,6 +20,7 @@ const DDMSTable = ({
   handleDataChange,
 }) => {
 
+  const [modalObj, setModalObj] = useState({ modal: false })
   const getDeferralMappingQuery = useQuery({
     queryKey: ['deferral-mapping', index, innerIndex, deferralStatus],
     queryFn: () => getDeferralMappingById({ dealershipId, id: headerValue?.category_id }),
@@ -31,6 +34,14 @@ const DDMSTable = ({
     }
   })
 
+  const handleDataChangeModal = (val) => {
+    if (val === 'rejected') {
+      setModalObj({ modal: true, value, title: 'Rejected Remarks', data: val, })
+      return;
+    }
+    handleDataChange(value, val)
+  }
+  // console.log(deferral);
   return (
     <>
       <Table.Td>
@@ -39,25 +50,33 @@ const DDMSTable = ({
         </Group>
       </Table.Td>
       <Table.Td>
-        <Box style={{ width: 200 }}>
-          <Select
-            data={[
-              { label: 'Approved', value: 'approved' },
-              { label: 'Rejected', value: 'rejected' },
-              { label: 'Deferral/Deviation', value: 'deferral/deviation' },
-              { label: 'Not Required', value: 'not-required' },
-            ]}
-            defaultValue={'rejected'}
-            size='xs'
-            styles={{
-              dropdown: {
-                boxShadow: 'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px'
-              }
-            }}
-            value={deferral?.status}
-            onChange={(e) => handleDataChange(value, e)}
-          />
-        </Box>
+        <Group gap={4} style={{ flexWrap: 'nowrap' }}>
+          <Box style={{ width: 200 }}>
+            <Select
+              data={[
+                { label: 'Approved', value: 'approved' },
+                { label: 'Rejected', value: 'rejected' },
+                { label: 'Deferral/Deviation', value: 'deferral/deviation' },
+                { label: 'Not Required', value: 'not-required' },
+              ]}
+              defaultValue={'not-required'}
+              allowDeselect={false}
+              size='xs'
+              styles={{
+                dropdown: {
+                  boxShadow: 'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px'
+                }
+              }}
+              value={deferral?.status}
+              onChange={(e) => handleDataChangeModal(e)}
+            />
+          </Box>
+          {deferral?.remarks ? (
+            <Tooltip label={'test'} withArrow color='gray'>
+              <IconInfoCircle color='#ccc' size={16} />
+            </Tooltip>
+          ) : null}
+        </Group>
       </Table.Td>
       <Table.Td style={{ width: 250 }}>
         {deferralStatus === 'deferral/deviation'
@@ -93,6 +112,28 @@ const DDMSTable = ({
           <IconTrash size={16} color='red' className={classes?.trash} onClick={() => handleDelete(innerIndex)} />
         </Tooltip>
       </Table.Td>
+      <Modal
+        opened={Boolean(modalObj?.modal)}
+        onClose={() => setModalObj({})}
+        size={'lg'}
+        title={modalObj?.title}
+      >
+        <RichTextEditorBox onChange={(e) => setModalObj(old => ({ ...old, remarks: e }))} />
+        <Group mt={'md'} justify='flex-end'>
+          <Button size='xs' variant='outline' onClick={() => setModalObj({})}>Cancel</Button>
+          <Button size='xs' color='green' onClick={() => {
+            if (modalObj?.remarks?.length) {
+              handleDataChange(value, modalObj?.data, '', modalObj?.remarks);
+              setModalObj({})
+              return;
+            }
+            displayNotification({
+              message: 'Please enter remarks',
+              variant: 'warning',
+            })
+          }}>Save</Button>
+        </Group>
+      </Modal>
     </>
   )
 }

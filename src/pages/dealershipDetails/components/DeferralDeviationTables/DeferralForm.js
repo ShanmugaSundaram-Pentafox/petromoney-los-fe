@@ -1,4 +1,4 @@
-import { Flex, Grid, Group, Select, Text } from '@mantine/core';
+import { ActionIcon, Grid, Group, Select, Text, Tooltip } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
@@ -8,10 +8,13 @@ import { addDeferralDeviation, getAllDeferralApplicantsByDealershipId, getDocume
 import moment from 'moment';
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
+import { IconUpload } from '@tabler/icons-react';
+import FileUpload from '../../../../components/FileUpload';
 
 
 const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
   const [loading, setLoading] = useState(false)
+  const [fileUploadObj, setFileUploadObj] = useState({});
 
   const { data: applicantsData } = useQuery(['dealership-applicants-list', dealershipId], () => getAllDeferralApplicantsByDealershipId(dealershipId), {
     initialData: [],
@@ -78,17 +81,22 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select searchable data={applicantsData} defaultValue={dealershipId?.toString()} size='xs' label={"Applicant"} value={values?.applicantData?.value || null} onChange={(_value, option) => setFieldValue("applicantData", option)} />
+          <Select searchable data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} size='xs' label={'Applicant'} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select searchable data={checklist} size='xs' label={"Document Type"} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue("checkListData", option)} />
+          <Select searchable data={checklist} size='xs' label={'Document Type'} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <DateInput value={values?.validDate} onChange={(e) => setFieldError("validDate", e)} minDate={new Date()} size='xs' label={'Dealership agreement valid till'} />
+          <DateInput value={values?.validDate} onChange={(e) => setFieldError('validDate', e)} minDate={new Date()} size='xs' label={'Dealership agreement valid till'} />
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, sm: 6 }} mt={20}>
+          <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true })}>
+            <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
+          </Tooltip>
         </Grid.Col>
         <Grid.Col span={12}>
           <label>Remarks</label>
-          <RichTextEditorBox onChange={(e) => { setFieldValue("remarks", e); errors?.remarks && setFieldError('remarks', null); }} />
+          <RichTextEditorBox onChange={(e) => { setFieldValue('remarks', e); errors?.remarks && setFieldError('remarks', null); }} />
           <Text size='xs' c={'red'}>{errors?.remarks}</Text>
         </Grid.Col>
       </Grid>
@@ -109,6 +117,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
           Add Deferral
         </Button>
       </Group>
+      <FileUpload open={Boolean(fileUploadObj?.modal)} onCloseUploader={() => setFileUploadObj({})} />
     </form>
   )
 }

@@ -1,4 +1,4 @@
-import { Flex, Grid, Group, Select, Text } from '@mantine/core';
+import { ActionIcon, Grid, Group, Select, Text, Tooltip } from '@mantine/core';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { Button } from '../../../../components/Mantine/Button/Button';
@@ -6,9 +6,12 @@ import { useQuery } from 'react-query';
 import { addDeferralDeviation, getAllDeferralApplicantsByDealershipId, getDocumentChecklistMaster } from '../../../../services/deferralDeviation.service';
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
+import FileUpload from '../../../../components/FileUpload';
+import { IconUpload } from '@tabler/icons-react';
 
 const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
   const [loading, setLoading] = useState(false);
+  const [fileUploadObj, setFileUploadObj] = useState({});
   const [error, setError] = useState();
 
   const { data: applicantsData, } = useQuery(['dealership-applicants-list', dealershipId], () => getAllDeferralApplicantsByDealershipId(dealershipId), {
@@ -74,14 +77,19 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
   return (
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
-        <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select size='xs' searchable label="Applicant" data={applicantsData} defaultSearchValue={dealershipId?.toString()} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue("applicantData", option)} />
+        <Grid.Col span={{ base: 12, sm: 5 }}>
+          <Select size='xs' searchable label="Applicant" data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select size='xs' searchable label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue("checkListData", option)} />
+          <Select size='xs' searchable label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue('checkListData', option)} />
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, sm: 1 }} mt={20}>
+          <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true })}>
+            <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
+          </Tooltip>
         </Grid.Col>
         <Grid.Col>
-          <RichTextEditorBox onChange={e => { setFieldValue("remarks", e); setError(); }} />
+          <RichTextEditorBox onChange={e => { setFieldValue('remarks', e); setError(); }} />
           {error ? <Text size='xs' c={'red'}>{error}</Text> : null}
         </Grid.Col>
       </Grid>
@@ -102,6 +110,7 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
           Add Deviation
         </Button>
       </Group>
+      <FileUpload open={Boolean(fileUploadObj?.modal)} onCloseUploader={() => setFileUploadObj({})} />
     </form>
   )
 }

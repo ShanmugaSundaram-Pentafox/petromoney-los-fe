@@ -143,6 +143,14 @@ const UnresolvedTable = ({ currentUser }) => {
         },
       },
       {
+        label: 'Withheld By',
+        name: 'with_held_by',
+        options: {
+          filter: false,
+          sort: false,
+        },
+      },
+      {
         label: 'Reason',
         name: 'comments',
         options: {

@@ -83,7 +83,7 @@ const DocList = ({ id, currentUser }) => {
   const [rowData, setRowData] = useState();
   const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
-  const { data: checkListData = [], isLoading: checklistLoading } = useQuery(
+  const { data: checkListData = {}, isLoading: checklistLoading } = useQuery(
     ['doc-checklist', id],
     () => getDealershipCheckList(id),
     {
@@ -110,7 +110,7 @@ const DocList = ({ id, currentUser }) => {
     const docID = rowData.doc_id;
     files.map(file => {
       const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
-      formData.append(rowData?.kyc_file_name ? rowData?.kyc_file_name : `file-${id}`, file);
+      formData.append(rowData?.kyc_file_name ? rowData?.kyc_file_name : 'file', file);
       formData.append('fileName', fileName);
       formData.append('id', rowData.doc_id);
     });

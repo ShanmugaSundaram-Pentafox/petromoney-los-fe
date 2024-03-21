@@ -51,8 +51,8 @@ const ResolvedTable = () => {
         },
       },
       {
-        label: 'Withheld By',
-        name: 'with_held_by',
+        label: 'Resolved By',
+        name: 'resolved_by',
         options: {
           filter: false,
           sort: false,

@@ -51,6 +51,14 @@ const ResolvedTable = () => {
         },
       },
       {
+        label: 'Resolved By',
+        name: 'resolved_by',
+        options: {
+          filter: false,
+          sort: false,
+        },
+      },
+      {
         label: 'Reason',
         name: 'comments',
         options: {

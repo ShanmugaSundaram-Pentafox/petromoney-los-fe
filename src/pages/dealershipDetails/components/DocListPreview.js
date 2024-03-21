@@ -97,7 +97,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
 
   const handleDocDelete = (fileId) => {
     setDeleteModal({ ...deleteModal, loading: true })
-    deleteDocsImage([fileId], dealershipId)
+    deleteDocsImage({ id: [fileId], doc_id: docId }, dealershipId)
       .then((res) => {
         queryClient.invalidateQueries(['doc-checklist', dealershipId])
         setDeleteModal({ ...deleteModal, open: false, loading: false })
@@ -166,15 +166,15 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
                 }
                 {
                   DocName &&
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
-                      <div className={classes.attachmentDelete} onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}><DeleteIcon width={16} /></div>
-                    </CheckAllowed>
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.delete}>
+                    <div className={classes.attachmentDelete} onClick={(e) => { e.stopPropagation(); setDeleteModal({ open: true, fileId: fileId }) }}><DeleteIcon width={16} /></div>
+                  </CheckAllowed>
                 }
                 {
                   DocName &&
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
-                      <div className={classes.attachmentEdit} onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}><EditIcon fontSize='small' style={{ color: 'white' }} /></div>
-                    </CheckAllowed>
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.edit}>
+                    <div className={classes.attachmentEdit} onClick={(e) => { e.stopPropagation(); setEditModal({ open: true, fileId: fileId, fileUrl: url, fileName: file_name }) }}><EditIcon fontSize='small' style={{ color: 'white' }} /></div>
+                  </CheckAllowed>
                 }
               </div>
               <h5 style={{ width: 100, whiteSpace: 'nowrap', textOverflow: 'ellipsis', marginTop: 2, overflow: 'hidden', marginLeft: 15 }}>{file_name}</h5>
@@ -261,11 +261,11 @@ const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editab
         }
         {
           upload &&
-            <div className={classes.titleBtns}>
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.upload}>
-                <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
-              </CheckAllowed>
-            </div>
+          <div className={classes.titleBtns}>
+            <CheckAllowed currentUser={currentUser} resource={resources_id?.docChecklist} action={action_id?.docChecklist?.upload}>
+              <Button size='small' style={{ marginLeft: 15 }} variant='outlined' onClick={upload} color='primary' startIcon={<AddIcon style={{ fontSize: 'small' }} />}>Upload</Button>
+            </CheckAllowed>
+          </div>
         }
       </div>
       <div

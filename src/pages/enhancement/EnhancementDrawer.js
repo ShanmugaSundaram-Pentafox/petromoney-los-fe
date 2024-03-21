@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
+import { Divider, Collapse } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
 import Alert from '@material-ui/lab/Alert';
@@ -6,7 +6,6 @@ import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { getDealershipById } from '../../services/dealerships.service';
 import { updateEnhancementLoanStatus } from '../../services/enhancement.service';
 import { getLoanById } from '../../services/loans.service';
@@ -15,7 +14,8 @@ import DealershipInfo from '../dealershipDetails/components/DealershipInfo';
 import DealersList from '../dealershipDetails/components/DealersList';
 import WorkingSheetDrawer from '../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import RenewalDrawerFooter from '../renewal/renewalDrawer/RenewalDrawerFooter';
-import { Button } from '@mantine/core';
+import { Box, Button, Group, Modal, Paper, Text } from '@mantine/core';
+import RichTextEditorBox from '../../components/RichTexEditor/RichTextEditorBox';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
   if (isReject) {
@@ -225,25 +225,27 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
           <RenewalDrawerFooter filterType={'enhancement'} selectedLoanData={selectedLoanData} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
-      <Dialog
-        open={reviewModal}
+      <Modal
+        opened={reviewModal}
         onClose={closeReviewModal}
+        title={getMessage(status, isReject, isPushback)}
+        zIndex={9999}
+        size={'lg'}
       >
-        <DialogTitle>{getMessage(status, isReject, isPushback)}</DialogTitle>
-        <DialogContent>
+        <Box>
           <div className={classes.dialog}>
-            <DialogContentText id="approval-remarks-desc">
+            <Text id="approval-remarks-desc">
               Please enter your remarks.
-            </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true} remarkData={remarks} />
+            </Text>
+            <RichTextEditorBox onChange={setRemarks} />
             {
               errorStatus ?
                 <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert> : null
             }
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button size='xs' variant='outline' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
-            <Button size='xs' loading={loading} onClick={() => updateLoanStatus()} color='green'>Cancel</Button>
+          <Group justify='flex-end' mt={15}>
+            <Button size='xs' variant='outline' onClick={closeReviewModal}>Cancel</Button>
+            <Button size='xs' loading={loading} onClick={() => updateLoanStatus()} color='green'>Confirm</Button>
             {/* <LoaderButton
               variant='contained'
               color='primary'
@@ -253,9 +255,9 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
               loadingText="Submitting..."
               onClick={() => updateLoanStatus()}
             >Confirm</LoaderButton> */}
-          </div>
-        </DialogContent>
-      </Dialog>
+          </Group>
+        </Box>
+      </Modal>
     </>
   );
 }

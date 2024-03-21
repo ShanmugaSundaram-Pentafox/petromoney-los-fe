@@ -20,7 +20,7 @@ const PDCReport = ({ currentUser }) => {
           />
         </Grid.Col>
       </Grid>
-      <PDCReportTable filterQry={filterQry} currentUser={currentUser} />
+      <PDCReportTable filterQry={filterQry} currentUser={currentUser} tit />
     </div>
   )
 }

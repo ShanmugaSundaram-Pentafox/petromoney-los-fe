@@ -36,6 +36,9 @@ export const Link = ({
       defaultOpened={defaultOpened}
       visibleFrom={visibleFrom}
       styles={{
+        root: {
+          borderRadius: 4,
+        },
         children: {
           display: 'flex',
           flexDirection: 'column',
@@ -43,13 +46,18 @@ export const Link = ({
         },
         label: {
           fontSize: '13px',
-          fontWeight: 550,
-          color: !active && 'rgb(50,50,50)'
+          fontFamily: '"Poppins", sans-serif',
+          fontWeight: 500,
+          color: 'rgb(50,50,50)'
         },
         section: {
-          color: !active && 'rgba(0,0,0,30%)'
+          color: '#adaeaf'
+        },
+        chevron: {
+          color: 'rgb(50, 50, 50)'
         }
       }}
+      py={7}
     >
       {children}
     </NavLink>

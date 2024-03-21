@@ -162,6 +162,7 @@ const PDCReportTable = ({ filterQry }) => {
         useAPIPagination
         page={page}
         setPage={setPage}
+        title={'PDC Report'}
         columnsFilter={false}
         filter={false}
         totalNoOfPages={pdcReportQuery?.data?.no_of_pages}

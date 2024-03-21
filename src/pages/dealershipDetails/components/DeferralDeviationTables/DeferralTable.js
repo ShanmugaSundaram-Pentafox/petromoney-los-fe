@@ -42,6 +42,10 @@ const DeferralTable = ({ id, dealershipName }) => {
       header: 'Customer ID',
       enableColumnFilter: false,
     }, {
+      key: 'code',
+      header: 'Code',
+      enableColumnFilter: false,
+    }, {
       key: 'party_name',
       header: 'Customer Name',
       enableColumnFilter: false,

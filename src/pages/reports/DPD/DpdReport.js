@@ -22,7 +22,7 @@ const DPDReport = ({ currentUser }) => {
           />
         </Grid>
       </Grid>
-      <DpdReportTable currentUser={currentUser} filterQry={filterQry} />
+      <DpdReportTable currentUser={currentUser} filterQry={filterQry} title={'DPD Report'} />
     </div>
 
   )

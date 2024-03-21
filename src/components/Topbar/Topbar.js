@@ -1,14 +1,12 @@
 import { ActionIcon, Box, Burger, Flex, Title, Tooltip } from '@mantine/core';
 // import { makeStyles } from '@material-ui/styles';
 // import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 // import styled from 'styled-components';
 import { rulesList } from '../../config/userRules';
-import { getPassbookDetails } from '../../services/common.service';
 import { resetCurrentUser } from '../../store/user/user.actions';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';

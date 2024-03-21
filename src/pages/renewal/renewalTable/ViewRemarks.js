@@ -1,5 +1,4 @@
 import { Box, Divider, Typography, makeStyles } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import Timeline from '@material-ui/lab/Timeline';
 import TimelineConnector from '@material-ui/lab/TimelineConnector';
 import TimelineContent from '@material-ui/lab/TimelineContent';
@@ -15,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
-    width: '40vw',
   },
   sidePanelTitle: {
     padding: '24px 16px',
@@ -47,10 +45,6 @@ const ViewRemarks = ({ filterType, loanId, handleClose }) => {
   }, [loanId])
   return (
     <div className={classes.sidePanelWrapper}>
-      <Typography className={classes.sidePanelTitle} variant='h4'>
-        <div>{'Remark'}</div>
-        <CloseIcon onClick={handleClose} />
-      </Typography>
       <Divider />
       <Timeline align="left">
         {

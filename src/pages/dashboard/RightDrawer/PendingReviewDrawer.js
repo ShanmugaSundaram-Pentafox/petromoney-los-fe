@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import Select from 'react-select';
 import { useMount } from 'react-use';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
 import LoanInfo from './LoanInfo';
-import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
@@ -14,8 +12,9 @@ import { isAllowed } from '../../../utils/cerbos';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 import classes from './SideDrawer.module.css';
-import { Alert, Box, Button, Modal, Text } from '@mantine/core';
+import { Alert, Box, Button, Group, Modal, Select, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
+import RichTextEditorBox from '../../../components/RichTexEditor/RichTextEditorBox';
 
 const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editable, data, onClose, readOnly }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
@@ -36,7 +35,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
           res.forEach((item) => {
             d.push({
               label: `${item.first_name} ${item.last_name}`,
-              value: item.id
+              value: item.id?.toString()
             })
           })
           setUserRole(d);
@@ -63,7 +62,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
       setLoading(true)
       let reqBody = {
         user_id: currentUser.id,
-        approver_id: user.value,
+        approver_id: parseInt(user.value),
         product_id: info?.product_id,
         approval_remarks: remarks,
         amount_requested: info?.amount_requested
@@ -126,6 +125,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
         onClose={handleApprovalModal}
         zIndex={9999}
         size={'lg'}
+        withCloseButton={false}
       >
         <Box className={classes.dialog}>
           <Box style={{ marginBottom: 20 }}>
@@ -135,8 +135,9 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             <Select
               clearable
               name='user_approve'
-              onChange={(data) => { setUser(data); setErrorStatus(); }}
-              options={userRole}
+              onChange={(_value, option) => { setUser(option); setErrorStatus(); }}
+              data={userRole}
+              styles={{ dropdown: { boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', zIndex: 9999 } }}
               menuPlacement='bottom'
               menuPosition='fixed'
               maxMenuHeight='200px'
@@ -145,7 +146,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
           <Text>
             Please enter your remarks for sending this for approval.
           </Text>
-          <TextEditor setJSON={setRemarks} toolBar={true} />
+          <RichTextEditorBox onChange={setRemarks} />
           {
             errorStatus
               ? <Alert variant='light' color='orange' title='Error!' icon={<IconInfoCircle />}>
@@ -154,7 +155,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
               : null
           }
         </Box>
-        <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 8, marginBottom: 5 }}>
+        <Group justify='center' mt={10} gap={4}>
           <Button variant='outline' size='xs' style={{ marginRight: 8 }} onClick={handleApprovalModal}>Cancel</Button>
           <Button
             color='green'
@@ -162,7 +163,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             loading={loading}
             onClick={updateLoanStatus}
           >Confirm</Button>
-        </Box>
+        </Group>
       </Modal>
     </>
   );

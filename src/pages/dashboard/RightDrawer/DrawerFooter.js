@@ -363,6 +363,7 @@ const DrawerFooter = ({
         onClose={() => setRejectModal(false)}
         title={'Reject Remarks'}
         styles={{ root: { zIndex: 99999, position: 'absolute' } }}
+        size={'lg'}
       >
         <>
           <Box>
@@ -443,9 +444,9 @@ const DrawerFooter = ({
             )
           }
         </>
-        <Group>
-          <Button size='xs' onClick={() => setRejectModal(false)}>Cancel</Button>
-          <Button variant='outline' size='xs' onClick={updateLoanStatus} loading={loading}>Confirm</Button>
+        <Group justify='center'>
+          <Button variant='outline' size='xs' onClick={() => setRejectModal(false)}>Cancel</Button>
+          <Button size='xs' color='red' onClick={updateLoanStatus} loading={loading}>Confirm</Button>
         </Group>
       </Modal>
 

@@ -16,7 +16,8 @@ import DealershipInfo from '../dealershipDetails/components/DealershipInfo';
 import DealersList from '../dealershipDetails/components/DealersList';
 import WorkingSheetDrawer from '../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import RenewalDrawerFooter from '../renewal/renewalDrawer/RenewalDrawerFooter';
-import { Button } from '@mantine/core';
+import { Box, Button, Group, Modal, Text } from '@mantine/core';
+import RichTextEditorBox from '../../components/RichTexEditor/RichTextEditorBox';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
   if (isReject) {
@@ -52,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
+    height: '90vh',
   },
   dialog: {
     minWidth: '30vw'
@@ -200,10 +201,6 @@ const ReOnboardingDrawer = ({ id, selectedLoanData, status, currentUser, data, o
   return (
     <>
       <div className={classes.wrapper}>
-        <div className={classes.wrapperTitle}>
-          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-          <CloseIcon className={classes.closeIcon} onClick={onClose} />
-        </div>
         <div className={classes.contentWrapper}>
           <DealershipInfo viewOnly={true} data={dealershipData?.data} currentUser={currentUser} />
           <Divider />
@@ -229,28 +226,30 @@ const ReOnboardingDrawer = ({ id, selectedLoanData, status, currentUser, data, o
           <RenewalDrawerFooter filterType={'enhancement'} selectedLoanData={selectedLoanData} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
-      <Dialog
-        open={reviewModal}
+      <Modal
+        opened={reviewModal}
         onClose={closeReviewModal}
+        zIndex={9999}
+        size={'lg'}
+        title={getMessage(status, isReject, isPushback)}
       >
-        <DialogTitle>{getMessage(status, isReject, isPushback)}</DialogTitle>
-        <DialogContent>
+        <Box>
           <div className={classes.dialog}>
-            <DialogContentText id="approval-remarks-desc">
+            <Text id="approval-remarks-desc">
               Please enter your remarks.
-            </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true} remarkData={remarks} />
+            </Text>
+            <RichTextEditorBox onChange={setRemarks} />
             {
               errorStatus ?
                 <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert> : null
             }
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button size='xs' variant='outlined' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
+          <Group justify='flex-end' mt={15}>
+            <Button size='xs' variant='outline' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
             <Button size='xs' loading={loading} onClick={() => updateLoanStatus()} color='green'>Confirm</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </Group>
+        </Box>
+      </Modal>
     </>
   );
 }

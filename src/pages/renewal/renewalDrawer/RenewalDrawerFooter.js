@@ -9,6 +9,7 @@ import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
 import ViewRemarks from '../renewalTable/ViewRemarks';
 import { Button, Group } from '@mantine/core';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 const useStyles = makeStyles(theme => ({
   actionButtonsWrapper: {
@@ -177,14 +178,13 @@ const RenewalDrawerFooter = ({
           }
         </Group>
       </div>
-      <Drawer
-        anchor="right"
-        open={openDrawer}
+      <RightSideDrawer
+        opened={openDrawer}
         onClose={() => setOpenDrawer(false)}
-        variant="temporary"
+        title={'Remarks'}
       >
         <ViewRemarks filterType={filterType} handleClose={() => setOpenDrawer(false)} loanId={filterType == 'enhancement' ? selectedLoanData?.id : selectedLoanData?.loan_id} />
-      </Drawer>
+      </RightSideDrawer>
     </div >
   )
 }

@@ -20,7 +20,7 @@ const LoanStats = ({ selectedStatsCard, handleClick, chartData, totalLoans }) =>
                       key={item.name + i}
                       selected={item.name === selectedStatsCard}
                       text={item.name}
-                      value={item.count}
+                      value={item.count || 0}
                       amount={item.amount}
                       action={() => handleClick(item.name)}
                     />

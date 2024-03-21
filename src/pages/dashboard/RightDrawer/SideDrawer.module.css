@@ -28,5 +28,5 @@
   overflow-x: hidden;
 }
 dialog {
-  min-width: 30vw;
+  /* min-width: 30vw; */
 }

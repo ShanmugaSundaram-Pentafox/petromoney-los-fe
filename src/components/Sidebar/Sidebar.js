@@ -1,8 +1,5 @@
-import { ArrowPathIcon, ArrowPathRoundedSquareIcon, BookOpenIcon, ClipboardDocumentIcon, ClipboardDocumentListIcon, Cog8ToothIcon, CurrencyDollarIcon, DocumentIcon, DocumentTextIcon, FolderPlusIcon, FunnelIcon, PhoneIcon, Squares2X2Icon, TruckIcon, UserCircleIcon, UserGroupIcon } from '@heroicons/react/24/outline'
+import { IconAlignBoxBottomCenter, IconArrowAutofitRight, IconArrowCapsule, IconArrowIteration, IconArrowLoopRight, IconBooks, IconCertificateOff, IconChecklist, IconClipboardText, IconCoins, IconDashboard, IconFileAnalytics, IconFileDescription, IconFileLambda, IconFileStack, IconGasStation, IconLayersSubtract, IconList, IconPhone, IconReorder, IconRepeat, IconReport, IconScooterElectric, IconSettings, IconTir, IconTractor, IconTruck, IconUserCircle, IconUsers } from '@tabler/icons-react';
 import { Image, ScrollArea, Text } from '@mantine/core';
-import ListIcon from '@material-ui/icons/List';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -76,34 +73,34 @@ const Sidebar = props => {
       id: action_id?.navigation.dashboard,
       name: 'Dashboard',
       href: '/',
-      icon: <Squares2X2Icon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconDashboard className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.dashboardDealer,
       name: 'Dashboard',
       href: '/reports',
-      icon: <Squares2X2Icon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconDashboard className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.pre_submit,
       name: 'Pre Submit',
       href: '/pre-submit',
-      icon: <ClipboardDocumentListIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconLayersSubtract className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.loans,
       name: 'Loans',
-      icon: <CurrencyDollarIcon className="w-4 h-4" strokeWidth="2px" />,
+      icon: <IconCoins className="w-4 h-4" strokeWidth="2px" />,
       links: [
         {
           name: 'Fuel Loans',
           href: '/loans',
-          icon: <FunnelIcon className="w-4 h-4" strokeWidth="2px" />,
+          icon: <IconGasStation className="w-4 h-4" strokeWidth="2px" />,
         },
         {
           name: 'Vehicle Loans',
           href: '/vehicle-loan',
-          icon: <TruckIcon className="w-4 h-4" strokeWidth="2px" />,
+          icon: <IconScooterElectric className="w-4 h-4" strokeWidth="2px" />,
         }
       ]
     },
@@ -111,35 +108,35 @@ const Sidebar = props => {
       id: action_id?.navigation.enhancement,
       name: 'Enhancement',
       href: '/enhancement',
-      icon: <DocumentTextIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconClipboardText className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.renewal,
       name: 'Renewal',
       href: '/renewal',
-      icon: <ArrowPathRoundedSquareIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconArrowAutofitRight className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.renewal,
       name: 'Re-onboarding',
       href: '/re-onboarding',
-      icon: <ArrowPathRoundedSquareIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconArrowLoopRight className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.credit_reload,
       name: 'Credit Reload',
       // href: '/reports/credit/reload',
-      icon: <ArrowPathIcon className="w-4 h-4" strokeWidth="2px" />,
+      icon: <IconRepeat className="w-4 h-4" strokeWidth="2px" />,
       links: [
         {
           name: 'New',
           href: '/credit/reload/new/reports',
-          icon: <FolderPlusIcon className="w-4 h-4" strokeWidth="2px" />,
+          icon: <IconArrowIteration className="w-4 h-4" strokeWidth="2px" />,
         },
         {
           name: 'Processed',
           href: '/credit/reload/processed/reports',
-          icon: <ArrowPathIcon className="w-4 h-4" strokeWidth="2px" />,
+          icon: <IconArrowCapsule className="w-4 h-4" strokeWidth="2px" />,
         }
       ]
     },
@@ -147,52 +144,52 @@ const Sidebar = props => {
       id: action_id?.navigation.withheld,
       name: 'Withheld',
       href: '/withheld',
-      icon: <ClipboardDocumentIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconAlignBoxBottomCenter className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.dealerships,
       name: 'Dealerships',
       href: '/dealership',
-      icon: <UserGroupIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconUsers className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.profileDealer,
       name: 'Profile',
       href: `/dealership/${currentUser.dealership_id}`,
-      icon: <PersonOutlineIcon strokeWidth="2px" />
+      icon: <IconUserCircle strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.profileTransports,
       name: 'Profile',
       href: '/transports-field',
-      icon: <PersonOutlineIcon strokeWidth="2px" />
+      icon: <IconUserCircle strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.collection_remarks,
       name: 'Collection Remarks',
       href: '/reports/remarks',
-      icon: <ClipboardDocumentListIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconFileStack className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.report,
       name: 'Report',
       // href: '/reports',
-      icon: <DocumentTextIcon className="w-4 h-4" strokeWidth="2px" />,
+      icon: <IconReport className="w-4 h-4" strokeWidth="2px" />,
       links: [
         {
           name: 'Opportunity Report',
           href: '/reports/opportunities',
-          icon: <DocumentIcon className="w-4 h-4" strokeWidth="2px" />
+          icon: <IconFileAnalytics className="w-4 h-4" strokeWidth="2px" />
         },
         {
           name: 'DPD Report',
           href: '/report/dpd',
-          icon: <DocumentIcon className="w-4 h-4" strokeWidth="2px" />
+          icon: <IconFileDescription className="w-4 h-4" strokeWidth="2px" />
         },
         {
           name: 'PDC Report',
           href: '/report/pdc',
-          icon: <DocumentIcon className="w-4 h-4" strokeWidth="2px" />
+          icon: <IconFileLambda className="w-4 h-4" strokeWidth="2px" />
         },
       ]
     },
@@ -200,23 +197,23 @@ const Sidebar = props => {
       id: action_id?.navigation.dealer_referral,
       name: 'Dealer Referral',
       href: '/referral',
-      icon: <ArrowPathRoundedSquareIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconReorder className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id.navigation.profileDealer,
       name: 'Passbook',
       href: '/passbook',
-      icon: <ListIcon strokeWidth="2px" />,
+      icon: <IconBooks strokeWidth="2px" />,
       links: [
         {
           name: 'Dealer Passbook',
           href: '/passbook',
-          icon: <></>
+          icon: <IconList className="w-4 h-4" strokeWidth="2px" />
         },
         {
           name: 'Transport Passbook',
           href: '/transport/fastag/details',
-          icon: <></>
+          icon: <IconTir className="w-4 h-4" strokeWidth="2px" />
         }
       ]
     },
@@ -224,40 +221,40 @@ const Sidebar = props => {
       id: action_id?.navigation.account_statement,
       name: 'Account Statement',
       href: '/statements',
-      icon: <ListAltIcon strokeWidth="2px" />
+      icon: <IconChecklist strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.profileTransports,
       name: 'FASTag Passbook',
       href: '/transport/fastag/details',
-      icon: <ListIcon strokeWidth="2px" />
+      icon: <IconList strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.noc,
       name: 'NOC Letter',
       href: '/noc',
-      icon: <DocumentIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconCertificateOff className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.call_request,
       name: 'Call Request',
       href: '/customer/callback',
-      icon: <PhoneIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconPhone className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.transports,
       name: 'Transports',
-      icon: <TruckIcon className="w-4 h-4" strokeWidth="2px" />,
+      icon: <IconTruck className="w-4 h-4" strokeWidth="2px" />,
       links: [
         {
           name: 'Transports List',
           href: '/transports',
-          icon: <ClipboardDocumentListIcon className="w-4 h-4" strokeWidth="2px" />
+          icon: <IconTractor className="w-4 h-4" strokeWidth="2px" />
         },
         {
           name: 'Passbook',
           href: '/transport/fastag/details',
-          icon: <BookOpenIcon className="w-4 h-4" strokeWidth="2px" />
+          icon: <IconBooks className="w-4 h-4" strokeWidth="2px" />
         }
       ]
     },
@@ -265,13 +262,13 @@ const Sidebar = props => {
       id: action_id?.navigation.users,
       name: 'Users',
       href: '/users',
-      icon: <UserCircleIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconUserCircle className="w-4 h-4" strokeWidth="2px" />
     },
     {
       id: action_id?.navigation.settings,
       name: 'Settings',
       href: '/settings',
-      icon: <Cog8ToothIcon className="w-4 h-4" strokeWidth="2px" />
+      icon: <IconSettings className="w-4 h-4" strokeWidth="2px" />
     },
   ]
 

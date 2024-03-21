@@ -169,7 +169,7 @@ const SidebarNav = props => {
               p={0}
               onClick={() => history.push(link.href)}
               active={location.pathname === link.href}
-              childrenOffset={28}
+              childrenOffset={22}
             >
               {link.links?.map((subLinks, index) => {
                 return (

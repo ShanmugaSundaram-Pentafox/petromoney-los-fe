@@ -121,15 +121,18 @@ const DocList = ({ id, currentUser }) => {
       headers: {
         Authorization: `Bearer ${currentUser.token}`,
       },
-    })
+    }).then(res => res?.json())
       .then(data => {
-        enqueueSnackbar('File Upload Success', { variant: 'success' });
+        if (data?.status?.toLowerCase() === 'error') {
+          enqueueSnackbar(data?.message, { variant: 'error' });
+        } else {
+          enqueueSnackbar('File Upload Success', { variant: 'success' });
+        }
         onCloseUploader();
         queryClient.invalidateQueries(['doc-checklist', id])
       })
       .catch(error => {
         enqueueSnackbar('File Upload Failed', { variant: 'error' });
-
       })
   };
 

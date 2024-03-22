@@ -1,13 +1,12 @@
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { makeStyles, useTheme } from '@material-ui/styles';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import Sidebar from '../components/Sidebar/Sidebar';
 import Topbar from '../components/Topbar/Topbar';
 import { resetCurrentUser } from '../store/user/user.actions';
-import { AppShell, Box, Drawer } from '@mantine/core';
+import { AppShell, Box } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 // import EnquiryPage from '../pages/enquiryPage/EnquiryPage';
 // import AddDealerForm from '../pages/hpcl/AddDealerForm';
@@ -85,13 +84,14 @@ const MainLayout = props => {
       </div> */}
 
       <AppShell
+        header={{ height: 55 }}
         navbar={{
           width: 240,
           breakpoint: 'md',
           collapsed: { mobile: !opened },
         }}
       >
-        <AppShell.Navbar>
+        <AppShell.Navbar style={{ zIndex: 98 }}>
           <Sidebar
             user={currentUser}
             currentUser={currentUser}
@@ -102,16 +102,15 @@ const MainLayout = props => {
           />
         </AppShell.Navbar>
 
-        <AppShell.Main className="overflow-hidden">
-          <Topbar 
-            user={currentUser} 
-            logout={logout} 
-            appBarProps={{
-              position: 'sticky',
-            }}  
+        <AppShell.Header>
+          <Topbar
+            user={currentUser}
+            logout={logout}
             onSidebarOpen={toggle}
           />
+        </AppShell.Header>
 
+        <AppShell.Main>
           <Box p="md">
             {children}
           </Box>

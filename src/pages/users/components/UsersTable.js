@@ -5,6 +5,7 @@ import { isAllowed } from '../../../utils/cerbos';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 import { Paper, Tooltip } from '@mantine/core';
 import { IconCheck, IconEdit, IconX } from '@tabler/icons-react';
+import AddNewUserAction from '../../../components/AddNewUser/AddNewUserAction';
 
 const UsersTable = ({ title, data, withRole, currentUser, loading }) => {
 
@@ -86,6 +87,9 @@ const UsersTable = ({ title, data, withRole, currentUser, loading }) => {
                 ...actionColumn
               ] :
               column
+        }
+        action={
+          <AddNewUserAction currentUser={currentUser} />
         }
         title={title}
       />

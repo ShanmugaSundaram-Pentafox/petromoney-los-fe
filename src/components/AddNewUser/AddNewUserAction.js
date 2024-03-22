@@ -34,11 +34,9 @@ const AddNewUserAction = ({ currentUser }) => {
     <div>
       <CheckAllowed currentUser={currentUser} resource={resources_id?.users} action={action_id?.users.userCreate}>
         <Button
-          variant={'light'}
-          color={'teal.4'}
+          color={'blue'}
           onClick={() => setOpenModal(true)}
           size={'xs'}
-          ml={'md'}
         >
           Create New User
         </Button>

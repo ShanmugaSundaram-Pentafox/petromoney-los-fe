@@ -22,6 +22,7 @@ const AddIconButton = ({ onClickAddMenu }) => {
       width={180}
       position="bottom-end"
       withArrow
+      zIndex={99999}
       transitionProps={{ transition: 'rotate-left', duration: 150 }}
     >
       <Menu.Target>

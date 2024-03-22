@@ -1,7 +1,3 @@
-import Box from '@material-ui/core/Box';
-import Drawer from '@material-ui/core/Drawer';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import ApprovalTable from './ApprovalTable';
@@ -14,6 +10,8 @@ import { rulesList } from '../../../config/userRules';
 import { getDealershipById } from '../../../services/dealerships.service';
 import RenewalDrawer from '../renewalDrawer/RenewalDrawer';
 import DisbursementApprovalTable from './DisbursementApprovalTable';
+import { Box, Grid, Paper } from '@mantine/core';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 
 const useStyles = makeStyles(theme => ({
@@ -61,79 +59,77 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
         role={currentUser.role_name}
         perform={rulesList.dashboard}
         yes={() => (
-          <Grid container spacing={2}>
+          <Grid gutter={2} mt={15}>
             {
               value === 'draft' ? (
-                <Grid item md={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <DraftTable title={'Applications in draft'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
               ) : null
             }
             {
               value === 'review' ? (
-                <Grid item md={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <ReviewTable title={'Pending for Review'} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
               ) : null
             }
             {
               value === 'approval' ? (
-                <Grid item md={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <ApprovalTable title={'Pending for Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
               ) : null
             }
             {
               value === 'approved' ? (
-                <Grid item xs={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <ApprovedTable title={'Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
 
               ) : null
             }
             {
               value === 'rejected' ? (
-                <Grid item xs={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
               ) : null
             }
             {
               value === 'Disb. Approval' ? (
-                <Grid item xs={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <DisbursementApprovalTable title={'Disbursement Approval Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
               ) : null
             }
           </Grid>
         )}
       />
-      <Drawer
-        anchor="right"
-        ModalProps={{
-          onBackdropClick: () => { setShowPanel({ status: false }) }
-        }}
-        open={showPanel.status}
-        variant={'temporary'}
+      <RightSideDrawer
+        opened={showPanel.status}
+        onClose={() => setShowPanel({ status: false })}
+        size={'70%'}
+        title={showPanel?.id}
       >
         <div className={classes.sidePanelWrapper}>
           {
             showPanel.data && <RenewalDrawer {...compProps} />
           }
         </div>
-      </Drawer>
+      </RightSideDrawer>
     </Box>
   )
 }

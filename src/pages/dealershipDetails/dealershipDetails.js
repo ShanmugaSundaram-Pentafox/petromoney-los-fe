@@ -1,4 +1,4 @@
-import { Tabs, Badge, Text, Box } from '@mantine/core';
+import { Tabs, Badge, Text, Box, Card } from '@mantine/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -18,12 +18,9 @@ import ScoreCard from './components/ScoreCard';
 import SolarEnquiryForm from './components/SolarEnquiryForm';
 import LeegalityLayout from '../../components/Leegality/LeegalityLayout';
 import { action_id, resources_id } from '../../config/accessControl';
-import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
-import DeferralHome from './components/DeferralHome';
-import DeviationHome from './components/DeviationHome';
 import DeferralTable from './components/DeferralDeviationTables/DeferralTable';
 import DeviationTable from './components/DeferralDeviationTables/DeviationTable';
 
@@ -128,10 +125,39 @@ const DealershipDetails = ({ currentUser, match }) => {
     { label: 'Mobile', value: mainApplicant?.data?.mobile },
     { label: 'Email', value: mainApplicant?.data?.email }
   ]
-  usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
+  // usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
 
   return (
     <Box style={{ maxWidth: 1200 }}>
+      <Card radius={'md'} mb={'md'} p={0}>
+        {typeof cardData !== 'string' && (
+          <div className="hidden lg:block py-4">
+            <dl className="grid grid-flow-col auto-cols-max overflow-hidden divide-x divide-gray-200">
+              {Array.isArray(cardData) && cardData.map((item, i) => (
+                <div key={item.name + i} className="px-4">
+                  <dt className="text-xs font-normal text-gray-900">
+                    {item.label}
+                  </dt>
+
+                  {/* overflow: hidden;
+                  width: 200px;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  font-weight: bold;
+                  margin-top: 1px;
+                  color: blue; */}
+                  {/* <Tooltip label={item.value} withArrow position='bottom' color='gray' disabled={item?.value?.trim()?.length > 10}> */}
+                  <dd style={{ fontWeight: 'bold', minWidth: '150px', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'rgb(59, 130, 246)' }}>
+                    {item.value || '-'}
+                  </dd>
+                  {/* </Tooltip> */}
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
+      </Card>
+
       <Tabs
         color="blue.1"
         variant="pills"

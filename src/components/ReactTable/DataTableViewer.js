@@ -153,6 +153,7 @@ const DataTableViewer = ({
                     onChange={(e) => {
                       setSearch(e.target.value);
                       apiSearch && apiSearch(e.target.value)
+                      useAPIPagination && setPage(1)
                     }}
                     value={search}
                     mx={0}

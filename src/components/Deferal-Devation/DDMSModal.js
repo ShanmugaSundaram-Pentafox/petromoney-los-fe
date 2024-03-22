@@ -65,6 +65,7 @@ const DDMSModal = ({
             result.push({
               ...item,
               category: i?.category,
+              remarks: checklist?.remarks,
               status: checklist?.status || 'not-required',
               deferral_deviation_mapping: checklist?.deferral_deviation_mapping || [],
             });
@@ -110,6 +111,7 @@ const DDMSModal = ({
     const result = deferral?.map((i) => ({
       checklist_id: i?.id,
       category: i?.category,
+      checklist_name: i?.name,
       remarks: i?.remarks || null,
       deferral_deviation_mapping: i?.status === 'deferral/deviation' ? i?.deferral_deviation_mapping : [],
       status: i?.status,

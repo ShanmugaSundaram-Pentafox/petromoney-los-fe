@@ -125,7 +125,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
           <Select searchable data={checklist} size='xs' label={'Document Type'} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <DateInput value={values?.validDate} onChange={(e) => setFieldError('validDate', e)} minDate={new Date()} size='xs' label={'Dealership agreement valid till'} />
+          <DateInput value={values?.validDate} onChange={(e) => setFieldError('validDate', e)} minDate={new Date()} size='xs' label={'Submission date'} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }} mt={20}>
           <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true, files: [] })}>

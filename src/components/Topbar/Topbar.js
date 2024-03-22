@@ -1,19 +1,16 @@
-import { ActionIcon, Box, Burger, Flex, Title, Tooltip } from '@mantine/core';
+import { Box, Burger, Flex, Group, Image, Title } from '@mantine/core';
 // import { makeStyles } from '@material-ui/styles';
 // import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 // import styled from 'styled-components';
 import { rulesList } from '../../config/userRules';
-import { getPassbookDetails } from '../../services/common.service';
 import { resetCurrentUser } from '../../store/user/user.actions';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import { permissionCheck } from '../UserCan/UserCan';
-import AddNewUserAction from '../AddNewUser/AddNewUserAction';
 
 // const useStyles = makeStyles(theme => {
 //   return ({
@@ -86,10 +83,10 @@ const Topbar = (props) => {
     <>
       <Box
         component="header"
-        className="bg-white h-14 flex items-center px-4 border-b border-b-gray-200"
+        className="bg-white h-14 flex items-center px-4 border-b z-10 border-b-gray-200"
         {...appBarProps}
       >
-        {goBackIcon && editable && (
+        {/* {goBackIcon && editable && (
           <Tooltip fz="xs" px="8" py="2.5" offset={2} label="Go Back">
             <ActionIcon
               variant="subtle"
@@ -103,19 +100,20 @@ const Topbar = (props) => {
               </svg>
             </ActionIcon>
           </Tooltip>
-        )}
+        )} */}
 
-        <Title order={3}>
-          {typeof pageTitle === 'string' ? pageTitle : null}
-        </Title>
-
-        {match?.path?.toLowerCase() == '/users' && (
-          <span
-          // className={classes.actionsContainer}
-          >
-            <AddNewUserAction currentUser={user} />
-          </span>
-        )}
+        <Group gap={10} className='items-center' ml={4}>
+          <Image
+            w={40}
+            h={40}
+            src="/images/logo.png"
+            mx="auto"
+          />
+          <Title order={3} sx={{ marginLeft: 12 }}>
+            <span className='text-red-500'>Petro</span>
+            <span className='text-green-800'>money</span>
+          </Title>
+        </Group>
 
         {/* {match?.path?.toLowerCase() == '/passbook' && (
           <span>
@@ -149,26 +147,6 @@ const Topbar = (props) => {
             </Tooltip>
           </span>
         )} */}
-
-        {typeof pageTitle !== 'string' && (
-          <div className="hidden lg:block py-4">
-            <dl className="grid grid-flow-col auto-cols-max overflow-hidden divide-x divide-gray-200">
-              {Array.isArray(pageTitle) && pageTitle.map((item, i) => (
-                <div key={item.name + i} className="px-4">
-                  <dt className="text-xs font-normal text-gray-900">
-                    {item.label}
-                  </dt>
-
-                  {/* <Tooltip label={item.value} withArrow position='bottom' color='gray' disabled={item?.value?.trim()?.length > 10}> */}
-                  <dd className="mt-0.5 flex text-xs font-semibold text-blue-500 max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis">
-                    {item.value || '-'}
-                  </dd>
-                  {/* </Tooltip> */}
-                </div>
-              ))}
-            </dl>
-          </div>
-        )}
 
         <Flex gap='sm' align='center' ml='auto'>
           <LoginUserInfo user={user} logout={logout} />

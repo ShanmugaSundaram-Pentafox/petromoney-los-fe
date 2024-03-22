@@ -33,7 +33,7 @@ const defaultTheme = createTheme({
       styles: (theme) => ({
         label: {
           color: theme.colors.gray[7],
-          fontSize: 13,    
+          fontSize: 13,
           fontWeight: 600,
           marginBottom: 4
         },

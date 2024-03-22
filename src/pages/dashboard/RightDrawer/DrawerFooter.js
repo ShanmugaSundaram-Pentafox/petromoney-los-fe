@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useMount } from 'react-use';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { sendLoanForEnhancement } from '../../../services/enhancement.service';
 import { getLoanById, getLoanRejectReason, updateLoanApprovalStatusById, updateLoanStats, updateLoanStatusByLoanId } from '../../../services/loans.service';
@@ -363,12 +362,13 @@ const DrawerFooter = ({
         onClose={() => setRejectModal(false)}
         title={'Reject Remarks'}
         styles={{ root: { zIndex: 99999, position: 'absolute' } }}
+        size={'lg'}
       >
         <>
           <Box>
             {
               errorMsg &&
-              <Alert severity='error' style={{ marginBottom: 12 }}>{errorMsg}</Alert>
+                <Alert severity='error' style={{ marginBottom: 12 }}>{errorMsg}</Alert>
             }
             <Text mb={16} fz={'sm'}>Choose category and reasons for rejection.</Text>
             <Chip.Group
@@ -443,9 +443,9 @@ const DrawerFooter = ({
             )
           }
         </>
-        <Group>
-          <Button size='xs' onClick={() => setRejectModal(false)}>Cancel</Button>
-          <Button variant='outline' size='xs' onClick={updateLoanStatus} loading={loading}>Confirm</Button>
+        <Group justify='center'>
+          <Button variant='outline' size='xs' onClick={() => setRejectModal(false)}>Cancel</Button>
+          <Button size='xs' color='red' onClick={updateLoanStatus} loading={loading}>Confirm</Button>
         </Group>
       </Modal>
 

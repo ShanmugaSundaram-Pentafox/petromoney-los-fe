@@ -19,7 +19,7 @@ const SidebarNav = props => {
     <List
       {...rest}
       listStyleType="none"
-      className="flex flex-col gap-y-1"
+      className="flex flex-col"
     >
       {/* {navLinks.map((link) => {
         return (
@@ -166,9 +166,10 @@ const SidebarNav = props => {
             <Link
               label={link.name}
               leftSection={link.icon}
+              p={0}
               onClick={() => history.push(link.href)}
               active={location.pathname === link.href}
-              childrenOffset={28}
+              childrenOffset={22}
             >
               {link.links?.map((subLinks, index) => {
                 return (

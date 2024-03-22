@@ -21,6 +21,7 @@ const DDMSTable = ({
 }) => {
 
   const [modalObj, setModalObj] = useState({ modal: false })
+  const [remarksModal, setRemarksModal] = useState({})
   const getDeferralMappingQuery = useQuery({
     queryKey: ['deferral-mapping', index, innerIndex, deferralStatus],
     queryFn: () => getDeferralMappingById({ dealershipId, id: headerValue?.category_id }),
@@ -72,8 +73,8 @@ const DDMSTable = ({
             />
           </Box>
           {deferral?.remarks ? (
-            <Tooltip label={'test'} withArrow color='gray'>
-              <IconInfoCircle color='#ccc' size={16} />
+            <Tooltip label={'click to view remarks'} withArrow color='gray'>
+              <IconInfoCircle color='#ccc' size={16} onClick={() => setRemarksModal({ modal: true, remarks: deferral?.remarks })} />
             </Tooltip>
           ) : null}
         </Group>
@@ -133,6 +134,9 @@ const DDMSTable = ({
             })
           }}>Save</Button>
         </Group>
+      </Modal>
+      <Modal opened={remarksModal?.modal} onClose={() => setRemarksModal({})} title={'Remarks Modal'}>
+        <div dangerouslySetInnerHTML={{ __html: remarksModal?.remarks }} />
       </Modal>
     </>
   )

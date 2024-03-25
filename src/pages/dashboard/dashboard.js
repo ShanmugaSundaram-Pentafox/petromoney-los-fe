@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import DashboardFilter from './components/DashboardFilter';
 import LoansTable from './components/LoansTable';
-import LoanStats from './components/LoanStats';
 import Currency from '../../../src/components/Number/Currency';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { action_id, resources_id } from '../../config/accessControl';
@@ -134,16 +133,22 @@ const Dashboard = ({ currentUser }) => {
                 filters={['zone', 'region', 'product', 'period']}
               />
             </Grid.Col>
-            <Grid.Col mt={'xs'}>
+            {/* <Grid.Col mt={'xs'}>
               <LoanStats
                 selectedStatsCard={selectedStatsCard}
                 handleClick={handleClick}
                 chartData={chartData}
                 totalLoans={totalLoans}
               />
-            </Grid.Col>
+            </Grid.Col> */}
           </Grid>
-          <LoansTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} />
+          <LoansTable
+            currentUser={currentUser}
+            value={selectedStatsCard}
+            handleClick={handleClick}
+            chartData={chartData}
+            filterQry={filterQry}
+          />
         </>
       )}
     </div>

@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry, currentUser }) => {
+const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry, currentUser, chartData, handleChange }) => {
   const classes = useStyles();
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
@@ -116,7 +116,7 @@ const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry
       enableColumnFilter: false,
       cell: ({ row }) => (
         <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
-          <Tooltip label={"eSign Application"} withArrow>
+          <Tooltip label={'eSign Application'} withArrow>
             <ActionIcon size="xs" color="blue" variant="subtle" onClick={() => { setloanId(row?.original?.['id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
               <ESignIcon />
             </ActionIcon>
@@ -146,8 +146,9 @@ const SubmittedTable = ({ title, loans = [], setLoansData, onRowClick, filterQry
       <DataTableViewer
         column={column}
         rowData={loans}
-        title={title}
-        count={loans?.length}
+        title={'Dashboard'}
+        // count={loans?.length}
+        showStatusTab={chartData}
         excelDownload
         loading={loading}
         onRowClick={(i) => onRowClick(i?.dealership_id, i, 'submitted')}

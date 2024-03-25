@@ -1,0 +1,26 @@
+.tab {
+  &[data-active] {
+    font-weight: 600;
+    background-color: #f9f9f9;
+  }
+  &:not([aria-selected='true']) {
+    color: #9b9b9b;
+    &:after {
+      content: '';
+      display: block;
+      margin: auto;
+      height: 2px;
+      width: 0px;
+      background: transparent;
+      transition: width 0.5s ease, background-color 0.5s ease;
+      position: absolute;
+      top: 0px;
+      bottom: -41px;
+      border-radius: 5px;
+    }
+    &:hover:after {
+      width: 100%;
+      background: gray;
+    }
+  }
+}

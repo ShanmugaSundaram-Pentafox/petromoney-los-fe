@@ -83,7 +83,7 @@ const Topbar = (props) => {
     <>
       <Box
         component="header"
-        className="bg-white h-14 flex items-center px-4 border-b z-10 border-b-gray-200"
+        className="bg-white h-[60px] flex items-center px-4 border-b z-10 border-b-gray-200"
         {...appBarProps}
       >
         {/* {goBackIcon && editable && (

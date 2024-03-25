@@ -1,4 +1,4 @@
-import { Tabs, Badge, Text, Box, Card } from '@mantine/core';
+import { Tabs, Badge, Text, Box, Card, Title, Group } from '@mantine/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -129,28 +129,22 @@ const DealershipDetails = ({ currentUser, match }) => {
 
   return (
     <Box style={{ maxWidth: 1200 }}>
-      <Card radius={'md'} mb={'md'} p={0}>
+      <Group gap={6}>
+        <Title my={4} order={2}>{dealershipData?.data?.name}</Title>
+        <Text>({dealershipData?.data?.id})</Text>
+      </Group>
+      <Card radius={'md'} my={'md'} p={0}>
         {typeof cardData !== 'string' && (
-          <div className="hidden lg:block py-4">
+          <div className="hidden lg:block py-3">
             <dl className="grid grid-flow-col auto-cols-max overflow-hidden divide-x divide-gray-200">
               {Array.isArray(cardData) && cardData.map((item, i) => (
                 <div key={item.name + i} className="px-4">
-                  <dt className="text-xs font-normal text-gray-900">
+                  <dt className="text-xs font-normal text-gray-400 mb-[2px]">
                     {item.label}
                   </dt>
-
-                  {/* overflow: hidden;
-                  width: 200px;
-                  white-space: nowrap;
-                  text-overflow: ellipsis;
-                  font-weight: bold;
-                  margin-top: 1px;
-                  color: blue; */}
-                  {/* <Tooltip label={item.value} withArrow position='bottom' color='gray' disabled={item?.value?.trim()?.length > 10}> */}
-                  <dd style={{ fontWeight: 'bold', minWidth: '150px', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'rgb(59, 130, 246)' }}>
+                  <dd style={{ minWidth: '150px', fontSize: 14, maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'black' }}>
                     {item.value || '-'}
                   </dd>
-                  {/* </Tooltip> */}
                 </div>
               ))}
             </dl>

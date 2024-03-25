@@ -1,15 +1,11 @@
 
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
-import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { NavLink as RouterLink } from 'react-router-dom';
 // import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
 import { setLoansByStatus } from '../../store/loans/loans.actions';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
-import Currency from '../Number/Currency';
 import DataTableViewer from '../ReactTable/DataTableViewer';
 
 const useStyles = makeStyles(theme => ({
@@ -58,43 +54,6 @@ const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) =>
   }, [filterQry]);
 
   const column = [
-    {
-      key: 'dealership_id',
-      header: 'Dealership Id',
-      enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
-    }, {
-      key: 'name',
-      header: 'Name',
-      enableColumnFilter: false,
-      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    }, {
-      key: 'type',
-      header: 'Type',
-      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
-    }, {
-      key: 'region',
-      header: 'Region',
-      cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
-    }, {
-      key: 'field_officer',
-      header: 'Field Officer',
-    }, {
-      key: 'amount_requested',
-      header: 'Req. Amount',
-      enableColumnFilter: false,
-      cell: (value) => <Currency value={value?.getValue()} />
-    }, {
-      key: 'modified_date',
-      header: 'Req. Date',
-      enableColumnFilter: false,
-      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
-    }, {
-      key: 'reviewer',
-      header: 'Reviewer',
-      enableColumnFilter: false,
-      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
-    },
   ];
 
   const options = {

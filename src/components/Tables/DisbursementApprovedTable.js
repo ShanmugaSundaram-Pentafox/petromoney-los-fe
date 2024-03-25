@@ -99,7 +99,7 @@ const DisbursementApprovedTable = ({ title, loans, setLoansData, onRowClick, fil
         title={title}
         count={loans?.length}
         excelDownload
-        onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approved')}
         loading={loading}
       />
     </div>

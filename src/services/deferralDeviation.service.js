@@ -20,9 +20,7 @@ export const getListOfStatusWithCount = () => {
 
 export const getStatsData = (id, type) => {
   return new Promise((resolve, reject) => {
-    apiCall(`deferral-deviations/record/count?type=${type}&party_id=${id}`, {
-      // customDomain: "https://ddms-uat-api.petromoney.in/"
-    })
+    apiCall(`deferral-deviations/record/count?type=${type}&party_id=${id}`)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
@@ -39,11 +37,8 @@ export const getStatsData = (id, type) => {
 
 export const getDeferralDataList = (id, type, status) => {
   return new Promise((resolve, reject) => {
-    apiCall(`deferral-deviations/${id}?type=${type}&status=${status}`, {
-      // customDomain: "https://ddms-uat-api.petromoney.in/"
-    })
+    apiCall(`deferral-deviations/${id}?type=${type}&status=${status}`)
       .then(res => {
-        console.log('data ->', res)
         if (res?.status === 'SUCCESS') {
           resolve(res?.data);
         } else {

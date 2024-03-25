@@ -1,13 +1,11 @@
-import { Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
+import { Divider, Paper, Collapse } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
-import CloseIcon from '@material-ui/icons/CloseRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { getDealershipById } from '../../services/dealerships.service';
 import { updateEnhancementLoanStatus } from '../../services/enhancement.service';
 import { getLoanById } from '../../services/loans.service';

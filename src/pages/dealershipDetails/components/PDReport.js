@@ -315,7 +315,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       onClick: () => setOpenChequeDrawer(true)
     }
   ]
-
+  console.log('omc data ->>>>>>>>>>>>>>>>>',omcData)
   return (
     <>
       <Flex align="center" justify="space-between" mb="lg">
@@ -376,7 +376,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
           open={openOmcForm}
           onClose={() => setOpenOmcForm(false)}
           dealer_id={id}
-          isEdit={omcData ? null : 'Edit'}
+          isEdit={omcData ? true : false}
           callback={handleEdit}
           currentUser={currentUser}
           data={omcData}

@@ -31,7 +31,7 @@ const DashCard = ({
           ${isSelected ? 'text-white' : 'text-gray-900'}
         `}
       >
-        {value}
+        {value || 0}
       </dd>
 
       {amount > 0 ? (

@@ -60,7 +60,7 @@ const EnhancementTable = ({ currentUser, value, filterQry, statusList, statsChan
         perform={rulesList.dashboard}
         yes={() => (
           <Grid gutter={2} mt={15}>
-            {/* {
+            {
               value === 'submit' ? (
                 <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
@@ -109,13 +109,13 @@ const EnhancementTable = ({ currentUser, value, filterQry, statusList, statsChan
             {
               value === 'Disb. Approval' ? (
                 <Grid.Col span={12}>
-                <Paper className={classes.tableContainer}>
-                <DisbursementApprovalTable title={'Disbursement Approval Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                </Paper>
+                  <Paper className={classes.tableContainer}>
+                    <DisbursementApprovalTable title={'Disbursement Approval Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                  </Paper>
                 </Grid.Col>
-                ) : null
-              } */}
-            {
+              ) : null
+            }
+            {/* {
               value ? (
                 <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
@@ -123,7 +123,7 @@ const EnhancementTable = ({ currentUser, value, filterQry, statusList, statsChan
                   </Paper>
                 </Grid.Col>
               ) : null
-            }
+            } */}
           </Grid>
         )}
       />

@@ -51,14 +51,14 @@ const EnhancementList = ({ currentUser }) => {
             filters={['zone', 'region', 'product', 'period']}
           />
         </Grid>
-        {/* <Grid item xs={12}>
+        <Grid item xs={12}>
           <LoanStats
             selectedStatsCard={selectedStatsCard}
             handleClick={handleClick}
             chartData={chartData}
             totalLoans={totalLoans}
           />
-        </Grid> */}
+        </Grid>
       </Grid>
       <EnhancementTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} statusList={chartData} statsChange={handleClick} />
     </div>

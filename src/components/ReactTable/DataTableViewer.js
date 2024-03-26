@@ -7,6 +7,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useJsonToCsv } from 'react-json-csv';
 import { generateCSVHeader, generateTableHeader } from '../../utils/tableHeader.util';
 import LoanStats from '../../pages/dashboard/components/LoanStats';
+import StatusViewer from '../../pages/dashboard/components/StatusViewer';
 
 const Filter = ({
   column,
@@ -257,11 +258,13 @@ const DataTableViewer = ({
         {
           statusTab?.custom
             ? statusTab?.custom
-            : <LoanStats
-              selectedStatsCard={statusChange?.status}
-              handleClick={statusChange?.handleChange}
-              chartData={statusTab?.list}
-            />
+            : (
+              <StatusViewer
+                selectedStatsCard={statusChange?.status}
+                handleClick={statusChange?.handleChange}
+                chartData={statusTab?.list}
+              />
+            )
         }
       </Box> : null}
       {!loading && Array.isArray(rowData) && !rowData.length ? (

@@ -176,4 +176,4 @@ const mapDispatchToProps = dispatch => ({
   logout: () => dispatch(resetCurrentUser())
 })
 
-export default connect(mapDispatchToProps)(withRouter(Topbar));
+export default connect(null, mapDispatchToProps)(withRouter(Topbar));

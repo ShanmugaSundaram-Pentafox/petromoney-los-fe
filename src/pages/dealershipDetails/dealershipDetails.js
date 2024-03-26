@@ -19,6 +19,10 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
+import DealershipTransport from './components/DealershipTransport';
+import FleetOperatorsDetails from './components/FleetOperatorsDetails';
+import DeferralTable from './components/DeferralDeviationTables/DeferralTable';
+import { DeviationTable } from './ScoreCardTables/WorkingSheetTable';
 
 
 const DealershipDetails = ({ currentUser, match }) => {
@@ -200,12 +204,12 @@ const DealershipDetails = ({ currentUser, match }) => {
         <Tabs.Panel value={'fleet_operators'}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
         </Tabs.Panel> */}
-        {/* <Tabs.Panel value={'deferral'}>
+        <Tabs.Panel value={'deferral'}>
           <DeferralTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel> */}
-        {/* <Tabs.Panel value={'deviation'}>
+        </Tabs.Panel>
+        <Tabs.Panel value={'deviation'}>
           <DeviationTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel> */}
+        </Tabs.Panel>
       </Tabs>
 
       <SolarEnquiryForm

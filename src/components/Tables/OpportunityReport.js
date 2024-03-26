@@ -6,21 +6,18 @@ import {
   TextField,
   InputAdornment,
   Box,
-  TableFooter,
 } from '@material-ui/core';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import { Formik } from 'formik';
 import { head } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { logger } from '../../config/logger';
-import usePageTitle from '../../hooks/usePageTitle';
+// import usePageTitle from '../../hooks/usePageTitle';
 import {
   getPotentialOpportunity,
 } from '../../services/loans.service';
 import LoaderButton from '../CommonComponents/Button/LoaderButton';
-import { ViewData } from '../CommonComponents/FilePreview';
 import Currency from '../Number/Currency';
 import { Paper, Table, Text } from '@mantine/core';
 
@@ -57,7 +54,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const OpportunityReport = () => {
-  usePageTitle('Opportunity Report');
+  // usePageTitle('Opportunity Report');
   const classes = useStyles();
   const [view, setView] = useState('state');
   const [potentialOpportunity, setPotentialOpportunity] = useState([]);
@@ -78,15 +75,15 @@ const OpportunityReport = () => {
 
   const sortArray = (arr, orderBy, key) => {
     switch (orderBy) {
-      case 'asc':
-      default:
-        return arr.sort((a, b) =>
-          a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0
-        );
-      case 'desc':
-        return arr.sort((a, b) =>
-          a[key] < b[key] ? 1 : b[key] < a[key] ? -1 : 0
-        );
+    case 'asc':
+    default:
+      return arr.sort((a, b) =>
+        a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0
+      );
+    case 'desc':
+      return arr.sort((a, b) =>
+        a[key] < b[key] ? 1 : b[key] < a[key] ? -1 : 0
+      );
     }
   };
 

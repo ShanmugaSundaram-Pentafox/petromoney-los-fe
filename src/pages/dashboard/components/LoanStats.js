@@ -3,7 +3,7 @@ import React from 'react';
 import classes from './LoansStats.module.css';
 
 const LoanStats = ({ selectedStatsCard, handleClick, chartData = [], totalLoans }) => {
-  console.log(chartData);
+  console.log('chart data ------>',chartData)
   const activeData = chartData?.filter(i => i?.count)
   // const [searchParams, setSearchParams] = useSearchParams();
 
@@ -24,27 +24,6 @@ const LoanStats = ({ selectedStatsCard, handleClick, chartData = [], totalLoans 
           ))}
         </Tabs.List>
       </Tabs>
-
-      {/* {chartData.length ? (
-          <dl className="grid grid-cols-3 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-4 lg:grid-cols-8">
-            {chartData?.map((item, i) => {
-              return (
-                <>
-                  {item.name || item.count ? (
-                    <DashCard
-                      key={item.name + i}
-                      selected={item.name === selectedStatsCard}
-                      text={item.name}
-                      value={item.count || 0}
-                      amount={item.amount}
-                      action={() => handleClick(item.name)}
-                    />
-                  ) : null}
-                </>
-              )
-            })}
-          </dl>
-        ) : null} */}
     </>
     // </Paper>
   )

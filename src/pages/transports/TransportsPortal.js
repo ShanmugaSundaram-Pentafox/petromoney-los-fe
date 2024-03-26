@@ -5,11 +5,11 @@ import { Redirect } from 'react-router';
 import AddNewTransportsForm from './components/AddNewTransportsForm';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
-import usePageTitle from '../../hooks/usePageTitle';
+// import usePageTitle from '../../hooks/usePageTitle';
 import TransportTable from '../transports/components/TransportsTable';
 
 const TransportsPortal = ({ currentUser }) => {
-  usePageTitle('Transports');
+  // usePageTitle('Transports');
   const [openModal, setOpenModal] = useState(false);
   const [rowData, setRowData] = useState({})
 
@@ -29,7 +29,7 @@ const TransportsPortal = ({ currentUser }) => {
     { label: 'Email', value: currentUser?.email },
     { label: 'Mobile', value: currentUser?.mobile },
   ]
-  usePageTitle(cardData)
+  // usePageTitle(cardData)
 
   const editable = permissionCheck(currentUser.role_name, rulesList.dealer_view)
   return (

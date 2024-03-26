@@ -106,7 +106,7 @@ const DataTableViewer = ({
   const getCSVColumns = useMemo(() => {
     return generateCSVHeader({ data: column });
   }, [column])
-
+  console.log('shio status tab ->',showStatusTab)
   useEffect(() => {
     if ((getTableColumns?.length)) {
       // if (tableData) {

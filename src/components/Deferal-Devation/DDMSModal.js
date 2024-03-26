@@ -165,7 +165,6 @@ const DDMSModal = ({
     // let newMapping = [...arr?.deferral_deviation_mapping]?.filter(i => i);
     // setCheckListCategory(old => ({ ...old, [arr?.category]: val === 'deferral/deviation' ? [...oldMapping, ...newMapping] : [] }))
   };
-  console.log(deferral?.filter(i => i?.remarks));
   const handleDeferralMapping = (arr, val, type) => {
     if (type === 'others') {
       let result = [...othersObj];

@@ -9,7 +9,6 @@ import CustomToken from '../../components/CommonComponents/CustomToken';
 import Currency from '../../components/Number/Currency';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
-import usePageTitle from '../../hooks/usePageTitle';
 import {
   getCreditReload,
   getCreditReportById,
@@ -27,7 +26,7 @@ const CreditProcessedTable = ({ currentUser }) => {
   const [downloadLoading, setDownloadLoading] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
-  usePageTitle('Credit Reload');
+  // usePageTitle('Credit Reload');
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
   const { data = [], refetch, error, isLoading: searchLoading } = useQuery(['processed-request', offset], () => getCreditReload({ processed: 1, filterQry: filterQry, dealershipId: currentUser?.dealership_id, offset: offset, category: (filterQry?.dealership_id || currentUser?.dealership_id) ? undefined : 'today' }), { refetchOnWindowFocus: false, enabled: true })

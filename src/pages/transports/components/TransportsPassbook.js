@@ -15,7 +15,7 @@ import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
-import usePageTitle from '../../../hooks/usePageTitle';
+// import usePageTitle from '../../../hooks/usePageTitle';
 import apiCall from '../../../utils/api.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
@@ -111,7 +111,7 @@ const useStyles = makeStyles({
 });
 
 function FastTagPassbook({ currentUser }) {
-  usePageTitle('Fastag Passbook')
+  // usePageTitle('Fastag Passbook')
   const classes = useStyles();
   const [selectedValue, setSelectedValue] = React.useState('vehicle');
   const [searchValue, setSearchValue] = useState();
@@ -269,9 +269,9 @@ function FastTagPassbook({ currentUser }) {
     count: total,
     onTableChange: (action, tableState) => {
       switch (action) {
-        case 'changePage':
-          pageChange(tableState.page)
-          break;
+      case 'changePage':
+        pageChange(tableState.page)
+        break;
       }
     }
   };
@@ -302,34 +302,34 @@ function FastTagPassbook({ currentUser }) {
   const onDateChange = (type) => (event) => {
     setSelectedPeriodType(type);
     switch (type) {
-      case 'D':
-        setSelectedPeriod({
-          from: new Date(),
-          to: new Date(),
-        });
-        setPeriod('today')
-        break;
-      case 'W':
-        setSelectedPeriod({
-          from: subDays(new Date(), 8),
-          to: subDays(new Date(), 1),
-        });
-        setPeriod('1week')
-        break;
-      case '2W':
-        setSelectedPeriod({
-          from: subDays(new Date(), 16),
-          to: subDays(new Date(), 1),
-        });
-        setPeriod('2week')
-        break;
-      case 'Custom':
-        setShowPicker(event.currentTarget)
-        setPeriod('custom')
-        break;
+    case 'D':
+      setSelectedPeriod({
+        from: new Date(),
+        to: new Date(),
+      });
+      setPeriod('today')
+      break;
+    case 'W':
+      setSelectedPeriod({
+        from: subDays(new Date(), 8),
+        to: subDays(new Date(), 1),
+      });
+      setPeriod('1week')
+      break;
+    case '2W':
+      setSelectedPeriod({
+        from: subDays(new Date(), 16),
+        to: subDays(new Date(), 1),
+      });
+      setPeriod('2week')
+      break;
+    case 'Custom':
+      setShowPicker(event.currentTarget)
+      setPeriod('custom')
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   };
 
@@ -536,21 +536,21 @@ function FastTagPassbook({ currentUser }) {
           <div className={classes.filterWrapper}>
             <div
               className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'
-                }`}
+              }`}
               onClick={onDateChange('D')}
             >
               Today
             </div>
             <div
               className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'
-                }`}
+              }`}
               onClick={onDateChange('W')}
             >
               1W
             </div>
             <div
               className={`${classes.filterItem} ${selectedPeriodType === '2W' && 'active'
-                }`}
+              }`}
               onClick={onDateChange('2W')}
             >
               2W

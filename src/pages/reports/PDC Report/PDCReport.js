@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import PDCReportTable from './PDCReportTable';
-import usePageTitle from '../../../hooks/usePageTitle';
 import RenewalFilter from '../../renewal/RenewalFilter';
 import { Grid } from '@mantine/core';
 
 const PDCReport = ({ currentUser }) => {
-  usePageTitle('PDC Report');
+  // usePageTitle('PDC Report');
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [totalLoans, setTotalLoans] = useState()
   const [filterQry, setFilterQry] = useState();

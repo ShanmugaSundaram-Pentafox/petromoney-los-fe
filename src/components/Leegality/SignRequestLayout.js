@@ -1,4 +1,3 @@
-import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import LeegalityAgreementTable from './components/LeegalityAgreementTable';
@@ -54,7 +53,6 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
         onClose()
       })
       .catch(err => {
-        console.log(err)
         displayNotification({
           message: err?.message || 'Document Override successfully',
           variant: 'error',
@@ -75,7 +73,6 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
           setLoading(false);
         })
         .catch(err => {
-          console.log('getLoansData >> ', err)
           setLoansData();
         })
     }
@@ -88,7 +85,6 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
           setResign(res?.[0]?.is_override == 1);
         })
         .catch(err => {
-          console.log(err);
           displayNotification({
             message: err,
             variant: 'error',
@@ -107,7 +103,6 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
         })
         .catch(err => {
           setPdfLoading(false)
-          console.log('getPdfContent >> ', err);
           displayNotification({
             message: err,
             variant: 'error',
@@ -226,7 +221,6 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
               message: res?.message,
               variant: 'error',
             })
-            console.log('>> Document Details status error >> ', res)
           }
         })
         .catch(err => {

@@ -31,7 +31,7 @@ export default Currency;
 
 export const ConvertCurrencyWithUnit = ({ amount = 0, decimalValues = 2 }) => {
   // handled the currency converter
-  const convertCurrency = (number = amount, decimals = decimalValues, recursiveCall) => {
+  const convertCurrency = (number = amount, decimals = decimalValues) => {
     const decimalPoints = decimals;
     const noOfLakhs = number / 100000;
     let displayStr;
@@ -46,13 +46,11 @@ export const ConvertCurrencyWithUnit = ({ amount = 0, decimalValues = 2 }) => {
 
     if (noOfLakhs >= 1 && noOfLakhs <= 99) {
       const lakhs = roundOf(noOfLakhs);
-      isPlural = lakhs > 1 && !recursiveCall;
-      displayStr = `${lakhs} Lakh${isPlural ? 's' : ''}`;
+      displayStr = `${lakhs} L`;
     } else if (noOfLakhs >= 100) {
       const crores = roundOf(noOfLakhs / 100);
       const crorePrefix = crores >= 100000 ? convertCurrency(crores, decimals, true) : crores;
-      isPlural = crores > 1 && !recursiveCall;
-      displayStr = `${crorePrefix} Cr${isPlural ? 's.' : ''}`;
+      displayStr = `${crorePrefix} Cr`;
     } else {
       displayStr = roundOf(number);
     }

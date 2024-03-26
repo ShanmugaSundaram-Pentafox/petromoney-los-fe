@@ -138,7 +138,7 @@ const Dashboard = ({ currentUser }) => {
             currentUser={currentUser}
             value={selectedStatsCard}
             handleClick={handleClick}
-            chartData={chartData}
+            chartData={chartData || [{}, {}, {}, {}, {}, {}]}
             filterQry={filterQry}
           />
         </>

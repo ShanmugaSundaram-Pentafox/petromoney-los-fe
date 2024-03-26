@@ -12,6 +12,7 @@ import { getDealershipById } from '../../services/dealerships.service';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import DisbursementApprovalTable from './DisbursementApprovalTable';
 import { Box, Grid, Paper } from '@mantine/core';
+import EnhancementTableList from './EnhancementTableList';
 
 
 const useStyles = makeStyles(theme => ({
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const EnhancementTable = ({ currentUser, value, filterQry }) => {
+const EnhancementTable = ({ currentUser, value, filterQry, statusList, statsChange }) => {
   const classes = useStyles();
   const [showPanel, setShowPanel] = useState({
     status: false,
@@ -59,7 +60,7 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
         perform={rulesList.dashboard}
         yes={() => (
           <Grid gutter={2} mt={15}>
-            {
+            {/* {
               value === 'submit' ? (
                 <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
@@ -108,8 +109,17 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
             {
               value === 'Disb. Approval' ? (
                 <Grid.Col span={12}>
+                <Paper className={classes.tableContainer}>
+                <DisbursementApprovalTable title={'Disbursement Approval Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                </Paper>
+                </Grid.Col>
+                ) : null
+              } */}
+            {
+              value ? (
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
-                    <DisbursementApprovalTable title={'Disbursement Approval Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                    <EnhancementTableList currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} status={value} statusList={statusList} statusChange={statsChange} />
                   </Paper>
                 </Grid.Col>
               ) : null

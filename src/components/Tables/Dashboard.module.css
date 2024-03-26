@@ -28,3 +28,23 @@
   top: 2px;
   color: #808080;
 }
+.itemLists {
+  display: flex;
+  gap: 6px;
+  flex-direction: column;
+}
+.listItem {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  height: 22px;
+}
+.listItem:hover {
+  background: #f7f7f7;
+}
+.listIcon {
+  width: 20px;
+  display: flex;
+  justify-content: center;
+}

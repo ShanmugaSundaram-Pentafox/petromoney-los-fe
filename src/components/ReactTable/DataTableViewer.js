@@ -53,12 +53,12 @@ const DataTableViewer = ({
   column = [],
   rowData = [],
   useAPIPagination = false,
-  statusChange = {},
   downloadQuery,
   title,
   excelDownload = false,
   apiSearch,
-  showStatusTab,
+  statusTab = { show: false, list: [], custom: null },
+  statusChange = { status: null, handleChange: () => { } },
   onRowClick,
   noDataText = 'No data yet!',
   noDataSubText = 'No data found in this section',
@@ -254,12 +254,16 @@ const DataTableViewer = ({
           {(!loading && Array.isArray(rowData) && !rowData?.length && showAction) ? showAction : null}
         </Group>
       </Box>
-      {showStatusTab ? <Box>
-        <LoanStats
-          selectedStatsCard={statusChange?.status}
-          handleClick={statusChange?.handleChange}
-          chartData={showStatusTab}
-        />
+      {statusTab?.show ? <Box my={'md'}>
+        {
+          statusTab?.custom
+            ? statusTab?.custom
+            : <LoanStats
+              selectedStatsCard={statusChange?.status}
+              handleClick={statusChange?.handleChange}
+              chartData={statusTab?.list}
+            />
+        }
       </Box> : null}
       {!loading && Array.isArray(rowData) && !rowData.length ? (
         <Box

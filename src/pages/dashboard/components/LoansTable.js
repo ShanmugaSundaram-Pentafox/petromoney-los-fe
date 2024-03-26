@@ -18,18 +18,7 @@ import PendingReviewDrawer from '../RightDrawer/PendingReviewDrawer';
 import RejectedDrawer from '../RightDrawer/RejectedDrawer';
 import SubmittedDrawer from '../RightDrawer/SubmittedDrawer';
 import DashboardTable from '../../../components/Tables/DashboardTable';
-
-const statusPicker = {
-  'Pending Approval': 'loan_approval',
-  'Pending Review': 'loan_review',
-  'Disb. Approval': 'disbursement_approval',
-  'Submitted': 'submitted',
-  'Approved': 'approved',
-  'Rejected': 'rejected',
-  'Disbursed': 'disbursed',
-  'Disb. Approved': 'disbursement_approved',
-}
-
+import { STATUS } from '../../../utils/mainStatus';
 
 const useStyles = makeStyles(theme => ({
   tableContainer: {
@@ -82,7 +71,7 @@ const LoansTable = ({ currentUser, value, filterQry, handleClick, chartData }) =
               value ? (
                 <Grid item md={12}>
                   <Box className={classes.tableContainer}>
-                    <DashboardTable title={'Pending for Initial Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} status={statusPicker[value]} value={value} chartData={chartData} handleChange={handleClick} />
+                    <DashboardTable currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} status={STATUS[value]} value={value} chartData={chartData} handleChange={handleClick} />
                   </Box>
                 </Grid>
               ) : null
@@ -99,7 +88,7 @@ const LoansTable = ({ currentUser, value, filterQry, handleClick, chartData }) =
           ) : (
             <>
               <Box className={classes.tableContainer}>
-                <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} />
+                <DashboardTable currentUser={currentUser} onRowClick={showDealershipInfo} status={'submitted'} value={'Submitted'} chartData={[]} />
               </Box>
             </>)
         )}

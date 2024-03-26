@@ -6,7 +6,7 @@ import { Badge, Button, Modal, Skeleton, Tabs, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import DeferralForm from './DeferralForm';
 
-const DeferralTable = ({ id, dealershipName,currentUser }) => {
+const DeferralTable = ({ id, dealershipName, currentUser }) => {
   const [activeTab, setActiveTab] = useState('draft');
   const [openModal, setOpenModal] = useState(false);
 
@@ -135,7 +135,7 @@ const DeferralTable = ({ id, dealershipName,currentUser }) => {
         }
         onRowClick={false}
         loading={deferralDataIsLoading}
-        showStatusTab={statusListView}
+        statusTab={{ show: true, custom: statusListView }}
         excelDownload
         filter={false}
       />

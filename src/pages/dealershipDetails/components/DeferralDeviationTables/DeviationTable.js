@@ -134,7 +134,7 @@ const DeviationTable = ({ id, dealershipName }) => {
             Add Deviation
           </Button>
         }
-        showStatusTab={statusListView}
+        statusTab={{ show: true, custom: statusListView }}
         excelDownload
         filter={false}
       />

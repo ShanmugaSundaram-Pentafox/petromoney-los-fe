@@ -42,7 +42,6 @@ const DDMSTable = ({
     }
     handleDataChange(value, val)
   }
-  // console.log(deferral);
   return (
     <>
       <Table.Td>

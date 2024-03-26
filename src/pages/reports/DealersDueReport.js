@@ -94,7 +94,7 @@ const DealersDueReport = ({ currentUser }) => {
             Sanctioned Loan : {dealerDetail.sanctioned_loan_amount ? <Currency value={dealerDetail.sanctioned_loan_amount[0]} /> : 0}
           </Title>
 
-          {dealerChartData.length ? (
+          {dealerChartData?.length ? (
             <dl className="grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-2 lg:grid-cols-4">
               {dealerChartData?.map((item, i) => {
                 return (

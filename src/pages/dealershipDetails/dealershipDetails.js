@@ -8,10 +8,8 @@ import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useMount } from 'react-use';
 import DealershipInfo from './components/DealershipInfo';
-import DealershipTransport from './components/DealershipTransport';
 import DealersList from './components/DealersList';
 import DealershipDoc from './components/DocList';
-import FleetOperatorsDetails from './components/FleetOperatorsDetails';
 import LoansList from './components/LoansList';
 import PersonalDiscussionReport from './components/PDReport';
 import ScoreCard from './components/ScoreCard';
@@ -21,8 +19,6 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
-import DeferralTable from './components/DeferralDeviationTables/DeferralTable';
-import DeviationTable from './components/DeferralDeviationTables/DeviationTable';
 
 
 const DealershipDetails = ({ currentUser, match }) => {
@@ -65,16 +61,16 @@ const DealershipDetails = ({ currentUser, match }) => {
       name: 'Documents',
       value: 'documents'
     },
-    {
-      id: action_id?.dealershipNavigation?.transporters,
-      name: 'Transporters',
-      value: 'transporter'
-    },
-    {
-      id: action_id?.dealershipNavigation?.fleetOperator,
-      name: 'Fleet Operators',
-      value: 'fleet_operators'
-    },
+    // {
+    //   id: action_id?.dealershipNavigation?.transporters,
+    //   name: 'Transporters',
+    //   value: 'transporter'
+    // },
+    // {
+    //   id: action_id?.dealershipNavigation?.fleetOperator,
+    //   name: 'Fleet Operators',
+    //   value: 'fleet_operators'
+    // },
     {
       id: action_id?.dealershipNavigation?.fleetOperator,
       name: 'Deferral',
@@ -198,18 +194,18 @@ const DealershipDetails = ({ currentUser, match }) => {
         <Tabs.Panel value={'documents'}>
           <DealershipDoc id={id} currentUser={currentUser} />
         </Tabs.Panel>
-        <Tabs.Panel value={'transporter'}>
+        {/* <Tabs.Panel value={'transporter'}>
           <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
         </Tabs.Panel>
         <Tabs.Panel value={'fleet_operators'}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'deferral'}>
+        </Tabs.Panel> */}
+        {/* <Tabs.Panel value={'deferral'}>
           <DeferralTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'deviation'}>
+        </Tabs.Panel> */}
+        {/* <Tabs.Panel value={'deviation'}>
           <DeviationTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
+        </Tabs.Panel> */}
       </Tabs>
 
       <SolarEnquiryForm

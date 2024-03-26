@@ -1,22 +1,20 @@
 import { Button } from '@mantine/core';
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import AddNewUserForm from './AddNewUserForm';
 import { action_id, resources_id } from '../../config/accessControl';
 import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { getAllUsers } from '../../services/users.service';
-import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import { RightSideDrawer } from '../Mantine/RightSideDrawer/RightSideDrawer';
 
 
 const AddNewUserAction = ({ currentUser }) => {
   const [openModal, setOpenModal] = useState(false);
-  const dispatch = useDispatch();
+  const [allusers,setAllUsers] = useState();
 
   const saveUserCallback = () => {
     getAllUsers()
       .then(data => {
-        dispatch(setAllUsers(data));
+        setAllUsers(data);
       })
       .catch(e => {
         // eslint-disable-next-line no-console

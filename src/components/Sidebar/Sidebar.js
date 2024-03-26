@@ -1,4 +1,4 @@
-import { IconAlignBoxBottomCenter, IconArrowAutofitRight, IconArrowCapsule, IconArrowIteration, IconArrowLoopRight, IconBooks, IconCertificateOff, IconChecklist, IconClipboardText, IconCoins, IconDashboard, IconFileAnalytics, IconFileDescription, IconFileLambda, IconFileStack, IconGasStation, IconLayersSubtract, IconList, IconPhone, IconReorder, IconRepeat, IconReport, IconScooterElectric, IconSettings, IconTir, IconTractor, IconTruck, IconUserCircle, IconUsers } from '@tabler/icons-react';
+import { IconAlignBoxBottomCenter, IconArrowAutofitRight, IconArrowCapsule, IconArrowIteration, IconArrowLoopRight, IconBooks, IconCertificateOff, IconChecklist, IconClipboardText, IconCoins, IconDashboard, IconFileAnalytics, IconFileDescription, IconFileLambda, IconFileStack, IconGasStation, IconLayersSubtract, IconList, IconPhone, IconReorder, IconRepeat, IconReport, IconSettings, IconTir, IconUserCircle, IconUsers } from '@tabler/icons-react';
 import { ScrollArea, Text } from '@mantine/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -88,23 +88,6 @@ const Sidebar = props => {
       icon: <IconLayersSubtract strokeWidth="2px" size={18} />
     },
     {
-      id: action_id?.navigation.loans,
-      name: 'Loans',
-      icon: <IconCoins strokeWidth="2px" size={18} />,
-      links: [
-        {
-          name: 'Fuel Loans',
-          href: '/loans',
-          icon: <IconGasStation strokeWidth="2px" size={18} />,
-        },
-        {
-          name: 'Vehicle Loans',
-          href: '/vehicle-loan',
-          icon: <IconScooterElectric strokeWidth="2px" size={18} />,
-        }
-      ]
-    },
-    {
       id: action_id?.navigation.enhancement,
       name: 'Enhancement',
       href: '/enhancement',
@@ -141,10 +124,33 @@ const Sidebar = props => {
       ]
     },
     {
+      id: action_id?.navigation.noc,
+      name: 'NOC Letter',
+      href: '/noc',
+      icon: <IconCertificateOff strokeWidth="2px" size={18} />
+    },
+    {
       id: action_id?.navigation.withheld,
       name: 'Withheld',
       href: '/withheld',
       icon: <IconAlignBoxBottomCenter strokeWidth="2px" size={18} />
+    },
+    {
+      id: action_id?.navigation.loans,
+      name: 'Loans',
+      icon: <IconCoins strokeWidth="2px" size={18} />,
+      links: [
+        {
+          name: 'Fuel Loans',
+          href: '/loans',
+          icon: <IconGasStation strokeWidth="2px" size={18} />,
+        },
+        // {
+        //   name: 'Vehicle Loans',
+        //   href: '/vehicle-loan',
+        //   icon: <IconScooterElectric strokeWidth="2px" size={18} />,
+        // }
+      ]
     },
     {
       id: action_id?.navigation.dealerships,
@@ -170,29 +176,7 @@ const Sidebar = props => {
       href: '/reports/remarks',
       icon: <IconFileStack strokeWidth="2px" size={18} />
     },
-    {
-      id: action_id?.navigation.report,
-      name: 'Report',
-      // href: '/reports',
-      icon: <IconReport strokeWidth="2px" size={18} />,
-      links: [
-        {
-          name: 'Opportunity Report',
-          href: '/reports/opportunities',
-          icon: <IconFileAnalytics strokeWidth="2px" size={18} />
-        },
-        {
-          name: 'DPD Report',
-          href: '/report/dpd',
-          icon: <IconFileDescription strokeWidth="2px" size={18} />
-        },
-        {
-          name: 'PDC Report',
-          href: '/report/pdc',
-          icon: <IconFileLambda strokeWidth="2px" size={18} />
-        },
-      ]
-    },
+    
     {
       id: action_id?.navigation.dealer_referral,
       name: 'Dealer Referral',
@@ -230,32 +214,49 @@ const Sidebar = props => {
       icon: <IconList strokeWidth="2px" size={18} />
     },
     {
-      id: action_id?.navigation.noc,
-      name: 'NOC Letter',
-      href: '/noc',
-      icon: <IconCertificateOff strokeWidth="2px" size={18} />
-    },
-    {
       id: action_id?.navigation.call_request,
       name: 'Call Request',
       href: '/customer/callback',
       icon: <IconPhone strokeWidth="2px" size={18} />
     },
+    // {
+    //   id: action_id?.navigation.transports,
+    //   name: 'Transports',
+    //   icon: <IconTruck strokeWidth="2px" size={18} />,
+    //   links: [
+    //     {
+    //       name: 'Transports List',
+    //       href: '/transports',
+    //       icon: <IconTractor strokeWidth="2px" size={18} />
+    //     },
+    //     {
+    //       name: 'Passbook',
+    //       href: '/transport/fastag/details',
+    //       icon: <IconBooks strokeWidth="2px" size={18} />
+    //     }
+    //   ]
+    // },
     {
-      id: action_id?.navigation.transports,
-      name: 'Transports',
-      icon: <IconTruck strokeWidth="2px" size={18} />,
+      id: action_id?.navigation.report,
+      name: 'Report',
+      // href: '/reports',
+      icon: <IconReport strokeWidth="2px" size={18} />,
       links: [
         {
-          name: 'Transports List',
-          href: '/transports',
-          icon: <IconTractor strokeWidth="2px" size={18} />
+          name: 'Opportunity Report',
+          href: '/reports/opportunities',
+          icon: <IconFileAnalytics strokeWidth="2px" size={18} />
         },
         {
-          name: 'Passbook',
-          href: '/transport/fastag/details',
-          icon: <IconBooks strokeWidth="2px" size={18} />
-        }
+          name: 'DPD Report',
+          href: '/report/dpd',
+          icon: <IconFileDescription strokeWidth="2px" size={18} />
+        },
+        {
+          name: 'PDC Report',
+          href: '/report/pdc',
+          icon: <IconFileLambda strokeWidth="2px" size={18} />
+        },
       ]
     },
     {

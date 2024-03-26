@@ -51,7 +51,6 @@ const ReactTable = ({
 
   const fuzzyFilter = (row, columnId, value, addMeta) => {
     const itemRank = rankItem(row.getValue(columnId), value);
-    console.log(itemRank);
     addMeta({
       itemRank,
     });

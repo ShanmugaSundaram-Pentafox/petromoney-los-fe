@@ -1,8 +1,8 @@
-import { Box, Burger, Flex, Group, Image, Title } from '@mantine/core';
+import { Badge, Box, Burger, Flex, Group, Image, Menu, Text, Title } from '@mantine/core';
 // import { makeStyles } from '@material-ui/styles';
 // import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 // import styled from 'styled-components';
@@ -11,6 +11,8 @@ import { resetCurrentUser } from '../../store/user/user.actions';
 import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import { permissionCheck } from '../UserCan/UserCan';
+import { format } from 'date-fns';
+import { IconExternalLink, IconSelector } from '@tabler/icons-react';
 
 // const useStyles = makeStyles(theme => {
 //   return ({
@@ -56,6 +58,13 @@ const Topbar = (props) => {
   // const [loading, setLoading] = useState(false)
   const [showNotificationSidebar, setShowNotificationSidebar] = useState(false);
   const editable = permissionCheck(user.role_name, rulesList.dealer_edit)
+  const [time, setTime] = useState(Date.now());
+  useEffect(() => {
+    const interval = setInterval(() => setTime(Date.now()), 900);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   // const handleStatementShare = (action) => {
   //   setLoading(true)
@@ -149,6 +158,38 @@ const Topbar = (props) => {
         )} */}
 
         <Flex gap='sm' align='center' ml='auto'>
+          <Menu
+            width={150}
+            withArrow
+            styles={{
+              item: {
+                padding: '4px 10px'
+              }
+            }}
+            position="bottom-end"
+          >
+            <Menu.Target>
+              <Box style={{ background: '#f6f6f6', padding: 6, borderRadius: 6, cursor: 'pointer' }}>
+                <Group gap={6}>
+                  <Badge variant='light' color='orange'>LOS</Badge>
+                  <IconSelector size={16} />
+                </Group>
+              </Box>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>Our Other Services</Menu.Label>
+              <Menu.Item onClick={() => window.open('https://lms-uat.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='blue'>LMS</Badge></Menu.Item>
+              <Menu.Item onClick={() => window.open('https://ddms-uat.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='green'>DDMS</Badge></Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+          <Box
+            style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', columnGap: '5px', width: 260 }}
+          >
+            <Text size={'xs'} c={'gray'} fw={'600'}>Calendar Time: </Text>
+            <Text size={'xs'} c={'gray'}>
+              {format(time, 'MMM d yyyy')} {format(time, 'hh:mm:ss')}
+            </Text>
+          </Box>
           <LoginUserInfo user={user} logout={logout} />
 
           <Burger

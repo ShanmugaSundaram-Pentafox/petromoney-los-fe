@@ -6,7 +6,7 @@ import { Badge, Button, Modal, Skeleton, Tabs, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import DeferralForm from './DeferralForm';
 
-const DeferralTable = ({ id, dealershipName }) => {
+const DeferralTable = ({ id, dealershipName,currentUser }) => {
   const [activeTab, setActiveTab] = useState('draft');
   const [openModal, setOpenModal] = useState(false);
 
@@ -140,7 +140,7 @@ const DeferralTable = ({ id, dealershipName }) => {
         filter={false}
       />
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deferral Data" centered>
-        <DeferralForm refetch={() => { statusListRefetch(); deferralDataRefetch(); }} dealershipName={dealershipName} dealershipId={id} close={() => setOpenModal(false)} />
+        <DeferralForm refetch={() => { statusListRefetch(); deferralDataRefetch(); }} dealershipName={dealershipName} dealershipId={id} close={() => setOpenModal(false)} currentUser={currentUser} />
       </Modal>
     </>
   );

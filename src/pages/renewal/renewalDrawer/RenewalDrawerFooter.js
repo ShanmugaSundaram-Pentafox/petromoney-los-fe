@@ -1,4 +1,3 @@
-import { Drawer } from '@material-ui/core';
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
@@ -116,65 +115,65 @@ const RenewalDrawerFooter = ({
         <Group>
           {
             status && ['draft', 'submit'].includes(status.toLowerCase()) &&
-            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
-              <Button
-                size='xs'
-                color='green'
-                leftSection={<ThumbUpAltIcon />}
-                onClick={handleReviewModal}
-              >
-                Send for Review
-              </Button>
-            </CheckAllowed>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
+                <Button
+                  size='xs'
+                  color='green'
+                  leftSection={<ThumbUpAltIcon />}
+                  onClick={handleReviewModal}
+                >
+                  Send for Review
+                </Button>
+              </CheckAllowed>
           }
           {
             status && ['review', 'approval'].includes(status.toLowerCase()) &&
-            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
-              <Button
-                size='xs'
-                leftSection={<ChevronLeftRoundedIcon />}
-                onClick={handlePushBack}
-              >
-                Pushback
-              </Button>
-            </CheckAllowed>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
+                <Button
+                  size='xs'
+                  leftSection={<ChevronLeftRoundedIcon />}
+                  onClick={handlePushBack}
+                >
+                  Pushback
+                </Button>
+              </CheckAllowed>
           }
           {
             status && ['approval', 'review'].includes(status.toLowerCase()) &&
-            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
-              <Button
-                size='xs'
-                color='red'
-                leftSection={<ThumbDownAltIcon />}
-                onClick={handleReject}
-              >
-                Reject
-              </Button>
-            </CheckAllowed>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
+                <Button
+                  size='xs'
+                  color='red'
+                  leftSection={<ThumbDownAltIcon />}
+                  onClick={handleReject}
+                >
+                  Reject
+                </Button>
+              </CheckAllowed>
           }
           {
             status && status.toLowerCase() === 'approval' && (isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_approve')) &&
-            <Button
-              size='xs'
-              color='green'
-              leftSection={<ThumbUpAltIcon />}
-              onClick={handleReviewModal}
-            >
-              Approve
-            </Button>
-          }
-          {
-            status && ['review'].includes(status.toLowerCase()) && (isAllowed(currentUser?.permissions, resources_id.dashboard, 'send_for_approval')) &&
-            <div>
               <Button
                 size='xs'
                 color='green'
                 leftSection={<ThumbUpAltIcon />}
                 onClick={handleReviewModal}
               >
-                Send for Approval
+                Approve
               </Button>
-            </div>
+          }
+          {
+            status && ['review'].includes(status.toLowerCase()) && (isAllowed(currentUser?.permissions, resources_id.dashboard, 'send_for_approval')) &&
+              <div>
+                <Button
+                  size='xs'
+                  color='green'
+                  leftSection={<ThumbUpAltIcon />}
+                  onClick={handleReviewModal}
+                >
+                  Send for Approval
+                </Button>
+              </div>
           }
         </Group>
       </div>

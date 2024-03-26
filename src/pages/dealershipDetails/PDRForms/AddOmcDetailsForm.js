@@ -19,7 +19,7 @@ import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
 const AddOmcDetailsForm = ({ open, onClose, data: init_data, dealer_id, isEdit, currentUser, callback, editable }) => {
-  const [readOnly, setReadOnly] = useState(isEdit === 'Edit' ? false : true);
+  const [readOnly, setReadOnly] = useState(isEdit);
   const [loading, setLoading] = useState(false)
   const [executedDate, setExecutedDate] = useState(init_data?.agreement_executed_on ? parse(init_data?.agreement_executed_on, 'dd-MM-yyyy', new Date()) : new Date())
   const [validDate, setValidDate] = useState(init_data?.agreement_valid_till ? parse(init_data?.agreement_valid_till, 'dd-MM-yyyy', new Date()) : new Date())
@@ -37,9 +37,8 @@ const AddOmcDetailsForm = ({ open, onClose, data: init_data, dealer_id, isEdit, 
     setValidDate(date)
   }
   const { enqueueSnackbar } = useSnackbar();
-
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, setValues } = useFormik({
-    initialValues: { ...init_data },
+    initialValues: {...init_data},
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
@@ -48,7 +47,7 @@ const AddOmcDetailsForm = ({ open, onClose, data: init_data, dealer_id, isEdit, 
         obj = compareObject(init_data, values)
       }
       else {
-        obj = { ...values }
+        obj = values 
       }
       const executed_date = executedDate ? format(new Date(executedDate), 'dd-MM-yyyy') : values.agreement_executed_on;
       const valid_date = validDate ? format(new Date(validDate), 'dd-MM-yyyy') : values.agreement_valid_till;

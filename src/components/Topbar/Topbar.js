@@ -50,7 +50,7 @@ import { permissionCheck } from '../UserCan/UserCan';
 // });
 
 const Topbar = (props) => {
-  const { onSidebarOpen, pageTitle, user, logout, match, history, goBackIcon, appBarProps } = props;
+  const { onSidebarOpen, user, logout, match, history, goBackIcon, appBarProps } = props;
   // const classes = useStyles();
   // const { enqueueSnackbar } = useSnackbar();
   // const [loading, setLoading] = useState(false)
@@ -172,14 +172,8 @@ Topbar.propTypes = {
   onSidebarOpen: PropTypes.func
 };
 
-const mapStateToProps = ({ common }) => ({
-  pageTitle: common.pageTitle,
-  goBackIcon: common.goBackIcon,
-  searchText: common.searchText
-})
-
 const mapDispatchToProps = dispatch => ({
   logout: () => dispatch(resetCurrentUser())
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Topbar));
+export default connect(mapDispatchToProps)(withRouter(Topbar));

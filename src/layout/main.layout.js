@@ -84,9 +84,9 @@ const MainLayout = props => {
       </div> */}
 
       <AppShell
-        header={{ height: 55 }}
+        header={{ height: 60 }}
         navbar={{
-          width: 240,
+          width: 249,
           breakpoint: 'md',
           collapsed: { mobile: !opened },
         }}

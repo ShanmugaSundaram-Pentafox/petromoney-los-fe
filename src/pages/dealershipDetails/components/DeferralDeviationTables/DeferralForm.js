@@ -10,9 +10,10 @@ import { displayNotification } from '../../../../components/CommonComponents/Not
 import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
 import { IconUpload } from '@tabler/icons-react';
 import FileUpload from '../../../../components/FileUpload';
+import { URL } from '../../../../config/serverUrls';
 
 
-const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
+const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUser }) => {
   const [loading, setLoading] = useState(false)
   const [fileUploadObj, setFileUploadObj] = useState({});
 
@@ -32,6 +33,42 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
     close();
   };
 
+  const handleSave = (files) => {
+    const formData = new FormData();
+    const docID = 35;
+    files.map(file => {
+      const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
+      formData.append(`file-${dealershipId}`, file);
+      formData.append('fileName', fileName);
+      formData.append('id', docID);
+    });
+    fetch(`${URL.base}${URL.checklist}/${dealershipId}/doc/${docID}`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
+    })
+      .then(res => {
+        return res.json()
+      })
+      .then(data => {
+        setFileUploadObj({ modal: false, files: data.data.url })
+        displayNotification({
+          message: 'File Upload Success',
+          variant: 'success',
+        });
+        refetch();
+      })
+      .catch(error => {
+        displayNotification({
+          message: 'File Upload error',
+          variant: 'error',
+        });
+
+      })
+  };
+
   const { handleSubmit, setFieldError, errors, values, setFieldValue } = useFormik({
     initialValues: {},
     validateOnChange: false,
@@ -43,14 +80,15 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
           ...values,
           type: 'deferral',
           party_name: dealershipName,
-          remarks: 'testing with remarks',
+          remarks: values?.remarks,
           due_date: moment(values?.validDate)?.format('YYYY-MM-DD'),
           party_id: dealershipId,
           applicant_id: values?.applicantData?.value === dealershipId ? null : values?.applicantData?.value,
           applicant_type: values?.applicantData?.value === dealershipId ? null : values?.applicantData?.category,
           applicant_name: values?.applicantData?.value === dealershipId ? null : values?.applicantData?.label,
           checklist_id: values?.checkListData?.value,
-          checklist_name: values?.checkListData?.label
+          checklist_name: values?.checkListData?.label,
+          document_urls: fileUploadObj?.files,
         }
         addDeferralDeviation(payload)
           .then((res) => {
@@ -90,7 +128,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
           <DateInput value={values?.validDate} onChange={(e) => setFieldError('validDate', e)} minDate={new Date()} size='xs' label={'Submission date'} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }} mt={20}>
-          <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true })}>
+          <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true, files: [] })}>
             <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
           </Tooltip>
         </Grid.Col>
@@ -117,7 +155,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch }) => {
           Add Deferral
         </Button>
       </Group>
-      <FileUpload open={Boolean(fileUploadObj?.modal)} onCloseUploader={() => setFileUploadObj({})} />
+      <FileUpload open={Boolean(fileUploadObj?.modal)} onCloseUploader={() => setFileUploadObj({ ...fileUploadObj, modal: false })} handleSave={handleSave} />
     </form>
   )
 }

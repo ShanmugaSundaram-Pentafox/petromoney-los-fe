@@ -1,4 +1,4 @@
-import { Tabs, Badge, Text, Box, Card, Title, Group } from '@mantine/core';
+import { Tabs, Text, Box, Card, Title, Group } from '@mantine/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -19,10 +19,9 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
-import DealershipTransport from './components/DealershipTransport';
-import FleetOperatorsDetails from './components/FleetOperatorsDetails';
 import DeferralTable from './components/DeferralDeviationTables/DeferralTable';
 import { DeviationTable } from './ScoreCardTables/WorkingSheetTable';
+import { IconBriefcase, IconListDetails, IconPinEnd, IconPinInvoke, IconRouteScan, IconScoreboard, IconUserScan, IconUsersGroup } from '@tabler/icons-react';
 
 
 const DealershipDetails = ({ currentUser, match }) => {
@@ -39,31 +38,37 @@ const DealershipDetails = ({ currentUser, match }) => {
       id: action_id?.dealershipNavigation?.dealership,
       name: 'Dealership',
       value: 'dealership',
+      icon: IconUserScan
     },
     {
       id: action_id?.dealershipNavigation?.dealers,
       name: 'Dealers',
       value: 'dealer',
+      icon: IconUsersGroup
     },
     {
       id: action_id?.dealershipNavigation?.scoreCard,
       name: 'Score Card',
-      value: 'score_card'
+      value: 'score_card',
+      icon: IconScoreboard,
     },
     {
       id: action_id?.dealershipNavigation?.loansList,
       name: 'Loans List',
-      value: 'loans_list'
+      value: 'loans_list',
+      icon: IconListDetails,
     },
     {
       id: action_id?.dealershipNavigation?.personalDiscussion,
       name: 'Personal Discussion',
-      value: 'personal_discussion'
+      value: 'personal_discussion',
+      icon: IconRouteScan
     },
     {
       id: action_id?.dealershipNavigation?.docChecklist,
       name: 'Documents',
-      value: 'documents'
+      value: 'documents',
+      icon: IconBriefcase
     },
     // {
     //   id: action_id?.dealershipNavigation?.transporters,
@@ -78,12 +83,14 @@ const DealershipDetails = ({ currentUser, match }) => {
     {
       id: action_id?.dealershipNavigation?.fleetOperator,
       name: 'Deferral',
-      value: 'deferral'
+      value: 'deferral',
+      icon: IconPinEnd
     },
     {
       id: action_id?.dealershipNavigation?.fleetOperator,
       name: 'Deviation',
-      value: 'deviation'
+      value: 'deviation',
+      icon: IconPinInvoke
     },
   ]
 
@@ -121,7 +128,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   let cardData = [
     { label: 'Dealership ID', value: dealershipData?.data?.id },
     { label: 'Business name', value: dealershipData?.data?.name },
-    { label: 'Dealer name', value: mainApplicant?.data?.first_name },
+    { label: 'Dealer name', value: mainApplicant?.data?.first_name, },
     { label: 'Mobile', value: mainApplicant?.data?.mobile },
     { label: 'Email', value: mainApplicant?.data?.email }
   ]
@@ -171,8 +178,8 @@ const DealershipDetails = ({ currentUser, match }) => {
               <Tabs.Tab
                 key={1}
                 value={item?.value}
+                leftSection={<item.icon size={16} color={(item?.value) === activeTab ? '#1864AB' : '#2b2b2b'} />}
               >
-                <Badge size="sm" circle variant={item?.value === activeTab ? 'white' : 'filled'} color="blue.3">{i + 1}</Badge>
                 <Text c={(item?.value) === activeTab ? 'blue.9' : '#2b2b2b'}>{item?.name}</Text>
               </Tabs.Tab>
             )

@@ -6,7 +6,6 @@ import {
   Button,
   Title,
   PasswordInput,
-  Badge,
   PinInput,
   Group,
 } from '@mantine/core';
@@ -20,7 +19,7 @@ import { URL } from '../../config/serverUrls';
 import { logger } from '../../config/logger';
 import { connect } from 'react-redux';
 import { setCurrentUser } from '../../store/user/user.actions';
-import { IconAlertCircle, IconLock, IconPhone } from '@tabler/icons-react';
+import { IconLock, IconPhone } from '@tabler/icons-react';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const domain = process.env?.REACT_APP_OTP_ONLY_DOMAINS?.split(/[ ,]+/)
@@ -204,33 +203,33 @@ const LoginForm = ({ setCurrentUser }) => {
                 </Box>
                 {
                   forgetPass &&
-                  <>
-                    <PasswordInput
-                      id='new_password'
-                      variant='filled'
-                      label='New Password'
-                      // size='xs'
-                      // error={errors?.password?.message}
-                      leftSection={<IconLock size={16} />}
-                      {...form.getInputProps('new_password')}
-                    />
-                    <PasswordInput
-                      id='confirm_password'
-                      variant='filled'
-                      label='Confirm Password'
-                      // size='xs'
-                      // error={errors?.password?.message}
-                      leftSection={<IconLock size={16} />}
-                      {...form.getInputProps('confirm_password')}
-                    />
-                  </>
+                    <>
+                      <PasswordInput
+                        id='new_password'
+                        variant='filled'
+                        label='New Password'
+                        // size='xs'
+                        // error={errors?.password?.message}
+                        leftSection={<IconLock size={16} />}
+                        {...form.getInputProps('new_password')}
+                      />
+                      <PasswordInput
+                        id='confirm_password'
+                        variant='filled'
+                        label='Confirm Password'
+                        // size='xs'
+                        // error={errors?.password?.message}
+                        leftSection={<IconLock size={16} />}
+                        {...form.getInputProps('confirm_password')}
+                      />
+                    </>
                 }
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'column' }}>
                   {/* <div style={{ display: 'flex', flexDirection: 'column' }}> */}
                   <Button
                     type="submit"
                     fullWidth
-                    mt={10}
+                    my={10}
                     color={!forgetPass ? 'green' : 'red'}
                   >
                     {
@@ -295,7 +294,7 @@ const LoginForm = ({ setCurrentUser }) => {
               />
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <Button
-                  mt={10}
+                  my={10}
                   type="submit"
                   fullWidth
                   color='green'
@@ -338,7 +337,7 @@ const LoginForm = ({ setCurrentUser }) => {
       </form>
       {apiStatus.type && (
         <Box mt='md'>
-          <Alert icon={<IconAlertCircle size={16} />} withCloseButton={false} color='red'>
+          <Alert withCloseButton={false} color={apiStatus?.type?.toLowerCase() === 'success' ? 'green' : 'red'}>
             {apiStatus?.message}
           </Alert>
         </Box>

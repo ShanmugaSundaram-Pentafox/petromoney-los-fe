@@ -6,6 +6,7 @@ import ColumnsFilter from '../Filter/ColumnFilter';
 import { useDisclosure } from '@mantine/hooks';
 import { useJsonToCsv } from 'react-json-csv';
 import { generateCSVHeader, generateTableHeader } from '../../utils/tableHeader.util';
+import LoanStats from '../../pages/dashboard/components/LoanStats';
 
 const Filter = ({
   column,
@@ -52,6 +53,7 @@ const DataTableViewer = ({
   column = [],
   rowData = [],
   useAPIPagination = false,
+  statusChange = {},
   downloadQuery,
   title,
   excelDownload = false,
@@ -104,7 +106,7 @@ const DataTableViewer = ({
   const getCSVColumns = useMemo(() => {
     return generateCSVHeader({ data: column });
   }, [column])
-
+  console.log('shio status tab ->',showStatusTab)
   useEffect(() => {
     if ((getTableColumns?.length)) {
       // if (tableData) {
@@ -128,7 +130,7 @@ const DataTableViewer = ({
 
   return (
     <Box>
-      <Box style={{ padding: 10, background: '#ffff', borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
+      <Box style={{ padding: 10, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}>
         <Group justify='space-between'>
           <Text style={{ fontSize: '16px' }} fw={500}>
             <Group gap={4}>
@@ -253,7 +255,11 @@ const DataTableViewer = ({
         </Group>
       </Box>
       {showStatusTab ? <Box>
-        {showStatusTab}
+        <LoanStats
+          selectedStatsCard={statusChange?.status}
+          handleClick={statusChange?.handleChange}
+          chartData={showStatusTab}
+        />
       </Box> : null}
       {!loading && Array.isArray(rowData) && !rowData.length ? (
         <Box

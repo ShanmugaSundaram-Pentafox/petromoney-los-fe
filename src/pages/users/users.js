@@ -1,22 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { connect } from 'react-redux';
 import { useMount } from 'react-use';
-import styled from 'styled-components';
-import { VictoryPie } from 'victory';
 import UsersTable from './components/UsersTable';
-import ChartCard from '../../components/CommonComponents/ChartCard/ChartCard';
 import { resources_id } from '../../config/accessControl';
-import { CHART_COLORS } from '../../config/constants';
-import usePageTitle from '../../hooks/usePageTitle';
 import { getAllUsers, getUsersByPincode, getUsersByRole } from '../../services/users.service';
-import { setAllUsers } from '../../store/dashboard/dashboard.actions';
 import { isAllowed } from '../../utils/cerbos';
-import { Box, Grid, Paper, ScrollArea, Skeleton, Table, Text, TextInput } from '@mantine/core';
+import { Box, Grid, Paper, Skeleton, Table, Text, TextInput } from '@mantine/core';
 import PieChartUsers from './components/PieChartUsers';
 
-const Users = ({ currentUser, allUsers, setAllUsersData }) => {
-  usePageTitle('All Users');
+const Users = ({ currentUser }) => {
+  const [allUsers,setAllUsersData]=useState();
   const [loading, setLoading] = useState(false)
   const [selectedRole, setSelectedRole] = useState(null);
   const [tableData, setTableData] = React.useState([]);
@@ -40,7 +33,7 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   const fo = getUsersByRole(allUsers, 'FIELD_OFFICER');
   const trans = getUsersByRole(allUsers, 'TRANSPORTER');
   const dealers = getUsersByRole(allUsers, 'DEALER');
-  const others = allUsers.filter(user => !(['FIELD_OFFICER', 'TRANSPORTER', 'DEALER'].includes(user.role_name)));
+  const others = allUsers?.filter(user => !(['FIELD_OFFICER', 'TRANSPORTER', 'DEALER'].includes(user.role_name)));
   const [currency, setCurrency] = React.useState();
   const [pincode, setPincode] = React.useState('');
 
@@ -50,7 +43,7 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
     enabled: Boolean(pincode?.length === 6),
   })
   const getUserById = id => {
-    return allUsers.find(item => item.id === id) || {};
+    return allUsers?.find(item => item.id === id) || {};
   };
 
   const handleRoleSelect = (role) => {
@@ -74,10 +67,10 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
             setSelectedRole={handleRoleSelect}
             loading={loading}
             data={{
-              field_officer: fo.length,
-              dealer: dealers.length,
-              transporter: trans.length,
-              others: others.length,
+              field_officer: fo?.length,
+              dealer: dealers?.length,
+              transporter: trans?.length,
+              others: others?.length,
             }}
           />
         </Grid.Col>
@@ -143,12 +136,6 @@ const Users = ({ currentUser, allUsers, setAllUsersData }) => {
   )
 }
 
-const mapStateToProps = ({ dashboard }) => ({
-  allUsers: dashboard.allUsers
-})
 
-const mapDispatchToProps = dispatch => ({
-  setAllUsersData: (data) => dispatch(setAllUsers(data))
-})
 
-export default connect(mapStateToProps, mapDispatchToProps)(Users);
+export default Users;

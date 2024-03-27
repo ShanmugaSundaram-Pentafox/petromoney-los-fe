@@ -4,11 +4,10 @@ import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import DashboardFilter from './components/DashboardFilter';
 import LoansTable from './components/LoansTable';
-import LoanStats from './components/LoanStats';
 import Currency from '../../../src/components/Number/Currency';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { action_id, resources_id } from '../../config/accessControl';
-import usePageTitle from '../../hooks/usePageTitle';
+// import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
 import { isAllowed } from '../../utils/cerbos';
 
@@ -53,11 +52,11 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Dashboard = ({ currentUser }) => {
-  usePageTitle('Dashboard');
+  // usePageTitle('Dashboard');
   const classes = useStyles();
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [totalLoans, setTotalLoans] = useState()
-  const [selectedStatsCard, setSelectedStatsCard] = useState('Submitted');
+  const [selectedStatsCard, setSelectedStatsCard] = useState('Approved');
   const [selectedReportStatsCard, setSelectedReportStatsCard] = useState('Due');
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
@@ -98,7 +97,7 @@ const Dashboard = ({ currentUser }) => {
               Sanctioned Loan : <Currency value={dealerDetail.sanctioned_loan_amount} />
             </Title>
 
-            {dealerChartData.length ? (
+            {dealerChartData?.length ? (
               <dl className="grid grid-cols-3 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-4 lg:grid-cols-8">
                 {dealerChartData?.map((item, i) => {
                   return (
@@ -134,16 +133,14 @@ const Dashboard = ({ currentUser }) => {
                 filters={['zone', 'region', 'product', 'period']}
               />
             </Grid.Col>
-            <Grid.Col mt={'xs'}>
-              <LoanStats
-                selectedStatsCard={selectedStatsCard}
-                handleClick={handleClick}
-                chartData={chartData}
-                totalLoans={totalLoans}
-              />
-            </Grid.Col>
           </Grid>
-          <LoansTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} />
+          <LoansTable
+            currentUser={currentUser}
+            value={selectedStatsCard}
+            handleClick={handleClick}
+            chartData={chartData}
+            filterQry={filterQry}
+          />
         </>
       )}
     </div>

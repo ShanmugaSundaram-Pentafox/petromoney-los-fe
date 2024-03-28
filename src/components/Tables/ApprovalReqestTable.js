@@ -1,22 +1,23 @@
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
-import moment from 'moment';
 import React, { useState } from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
-import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
-import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
-import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { getLoansByStatus } from '../../services/loans.service';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
-import Currency from '../Number/Currency';
 import { permissionCheck } from '../UserCan/UserCan';
 import DataTableViewer from '../ReactTable/DataTableViewer';
-import { ActionIcon, Tooltip } from '@mantine/core';
 import { useQuery } from 'react-query';
-
+import Currency from '../Number/Currency';
+import moment from 'moment';
+import { NavLink as RouterLink } from 'react-router-dom';
+import clsx from 'clsx';
+import { ActionIcon, Tooltip } from '@mantine/core';
+import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    // padding: theme.spacing(3),
+    // paddingTop: 0,
+  },
   title: {
     fontWeight: 500
   },
@@ -36,37 +37,28 @@ const useStyles = makeStyles(theme => ({
   pills_SOLAR: {
     color: '#51b37f',
     backgroundColor: '#e1f8e5',
-  },
-  dTitle: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
+  }
 }));
 
-const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
-  const classes = useStyles();
+const ApprovalReqestTable = ({ title, onRowClick, filterQry, currentUser, chartData }) => {
+  const [loading, setLoading] = useState(false);
   const [loanId, setloanId] = useState();
+  const [type, setType] = useState('');
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
-  const [type, setType] = useState('');
   const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
+  const classes = useStyles();
 
   const getLoanDetailsQuery = useQuery({
-    queryKey: ['loan-details-submit', filterQry],
-    queryFn: () => getLoansByStatus('submitted', filterQry),
+    queryKey: ['loan-details-approval', filterQry],
+    queryFn: () => getLoansByStatus('loan_approval', filterQry),
   })
 
   // useEffect(() => {
   //   setLoading(true);
-  //   getLoansByStatus('submitted', filterQry)
+  //   getLoansByStatus('loan_approval', filterQry)
   //     .then(data => {
-  //       setLoansData('submitted', data);
+  //       setLoansData('loan_approval', data);
   //       setLoading(false);
   //     })
   //     .catch(e => {
@@ -76,84 +68,73 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
 
   const column = [
     {
-      header: 'Dealership Id',
       key: 'dealership_id',
+      header: 'Dealership Id',
       enableColumnFilter: false,
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
     }, {
+      key: 'name',
       header: 'Name',
       enableColumnFilter: false,
-      key: 'name',
       cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }, {
-      header: 'Type',
       key: 'type',
+      header: 'Type',
       cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
     }, {
-      header: 'Region',
       key: 'region',
+      header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
     }, {
-      header: 'Field Officer',
       key: 'field_officer',
+      header: 'Field Officer',
     }, {
-      header: 'Req. Amount',
       key: 'amount_requested',
+      header: 'Req. Amount',
       enableColumnFilter: false,
       cell: (value) => <Currency value={value?.getValue()} />
     }, {
-      header: 'Req. Date',
-      key: 'created_date',
+      key: 'modified_date',
+      header: 'Req. Amount',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
     }, {
-      header: 'Application State',
-      key: 'application_state',
-      cell: (value) => <span>{value?.getValue() || '-'}</span>
+      key: 'reviewer',
+      header: 'Reviewed By',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     }, {
-      header: 'Documents',
+      key: 'approver',
+      header: 'Approver',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }, {
       key: 'action',
-      isHeaderDisplay: Boolean(actionable),
+      header: 'Document',
       isHeaderDownload: false,
+      isHeaderDisplay: Boolean(actionable),
       enableColumnFilter: false,
       cell: ({ row }) => (
-        <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
-          <Tooltip label={'eSign Application'} withArrow>
-            <ActionIcon size="xs" color="blue" variant="subtle" onClick={() => { setloanId(row?.original?.['id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
-              <ESignIcon />
-            </ActionIcon>
-          </Tooltip>
-        </CheckAllowed>
+        <Tooltip label="eSign Application" withArrow color='gray'>
+          <ActionIcon size="xs" color="blue" variant="subtle" onClick={() => { setloanId(row?.['id']); setType('application'); setDealershipId(row?.dealership_id); setModalVisible(true); }}>
+            <ESignIcon />
+          </ActionIcon>
+        </Tooltip>
       )
     },
   ]
-
-  // const options = {
-  //   selectableRowsHeader: false,
-  //   selectableRows: 'none',
-  //   isRowSelectable: () => false,
-  //   onCellClick: (colData, cellMeta) => {
-  //     if (cellMeta.colIndex !== 8) {
-  //       onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'submitted')
-  //     }
-  //   },
-  //   customSort: (data, dataIndex, rowIndex) => {
-  //     let dateIndex = 5
-  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-  //   }
-  // };
 
   return (
     <div className={classes.root}>
       <DataTableViewer
         column={column}
         rowData={getLoanDetailsQuery?.data}
-        title={'Dashboard'}
-        // count={loans?.length}
-        // showStatusTab={chartData}
+        title={title}
+        count={getLoanDetailsQuery?.data?.length}
+        showStatusTab={chartData}
+        onRowClick={(e) => onRowClick(e.dealership_id, e, 'loan_approval')}
+        loading={loading}
         excelDownload
-        loading={getLoanDetailsQuery?.isLoading}
-        onRowClick={(i) => onRowClick(i?.dealership_id, i, 'submitted')}
       />
       <SignRequestLayout
         dealershipId={dealershipId}
@@ -168,5 +149,4 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
   )
 }
 
-
-export default SubmittedTable;
+export default ApprovalReqestTable;

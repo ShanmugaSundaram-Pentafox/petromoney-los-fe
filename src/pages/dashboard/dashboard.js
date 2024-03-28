@@ -10,6 +10,7 @@ import { action_id, resources_id } from '../../config/accessControl';
 // import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
 import { isAllowed } from '../../utils/cerbos';
+import LoanStats from './components/LoanStats';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -131,6 +132,14 @@ const Dashboard = ({ currentUser }) => {
                 setTotalLoans={setTotalLoans}
                 filterType='Dashboard'
                 filters={['zone', 'region', 'product', 'period']}
+              />
+            </Grid.Col>
+            <Grid.Col mt={'xs'}>
+              <LoanStats
+                selectedStatsCard={selectedStatsCard}
+                handleClick={handleClick}
+                chartData={chartData}
+                totalLoans={totalLoans}
               />
             </Grid.Col>
           </Grid>

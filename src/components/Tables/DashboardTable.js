@@ -10,13 +10,8 @@ import classes from './Dashboard.module.css'
 import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { action_id, resources_id } from '../../config/accessControl';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
-import { ActionIcon, Popover, Text, Tooltip } from '@mantine/core';
-import DocCheckListDetailsTable from '../Attachment/DocCheckListDetailsTable';
-import { LinkIcon } from '@heroicons/react/16/solid';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import DescriptionIcon from '@material-ui/icons/Description';
-import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
-import { IconLink, IconList } from '@tabler/icons-react';
+import { ActionIcon, Tooltip } from '@mantine/core';
+import { IconLink } from '@tabler/icons-react';
 import CustomToken from '../CommonComponents/CustomToken';
 import DDMSModal from '../Deferal-Devation/DDMSModal';
 
@@ -75,77 +70,6 @@ const DashboardTable = ({ onRowClick, filterQry, currentUser, chartData, status,
     ],
     approved: [
       ...column.approved,
-      {
-        key: 'action',
-        header: 'Attachment',
-        enableColumnFilter: false,
-        cell: ({ row }) => {
-          return (
-            <Popover shadow='xl' withArrow position='top-end'>
-              <Popover.Target>
-                <Tooltip label={'click to view documents checklist'}>
-                  <ActionIcon variant={'subtle'} color={'gray'} size={'xs'} mt={4}><LinkIcon /></ActionIcon>
-                </Tooltip>
-              </Popover.Target>
-              <Popover.Dropdown>
-                <DocCheckListDetailsTable title={row?.original} />
-              </Popover.Dropdown>
-            </Popover>
-          )
-        }
-      }, {
-        key: 'action',
-        header: 'Documents',
-        isHeaderDownload: false,
-        isHeaderDisplay: Boolean(actionable),
-        enableColumnFilter: false,
-        cell: ({ row }) => (
-          <>
-            <Popover
-              withArrow
-              position='left-start'
-              shadow="lg"
-            >
-              <Popover.Target>
-                <Tooltip label={'Click to view documents'} withArrow color='gray' offset={10}>
-                  <span>
-                    <ActionIcon size="xs" variant='subtle' color={'blue'} mt={4}><IconList /></ActionIcon>
-                  </span>
-                </Tooltip>
-              </Popover.Target>
-              <Popover.Dropdown>
-                <div className={classes.itemLists}>
-                  <div className={classes.listItem} onClick={() => { setloanId(row?.original?.['id']); setDealershipId(row?.original?.dealership_id); setType('sanction'); setModalVisible(true); }}>
-                    <div className={classes.listIcon}>
-                      <DescriptionIcon style={{ width: 19, color: 'blue' }} />
-                    </div>
-                    <Text>Sanction Letter</Text>
-                  </div>
-                  <div className={classes.listItem} onClick={() => { setloanId(row?.original?.['id']); setDealershipId(row?.original?.dealership_id); setType('agreement'); setModalVisible(true); setLoanAmount(row?.original?.['amount_approved']); setProductTypeId(row?.original?.['product_id']) }}>
-                    <div className={classes.listIcon} >
-                      <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
-                    </div>
-                    <Text>Loan Agreement</Text>
-                  </div>
-                  <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setloanId(row?.original?.['id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
-                    <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
-                      <ESignIcon width={17} style={{ color: 'blue' }} />
-                    </div>
-                    <Text>eSign Application</Text>
-                  </div>
-                  <div className={classes.listItem} onClick={() => { setloanId(row?.original?.['id']); setType('loc'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); setLoanAmount(row?.original?.['amount_approved']); }}>
-                    <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
-                      <AssignmentIcon style={{ width: 19, color: 'blue' }} />
-                    </div>
-                    <Text>Letter Of Continuity</Text>
-                  </div>
-                </div>
-              </Popover.Dropdown>
-            </Popover>
-
-          </>
-        )
-      },
     ],
     disbursement_approval: [
       ...column.disbursement_approval,

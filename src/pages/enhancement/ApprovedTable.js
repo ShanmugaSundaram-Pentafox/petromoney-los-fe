@@ -22,6 +22,8 @@ import { downloadEnhancementData, getEnhancedLoanByStatus, getEnhancementSync, g
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
+import { ActionIcon, Group, Modal, Text } from '@mantine/core';
+import { IconList } from '@tabler/icons-react';
 
 
 const useStyles = makeStyles(theme => ({
@@ -193,9 +195,47 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
             <CustomToken label={'Signed'} variant="success" icon="tick" />
           ) : (
             <>
-              <Tooltip title={'Click to view Documents'}>
-                <IconButton size="small" color="primary" aria-label="application" onClick={(e) => setAnchorEl({ document: e.currentTarget, value: row?.original?.dealership_id, r: row?.original })} ><List /></IconButton>
-              </Tooltip>
+              <Popover
+                withArrow
+                position='left-start'
+                shadow="lg"
+              >
+                <Popover.Target>
+                  <Tooltip label={'Click to view documents'} withArrow color='gray' offset={10}>
+                    <span>
+                      <ActionIcon size="xs" variant='subtle' color={'blue'} mt={4}><IconList /></ActionIcon>
+                    </span>
+                  </Tooltip>
+                </Popover.Target>
+                <Popover.Dropdown>
+                  <div className={classes.itemLists}>
+                    <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
+                      <div className={classes.listIcon}>
+                        <DescriptionIcon style={{ width: 19, color: 'blue' }} />
+                      </div>
+                      <Text>Sanction Letter</Text>
+                    </div>
+                    <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['current_loan_amount']); setProductTypeId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['new_product_id']) }}>
+                      <div className={classes.listIcon} >
+                        <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
+                      </div>
+                      <Text>Loan Agreement</Text>
+                    </div>
+                    <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
+                      <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
+                        <ESignIcon width={17} style={{ color: 'blue' }} />
+                      </div>
+                      <Text>eSign Application</Text>
+                    </div>
+                    <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['current_loan_amount']); }}>
+                      <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
+                        <AssignmentIcon style={{ width: 19, color: 'blue' }} />
+                      </div>
+                      <Text>Letter Of Continuity</Text>
+                    </div>
+                  </div>
+                </Popover.Dropdown>
+              </Popover>
             </>
           )
         )
@@ -266,74 +306,18 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
         excelDownload
         downloadQuery={{ query: enhancementDownloadQuery?.refetch, isLoading: enhancementDownloadQuery?.isFetching }}
       />
-      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
-        <SignRequestLayout
-          dealershipId={dealershipId}
-          loanId={loanId}
-          loanAmount={loanAmount}
-          productId={productTypeId}
-          getStatus={true}
-          type={type}
-          title={type === 'application' ? 'eSign Application Form' : type === 'loc' ? 'Letter of Continuity' : 'Sanction Letter'}
-          onClose={() => setModalVisible(false)}
-          currentUser={currentUser}
-        />
-      </Dialog>
-      <Dialog fullWidth maxWidth="xs" open={openDialog} onClose={() => setOpenDialog(true)}>
-        <DialogContent dividers>
-          <Typography>Ready to sync data with LMS?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <div>
-            <Button variant='outlined' onClick={() => setOpenDialog(false)}>Cancel</Button>
-            <Button variant='contained' color='primary' style={{ color: 'white', marginLeft: 15 }} onClick={() => syncData()}>Yes</Button>
-          </div>
-        </DialogActions>
-      </Dialog>
-
-      <Popover
-        id={documentId}
-        open={documentPopover}
-        anchorEl={anchorEl?.document}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <div className={classes.itemLists}>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
-            <div className={classes.listIcon}>
-              <DescriptionIcon style={{ width: 19, color: 'blue' }} />
-            </div>
-            <Typography>Sanction Letter</Typography>
-          </div>
-          {getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex?.enhancement_category] != 'decrease' ?
-            <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['current_loan_amount']); setProductTypeId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['new_product_id']) }}>
-              <div className={classes.listIcon} >
-                <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
-              </div>
-              <Typography>Loan Agreement</Typography>
-            </div> : null
-          }
-          <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
-            <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
-              <ESignIcon width={17} style={{ color: 'blue' }} />
-            </div>
-            <Typography>eSign Application</Typography>
-          </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['loan_id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(getEnhancementDataQuery?.data?.[anchorEl?.r?.rowIndex]['current_loan_amount']); }}>
-            <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
-              <AssignmentIcon style={{ width: 19, color: 'blue' }} />
-            </div>
-            <Typography>Letter Of Continuity</Typography>
-          </div>
-        </div>
-      </Popover>
+      <SignRequestLayout
+        dealershipId={dealershipId}
+        opened={modalVisible}
+        loanId={loanId}
+        loanAmount={loanAmount}
+        productId={productTypeId}
+        getStatus={true}
+        type={type}
+        title={type === 'application' ? 'eSign Application Form' : type === 'loc' ? 'Letter of Continuity' : 'Sanction Letter'}
+        onClose={() => setModalVisible(false)}
+        currentUser={currentUser}
+      />
     </div>
   )
 }

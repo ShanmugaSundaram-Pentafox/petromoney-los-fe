@@ -37,6 +37,7 @@ const LeegalityInvitees = ({ dealers, applicants, guarantor, updateSelectedDeale
             <CardsCheckList
               data={applicants}
               onChange={updateSelectedCoAppicants}
+              tooltip={true}
             />
           </Box>
         ) : (

@@ -331,7 +331,7 @@ const ApprovedTable = ({ title, loans, setLoansData, onRowClick, filterQry, curr
             </div>
             <Typography>eSign Application</Typography>
           </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['amount_approved']); }}>
+          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['amount_approved']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['product_id']) }}>
             <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
               <AssignmentIcon style={{ width: 19, color: 'blue' }} />
             </div>

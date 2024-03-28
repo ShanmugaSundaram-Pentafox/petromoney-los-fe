@@ -10,13 +10,8 @@ import classes from './Dashboard.module.css'
 import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { action_id, resources_id } from '../../config/accessControl';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
-import { ActionIcon, Popover, Text, Tooltip } from '@mantine/core';
-import DocCheckListDetailsTable from '../Attachment/DocCheckListDetailsTable';
-import { LinkIcon } from '@heroicons/react/16/solid';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import DescriptionIcon from '@material-ui/icons/Description';
-import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.svg';
-import { IconLink, IconList } from '@tabler/icons-react';
+import { ActionIcon, Tooltip } from '@mantine/core';
+import { IconLink } from '@tabler/icons-react';
 import CustomToken from '../CommonComponents/CustomToken';
 import DDMSModal from '../Deferal-Devation/DDMSModal';
 

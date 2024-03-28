@@ -146,6 +146,15 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         },
       },
       {
+        label: 'Approved Amount',
+        name: 'approved_amount',
+        options: {
+          filter: true,
+          sort: true,
+          customBodyRender: (value) => <strong><Currency value={value} /></strong>,
+        },
+      },
+      {
         label: 'Disbursed Amount',
         name: 'disbursed_amount',
         options: {

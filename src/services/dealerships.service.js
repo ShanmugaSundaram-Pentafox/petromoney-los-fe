@@ -126,9 +126,7 @@ export const deleteDocsImage = (data, id) => {
   return new Promise((resolve, reject) => {
     apiCall(`${URL.checklist}/${id}`, {
       method: 'DELETE',
-      body: {
-        id: data
-      }
+      body: data
     })
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {

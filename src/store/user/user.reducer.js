@@ -13,7 +13,7 @@ export const userReducer = (state = INITIAL_STATE, action) => {
     }
   case UserActionTypes.REMOVE_CURRENT_USER:
     if(!action.payload?.timeout) {
-      window.sessionStorage.setItem('pm-login-url', undefined);
+      window.sessionStorage.setItem('@_ddms_auth_', undefined);
     }
     return {
       currentUser: null

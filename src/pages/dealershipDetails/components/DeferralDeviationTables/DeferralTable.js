@@ -2,13 +2,18 @@ import { useQuery } from 'react-query';
 import React, { useState, useEffect } from 'react';
 import DataTableViewer from '../../../../components/ReactTable/DataTableViewer';
 import { getDeferralDataList, getStatsData } from '../../../../services/deferralDeviation.service';
-import { Badge, Button, Modal, Skeleton, Tabs, Text } from '@mantine/core';
+import { Badge, Box, Button, Modal, Skeleton, Tabs, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import DeferralForm from './DeferralForm';
+import { AttachmentOutlined } from '@material-ui/icons';
+import { useDisclosure } from '@mantine/hooks';
+import FilePreview from '../../../../components/CommonComponents/FilePreview';
 
 const DeferralTable = ({ id, dealershipName, currentUser }) => {
   const [activeTab, setActiveTab] = useState('draft');
   const [openModal, setOpenModal] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
+  const [docUrl, setDocUrl] = useState([]);
 
   const { data: statusList = [], isLoading: statusListLoading, refetch: statusListRefetch } = useQuery({
     queryKey: ['get-deferral-stats'],
@@ -31,27 +36,19 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
 
   useEffect(() => {
     if (statusList && statusList.length > 0) {
-      console.log(statusList);
       setActiveTab(statusList[0].current_status);
     }
   }, [statusList]);
 
   const column = [
     {
-      key: 'party_id',
-      header: 'Customer ID',
-      enableColumnFilter: false,
-    }, {
       key: 'code',
       header: 'Code',
       enableColumnFilter: false,
     }, {
-      key: 'party_name',
-      header: 'Customer Name',
-      enableColumnFilter: false,
-    }, {
       key: 'applicant_type',
-      header: 'Applicant Type',
+      header: 'Type',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase() || 'Dealership'}</span>
     }, {
       key: 'applicant_name',
       header: 'Applicant Name',
@@ -68,6 +65,15 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
       header: 'Maker',
       isHeaderDownload: false,
       enableColumnFilter: false,
+    },
+    {
+      key: 'document_urls',
+      header: 'Maker',
+      isHeaderDownload: false,
+      enableColumnFilter: false,
+      cell: (value) => <Box onClick={() => { open(); setDocUrl(value?.getValue()[0]) }}>
+        <AttachmentOutlined color='gray' size={16} />
+      </Box>
     },
   ]
 
@@ -139,6 +145,9 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
         excelDownload
         filter={false}
       />
+      <Modal size={'lg'} opened={opened} onClose={close} title="Preview Attachment">
+        <FilePreview data={{image: docUrl[0]}} />
+      </Modal>
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deferral Data" centered>
         <DeferralForm refetch={() => { statusListRefetch(); deferralDataRefetch(); }} dealershipName={dealershipName} dealershipId={id} close={() => setOpenModal(false)} currentUser={currentUser} />
       </Modal>

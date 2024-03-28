@@ -76,13 +76,13 @@ export const getAllDeferralApplicantsByDealershipId = id => {
 
 export const getDocumentChecklistMaster = () => {
   return new Promise((resolve, reject) => {
-    apiCall('master/pre_disbursal_document_checklist')
+    apiCall('master/pre_disbursal_document_checklist/category')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           // const active_app = data.filter(it => it?.is_active == 1)
           const result = data.map((item) => ({
             value: item?.id?.toString(),
-            label: item?.name
+            label: item?.category
           }));
           resolve(result || []);
         }

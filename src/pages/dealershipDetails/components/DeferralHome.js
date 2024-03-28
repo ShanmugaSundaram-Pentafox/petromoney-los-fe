@@ -48,7 +48,6 @@ const DeferralHome = ({ id,dealershipName }) => {
     refetchOnWindowFocus: false
   });
 
-  console.log('status list ->',statusList)
 
   useEffect(() => {
     if (statusList && statusList.length > 0) {
@@ -58,7 +57,6 @@ const DeferralHome = ({ id,dealershipName }) => {
   const handleTabChange = (value) => {
     setActiveTab(value);
   };
-  console.log('status active ->',activeTab)
 
   if (isLoading) {
     return (

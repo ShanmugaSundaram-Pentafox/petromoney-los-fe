@@ -67,7 +67,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
           CIBILReport()
         })
         .catch(e => {
-          console.log(e)
           setPanLoading({icon:true, loading:false, success:false, error:true})
         })
     } else {

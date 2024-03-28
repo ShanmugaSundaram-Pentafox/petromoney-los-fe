@@ -6,7 +6,6 @@ import {
   Button,
   Title,
   PasswordInput,
-  Badge,
   PinInput,
   Group,
 } from '@mantine/core';
@@ -119,7 +118,6 @@ const LoginForm = ({ setCurrentUser }) => {
               message: 'Unable to send OTP',
               variant: 'error',
             })
-            console.log('Unable to send OTP')
           }
         })
         .catch((error) => {
@@ -143,7 +141,6 @@ const LoginForm = ({ setCurrentUser }) => {
             message: `OTP Sent to ${form?.values?.mobile}`,
             variant: 'success',
           })
-          console.log('>>>>>>> success');
         }
         else {
           displayNotification({
@@ -158,7 +155,6 @@ const LoginForm = ({ setCurrentUser }) => {
           message: 'Unable to send OTP',
           variant: 'error',
         })
-        console.log('error', error)
       })
   }
 
@@ -204,26 +200,26 @@ const LoginForm = ({ setCurrentUser }) => {
                 </Box>
                 {
                   forgetPass &&
-                  <>
-                    <PasswordInput
-                      id='new_password'
-                      variant='filled'
-                      label='New Password'
-                      // size='xs'
-                      // error={errors?.password?.message}
-                      leftSection={<IconLock size={16} />}
-                      {...form.getInputProps('new_password')}
-                    />
-                    <PasswordInput
-                      id='confirm_password'
-                      variant='filled'
-                      label='Confirm Password'
-                      // size='xs'
-                      // error={errors?.password?.message}
-                      leftSection={<IconLock size={16} />}
-                      {...form.getInputProps('confirm_password')}
-                    />
-                  </>
+                    <>
+                      <PasswordInput
+                        id='new_password'
+                        variant='filled'
+                        label='New Password'
+                        // size='xs'
+                        // error={errors?.password?.message}
+                        leftSection={<IconLock size={16} />}
+                        {...form.getInputProps('new_password')}
+                      />
+                      <PasswordInput
+                        id='confirm_password'
+                        variant='filled'
+                        label='Confirm Password'
+                        // size='xs'
+                        // error={errors?.password?.message}
+                        leftSection={<IconLock size={16} />}
+                        {...form.getInputProps('confirm_password')}
+                      />
+                    </>
                 }
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'column' }}>
                   {/* <div style={{ display: 'flex', flexDirection: 'column' }}> */}

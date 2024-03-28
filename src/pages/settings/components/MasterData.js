@@ -1,4 +1,4 @@
-import { Box, Drawer, Paper, SimpleGrid, Text } from '@mantine/core';
+import { Box, Paper, SimpleGrid, Text } from '@mantine/core';
 import { makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import AssignProducts from './AssignProducts';
@@ -23,6 +23,8 @@ import { ReactComponent as RemarkIcon } from '../../../icons/remarkIcon.svg';
 import { ReactComponent as RolesIcon } from '../../../icons/rolesIcon.svg';
 import { ReactComponent as ZoneIcon } from '../../../icons/zoneIcon.svg';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { IconChecklist } from '@tabler/icons-react';
+import PDCChecklistMaster from './PdcChecklistMaster';
 
 const useStyles = makeStyles({
   content: {
@@ -140,7 +142,14 @@ function MasterData({ currentUser }) {
             </Box>
           </CheckAllowed>
         </div>
-
+        <div>
+          {/* <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id?.settings?.emailGroup}> */}
+          <Box className={classes.content} onClick={() => setCustomForm('pdc_checklist')}>
+            <IconChecklist className={classes.icons} />
+            <Text size="xs" fw="bold" ta="center">PDC Checklist</Text>
+          </Box>
+          {/* </CheckAllowed> */}
+        </div>
         <div>
           <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.collectionRemark}>
             <Box className={classes.content} onClick={() => setCustomForm('collection_remark')}>
@@ -158,6 +167,7 @@ function MasterData({ currentUser }) {
             </Box>
           </CheckAllowed>
         </div>
+        
       </SimpleGrid>
 
       <RightSideDrawer
@@ -216,6 +226,14 @@ function MasterData({ currentUser }) {
       >
         <MasterEmailGroup currentUser={currentUser} title='Email Groups' callback={setCustomForm} />
       </RightSideDrawer>
+      <RightSideDrawer
+        opened={customForm === 'pdc_checklist'}
+        onClose={() => setCustomForm()}
+        title={'PDC Checklist'}
+      >
+        <PDCChecklistMaster currentUser={currentUser} callback={setCustomForm} />
+      </RightSideDrawer>
+      
     </Paper>
   );
 }

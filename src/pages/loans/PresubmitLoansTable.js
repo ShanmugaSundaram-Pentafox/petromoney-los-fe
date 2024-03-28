@@ -179,7 +179,6 @@ const PresubmitLoansTable = ({ currentUser }) => {
           setChecklistData([]);
         })
         .catch(e => {
-          console.log(e);
           enqueueSnackbar(e, {
             anchorOrigin: {
               vertical: 'top',

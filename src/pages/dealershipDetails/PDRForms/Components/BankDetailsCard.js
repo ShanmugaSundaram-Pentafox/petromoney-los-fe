@@ -62,7 +62,6 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
   const deleteBankRow = (row, index) => {
     deleteBankDetailsByID(row, id)
       .then(data => {
-        console.log(data)
         enqueueSnackbar(data, {
           anchorOrigin: {
             vertical: 'top',
@@ -199,7 +198,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
             <Button variant='outlined' disabled={verificationLoading} onClick={() => { setBankVerify(); setVerifiedDetails(); }}>Cancel</Button>
             {
               !bankVerify?.bank_verified &&
-              <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>
+                <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={() => verifyBank()}>Verify</Button>
             }
           </div>
         </DialogContent>
@@ -220,7 +219,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
             <Button variant='outlined' onClick={() => { setManualBankVerify() }}>Cancel</Button>
             {
               !bankVerify?.bank_verified &&
-              <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={handleManualVerify}>Verify</Button>
+                <Button variant='contained' disabled={verificationLoading} className={classes.btnSuccess} onClick={handleManualVerify}>Verify</Button>
             }
           </div>
         </DialogContent>

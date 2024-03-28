@@ -1,4 +1,4 @@
-import { ActionIcon, Grid, Group, Select, Text, Tooltip } from '@mantine/core';
+import { FileInput, Grid, Group, Select, Text } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
@@ -8,7 +8,6 @@ import { addDeferralDeviation, getAllDeferralApplicantsByDealershipId, getDocume
 import moment from 'moment';
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
-import { IconUpload } from '@tabler/icons-react';
 import FileUpload from '../../../../components/FileUpload';
 import { URL } from '../../../../config/serverUrls';
 
@@ -127,10 +126,17 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <DateInput value={values?.validDate} onChange={(e) => setFieldError('validDate', e)} minDate={new Date()} size='xs' label={'Submission date'} />
         </Grid.Col>
-        <Grid.Col span={{ base: 12, sm: 6 }} mt={20}>
-          <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true, files: [] })}>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
+          {/* <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true, files: [] })}>
             <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
-          </Tooltip>
+          </Tooltip> */}
+          <FileInput
+            label="Attachments"
+            description=""
+            size='xs'
+            placeholder="click to upload file"
+            onChange={() => setFileUploadObj({ ...fileUploadObj, modal: false })}
+          />
         </Grid.Col>
         <Grid.Col span={12}>
           <label>Remarks</label>

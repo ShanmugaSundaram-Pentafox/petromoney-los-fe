@@ -54,7 +54,6 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         });
       })
       .catch((err) => {
-        console.log(err);
         enqueueSnackbar(err, {
           anchorOrigin: {
             vertical: 'top',

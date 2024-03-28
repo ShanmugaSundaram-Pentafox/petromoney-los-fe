@@ -315,7 +315,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
       onClick: () => setOpenChequeDrawer(true)
     }
   ]
-  console.log('omc data ->>>>>>>>>>>>>>>>>',omcData)
   return (
     <>
       <Flex align="center" justify="space-between" mb="lg">
@@ -364,7 +363,6 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
           )
         })}
       </SimpleGrid>
-      {console.log(omcData)}
       {/* Right Side Drawer Starts Here */}
       {externalView && !omcEdit ? (
         <EmptySideDrawer

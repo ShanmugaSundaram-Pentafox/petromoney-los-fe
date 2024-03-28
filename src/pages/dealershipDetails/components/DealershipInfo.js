@@ -66,7 +66,6 @@ const DealershipInfo = ({ data, currentUser, isLoading }) => {
           setFieldValue('address', res?.details?.pradr?.adr);
         })
         .catch(e => {
-          console.log(e);
           action === 'pan' ?
             setPanValidateData({ icon: true, idType: 'PAN' }) :
             setGstValidateData({ icon: true, idType: 'GST' })
@@ -290,7 +289,6 @@ const DealershipInfo = ({ data, currentUser, isLoading }) => {
       </div>
     })
   }
-  console.log(loading);
   return (
     <>
       {readOnly ? (

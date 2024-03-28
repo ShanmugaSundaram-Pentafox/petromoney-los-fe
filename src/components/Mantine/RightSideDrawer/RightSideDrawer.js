@@ -4,7 +4,7 @@ import { Button } from '../Button/Button';
 
 export const RightSideDrawer = ({
   title,
-  size,
+  size = 'lg',
   opened,
   onClose,
   children,

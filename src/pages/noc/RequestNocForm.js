@@ -127,7 +127,6 @@ const RequestNocForm = ({ data, callback, currentUser, view }) => {
           callback(data);
         })
         .catch((e) => {
-          console.log(e);
           setOptionsLoading(false);
         });
     }

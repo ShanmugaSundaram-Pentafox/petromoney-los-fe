@@ -39,12 +39,10 @@ const PassbookDetails = ({ CurrentUser }) => {
           })
           .catch((e) => {
             setLoading(false)
-            console.log(e);
           });
       })
       .catch((e) => {
         setLoading(false)
-        console.log(e);
       });
   });
   const columns = useMemo(() => {

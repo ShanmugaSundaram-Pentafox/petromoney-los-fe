@@ -1,4 +1,4 @@
-import { ActionIcon, Grid, Group, Select, Text, Tooltip } from '@mantine/core';
+import { FileInput, Grid, Group, Select, Text } from '@mantine/core';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { Button } from '../../../../components/Mantine/Button/Button';
@@ -7,7 +7,6 @@ import { addDeferralDeviation, getAllDeferralApplicantsByDealershipId, getDocume
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
 import FileUpload from '../../../../components/FileUpload';
-import { IconUpload } from '@tabler/icons-react';
 
 const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
   const [loading, setLoading] = useState(false);
@@ -83,10 +82,20 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <Select size='xs' searchable label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
-        <Grid.Col span={{ base: 12, sm: 1 }} mt={20}>
-          <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true })}>
+        <Grid.Col span={{ base: 12, sm: 6 }}>
+          {/* <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true, files: [] })}>
             <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
-          </Tooltip>
+          </Tooltip> */}
+          <FileInput
+            label="Attachments"
+            description=""
+            size='xs'
+            placeholder="click to upload file"
+            onChange={() => setFileUploadObj({ ...fileUploadObj, modal: false })}
+          />
+          {/* <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true })}>
+            <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
+          </Tooltip> */}
         </Grid.Col>
         <Grid.Col>
           <RichTextEditorBox onChange={e => { setFieldValue('remarks', e); setError(); }} />

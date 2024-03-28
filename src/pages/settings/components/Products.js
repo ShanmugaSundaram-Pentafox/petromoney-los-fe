@@ -1,9 +1,6 @@
-import { Button, Divider, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, Typography } from '@material-ui/core'
-import AddIcon from '@material-ui/icons/Add';
+import { Button, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Tooltip } from '@material-ui/core'
 import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
-import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
@@ -196,12 +193,12 @@ const Products = ({ title, callback, currentUser }) => {
 
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
+      {/* <Typography className={classes.sidePanelTitle} variant="h4">
         <div>{title}</div>
         <IconButton size="small">
           <CloseIcon onClick={() => callback(false)} />
         </IconButton>
-      </Typography>
+      </Typography> */}
       <div className={classes.sidePanelFormContentWrapper}>
         {
           addNewProduct ? (
@@ -293,7 +290,7 @@ const Products = ({ title, callback, currentUser }) => {
                     <TableCell>Tenure<br />(days)</TableCell>
                     {
                       isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.productsUpdate) &&
-                      <TableCell align="center">Actions</TableCell>
+                        <TableCell align="center">Actions</TableCell>
                     }
                   </TableRow>
                 </TableHead>
@@ -342,7 +339,7 @@ const Products = ({ title, callback, currentUser }) => {
           )
         }
       </div>
-      <div className={classes.actionFooter}>
+      {/* <div className={classes.actionFooter}>
         <Divider />
         <div className={classes.actionButtonsWrapper}>
           <div>
@@ -366,7 +363,7 @@ const Products = ({ title, callback, currentUser }) => {
             </Button>
           </CheckAllowed>
         </div>
-      </div>
+      </div> */}
     </div >
   )
 }

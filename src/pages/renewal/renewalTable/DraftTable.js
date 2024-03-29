@@ -1,6 +1,3 @@
-import { makeStyles, } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
-import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import clsx from 'clsx';
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -11,28 +8,13 @@ import Currency from '../../../components/Number/Currency';
 import { getSignedUrl } from '../../../services/common.service';
 import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, sendRenewalReminder } from '../../../services/renewal.service';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
-import { Button, Group, Modal, Text, } from '@mantine/core';
+import { Button, Group, Modal, Text, Title, } from '@mantine/core';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
-
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    fontWeight: 500
-  },
-  pill: {
-    display: 'inline-block',
-    borderRadius: '29px',
-    padding: '3px 8px',
-    fontSize: '12px',
-    fontWeight: '500',
-    minWidth: '30px',
-    textAlign: 'center',
-  },
-}));
+import { IconInfoCircle, IconSend } from '@tabler/icons-react';
+import classes from './Renewal.module.css';
 
 
 const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
-  const classes = useStyles();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const [openModal, setOpenModal] = useState(false);
@@ -91,34 +73,6 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
       })
   }
 
-  const onDownloadClick = () => {
-    downloadRenewalData('draft', filterQry)
-      .then(data => {
-        getSignedUrl(data[0]?.url)
-          .then((res) => {
-            window.open(res?.url, '_blank');
-          })
-          .catch(e => {
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
-          })
-      })
-      .catch(e => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
-
   const column = [
     {
       key: 'dealership_id',
@@ -151,59 +105,6 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
     },
   ]
 
-  // const options = {
-  //   selectableRowsHeader: false,
-  //   selectableRows: 'none',
-  //   isRowSelectable: () => true,
-  //   rowsPerPage: 10,
-  //   filter: false,
-  //   print: false,
-  //   sort: false,
-  //   download: false,
-  //   // search: false,
-  //   viewColumns: false,
-  //   searchPlaceholder: 'Search by dealreship ID/Name',
-  //   onSearchChange: (searchText) => {
-  //     setSearch(searchText)
-  //   },
-  //   // customToolbar: () => {
-  //   //   return (
-  //   //     <>
-  //   //       <Tooltip label="Download" withArrow color='gray'>
-  //   //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-  //   //       </Tooltip>
-  //   //       <Button
-  //   //         color='primary'
-  //   //         variant='contained'
-  //   //         onClick={() => setOpenModal(true)}
-  //   //       >
-  //   //         Send Reminder
-  //   //       </Button>
-  //   //     </>
-  //   //   );
-  //   // },
-  //   customFooter: () => {
-  //     return (
-  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-  //         <MuiTableFooter
-  //           totalCount={pageDetailsQuery?.data?.total_number_of_pages}
-  //           pageSize={10}
-  //           onPageChange={(value) => { setPage(value) }}
-  //         />
-  //       </div>
-  //     )
-  //   },
-  //   onCellClick: (colData, cellMeta) => {
-  //     if (cellMeta.colIndex !== 7) {
-  //       onRowClick(getRenewalDataQuery?.data[cellMeta.dataIndex].dealership_id, getRenewalDataQuery?.data[cellMeta.dataIndex], 'draft')
-  //     }
-  //   },
-  //   customSort: (data, dataIndex, rowIndex) => {
-  //     let dateIndex = 5
-  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-  //   }
-  // };
-
   return (
     <div className={classes.root}>
       <DataTableViewer
@@ -231,14 +132,16 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
         withCloseButton={false}
       >
         <div style={{ textAlign: 'center', marginBottom: 16 }}>
-          <InfoCircleOutlined style={{ fontSize: 48, color: '#f0ad4e', margin: 16, marginBottom: 20 }} />
-          <Typography variant='h3'>Are you certain?</Typography>
+          <Group justify='center' mb={'md'}>
+            <IconInfoCircle size={48} color={'#f0ad4e'} />
+          </Group>
+          <Title order={3}>Are you certain?</Title>
         </div>
         <Text ta={'center'}>Were you planning to inform all the regional managers, dealers, and sales teams that their loan renewal is currently in progress?</Text>
         <Group justify='center' gap={10} mt={'lg'}>
-          <Button variant='outline' onClick={() => setOpenModal(false)}>Cancel</Button>
-          <Button color='green' onClick={handleReminder}>
-            Yes
+          <Button variant='outline' size='xs' onClick={() => setOpenModal(false)}>Cancel</Button>
+          <Button color='green' leftSection={<IconSend size={16} />} size='xs' onClick={handleReminder}>
+            Send
           </Button>
         </Group>
       </Modal>

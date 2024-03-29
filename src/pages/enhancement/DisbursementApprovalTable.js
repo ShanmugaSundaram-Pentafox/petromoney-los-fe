@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState, } from 'react';
@@ -13,47 +12,9 @@ import { displayNotification } from '../../components/CommonComponents/Notificat
 import { ActionIcon, Group, Modal, Text, Tooltip, Button } from '@mantine/core';
 import { IconCircleCheck, IconLink, IconRefresh } from '@tabler/icons-react';
 import DDMSModal from '../../components/Deferal-Devation/DDMSModal';
-
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    fontWeight: 500
-  },
-  pill: {
-    display: 'inline-block',
-    borderRadius: '29px',
-    padding: '3px 8px',
-    fontSize: '12px',
-    fontWeight: '500',
-    minWidth: '30px',
-    textAlign: 'center',
-  },
-  itemLists: {
-    padding: '10px',
-    display: 'flex',
-    gap: '6px',
-    flexDirection: 'column',
-  },
-  listItem: {
-    display: 'flex',
-    gap: '10px',
-    alignItems: 'center',
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#f7f7f7',
-    },
-    height: '22px',
-  },
-  listIcon: {
-    width: '20px',
-    display: 'flex',
-    justifyContent: 'center',
-  }
-}));
-
+import classes from './Enhancement.module.css'
 
 const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
-  const classes = useStyles();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const [enhancementId, setEnhancementId] = useState();
@@ -181,51 +142,6 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
       }
     },
   ]
-
-  // const options = {
-  //   selectableRowsHeader: false,
-  //   selectableRows: 'none',
-  //   isRowSelectable: () => true,
-  //   rowsPerPage: 10,
-  //   filter: false,
-  //   print: false,
-  //   sort: false,
-  //   download: false,
-  //   viewColumns: false,
-  //   searchPlaceholder: 'Search by dealreship ID/Name',
-  //   onSearchChange: (searchText) => {
-  //     setSearch(searchText)
-  //   },
-  //   // customToolbar: () => {
-  //   //   return (
-  //   //     <>
-  //   //       <Tooltip title="Download">
-  //   //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-  //   //       </Tooltip>
-  //   //     </>
-  //   //   );
-  //   // },
-  //   customFooter: () => {
-  //     return (
-  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-  //         <MuiTableFooter
-  //           totalCount={pageData?.total_number_of_pages}
-  //           pageSize={10}
-  //           onPageChange={(value) => { setPage(value) }}
-  //         />
-  //       </div>
-  //     )
-  //   },
-  //   onCellClick: (colData, cellMeta) => {
-  //     if ((cellMeta.colIndex !== 8) && (cellMeta.colIndex !== 7)) {
-  //       onRowClick(getEnhancementDataQuery?.data[cellMeta.dataIndex].dealership_id, getEnhancementDataQuery?.data[cellMeta.dataIndex], 'disbursement_approval')
-  //     }
-  //   },
-  //   customSort: (data, dataIndex, rowIndex) => {
-  //     let dateIndex = 5
-  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-  //   }
-  // };
 
   return (
     <div className={classes.root}>

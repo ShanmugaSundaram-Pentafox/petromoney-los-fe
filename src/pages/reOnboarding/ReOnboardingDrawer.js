@@ -1,8 +1,5 @@
-import { Divider, Paper, Collapse } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+import { Divider, Collapse } from '@material-ui/core';
 import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
-import Alert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -14,8 +11,9 @@ import DealershipInfo from '../dealershipDetails/components/DealershipInfo';
 import DealersList from '../dealershipDetails/components/DealersList';
 import WorkingSheetDrawer from '../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import RenewalDrawerFooter from '../renewal/renewalDrawer/RenewalDrawerFooter';
-import { Box, Button, Group, Modal, Text } from '@mantine/core';
+import { Alert, Box, Button, Group, Modal, Paper, Text, Title } from '@mantine/core';
 import RichTextEditorBox from '../../components/RichTexEditor/RichTextEditorBox';
+import classes from './ReOnboarding.module.css';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
   if (isReject) {
@@ -45,48 +43,6 @@ const getMessage = (status, isReject, isPushback) => {
   return 'Move to Next Stage?'
 }
 
-const useStyles = makeStyles(theme => ({
-  wrapper: {
-    padding: '0 24px 10px 24px',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '90vh',
-  },
-  dialog: {
-    minWidth: '30vw'
-  },
-  contentWrapper: {
-    padding: 12,
-    flex: 1,
-    overflow: 'auto',
-    overflowX: 'hidden'
-  },
-  wrapperTitle: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginRight: 24,
-  },
-  title: {
-    top: 0,
-    left: 0,
-    padding: '8px 16px',
-    background: theme.palette.grey[300],
-    borderBottomRightRadius: 12,
-    boxShadow: '0px 0px 4px #8d8d8d',
-  },
-  closeIcon: {
-    marginTop: 8,
-  },
-  collapseCard: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10
-  }
-}))
-
-
 const ReOnboardingDrawer = ({ id, selectedLoanData, status, currentUser, data, onClose }) => {
   const [reviewModal, setReviewModal] = useState(false);
   const [loading, setLoading] = useState(false)
@@ -96,7 +52,6 @@ const ReOnboardingDrawer = ({ id, selectedLoanData, status, currentUser, data, o
   const [errorStatus, setErrorStatus] = useState()
   const [collapse, setCollapse] = useState(false);
   const [info, setInfo] = useState();
-  const classes = useStyles();
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.loan_id))
   const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), { refetchOnWindowFocus: false })
   const { enqueueSnackbar } = useSnackbar();
@@ -208,7 +163,7 @@ const ReOnboardingDrawer = ({ id, selectedLoanData, status, currentUser, data, o
                 return (
                   <Paper variant='outlined' key={item?.id} style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}>
                     <div className={classes.collapseCard} onClick={() => handleClick(item.id)}>
-                      <Typography variant='h6' style={{ cursor: 'pointer' }}>{item?.name}</Typography>
+                      <Title order={6} style={{ cursor: 'pointer' }}>{item?.name}</Title>
                       {collapse == item?.id ? <ArrowDropDownSharp /> : <ArrowRightOutlined />}
                     </div>
                     <Collapse in={collapse == item?.id}>
@@ -239,7 +194,7 @@ const ReOnboardingDrawer = ({ id, selectedLoanData, status, currentUser, data, o
             <RichTextEditorBox onChange={setRemarks} />
             {
               errorStatus ?
-                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert> : null
+                <Alert withCloseButton={false} title={'Error'} style={{ padding: '0px 16px' }}>{errorStatus}</Alert> : null
             }
           </div>
           <Group justify='flex-end' mt={15}>

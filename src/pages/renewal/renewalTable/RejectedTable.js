@@ -1,35 +1,15 @@
-import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import Currency from '../../../components/Number/Currency';
-import { getSignedUrl } from '../../../services/common.service';
-import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
+import { getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    fontWeight: 500
-  },
-  pill: {
-    display: 'inline-block',
-    borderRadius: '29px',
-    padding: '3px 8px',
-    fontSize: '12px',
-    fontWeight: '500',
-    minWidth: '30px',
-    textAlign: 'center',
-  },
-}));
-
+import classes from './Renewal.module.css';
 
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
-  const classes = useStyles();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
-  const { enqueueSnackbar } = useSnackbar();
 
   const pageDetailsQuery = useQuery({
     queryKey: ['renewal_rejectedRecordCount', filterQry, search],

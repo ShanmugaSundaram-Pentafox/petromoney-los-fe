@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -9,26 +8,9 @@ import { downloadEnhancementData, getEnhancedLoanByStatus, getPageDetails } from
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
-
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    fontWeight: 500
-  },
-  pill: {
-    display: 'inline-block',
-    borderRadius: '29px',
-    padding: '3px 8px',
-    fontSize: '12px',
-    fontWeight: '500',
-    minWidth: '30px',
-    textAlign: 'center',
-  },
-}));
-
+import classes from './ReOnboarding.module.css'
 
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
-  const classes = useStyles();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const { enqueueSnackbar } = useSnackbar();

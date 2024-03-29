@@ -1,10 +1,10 @@
-import Grid from '@material-ui/core/Grid';
 import React, { useState } from 'react';
 import EnhancementTable from './EnhancementTable'
 import usePageTitle from '../../hooks/usePageTitle';
 import { getEnhancementStatusList, getStatusWiseRecordCount } from '../../services/enhancement.service';
 import LoanStats from '../dashboard/components/LoanStats';
 import RenewalFilter from '../renewal/RenewalFilter';
+import { Grid } from '@mantine/core';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -41,8 +41,8 @@ const EnhancementList = ({ currentUser }) => {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
+      <Grid gutter={'md'}>
+        <Grid.Col span={12}>
           <RenewalFilter
             filterQry={setFilterQry}
             setChartData={setChartData}
@@ -50,15 +50,15 @@ const EnhancementList = ({ currentUser }) => {
             filterType='enhancement'
             filters={['zone', 'region', 'product', 'period']}
           />
-        </Grid>
-        <Grid item xs={12}>
+        </Grid.Col>
+        <Grid.Col span={12}>
           <LoanStats
             selectedStatsCard={selectedStatsCard}
             handleClick={handleClick}
             chartData={chartData}
             totalLoans={totalLoans}
           />
-        </Grid>
+        </Grid.Col>
       </Grid>
       <EnhancementTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} statusList={chartData} statsChange={handleClick} />
     </div>

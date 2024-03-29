@@ -12,7 +12,6 @@ import { getDealershipById } from '../../services/dealerships.service';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import DisbursementApprovalTable from './DisbursementApprovalTable';
 import { Box, Grid, Paper } from '@mantine/core';
-import EnhancementTableList from './EnhancementTableList';
 
 
 const useStyles = makeStyles(theme => ({

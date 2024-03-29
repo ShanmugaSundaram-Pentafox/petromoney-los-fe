@@ -1,9 +1,3 @@
-import { Button, Dialog, DialogContent, DialogActions } from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
-import Typography from '@material-ui/core/Typography';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import SyncIcon from '@material-ui/icons/Sync';
-import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useSnackbar } from 'notistack';
 import React, { useState, } from 'react';
@@ -15,50 +9,12 @@ import { downloadEnhancementData, getEnhancedLoanByStatus, getEnhancementSync, g
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
-import { ActionIcon, Tooltip } from '@mantine/core';
-import { IconLink } from '@tabler/icons-react';
+import { ActionIcon, Group, Modal, Text, Tooltip, Button } from '@mantine/core';
+import { IconCircleCheck, IconLink, IconRefresh } from '@tabler/icons-react';
 import DDMSModal from '../../components/Deferal-Devation/DDMSModal';
-
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    fontWeight: 500
-  },
-  pill: {
-    display: 'inline-block',
-    borderRadius: '29px',
-    padding: '3px 8px',
-    fontSize: '12px',
-    fontWeight: '500',
-    minWidth: '30px',
-    textAlign: 'center',
-  },
-  itemLists: {
-    padding: '10px',
-    display: 'flex',
-    gap: '6px',
-    flexDirection: 'column',
-  },
-  listItem: {
-    display: 'flex',
-    gap: '10px',
-    alignItems: 'center',
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#f7f7f7',
-    },
-    height: '22px',
-  },
-  listIcon: {
-    width: '20px',
-    display: 'flex',
-    justifyContent: 'center',
-  }
-}));
-
+import classes from './Enhancement.module.css'
 
 const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
-  const classes = useStyles();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const [enhancementId, setEnhancementId] = useState();
@@ -158,11 +114,11 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
         return (
           row?.original?.is_sync == 1 ?
             <Tooltip label='Already synced' withArrow color='gray'>
-              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+              <IconCircleCheck color={'green'} />
             </Tooltip> :
             <div>
               <Tooltip label="click to sync" withArrow color='gray'>
-                <SyncIcon style={{ color: 'grey' }} onClick={() => { setOpenDialog(true); setEnhancementId(row?.original?.['id']) }} />
+                <IconRefresh color={'grey'} onClick={() => { setOpenDialog(true); setEnhancementId(row?.original?.['id']) }} />
               </Tooltip>
             </div>
         )
@@ -187,51 +143,6 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
     },
   ]
 
-  // const options = {
-  //   selectableRowsHeader: false,
-  //   selectableRows: 'none',
-  //   isRowSelectable: () => true,
-  //   rowsPerPage: 10,
-  //   filter: false,
-  //   print: false,
-  //   sort: false,
-  //   download: false,
-  //   viewColumns: false,
-  //   searchPlaceholder: 'Search by dealreship ID/Name',
-  //   onSearchChange: (searchText) => {
-  //     setSearch(searchText)
-  //   },
-  //   // customToolbar: () => {
-  //   //   return (
-  //   //     <>
-  //   //       <Tooltip title="Download">
-  //   //         <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-  //   //       </Tooltip>
-  //   //     </>
-  //   //   );
-  //   // },
-  //   customFooter: () => {
-  //     return (
-  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-  //         <MuiTableFooter
-  //           totalCount={pageData?.total_number_of_pages}
-  //           pageSize={10}
-  //           onPageChange={(value) => { setPage(value) }}
-  //         />
-  //       </div>
-  //     )
-  //   },
-  //   onCellClick: (colData, cellMeta) => {
-  //     if ((cellMeta.colIndex !== 8) && (cellMeta.colIndex !== 7)) {
-  //       onRowClick(getEnhancementDataQuery?.data[cellMeta.dataIndex].dealership_id, getEnhancementDataQuery?.data[cellMeta.dataIndex], 'disbursement_approval')
-  //     }
-  //   },
-  //   customSort: (data, dataIndex, rowIndex) => {
-  //     let dateIndex = 5
-  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-  //   }
-  // };
-
   return (
     <div className={classes.root}>
       <DataTableViewer
@@ -253,17 +164,13 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
 
       <DDMSModal opened={Boolean(docModal?.modal)} onClose={() => setDocModal({})} modalObj={docModal} queryKey={'enhancement-data-disbursement_approval'} />
 
-      <Dialog fullWidth maxWidth="xs" open={openDialog} onClose={() => setOpenDialog(true)}>
-        <DialogContent dividers>
-          <Typography>Ready to sync data with LMS?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <div>
-            <Button variant='outlined' onClick={() => setOpenDialog(false)}>Cancel</Button>
-            <Button variant='contained' color='primary' style={{ color: 'white', marginLeft: 15 }} onClick={() => syncData()}>Yes</Button>
-          </div>
-        </DialogActions>
-      </Dialog>
+      <Modal opened={openDialog} onClose={() => setOpenDialog(true)} size={'lg'}>
+        <Text>Ready to sync data with LMS?</Text>
+        <Group justify='flex-end'>
+          <Button variant='outline' onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button color='green' onClick={() => syncData()}>Yes</Button>
+        </Group>
+      </Modal>
     </div>
   )
 }

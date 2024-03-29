@@ -1,11 +1,4 @@
-import { Button, Dialog, DialogContent, DialogActions } from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
-import Typography from '@material-ui/core/Typography';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import SyncIcon from '@material-ui/icons/Sync';
-import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import CustomToken from '../../components/CommonComponents/CustomToken';
@@ -15,56 +8,17 @@ import { downloadEnhancementData, getEnhancedLoanByStatus, getEnhancementSync, g
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
-import { ActionIcon, Tooltip } from '@mantine/core';
-import { IconLink } from '@tabler/icons-react';
+import { ActionIcon, Button, Group, Modal, Text, Tooltip } from '@mantine/core';
+import { IconCircleCheck, IconLink, IconRefresh } from '@tabler/icons-react';
 import DDMSModal from '../../components/Deferal-Devation/DDMSModal';
-
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    fontWeight: 500
-  },
-  pill: {
-    display: 'inline-block',
-    borderRadius: '29px',
-    padding: '3px 8px',
-    fontSize: '12px',
-    fontWeight: '500',
-    minWidth: '30px',
-    textAlign: 'center',
-  },
-  itemLists: {
-    padding: '10px',
-    display: 'flex',
-    gap: '6px',
-    flexDirection: 'column',
-  },
-  listItem: {
-    display: 'flex',
-    gap: '10px',
-    alignItems: 'center',
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#f7f7f7',
-    },
-    height: '22px',
-  },
-  listIcon: {
-    width: '20px',
-    display: 'flex',
-    justifyContent: 'center',
-  }
-}));
-
+import classes from './ReOnboarding.module.css';
 
 const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
-  const classes = useStyles();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const [enhancementId, setEnhancementId] = useState();
   const [openDialog, setOpenDialog] = useState(false)
   const [docModal, setDocModal] = useState({ modal: false })
-  const { enqueueSnackbar } = useSnackbar();
 
   const getReOnboardingDataQuery = useQuery({
     queryKey: ['re-onboarding-data-disbursement_approval', filterQry, page, search],
@@ -98,22 +52,16 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
   const syncData = () => {
     getEnhancementSync(enhancementId)
       .then(res => {
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: res,
           variant: 'success',
         })
         getReOnboardingDataQuery?.refetch()
         setOpenDialog(false)
       })
       .catch(err => {
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: err,
           variant: 'error',
         })
         setOpenDialog(false)
@@ -157,11 +105,11 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
         return (
           row?.original?.is_sync == 1 ?
             <Tooltip label='Already synced' withArrow color='gray'>
-              <CheckCircleTwoToneIcon style={{ color: green[200] }} />
+              <IconCircleCheck color={'green'} />
             </Tooltip> :
             <div>
               <Tooltip label="click to sync" withArrow color='gray'>
-                <SyncIcon style={{ color: 'grey' }} onClick={() => { setOpenDialog(true); setEnhancementId(row?.original?.['id']) }} />
+                <IconRefresh color={'gray'} onClick={() => { setOpenDialog(true); setEnhancementId(row?.original?.['id']) }} />
               </Tooltip>
             </div>
         )
@@ -252,17 +200,13 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
 
       <DDMSModal opened={Boolean(docModal?.modal)} onClose={() => setDocModal({})} modalObj={docModal} queryKey='re-onboarding-data-disbursement_approval' />
 
-      <Dialog fullWidth maxWidth="xs" open={openDialog} onClose={() => setOpenDialog(true)}>
-        <DialogContent dividers>
-          <Typography>Ready to sync data with LMS?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <div>
-            <Button variant='outlined' onClick={() => setOpenDialog(false)}>Cancel</Button>
-            <Button variant='contained' color='primary' style={{ color: 'white', marginLeft: 15 }} onClick={() => syncData()}>Yes</Button>
-          </div>
-        </DialogActions>
-      </Dialog>
+      <Modal opened={openDialog} onClose={() => setOpenDialog(true)} size={'lg'}>
+        <Text>Ready to sync data with LMS?</Text>
+        <Group justify='flex-end'>
+          <Button variant='outline' onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button color='green' onClick={() => syncData()}>Yes</Button>
+        </Group>
+      </Modal>
     </div>
   )
 }

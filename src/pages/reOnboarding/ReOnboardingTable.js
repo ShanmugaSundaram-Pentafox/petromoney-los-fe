@@ -1,4 +1,3 @@
-import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import ApprovalTable from './ApprovalTable';
 import ApprovedTable from './ApprovedTable';
@@ -12,20 +11,9 @@ import { getDealershipById } from '../../services/dealerships.service';
 import DisbursementApprovalTable from './DisbursementApprovalTable';
 import { Box, Grid, Paper } from '@mantine/core';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
-
-
-const useStyles = makeStyles(theme => ({
-  tableContainer: {
-    borderRadius: 6,
-  },
-  sidePanelWrapper: {
-    width: '70vw',
-    maxWidth: '80vw'
-  },
-}));
+import classes from './ReOnboarding.module.css';
 
 const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
-  const classes = useStyles();
   const [showPanel, setShowPanel] = useState({
     status: false,
     data: ''

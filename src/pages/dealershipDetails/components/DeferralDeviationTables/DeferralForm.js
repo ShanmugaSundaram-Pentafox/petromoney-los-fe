@@ -1,4 +1,5 @@
-import { FileInput, Grid, Group, Select, Text } from '@mantine/core';
+import { Box, Grid, Group, Image, Select, SimpleGrid, Text, Title } from '@mantine/core';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { DateInput } from '@mantine/dates';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
@@ -15,6 +16,20 @@ import { URL } from '../../../../config/serverUrls';
 const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUser }) => {
   const [loading, setLoading] = useState(false)
   const [fileUploadObj, setFileUploadObj] = useState({});
+  const [files, setFiles] = useState([]);
+
+  const previews = files.map((file, index) => {
+    const imageUrl = window.URL.createObjectURL(file);
+    return (
+      <Box key={index} style={{ border: '1px dashed #ADB5BD', borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }}>
+        <Image width={50} height={50} src={imageUrl} onLoad={() => window.URL.revokeObjectURL(imageUrl)} />
+        {/* <Button size={'xxs'} mt={12}>
+          <IconTrash size={12} />
+        </Button> */}
+      </Box>
+    )
+  });
+
 
   const { data: applicantsData } = useQuery(['dealership-applicants-list', dealershipId], () => getAllDeferralApplicantsByDealershipId(dealershipId), {
     initialData: [],
@@ -124,19 +139,29 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
           <Select searchable data={checklist} size='xs' label={'Document Type'} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <DateInput value={values?.validDate} onChange={(e) => setFieldError('validDate', e)} minDate={new Date()} size='xs' label={'Submission date'} />
+          <DateInput value={values?.validDate} onChange={(e) => setFieldValue('validDate', e)} minDate={new Date()} size='xs' label={'Submission date'} />
         </Grid.Col>
-        <Grid.Col span={{ base: 12, sm: 6 }}>
+        <Grid.Col span={{ base: 12, sm: 6 }}></Grid.Col>
+        <Grid.Col span={{ base: 12, sm: 12 }}>
+          <Title size={14} c={'#2b2b2b'}>Attachments</Title>
           {/* <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true, files: [] })}>
             <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
           </Tooltip> */}
-          <FileInput
+          <div>
+            <Dropzone bg={'#F1F3F5'} multiple accept={IMAGE_MIME_TYPE} onDrop={setFiles}>
+              <Text ta="center">Drop images here</Text>
+            </Dropzone>
+            <SimpleGrid cols={6} mt={20}>
+              {previews}
+            </SimpleGrid>
+          </div>
+          {/* <FileInput
             label="Attachments"
             description=""
             size='xs'
             placeholder="click to upload file"
             onChange={() => setFileUploadObj({ ...fileUploadObj, modal: false })}
-          />
+          /> */}
         </Grid.Col>
         <Grid.Col span={12}>
           <label>Remarks</label>

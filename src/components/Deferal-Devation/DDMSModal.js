@@ -240,7 +240,7 @@ const DDMSModal = ({
                             <Group mt={4} gap={4} style={{ alignItems: 'center' }}>
                               <p>{(index + 1) + '). '}</p>
                               <div>{item?.category}</div>
-                              {item?.category_id == 13 ?
+                              {item?.category_id == 99 ?
                                 <Popover withArrow position='top-start' shadow='xl' opened={Boolean(othersText?.modal)} onClose={() => setOthersText({})}>
                                   <Popover.Target>
                                     <ActionIcon variant='subtle' onClick={() => setOthersText({ modal: true })}>

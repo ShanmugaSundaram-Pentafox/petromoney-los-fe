@@ -287,7 +287,7 @@ const DDMSModal = ({
                           deferralStatus={othersObj?.find(i => i?.name === value?.name)?.status}
                           handleDelete={handleDelete}
                           dealershipId={modalObj?.id}
-                          handleDataChange={(arr, val) => handleDataChange(arr, val, 'others')}
+                          handleDataChange={(arr, val, type, remarks) => handleDataChange(arr, val, 'others', remarks)}
                           handleDeferralMapping={(arr, val) => handleDeferralMapping(arr, val, 'others')}
                         />
                       </Table.Tr>

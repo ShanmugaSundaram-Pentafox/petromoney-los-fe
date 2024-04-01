@@ -20,8 +20,8 @@ import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
 import DeferralTable from './components/DeferralDeviationTables/DeferralTable';
-import { DeviationTable } from './ScoreCardTables/WorkingSheetTable';
 import { IconBriefcase, IconListDetails, IconPinEnd, IconPinInvoke, IconRouteScan, IconScoreboard, IconUserScan, IconUsersGroup } from '@tabler/icons-react';
+import DeviationTable from './components/DeferralDeviationTables/DeviationTable';
 
 
 const DealershipDetails = ({ currentUser, match }) => {

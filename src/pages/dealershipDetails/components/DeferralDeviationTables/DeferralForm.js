@@ -1,5 +1,5 @@
 import { Box, Grid, Group, Image, Select, SimpleGrid, Text, Title } from '@mantine/core';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { Dropzone, IMAGE_MIME_TYPE, PDF_MIME_TYPE } from '@mantine/dropzone';
 import { DateInput } from '@mantine/dates';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
@@ -48,7 +48,9 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
   };
 
   const handleSave = (files) => {
+    setFiles(files)
     const formData = new FormData();
+    //defaults to 35 for ddms
     const docID = 35;
     files.map(file => {
       const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
@@ -72,7 +74,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
           message: 'File Upload Success',
           variant: 'success',
         });
-        refetch();
+        // refetch();
       })
       .catch(error => {
         displayNotification({
@@ -128,7 +130,6 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
       }
     }
   });
-
   return (
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
@@ -144,24 +145,17 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
         <Grid.Col span={{ base: 12, sm: 6 }}></Grid.Col>
         <Grid.Col span={{ base: 12, sm: 12 }}>
           <Title size={14} c={'#2b2b2b'}>Attachments</Title>
-          {/* <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true, files: [] })}>
-            <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
-          </Tooltip> */}
           <div>
-            <Dropzone bg={'#F1F3F5'} multiple accept={IMAGE_MIME_TYPE} onDrop={setFiles}>
+            <Dropzone
+              onChange={handleSave}
+              // onReject={}
+              accept={[IMAGE_MIME_TYPE,PDF_MIME_TYPE]} bg={'#F1F3F5'} multiple onDrop={handleSave}>
               <Text ta="center">Drop images here</Text>
             </Dropzone>
             <SimpleGrid cols={6} mt={20}>
               {previews}
             </SimpleGrid>
           </div>
-          {/* <FileInput
-            label="Attachments"
-            description=""
-            size='xs'
-            placeholder="click to upload file"
-            onChange={() => setFileUploadObj({ ...fileUploadObj, modal: false })}
-          /> */}
         </Grid.Col>
         <Grid.Col span={12}>
           <label>Remarks</label>

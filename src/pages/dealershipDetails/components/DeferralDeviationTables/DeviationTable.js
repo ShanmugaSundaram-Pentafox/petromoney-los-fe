@@ -55,13 +55,13 @@ const DeviationTable = ({ id, dealershipName }) => {
       header: 'Document type',
     }, {
       key: 'maker_name',
-      header: 'Maker',
+      header: 'Raised by',
       isHeaderDownload: false,
       enableColumnFilter: false,
     },
     {
       key: 'document_urls',
-      header: 'Maker',
+      header: 'Attachment',
       isHeaderDownload: false,
       enableColumnFilter: false,
       cell: (value) => <Box onClick={() => { open(); setDocUrl(value?.getValue()) }}>

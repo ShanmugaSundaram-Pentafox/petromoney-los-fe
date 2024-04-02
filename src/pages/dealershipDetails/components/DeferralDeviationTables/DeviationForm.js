@@ -1,4 +1,4 @@
-import { FileInput, Grid, Group, Select, Text } from '@mantine/core';
+import { Box, Grid, Group, Image, Select, SimpleGrid, Text, Title } from '@mantine/core';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { Button } from '../../../../components/Mantine/Button/Button';
@@ -7,11 +7,24 @@ import { addDeferralDeviation, getAllDeferralApplicantsByDealershipId, getDocume
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
 import FileUpload from '../../../../components/FileUpload';
+import { Dropzone, IMAGE_MIME_TYPE, PDF_MIME_TYPE } from '@mantine/dropzone';
+import { URL } from '../../../../config/serverUrls';
 
-const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
+const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [fileUploadObj, setFileUploadObj] = useState({});
   const [error, setError] = useState();
+  const [files, setFiles] = useState([]);
+
+  const previews = files.map((file, index) => {
+    const imageUrl = window.URL.createObjectURL(file);
+    return (
+      <Box key={index} style={{ border: '1px dashed #ADB5BD', borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }}>
+        <Image width={50} height={50} src={imageUrl} onLoad={() => window.URL.revokeObjectURL(imageUrl)} />
+      </Box>
+    )
+  });
+
 
   const { data: applicantsData, } = useQuery(['dealership-applicants-list', dealershipId], () => getAllDeferralApplicantsByDealershipId(dealershipId), {
     initialData: [],
@@ -28,6 +41,44 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
 
   const handleClose = () => {
     close();
+  };
+
+  const handleSave = (files) => {
+    setFiles(files)
+    const formData = new FormData();
+    //defaults to 35 for ddms
+    const docID = 35;
+    files.map(file => {
+      const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
+      formData.append(`file-${dealershipId}`, file);
+      formData.append('fileName', fileName);
+      formData.append('id', docID);
+    });
+    fetch(`${URL.base}${URL.checklist}/${dealershipId}/doc/${docID}`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
+    })
+      .then(res => {
+        return res.json()
+      })
+      .then(data => {
+        setFileUploadObj({ modal: false, files: data.data.url })
+        displayNotification({
+          message: 'File Upload Success',
+          variant: 'success',
+        });
+        // refetch();
+      })
+      .catch(error => {
+        displayNotification({
+          message: 'File Upload error',
+          variant: 'error',
+        });
+
+      })
   };
 
   const { handleSubmit, setFieldValue, values } = useFormik({
@@ -82,20 +133,19 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, }) => {
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <Select size='xs' searchable label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
-        <Grid.Col span={{ base: 12, sm: 6 }}>
-          {/* <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true, files: [] })}>
-            <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
-          </Tooltip> */}
-          <FileInput
-            label="Attachments"
-            description=""
-            size='xs'
-            placeholder="click to upload file"
-            onChange={() => setFileUploadObj({ ...fileUploadObj, modal: false })}
-          />
-          {/* <Tooltip label={'Click to upload the file'} withArrow color='gray' onClick={() => setFileUploadObj({ modal: true })}>
-            <ActionIcon variant='subtle'><IconUpload /></ActionIcon>
-          </Tooltip> */}
+        <Grid.Col span={{ base: 12, sm: 12 }}>
+          <Title size={14} c={'#2b2b2b'}>Attachments</Title>
+          <div>
+            <Dropzone
+              onChange={handleSave}
+              // onReject={}
+              accept={[IMAGE_MIME_TYPE,PDF_MIME_TYPE]} bg={'#F1F3F5'} multiple onDrop={handleSave}>
+              <Text ta="center">Drop images here</Text>
+            </Dropzone>
+            <SimpleGrid cols={6} mt={20}>
+              {previews}
+            </SimpleGrid>
+          </div>
         </Grid.Col>
         <Grid.Col>
           <RichTextEditorBox onChange={e => { setFieldValue('remarks', e); setError(); }} />

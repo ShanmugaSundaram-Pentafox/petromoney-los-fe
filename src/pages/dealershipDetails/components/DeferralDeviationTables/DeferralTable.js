@@ -62,13 +62,13 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
       enableColumnFilter: false,
     }, {
       key: 'maker_name',
-      header: 'Maker',
+      header: 'Raised By',
       isHeaderDownload: false,
       enableColumnFilter: false,
     },
     {
       key: 'document_urls',
-      header: 'Maker',
+      header: 'Attachments',
       isHeaderDownload: false,
       enableColumnFilter: false,
       cell: (value) => <Box onClick={() => { open(); setDocUrl(value?.getValue()[0]) }}>

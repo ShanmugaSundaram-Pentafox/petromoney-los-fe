@@ -86,10 +86,19 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
+      /**
+       * do the below items to sent html string to a plain string
+       * Set the innerHTML of the div to the HTML string
+       * Get the text content of the div, which will be the plain string
+       */
+      const tempElement = document.createElement('div');
+      tempElement.innerHTML = values?.remarks;
+      const plainString = tempElement.textContent || tempElement.innerText;
       if (values?.remarks) {
         setLoading(true);
         let payload = {
           ...values,
+          remarks:plainString,
           type: 'deviation',
           party_name: dealershipName,
           party_id: dealershipId,

@@ -1,4 +1,4 @@
-import { Flex } from '@mantine/core';
+import { Box, Flex } from '@mantine/core';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
@@ -137,50 +137,60 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         </CheckAllowed>
       </Flex>
 
-      <DealersTable
-        id={id}
-        deletable={deletable}
-        data={applicantsData?.filter(item => item.category === 'DEALER')}
-        formType={formType}
-        rowData={rowData}
-        titleAlign={titleAlign}
-        showCreditForm={showCreditForm}
-        openCloseCreditForm={openCloseCreditForm}
-        editFormClose={editFormClose}
-        dealersClickRow={dealersClickRow}
-        onClickAddMenu={onClickAddMenu}
-        currentUser={currentUser}
-        showDealerEditForm={showDealerEditForm} />
-
-      <CoApplicantsTable
-        id={id}
-        deletable={deletable}
-        titleAlign={titleAlign}
-        coApplicantsData={applicantsData?.filter(item => item.category === 'COAPPLICANT')}
-        formType={formType}
-        rowData={rowData}
-        showCreditForm={showCreditForm}
-        openCloseCreditForm={openCloseCreditForm}
-        editFormClose={editFormClose}
-        dealersClickRow={dealersClickRow}
-        onClickAddMenu={onClickAddMenu}
-        currentUser={currentUser}
-        showDealerEditForm={showDealerEditForm} />
-
-      <GuarantorsTable
-        id={id}
-        deletable={deletable}
-        titleAlign={titleAlign}
-        guarantorsData={applicantsData?.filter(item => item.category === 'GUARANTOR')}
-        formType={formType}
-        rowData={rowData}
-        showCreditForm={showCreditForm}
-        openCloseCreditForm={openCloseCreditForm}
-        editFormClose={editFormClose}
-        dealersClickRow={dealersClickRow}
-        onClickAddMenu={onClickAddMenu}
-        currentUser={currentUser}
-        showDealerEditForm={showDealerEditForm} />
+      <Box style={{ display: 'flex', }}>
+        <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
+          <DealersTable
+            id={id}
+            deletable={deletable}
+            data={applicantsData?.filter(item => item.category === 'DEALER')}
+            formType={formType}
+            rowData={rowData}
+            titleAlign={titleAlign}
+            showCreditForm={showCreditForm}
+            openCloseCreditForm={openCloseCreditForm}
+            editFormClose={editFormClose}
+            dealersClickRow={dealersClickRow}
+            onClickAddMenu={onClickAddMenu}
+            currentUser={currentUser}
+            showDealerEditForm={showDealerEditForm} />
+        </Box>
+      </Box>
+      <Box style={{ display: 'flex', }}>
+        <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
+          <CoApplicantsTable
+            id={id}
+            deletable={deletable}
+            titleAlign={titleAlign}
+            coApplicantsData={applicantsData?.filter(item => item.category === 'COAPPLICANT')}
+            formType={formType}
+            rowData={rowData}
+            showCreditForm={showCreditForm}
+            openCloseCreditForm={openCloseCreditForm}
+            editFormClose={editFormClose}
+            dealersClickRow={dealersClickRow}
+            onClickAddMenu={onClickAddMenu}
+            currentUser={currentUser}
+            showDealerEditForm={showDealerEditForm} />
+        </Box>
+      </Box>
+      <Box style={{ display: 'flex', }}>
+        <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
+          <GuarantorsTable
+            id={id}
+            deletable={deletable}
+            titleAlign={titleAlign}
+            guarantorsData={applicantsData?.filter(item => item.category === 'GUARANTOR')}
+            formType={formType}
+            rowData={rowData}
+            showCreditForm={showCreditForm}
+            openCloseCreditForm={openCloseCreditForm}
+            editFormClose={editFormClose}
+            dealersClickRow={dealersClickRow}
+            onClickAddMenu={onClickAddMenu}
+            currentUser={currentUser}
+            showDealerEditForm={showDealerEditForm} />
+        </Box>
+      </Box>
 
       <RightSideDrawer
         size="lg"

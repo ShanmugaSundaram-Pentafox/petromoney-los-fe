@@ -2,19 +2,53 @@ import { useQuery } from 'react-query';
 import React, { useState, useEffect } from 'react';
 import DataTableViewer from '../../../../components/ReactTable/DataTableViewer';
 import { getDeferralDataList, getStatsData } from '../../../../services/deferralDeviation.service';
-import { Badge, Box, Button, Modal, Skeleton, Tabs, Text } from '@mantine/core';
-import { IconPlus } from '@tabler/icons-react';
+import { Badge, Box, Button, Flex, Modal, Skeleton, Tabs, Text, Tooltip } from '@mantine/core';
+import { IconFileTypePdf, IconPhoto, IconPlus } from '@tabler/icons-react';
 import DeferralForm from './DeferralForm';
 import { AttachmentOutlined } from '@material-ui/icons';
 import { useDisclosure } from '@mantine/hooks';
 import FilePreview from '../../../../components/CommonComponents/FilePreview';
+
 
 const DeferralTable = ({ id, dealershipName, currentUser }) => {
   const [activeTab, setActiveTab] = useState('draft');
   const [openModal, setOpenModal] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
   const [docUrl, setDocUrl] = useState([]);
+  const [activeDoc, setActiveDoc] = useState();
 
+
+  const FileListPreview = ({ onOpen }) => docUrl[0]?.map((file, index) => {
+    return (
+      <Tooltip key={index} label={'Click to Preview'}>
+        <Box
+          style={{
+            position: 'relative',
+            width: 70,
+            height: 70,
+            backgroundColor: 'white',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 4,
+            border: '1px dashed gray',
+            overflow: 'hidden',
+            cursor: 'pointer'
+          }}
+          onClick={() => typeof (file) == 'string' ? onOpen(file) : null}
+        >
+          <Flex direction={'column'} align={'center'} justifyContent={'center'}>
+            {file?.endsWith('.pdf') ? (
+              <IconFileTypePdf size={28} color='gray' />
+            ) : (
+              <IconPhoto size={28} stroke={0.5} color='gray' />
+            )}
+            <Text c='gray.6'>{index + 1}</Text>
+          </Flex>
+        </Box>
+      </Tooltip>
+    )
+  });
   const { data: statusList = [], isLoading: statusListLoading, refetch: statusListRefetch } = useQuery({
     queryKey: ['get-deferral-stats'],
     queryFn: () => getStatsData(id, 'deferral'),
@@ -71,9 +105,11 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
       header: 'Attachments',
       isHeaderDownload: false,
       enableColumnFilter: false,
-      cell: (value) => <Box onClick={() => { open(); setDocUrl(value?.getValue()[0]) }}>
-        <AttachmentOutlined color='gray' size={16} />
-      </Box>
+      cell: (value) => value?.getValue()?.length ? (
+        <Box onClick={() => { open(); setDocUrl(value?.getValue()) }}>
+          <AttachmentOutlined color='gray' size={16} />
+        </Box>
+      ) : null
     },
   ]
 
@@ -145,8 +181,13 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
         excelDownload
         filter={false}
       />
-      <Modal size={'lg'} opened={opened} onClose={close} title="Preview Attachment">
-        <FilePreview data={{image: docUrl[0]}} />
+      <Modal size={'xl'} opened={opened} onClose={close} title="Preview Attachment">
+        <Flex gap={20}>
+          <Flex direction={'column'} gap={2} rowGap={12}>
+            {Array.isArray(docUrl) ? <FileListPreview onOpen={(f) => setActiveDoc(f)} /> : null}
+          </Flex>
+          <FilePreview data={{ image: activeDoc }} />
+        </Flex>
       </Modal>
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deferral Data" centered>
         <DeferralForm refetch={() => { statusListRefetch(); deferralDataRefetch(); }} dealershipName={dealershipName} dealershipId={id} close={() => setOpenModal(false)} currentUser={currentUser} />

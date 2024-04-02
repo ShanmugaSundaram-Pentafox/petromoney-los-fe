@@ -157,7 +157,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
             <Dropzone
               onChange={handleSave}
               // onReject={}
-              accept={[IMAGE_MIME_TYPE,PDF_MIME_TYPE]} bg={'#F1F3F5'} multiple onDrop={handleSave}>
+              accept={{IMAGE_MIME_TYPE,PDF_MIME_TYPE}} bg={'#F1F3F5'} multiple onDrop={handleSave}>
               <Text ta="center">Drop images here</Text>
             </Dropzone>
             <SimpleGrid cols={6} mt={20}>

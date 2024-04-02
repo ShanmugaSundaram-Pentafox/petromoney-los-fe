@@ -139,8 +139,6 @@ const DeviationTable = ({ id, dealershipName }) => {
         filter={false}
       />
       <Modal size={'xl'} opened={opened} onClose={close} title="Preview Attachment">
-        {/* <Text>{docUrl[0]}</Text>
-<Text>{docUrl[1]}</Text> */}
       </Modal>
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deviation Data" centered>
         <DeviationForm dealershipId={id} refetch={() => { deviationDataRefetch(); statusListRefetch(); }} dealershipName={dealershipName} close={() => setOpenModal(false)} />

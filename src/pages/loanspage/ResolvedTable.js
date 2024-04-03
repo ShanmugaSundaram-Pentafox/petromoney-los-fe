@@ -19,6 +19,9 @@ const ResolvedTable = () => {
       key: 'region',
       header: 'Region',
     }, {
+      key: 'resolved_by',
+      header: 'Resolved By',
+    }, {
       key: 'comments',
       header: 'Reason',
       cell: (value) => {
@@ -72,7 +75,7 @@ const ResolvedTable = () => {
           rowData={data}
           filter={false}
           column={column}
-          title={`Resolved Withheld Loans`}
+          title={'Resolved Withheld Loans'}
           loading={isLoading}
         />
       </Grid>

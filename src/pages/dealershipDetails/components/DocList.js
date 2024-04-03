@@ -1,4 +1,5 @@
-import { Title } from '@mantine/core';
+import { Loader, Title } from '@mantine/core';
+import { groupBy } from 'lodash';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
@@ -15,7 +16,16 @@ const DocList = ({ id, currentUser }) => {
   const [rowData, setRowData] = useState();
   const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
 
-  const { data: checkListData = [] } = useQuery(['doc-checklist', id], () => getDealershipCheckList(id), { refetchOnWindowFocus: false })
+  const { data: checkListData = {}, isLoading: checklistLoading } = useQuery(
+    ['doc-checklist', id],
+    () => getDealershipCheckList(id),
+    {
+      refetchOnWindowFocus: false,
+      select: (data) => {
+        return groupBy(data, 'doc_stage')
+      }
+    }
+  )
 
   const { enqueueSnackbar } = useSnackbar();
   const onCloseUploader = () => {
@@ -33,10 +43,11 @@ const DocList = ({ id, currentUser }) => {
     const docID = rowData.doc_id;
     files.map(file => {
       const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
-      formData.append(`file-${id}`, file);
+      formData.append(rowData?.kyc_file_name ? rowData?.kyc_file_name : 'file', file);
       formData.append('fileName', fileName);
       formData.append('id', rowData.doc_id);
     });
+
 
     fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
@@ -44,46 +55,55 @@ const DocList = ({ id, currentUser }) => {
       headers: {
         Authorization: `Bearer ${currentUser.token}`,
       },
-    })
+    }).then(res => res?.json())
       .then(data => {
-        enqueueSnackbar('File Upload Success', { variant: 'success' });
+        if (data?.status?.toLowerCase() === 'error') {
+          enqueueSnackbar(data?.message, { variant: 'error' });
+        } else {
+          enqueueSnackbar('File Upload Success', { variant: 'success' });
+        }
         onCloseUploader();
         queryClient.invalidateQueries(['doc-checklist', id])
       })
       .catch(error => {
         enqueueSnackbar('File Upload Failed', { variant: 'error' });
-
       })
   };
+
 
   return (
     <>
       {showUpload && (
-        <FileUpload 
-          id={id} 
-          handleSave={handleSave} 
-          data={rowData} 
-          title='Upload Dealership Document' 
-          open={showUpload} 
-          onCloseUploader={onCloseUploader} 
-          FILE_FORMAT={rowData.doc_id == '17' ? FILE_FORMAT_ALL : undefined} 
+        <FileUpload
+          id={id}
+          handleSave={handleSave}
+          data={rowData}
+          title='Upload Dealership Document'
+          open={showUpload}
+          onCloseUploader={onCloseUploader}
+          FILE_FORMAT={rowData.doc_id == '17' ? FILE_FORMAT_ALL : undefined}
         />
       )}
-      
-      <Title order={3} mb="lg">Dealership Documents</Title>
+      {(!checklistLoading && Object.entries(checkListData)?.length) ?
+        Object.entries(checkListData)?.reverse()?.map((item, index) => (
+          <div key={index}>
 
-      {Array.isArray(checkListData) && checkListData.map((row, i) => row.doc_type !== 'dealer' && (
-        <DocListPreview 
-          key={i}   
-          currentUser={currentUser} 
-          docName={row.description} 
-          upload={() => onDocUpload(row)} 
-          file={row.file_data} 
-          docId={row?.doc_id} id={i + 1} 
-          dealershipId={id} 
-          editable={editable} 
-        />
-      ))}
+            <Title order={3} mb="lg">Dealership Documents</Title>
+
+            {Array.isArray(item?.[1]) && item?.[1]?.map((row, i) => row.doc_type !== 'dealer' && (
+              <DocListPreview
+                key={i}
+                currentUser={currentUser}
+                docName={row.description}
+                upload={() => onDocUpload(row)}
+                file={row.file_data}
+                docId={row?.doc_id} id={i + 1}
+                dealershipId={id}
+                editable={editable}
+              />
+            ))}
+          </div>
+        )) : checklistLoading ? <Loader /> : <center>No data to display</center>}
     </ >
 
   );

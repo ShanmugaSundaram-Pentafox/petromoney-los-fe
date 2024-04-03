@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.38.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.37.0...v2.38.0) (2024-03-21)
+
+
+### Features
+
+* **Bank:** changed the RBAC for active and deactive bank ([17ee2c0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/17ee2c043d5545119e63f057400325b2e7e40f26))
+* **Entity:** added the entity ([7774e78](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/7774e78ba803b221d17a7951517a58a5e8604fae))
+* **LegalityAgreementTable:** Added the bank details in table ([3aed220](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/3aed22021f1304878c84be070b5652d2b1841454))
+* **PDC:** added the attachment view ([d085fe8](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/d085fe8396ff55f2aecd9608923e0697838f7f9a))
+* **RenewalTable:** changed the header from disbursed amount to approved amount ([2c3939d](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/2c3939d39778dbb953f10a1f326a1cb6a71c3eb0))
+* **userRule:** added the new role ([356c331](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/356c33173e8875997a3619716130c544caf71b6b))
+* **Withheld:** displayed the created by name in table ([d9476e3](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/d9476e3de0c38da001640234fd038b9253a4f5f4))
+
+
+### Bug Fixes
+
+* **DisbursedTable:** Added new column ([1dde135](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/1dde135fe70a1d63517a020d0781fb3b01448f46))
+* **RenewalFilter:** added fix for  renewal filter ([bfdc73a](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/bfdc73a93b76fda3a5e7c8477459d945d66890cf))
+* **RenewalFilter:** added fix for renewal filter zone ([2f8199c](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/commit/2f8199c5253dffbc7d67274eb571d10a3d206ed3))
+
 ## [2.37.0](https://git-codecommit.ap-south-1.amazonaws.com/v1/repos/petromoney-fe/compare/v2.36.0...v2.37.0) (2024-02-15)
 
 

@@ -223,7 +223,12 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
                   <Table.Td>Loan Amount (In Words)</Table.Td>
                   <Table.Td>{numInWords(loanAmount)}</Table.Td>
                 </Table.Tr>
-                {type === 'loc' ? null : <>
+                {type === 'loc' ? (
+                  <Table.Tr>
+                    <Table.Td>Entity Name</Table.Td>
+                    <Table.Td>{product?.entity_name}</Table.Td>
+                  </Table.Tr>
+                ) : <>
                   <Table.Tr>
                     <Table.Td>DPN Date</Table.Td>
                     <Table.Td>{format(new Date(), 'dd-MM-yyyy') || '-NA-'}</Table.Td>

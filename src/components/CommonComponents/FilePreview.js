@@ -97,7 +97,6 @@ export const AvatarCard = ({ file, title, tooltip }) => {
 const FilePreview = ({ data, title }) => {
   const [signedUrl, setSignedUrl] = useState();
   const [loading, setLoading] = useState(true);
-  console.log('image ->>>>>>>>>>>>>>>>>',data?.image)
 
   useEffect(() => {
     if (data?.image) {

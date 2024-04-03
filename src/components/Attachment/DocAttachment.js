@@ -29,7 +29,6 @@ export const DocAttachment = ({
               <>
                 {imgUrl?.endsWith('.pdf') ? (
                   <IconFileTypePdf size={28} className="text-gray-500" /> 
-                  // <img src={imgUrl || Thumbnail} alt={docName} height="100%" width="100%" style={{ borderRadius: 6, padding: 1, objectFit: 'cover', display: 'block' }} />
                 ) : (
                   <IconPhoto size={32} stroke={1.5} className="text-gray-500" />
                 )}

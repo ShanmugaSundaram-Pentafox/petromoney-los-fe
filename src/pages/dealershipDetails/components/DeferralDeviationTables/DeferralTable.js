@@ -16,6 +16,7 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [docUrl, setDocUrl] = useState([]);
   const [activeDoc, setActiveDoc] = useState();
+  const [page, setPage] = useState(1);
 
 
   const FileListPreview = ({ onOpen }) => docUrl[0]?.map((file, index) => {
@@ -134,7 +135,6 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
-      // styles={tabStyle({ color: STATUS_COLORS[activeTab] })}
       >
         <Tabs.List>
           {
@@ -166,7 +166,10 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
         column={column}
         rowData={deferralData}
         title={'Deferral'}
-        styles={null}
+        useAPIPagination
+        page={page}
+        setPage={setPage}
+        totalNoOfPages={deferralData?.data?.total_number_of_pages}
         showAction={<Button
           onClick={() => setOpenModal(true)}
           leftSection={<IconPlus size={18} />}
@@ -181,12 +184,15 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
         excelDownload
         filter={false}
       />
-      <Modal size={'xl'} opened={opened} onClose={close} title="Preview Attachment">
+      <Modal size={'xl'} opened={opened} onClose={()=> {close();setActiveDoc('')}} title="Preview Attachment">
         <Flex gap={20}>
           <Flex direction={'column'} gap={2} rowGap={12}>
             {Array.isArray(docUrl) ? <FileListPreview onOpen={(f) => setActiveDoc(f)} /> : null}
           </Flex>
-          <FilePreview data={{ image: activeDoc }} />
+          {
+            activeDoc ? <FilePreview data={{ image: activeDoc }} /> : <Text align='center' c={'gray'}>Click the documents to view</Text>
+          }
+          
         </Flex>
       </Modal>
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deferral Data" centered>

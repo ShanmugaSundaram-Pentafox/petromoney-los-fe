@@ -1,7 +1,5 @@
 import { Checkbox, FormControlLabel, FormGroup, Typography } from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
 import Grid from '@material-ui/core/Grid';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -15,6 +13,7 @@ import Button from '../../../components/CommonComponents/Button/Button';
 import TextInput from '../../../components/TextInput/TextInput';
 import { URL } from '../../../config/serverUrls';
 import { getPdcBank } from '../../../services/pdc.service';
+import { Image } from '@mantine/core';
 
 const useStyles = makeStyles((theme) => ({
   actionFoot: {
@@ -249,7 +248,7 @@ const AddChequeDetailsForm = ({ data, collectionId, callback, currentUser, title
                     {
                       values?.file ? (
                         <>
-                          <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                          <Image src={window.URL.createObjectURL(values?.file)} h={75} fallbackSrc='https://placehold.co/122x75?text=.pdf' />
                         </>
                       ) : (
                         <label htmlFor='file' style={{ fontSize: 32, color: 'grey' }}>+</label>

@@ -51,18 +51,13 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
     )
   });
   const { data: statusList = [], isLoading: statusListLoading, refetch: statusListRefetch } = useQuery({
-    queryKey: ['get-deferral-stats'],
+    queryKey: ['get-deferral-stats', page, activeTab],
     queryFn: () => getStatsData(id, 'deferral'),
-    // select: (data) => {
-    //   console.log(data);
-    //   data?.length > 0 && setActiveTab(data[0]?.current_status);
-    //   return data;
-    // }
   });
 
   const { data: deferralData = [], isLoading: deferralDataIsLoading, refetch: deferralDataRefetch } = useQuery({
-    queryKey: ['get-deferral', activeTab],
-    queryFn: () => getDeferralDataList(id, 'deferral', activeTab),
+    queryKey: ['get-deferral', activeTab, page],
+    queryFn: () => getDeferralDataList(id, 'deferral', activeTab, page),
   });
 
   const handleTabChange = (value) => {
@@ -169,7 +164,7 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
         useAPIPagination
         page={page}
         setPage={setPage}
-        totalNoOfPages={deferralData?.data?.total_number_of_pages}
+        totalNoOfPages={Math.ceil(parseInt(statusList?.find(i => i?.current_status)?.number_of_records) / 5)}
         showAction={<Button
           onClick={() => setOpenModal(true)}
           leftSection={<IconPlus size={18} />}
@@ -184,7 +179,7 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
         excelDownload
         filter={false}
       />
-      <Modal size={'xl'} opened={opened} onClose={()=> {close();setActiveDoc('')}} title="Preview Attachment">
+      <Modal size={'xl'} opened={opened} onClose={() => { close(); setActiveDoc('') }} title="Preview Attachment">
         <Flex gap={20}>
           <Flex direction={'column'} gap={2} rowGap={12}>
             {Array.isArray(docUrl) ? <FileListPreview onOpen={(f) => setActiveDoc(f)} /> : null}
@@ -192,7 +187,7 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
           {
             activeDoc ? <FilePreview data={{ image: activeDoc }} /> : <Text align='center' c={'gray'}>Click the documents to view</Text>
           }
-          
+
         </Flex>
       </Modal>
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deferral Data" centered>

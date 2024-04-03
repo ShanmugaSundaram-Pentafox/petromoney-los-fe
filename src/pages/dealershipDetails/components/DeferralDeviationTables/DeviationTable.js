@@ -12,18 +12,19 @@ const DeviationTable = ({ id, dealershipName }) => {
   const [activeTab, setActiveTab] = useState('draft');
   const [openModal, setOpenModal] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
+  const [page, setPage] = useState(1);
   const [docUrl, setDocUrl] = useState([]);
 
 
   const { data: statusList, isLoading: statusListIsLoading, refetch: statusListRefetch } = useQuery({
-    queryKey: ['get-deviation-stats'],
+    queryKey: ['get-deviation-stats', page, activeTab],
     queryFn: () => getStatsData(id, 'deviation'),
     refetchOnWindowFocus: false
   });
 
   const { data: deviationData = [], isLoading: deviationDataIsLoading, refetch: deviationDataRefetch } = useQuery({
-    queryKey: ['get-deviation', activeTab],
-    queryFn: () => getDeferralDataList(id, 'deviation', activeTab),
+    queryKey: ['get-deviation', activeTab, page],
+    queryFn: () => getDeferralDataList(id, 'deviation', activeTab, page),
     refetchOnWindowFocus: false
   });
 
@@ -122,6 +123,10 @@ const DeviationTable = ({ id, dealershipName }) => {
         column={column}
         rowData={deviationData}
         title={'Deviations'}
+        useAPIPagination
+        page={page}
+        setPage={setPage}
+        totalNoOfPages={Math.ceil(parseInt(statusList?.find(i => i?.current_status)?.number_of_records) / 5)}
         onRowClick={false}
         styles={null}
         loading={deviationDataIsLoading}

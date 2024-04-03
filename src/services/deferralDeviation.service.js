@@ -35,9 +35,9 @@ export const getStatsData = (id, type) => {
 }
 
 
-export const getDeferralDataList = (id, type, status) => {
+export const getDeferralDataList = (id, type, status, page) => {
   return new Promise((resolve, reject) => {
-    apiCall(`deferral-deviations/${id}?type=${type}&status=${status}`)
+    apiCall(`deferral-deviations/${id}?type=${type}&status=${status}&page=${page}&records=${5}`)
       .then(res => {
         if (res?.status === 'SUCCESS') {
           resolve(res?.data);

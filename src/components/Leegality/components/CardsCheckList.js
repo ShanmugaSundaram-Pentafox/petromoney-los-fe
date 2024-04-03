@@ -1,9 +1,8 @@
-import { Divider, Switch, Typography } from '@material-ui/core';
+import { Divider, Grid, Switch, Tooltip, Typography } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import { green } from '@material-ui/core/colors';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
-import { makeStyles } from '@material-ui/styles';
+import { InfoOutlined } from '@material-ui/icons';
+import { makeStyles, withStyles } from '@material-ui/styles';
 import { IconCheckbox, IconSquare } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import styled from 'styled-components';
@@ -19,6 +18,17 @@ const useStyles = makeStyles(() => ({
     }
   }
 }))
+
+// changing the tooltip look and feel
+const HtmlTooltip = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    width: 250,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+  },
+}))(Tooltip);
 
 const Card = styled.div`
   background-color: #fff;
@@ -52,7 +62,7 @@ const Card = styled.div`
   }
 `;
 
-const CardItem = ({ onChange, data }) => {
+const CardItem = ({ onChange, data, tooltip = false }) => {
   const classes = useStyles();
   const [checked, setChecked] = useState(false);
   const [aadharSign, setAadharSign] = useState(true);
@@ -82,7 +92,31 @@ const CardItem = ({ onChange, data }) => {
               }
             </div>
             <div style={{ marginLeft: 10 }}>
-              <p><strong>{data.first_name} {data.last_name || ''}</strong></p>
+              <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 4 }}>
+                <p><strong>{data.first_name} {data.last_name || ''}</strong></p>
+                {tooltip ?
+                  <HtmlTooltip title={
+                    <React.Fragment>
+                      <Grid spacing={2}>
+                        <Grid item xs={12}>
+                          Father Name
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="caption" >{data?.father_name}</Typography>
+                        </Grid>
+                        <Grid item xs={12} style={{ marginTop: 4 }}>
+                          Address
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="caption" >{data?.full_address}</Typography>
+                        </Grid>
+                      </Grid>
+                    </React.Fragment>
+                  } placement='top'>
+                    <InfoOutlined style={{ width: 14 }} />
+                  </HtmlTooltip> : null
+                }
+              </div>
               {data.email && <p><small>{data.email}</small></p>}
               {data.mobile && <p><small>{data.mobile}</small></p>}
             </div>
@@ -123,7 +157,7 @@ const CardItem = ({ onChange, data }) => {
   )
 }
 
-const CardsCheckList = ({ data, onChange }) => {
+const CardsCheckList = ({ data, onChange, tooltip }) => {
 
   return (
     <Box>
@@ -134,6 +168,7 @@ const CardsCheckList = ({ data, onChange }) => {
               key={`check-${i}`}
               data={item}
               onChange={onChange}
+              tooltip={tooltip}
             />
           )
         })

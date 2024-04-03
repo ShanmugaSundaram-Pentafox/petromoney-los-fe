@@ -62,27 +62,6 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
     retry: Boolean(false),
   });
 
-
-  const onDownloadClick = () => {
-    downloadEnhancementData('approval', filterQry)
-      .then(data => {
-        getSignedUrl(data[0]?.url)
-          .then((res) => {
-            window.open(res?.url, '_blank');
-          })
-          .catch(e => {
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
-          })
-      })
-      .catch(e => console.log('Download error >>>', e))
-  }
-
   const column = [
     {
       key: 'dealership_id',

@@ -121,6 +121,9 @@ const UnresolvedTable = ({ currentUser }) => {
       key: 'region',
       header: 'Region',
     }, {
+      key: 'with_held_by',
+      header: 'Withheld By',
+    }, {
       key: 'action',
       header: 'Reason',
       isHeaderDownload: false,

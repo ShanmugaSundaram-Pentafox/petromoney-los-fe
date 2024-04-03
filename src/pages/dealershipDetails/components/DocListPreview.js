@@ -29,7 +29,7 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
 
   const handleDocDelete = (fileId) => {
     setDeleteModal({ ...deleteModal, loading: true })
-    deleteDocsImage([fileId], dealershipId)
+    deleteDocsImage({ id: [fileId], doc_id: docId }, dealershipId)
       .then((res) => {
         queryClient.invalidateQueries(['doc-checklist', dealershipId])
         setDeleteModal({ ...deleteModal, open: false, loading: false })

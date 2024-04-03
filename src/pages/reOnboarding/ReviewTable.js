@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import Currency from '../../components/Number/Currency';
@@ -10,10 +9,9 @@ import { useQuery } from 'react-query';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 import classes from './ReOnboarding.module.css'
 
-const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
+const ReviewTable = ({ title, onRowClick, filterQry }) => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
-  const { enqueueSnackbar } = useSnackbar();
 
   const getReOnboardingDataQuery = useQuery({
     queryKey: ['re-onboarding-data-review', filterQry, page, search],
@@ -43,35 +41,6 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     enabled: Boolean(false),
     retry: Boolean(false),
   });
-
-  const onDownloadClick = () => {
-    downloadEnhancementData('review', filterQry)
-      .then(data => {
-        getSignedUrl(data[0]?.url)
-          .then((res) => {
-            window.open(res?.url, '_blank');
-          })
-          .catch(e => {
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
-          })
-
-      })
-      .catch(e => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
 
   const column = [
     {

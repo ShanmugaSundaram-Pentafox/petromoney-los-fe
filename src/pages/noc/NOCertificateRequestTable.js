@@ -109,6 +109,11 @@ const NOCertificateRequestTable = ({ currentUser }) => {
       key: 'noc_type',
       header: 'Type'
     }, {
+      key: 'approved_amount',
+      header: 'Approved Amount',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
       key: 'disbursed_amount',
       header: 'Disbursed Amount',
       enableColumnFilter: false,
@@ -207,7 +212,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         rowData={getAllNOCRequestQuery?.data}
         column={column}
         loading={getAllNOCRequestQuery?.isLoading}
-        styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
+        styles={{ overflowX: 'auto', whiteSpace: 'nowrap', maxWidth: '100vw' }}
         action={
           isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest)
             ? <Button

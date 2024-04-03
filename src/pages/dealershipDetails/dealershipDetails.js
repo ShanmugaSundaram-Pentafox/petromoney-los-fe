@@ -160,16 +160,24 @@ const DealershipDetails = ({ currentUser, match }) => {
       </Card>
 
       <Tabs
-        color="blue.1"
+        // color="blue.1"
         variant="pills"
         orientation="vertical"
+        color={'##5a67f500'}
         onChange={onChangeTab}
         value={activeTab}
         defaultValue={'dealership'}
+        styles={{
+          tab: {
+            paddingBottom: 5,
+            paddingTop: 5,
+          }
+        }}
         classNames={{
           root: 'gap-4',
           tabLabel: 'flex grow items-center gap-2',
-          panel: 'h-full bg-white p-4 rounded-md'
+          panel: 'h-full bg-white p-4 rounded-md',
+          list: 'gap-0',
         }}
       >
         <Tabs.List>
@@ -178,9 +186,9 @@ const DealershipDetails = ({ currentUser, match }) => {
               <Tabs.Tab
                 key={1}
                 value={item?.value}
-                leftSection={<item.icon size={16} color={(item?.value) === activeTab ? '#1864AB' : '#2b2b2b'} />}
+                leftSection={<item.icon size={16} color={(item?.value) === activeTab ? '#5a67f5' : '#2b2b2b'} />}
               >
-                <Text c={(item?.value) === activeTab ? 'blue.9' : '#2b2b2b'}>{item?.name}</Text>
+                <Text c={(item?.value) === activeTab ? '#5a67f5' : '#2b2b2b'}>{item?.name}</Text>
               </Tabs.Tab>
             )
           })

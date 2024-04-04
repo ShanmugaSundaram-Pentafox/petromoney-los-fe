@@ -11,6 +11,7 @@ import { displayNotification } from '../../../../components/CommonComponents/Not
 import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
 import FileUpload from '../../../../components/FileUpload';
 import { URL } from '../../../../config/serverUrls';
+import { IconFileTypePdf } from '@tabler/icons-react';
 
 
 const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUser }) => {
@@ -21,11 +22,14 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
   const previews = files.map((file, index) => {
     const imageUrl = window.URL.createObjectURL(file);
     return (
-      <Box key={index} style={{ border: '1px dashed #ADB5BD', borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }}>
-        <Image width={50} height={50} src={imageUrl} onLoad={() => window.URL.revokeObjectURL(imageUrl)} />
-        {/* <Button size={'xxs'} mt={12}>
-          <IconTrash size={12} />
-        </Button> */}
+      <Box key={index} style={{ border: '1px dashed #ADB5BD', borderBottomLeftRadius: 4, borderBottomRightRadius: 4, height: 80, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <>
+          {file?.path?.endsWith('.pdf') ? (
+            <IconFileTypePdf size={28} color='gray' />
+          ) : (
+            <Image width={50} height={50} src={imageUrl} onLoad={() => window.URL.revokeObjectURL(imageUrl)} />
+          )}
+        </>
       </Box>
     )
   });
@@ -157,7 +161,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
             <Dropzone
               onChange={handleSave}
               // onReject={}
-              accept={{IMAGE_MIME_TYPE,PDF_MIME_TYPE}} bg={'#F1F3F5'} multiple onDrop={handleSave}>
+              accept={{ IMAGE_MIME_TYPE, PDF_MIME_TYPE }} bg={'#F1F3F5'} multiple onDrop={handleSave}>
               <Text ta="center">Drop images here</Text>
             </Dropzone>
             <SimpleGrid cols={6} mt={20}>

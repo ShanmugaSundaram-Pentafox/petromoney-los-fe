@@ -23,11 +23,11 @@ import AddIncomeDetailsForm from '../PDRForms/AddIncomeDetailsForm';
 import AddInfrastructureDetailsForm from '../PDRForms/AddInfrastructureDetailsForm';
 import AddLoanDetailsForm from '../PDRForms/AddLoanDetailsForm';
 import AddNewOutletDetailsForm from '../PDRForms/AddNewOutletDetailsForm';
-import AddOmcDetailsForm from '../PDRForms/AddOmcDetailsForm';
 import AddOtherDetailsForm from '../PDRForms/AddOtherDetailsForm';
 import AddReferenceForm from '../PDRForms/AddReferenceForm';
 import Cheque from '../PDRForms/Cheque';
 import VoiceCall from '../PDRForms/VoiceCall';
+import AddOMCEditForm from '../PDRForms/AddOMCEditForm';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -364,24 +364,18 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
         })}
       </SimpleGrid>
       {/* Right Side Drawer Starts Here */}
-      {externalView && !omcEdit ? (
-        <EmptySideDrawer
-          title="OMC Details"
-          callback={handleEdit}
-        />
-      ) : (
-        <AddOmcDetailsForm
-          open={openOmcForm}
-          onClose={() => setOpenOmcForm(false)}
-          dealer_id={id}
-          isEdit={omcData ? true : false}
-          callback={handleEdit}
-          currentUser={currentUser}
-          data={omcData}
-          editable={externalView}
-        />
-      )}
-      {/* Right Side Drawer Ends Here */}
+      <Drawer
+        anchor="right"
+        open={openOmcForm}
+        onClose={() => setOpenOmcForm(false)}
+        variant="temporary"
+      >
+        {
+          externalView && !omcData ?
+            <EmptySideDrawer title="Outlet Details" callback={handleEdit} /> :
+            <AddOMCEditForm dealer_id={id} isEdit={omcData ? null : 'Edit'} callback={handleEdit} currentUser={currentUser} data={omcData} editable={externalView} />
+        }
+      </Drawer>
 
       <Drawer
         anchor="right"

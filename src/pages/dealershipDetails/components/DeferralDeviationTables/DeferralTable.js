@@ -192,7 +192,6 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
           {
             activeDoc ? <FilePreview data={{ image: activeDoc }} /> : <Text align='center' c={'gray'}>Click the documents to view</Text>
           }
-          
         </Flex>
       </Modal>
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deferral Data" centered>

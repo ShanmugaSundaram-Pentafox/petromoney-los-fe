@@ -41,7 +41,7 @@ const onClickClose = key => {
 function App() {
   return (
     <MantineProvider theme={defaultTheme}>
-      <Notifications position='top-right' zIndex={999999} />
+      <Notifications position='top-right' zIndex={9999999} />
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
           <ThemeProvider theme={theme}>

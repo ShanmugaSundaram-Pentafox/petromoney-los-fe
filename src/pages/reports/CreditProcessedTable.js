@@ -221,6 +221,7 @@ const CreditProcessedTable = ({ currentUser }) => {
         open={openModal}
         onClose={() => setOpenModal(false)}
         variant='temporary'
+        styles={{ root: { position: 'absolute', zIndex: 9999 } }}
       >
         {
           <CreditReloadForm

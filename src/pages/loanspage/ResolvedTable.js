@@ -38,36 +38,6 @@ const ResolvedTable = () => {
     },
   ];
 
-  // const options = {
-  //   selectableRowsHeader: false,
-  //   selectableRows: 'none',
-  //   rowsPerPage: 10,
-  //   viewColumns: false,
-  //   print: true,
-  //   download: true,
-  //   filter: true,
-  //   isRowSelectable: () => false,
-  //   onDownload: (buildHead, buildBody, columns, data) => {
-  //     let Data = () => {
-  //       let tempArray = []
-  //       data.map((item, index) => {
-  //         let buffer = []
-  //         item.data.map((data, i) => {
-  //           if (typeof (data) !== 'object') {
-  //             buffer.push(data)
-  //           } else {
-  //             let result = data.map(obj => `${obj.comment}\n`)
-  //             buffer.push(result)
-  //           }
-  //         })
-  //         tempArray.push({ index: index, data: buffer })
-  //       })
-  //       return tempArray
-  //     }
-  //     return '\uFEFF' + buildHead(columns) + buildBody(Data())
-  //   },
-  // }
-
   return (
     <>
       <Grid item md={12}>

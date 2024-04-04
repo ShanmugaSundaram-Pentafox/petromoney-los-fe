@@ -60,7 +60,6 @@ const UnresolvedTable = ({ currentUser }) => {
         queryClient.invalidateQueries('withheld-loans')
       })
       .catch(e => {
-        console.log(e);
         enqueueSnackbar(e, {
           anchorOrigin: {
             vertical: 'top',
@@ -87,7 +86,6 @@ const UnresolvedTable = ({ currentUser }) => {
         queryClient.invalidateQueries('withheld-loans')
       })
       .catch((e) => {
-        console.log(e);
         enqueueSnackbar(e, {
           anchorOrigin: {
             vertical: 'top',
@@ -209,6 +207,16 @@ const UnresolvedTable = ({ currentUser }) => {
           filter={false}
           column={column}
           loading={isLoading}
+          showAction={<CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.create}>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => setOpenModal(true)}
+            >
+              Add
+            </Button>
+          </CheckAllowed>
+          }
           title={'Unresolved withheld loans'}
           noDataText='No un-resolved loans found'
         />

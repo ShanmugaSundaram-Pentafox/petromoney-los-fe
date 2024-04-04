@@ -113,7 +113,8 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
           applicant_type: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.category,
           applicant_name: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.label,
           checklist_id: values?.checkListData?.value,
-          checklist_name: values?.checkListData?.label
+          checklist_name: values?.checkListData?.label,
+          document_urls: fileUploadObj?.files,
         }
         addDeferralDeviation(payload)
           .then((res) => {

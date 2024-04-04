@@ -10,6 +10,44 @@ import { useDisclosure } from '@mantine/hooks';
 import FilePreview from '../../../../components/CommonComponents/FilePreview';
 
 
+export const FileListPreview = ({ onOpen, docUrl }) => {
+  console.log('docurl -->',docUrl)
+  return (
+    docUrl[0]?.map((file, index) => {
+      return (
+        <Tooltip key={index} label={'Click to Preview'}>
+          <Box
+            style={{
+              position: 'relative',
+              width: 70,
+              height: 70,
+              backgroundColor: 'white',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 4,
+              border: '1px dashed gray',
+              overflow: 'hidden',
+              cursor: 'pointer'
+            }}
+            onClick={() => typeof (file) == 'string' ? onOpen(file) : null}
+          >
+            <Flex direction={'column'} align={'center'} justifyContent={'center'}>
+              {file?.endsWith('.pdf') ? (
+                <IconFileTypePdf size={28} color='gray' />
+              ) : (
+                <IconPhoto size={28} stroke={0.5} color='gray' />
+              )}
+              <Text c='gray.6'>{index + 1}</Text>
+            </Flex>
+          </Box>
+        </Tooltip>
+      )
+    })
+  )
+}
+  ;
+
 const DeferralTable = ({ id, dealershipName, currentUser }) => {
   const [activeTab, setActiveTab] = useState('draft');
   const [openModal, setOpenModal] = useState(false);
@@ -18,38 +56,6 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
   const [activeDoc, setActiveDoc] = useState();
   const [page, setPage] = useState(1);
 
-
-  const FileListPreview = ({ onOpen }) => docUrl[0]?.map((file, index) => {
-    return (
-      <Tooltip key={index} label={'Click to Preview'}>
-        <Box
-          style={{
-            position: 'relative',
-            width: 70,
-            height: 70,
-            backgroundColor: 'white',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 4,
-            border: '1px dashed gray',
-            overflow: 'hidden',
-            cursor: 'pointer'
-          }}
-          onClick={() => typeof (file) == 'string' ? onOpen(file) : null}
-        >
-          <Flex direction={'column'} align={'center'} justifyContent={'center'}>
-            {file?.endsWith('.pdf') ? (
-              <IconFileTypePdf size={28} color='gray' />
-            ) : (
-              <IconPhoto size={28} stroke={0.5} color='gray' />
-            )}
-            <Text c='gray.6'>{index + 1}</Text>
-          </Flex>
-        </Box>
-      </Tooltip>
-    )
-  });
   const { data: statusList = [], isLoading: statusListLoading, refetch: statusListRefetch } = useQuery({
     queryKey: ['get-deferral-stats'],
     queryFn: () => getStatsData(id, 'deferral'),
@@ -184,13 +190,13 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
         excelDownload
         filter={false}
       />
-      <Modal size={'xl'} opened={opened} onClose={()=> {close();setActiveDoc('')}} title="Preview Attachment">
+      <Modal size={'xl'} opened={opened} onClose={() => { close(); setActiveDoc('') }} title="Preview Attachment">
         <Flex gap={20}>
           <Flex direction={'column'} gap={2} rowGap={12}>
-            {Array.isArray(docUrl) ? <FileListPreview onOpen={(f) => setActiveDoc(f)} /> : null}
+            {Array.isArray(docUrl) ? <FileListPreview docUrl={docUrl} onOpen={(f) => setActiveDoc(f)} /> : null}
           </Flex>
           {
-            activeDoc ? <FilePreview data={{ image: activeDoc }} /> : <Text align='center' c={'gray'}>Click the documents to view</Text>
+            activeDoc ? <FilePreview data={{ image: activeDoc, type: activeDoc?.endsWith('.pdf') ? 'pdf' : null }} /> : <Text align='center' c={'gray'}>Click the documents to view</Text>
           }
         </Flex>
       </Modal>

@@ -169,6 +169,13 @@ const DDMSModal = ({
       });
       return;
     }
+    if ([...result, ...resultOthers]?.filter(e => e?.status === 'not-required')?.length === [...result, ...resultOthers]?.length) {
+      displayNotification({
+        message: 'Seems all are not required',
+        variant: 'warning',
+      });
+      return;
+    }
     const body = {
       data: {
         checklist_mapping: [...result, ...resultOthers],

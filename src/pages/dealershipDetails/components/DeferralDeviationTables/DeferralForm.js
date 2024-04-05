@@ -146,10 +146,10 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select searchable data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} size='xs' label={'Applicant'} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
+          <Select  data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} size='xs' label={'Applicant'} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select searchable data={checklist} size='xs' label={'Document Type'} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue('checkListData', option)} />
+          <Select  data={checklist} size='xs' label={'Document Type'} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <DateInput value={values?.validDate} onChange={(e) => setFieldValue('validDate', e)} minDate={new Date()} size='xs' label={'Submission date'} />

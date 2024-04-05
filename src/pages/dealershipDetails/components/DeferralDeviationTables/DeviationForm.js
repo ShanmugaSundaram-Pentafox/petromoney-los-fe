@@ -145,10 +145,10 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
         <Grid.Col span={{ base: 12, sm: 5 }}>
-          <Select size='xs' searchable label="Applicant" data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
+          <Select size='xs' label="Applicant" data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select size='xs' searchable label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue('checkListData', option)} />
+          <Select size='xs' label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 12 }}>
           <Title size={14} c={'#2b2b2b'}>Attachments</Title>

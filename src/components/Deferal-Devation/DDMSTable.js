@@ -108,9 +108,13 @@ const DDMSTable = ({
         }
       </Table.Td>
       <Table.Td>
-        <Tooltip label={'Click to delete'} withArrow color='gray'>
-          <IconTrash size={16} color='red' className={classes?.trash} onClick={() => handleDelete(innerIndex)} />
-        </Tooltip>
+        {index === 13 ?
+          (
+            <Tooltip label={'Click to delete'} withArrow color='gray'>
+              <IconTrash size={16} color='red' className={classes?.trash} onClick={() => handleDelete(innerIndex)} />
+            </Tooltip>
+          ) : null
+        }
       </Table.Td>
       <Modal
         opened={Boolean(modalObj?.modal)}

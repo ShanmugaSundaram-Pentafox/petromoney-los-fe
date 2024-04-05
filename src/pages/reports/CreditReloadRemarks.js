@@ -1,13 +1,7 @@
-import { InputAdornment } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
-import { Check, Close } from '@material-ui/icons';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreatableSelect from 'react-select/creatable';
@@ -19,8 +13,9 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { addCreditReport, updateCreditReload } from '../../services/creditreport.service';
 import { getAllWithheldRemarks } from '../../services/withheld.services';
 import { isAllowed } from '../../utils/cerbos';
-import { Box, Button, Grid, Group, Text, Title } from '@mantine/core';
+import { Box, Button, Divider, Grid, Group, Text, Title } from '@mantine/core';
 import Currency from '../../components/Number/Currency';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
   const classes = {};
@@ -31,7 +26,6 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
   const [utrNumber, setUtrNumber] = useState();
   const [disburseLoading, setDisburseLoading] = useState(false);
   const [amount, setAmount] = useState({ isEdit: false, value: rowData?.amount, loading: false })
-  const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient()
 
   const postApiCall = (submitData) => {
@@ -44,26 +38,20 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
       .then((res) => {
         setDisburseLoading(false)
         callback()
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: res?.message,
           variant: 'success',
-        });
+        })
         setTimeout(() => {
           window.location.reload(false)
         }, 1000);
       })
       .catch((e) => {
         setDisburseLoading(false)
-        enqueueSnackbar(e.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: e?.message,
           variant: 'error',
-        });
+        })
       })
   }
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, } = useFormik({
@@ -124,22 +112,16 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
           setAmount({ ...amount, isEdit: false, loading: false });
           callback()
           queryClient.invalidateQueries('new-request')
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: res,
             variant: 'success',
-          });
+          })
         })
         .catch(e => {
-          enqueueSnackbar(e, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: e,
             variant: 'error',
-          });
+          })
         })
     }
     else
@@ -159,8 +141,9 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
       <Box>
         <Box>
           <Box>
+            <Divider mb={'md'} />
             <>
-              <Grid gutter={'md'}>
+              <Grid gutter={'md'} p={10}>
                 <Grid.Col span={6}>
                   <Box mb={'sm'}>
                     <ViewData title="Dealership ID" value={rowData?.dealership_id} />
@@ -273,7 +256,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
               isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && (
                 rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
                   <>
-                    <Grid>
+                    <Grid p={10}>
                       <Grid.Col span={12}>
                         <label style={{ marginBottom: 8, marginTop: 25 }}>Remarks</label>
                         <CreatableSelect
@@ -308,8 +291,8 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
         </Box>
       </Box>
       <Box mt={'xl'}>
-        <Box>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box px={10}>
+          <Group justify='flex-end' gap={'md'}>
             <Button
               variant='outline'
               onClick={callback}
@@ -319,34 +302,34 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
             </Button>
             {
               rowData.status != 'Disbursed' && rowData.status != 'Declined' &&
-              <Group gap={'md'}>
-                {
+                <Group gap={'md'}>
+                  {
                   // Credit Reload decline permission check for vivriti loans which doesn't have tranche_code and for other petromoney loans 
-                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.decline) && (!rowData?.tranche_code)) ?
-                    <Button
-                      type='submit'
-                      // variant='light'
-                      color='red'
-                      onClick={declineSubmit}
-                    >
-                      Decline
-                    </Button> : null
-                }
-                {
+                    (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.decline) && (!rowData?.tranche_code)) ?
+                      <Button
+                        type='submit'
+                        // variant='light'
+                        color='red'
+                        onClick={declineSubmit}
+                      >
+                        Decline
+                      </Button> : null
+                  }
+                  {
                   // Credit Reload disburse permission check, don't allow user to disburse the vivirit loans
-                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && !rowData?.product_name?.includes('Vivriti')) ?
-                    <Button
+                    (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && !rowData?.product_name?.includes('Vivriti')) ?
+                      <Button
                       // variant='light'
-                      color='green'
-                      type='submit'
-                      onClick={disburseSubmit}
-                    >
-                      Disburse
-                    </Button> : null
-                }
-              </Group>
+                        color='green'
+                        type='submit'
+                        onClick={disburseSubmit}
+                      >
+                        Disburse
+                      </Button> : null
+                  }
+                </Group>
             }
-          </div>
+          </Group>
           {
             <FormDialog className={classes.dialogBox} title='Payment Reference' onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
               <FilePreview data={imageModal} />

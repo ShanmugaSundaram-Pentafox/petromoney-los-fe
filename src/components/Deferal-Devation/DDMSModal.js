@@ -16,8 +16,6 @@ const DDMSModal = ({
   const [othersText, setOthersText] = useState();
   const [othersObj, setOthersObj] = useState();
   const [deferral, setDeferral] = useState([]);
-  const [remarksModalObj, setRemarksModalObj] = useState({});
-  // const [checklistCategory, setCheckListCategory] = useState([]);
   const queryClient = useQueryClient()
 
   const deferralDetailsQuery = useQuery({
@@ -124,9 +122,36 @@ const DDMSModal = ({
       deferral_deviation_mapping: i?.status === 'deferral/deviation' ? i?.deferral_deviation_mapping : [],
       status: i?.status,
     }))
+    // display error msg when there is no value selected when deferral/deviation selected
     if ([...result, ...resultOthers]?.filter((i) => (i?.status === 'deferral/deviation' && !i?.deferral_deviation_mapping?.length))?.length) {
       displayNotification({
         message: 'Please select any deferral/deviation mapping, It cant be null',
+        variant: 'warning',
+      });
+      return;
+    }
+    // this function is used to find duplicate
+    function findDuplicates() {
+      const set = new Set();
+      const duplicates = [];
+
+      [...result, ...resultOthers]?.filter((i) => (i?.status === 'deferral/deviation'))?.forEach(item => {
+        item?.deferral_deviation_mapping?.forEach(innerItem => {
+          if (set.has(innerItem)) {
+            // pushing the selected deferral & deviation id's
+            duplicates.push(innerItem);
+          } else {
+            set.add(innerItem);
+          }
+        })
+      });
+
+      return duplicates;
+    }
+    // display error message when there is duplicate
+    if (findDuplicates()?.length) {
+      displayNotification({
+        message: 'There are some duplicate item selected',
         variant: 'warning',
       });
       return;
@@ -218,7 +243,7 @@ const DDMSModal = ({
         title={'Document Checklist'}
         size={'70%'}
       >
-        <ScrollArea h={'70vh'} scrollbars='y'>
+        <ScrollArea h={'70vh'} scrollbars='y' offsetScrollbars>
           <div>
             {(ddmsChecklistQuery?.isLoading || deferralDetailsQuery?.isLoading) ? (
               <Skeleton height={15} width={250} />
@@ -235,7 +260,7 @@ const DDMSModal = ({
                   ? <>
                     {ddmsChecklistQuery?.data?.data?.map((item, index) => (
                       <>
-                        <Table.Thead key={index} style={{ fontWeight: '700', fontSize: '14px' }}>
+                        <Table.Thead key={index} style={{ fontWeight: '700', fontSize: '14px', background: '' }}>
                           <Table.Th colSpan={3}>
                             <Group mt={4} gap={4} style={{ alignItems: 'center' }}>
                               <p>{(index + 1) + '). '}</p>
@@ -319,25 +344,6 @@ const DDMSModal = ({
         ) : null
         }
       </Modal>
-      {/* <Modal
-        opened={Boolean(remarksModalObj?.modal)}
-        onClose={() => setRemarksModalObj({})}
-        title={'Remarks'}
-      >
-        {deferral?.filter(i => i?.remarks)?.map((item, index) => {
-          return (
-            <Box key={`${index}-${item?.category}`}>
-              <Title order={6}>{item?.category}</Title>
-              {console.log(item?.remarks)}
-              <div dangerouslySetInnerHTML={{ _html: item?.remarks }} />
-            </Box>
-          )
-        })}
-        <Group>
-          <Button size='xs' variant='outline'>Cancel</Button>
-          <Button size='xs' onClick={() => handleDocChecklistUpdate()} color='teal'>Confirm</Button>
-        </Group>
-      </Modal> */}
     </>
   )
 }

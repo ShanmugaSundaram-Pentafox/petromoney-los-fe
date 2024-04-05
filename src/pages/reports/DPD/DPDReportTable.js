@@ -1,17 +1,14 @@
-import { Button, Tooltip } from '@material-ui/core';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
-import { useSnackbar } from 'notistack';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
-import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import Currency from '../../../components/Number/Currency';
 import { getSignedUrl } from '../../../services/common.service';
 import { getDpdPageDetails, getDpdReportData, } from '../../../services/report.service';
-import { dateCustomSort } from '../../../utils/commonFunctions.util';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 
 const useStyles = makeStyles(theme => ({
@@ -30,47 +27,44 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
+const DpdReportTable = ({ title, filterQry }) => {
   const classes = useStyles();
-  const [loans, setLoans] = useState([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
-  const [loading, setLoading] = useState(false);
-  const [download, setDownload] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(false);
 
   const pageDetailsQuery = useQuery({
     queryKey: ['dpd_pageCount', filterQry, search],
     queryFn: () => getDpdPageDetails(filterQry, search),
   })
 
-  useEffect(() => {
-    setLoading(true);
-    getDpdReportData(filterQry, page, search, download)
+  const dpdReportDetails = useQuery({
+    queryKey: ['dpd_details', filterQry, page, search],
+    queryFn: () => getDpdReportData(filterQry, page, search),
+  })
+
+  const handleDownload = () => {
+    setIsLoading(true);
+    getDpdReportData(filterQry, page, search, true)
       .then(({ data, report_url }) => {
-        setLoans(data);
         if (report_url) {
           getSignedUrl(report_url)
             .then((res) => {
               window.open(res?.url, '_blank');
             })
             .catch(e => {
-              enqueueSnackbar(e, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
+              displayNotification({
+                message: e,
                 variant: 'error',
-              });
+              })
             })
         }
-        setDownload(false);
-        setLoading(false);
+        setIsLoading(false);
       })
       .catch(e => {
-        setLoading(false);
+        setIsLoading(false);
       })
-  }, [filterQry, page, search, download])
+  }
 
   const column = [
     {
@@ -129,59 +123,61 @@ const DpdReportTable = ({ title, onRowClick, filterQry, currentUser }) => {
     },
   ];
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => true,
-    rowsPerPage: 10,
-    filter: false,
-    print: false,
-    sort: false,
-    download: false,
-    viewColumns: false,
-    searchPlaceholder: 'Search by dealreship ID/Name',
-    onSearchChange: (searchText) => {
-      setSearch(searchText)
-    },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={() => setDownload(true)}></Button>
-          </Tooltip>
-        </>
-      );
-    },
-    customFooter: () => {
-      return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <MuiTableFooter
-            totalCount={pageDetailsQuery?.data}
-            pageSize={10}
-            onPageChange={(value) => { setPage(value) }}
-          />
-        </div>
-      )
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => true,
+  //   rowsPerPage: 10,
+  //   filter: false,
+  //   print: false,
+  //   sort: false,
+  //   download: false,
+  //   viewColumns: false,
+  //   searchPlaceholder: 'Search by dealreship ID/Name',
+  //   onSearchChange: (searchText) => {
+  //     setSearch(searchText)
+  //   },
+  //   customToolbar: () => {
+  //     return (
+  //       <>
+  //         <Tooltip title="Download">
+  //           <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={() => setDownload(true)}></Button>
+  //         </Tooltip>
+  //       </>
+  //     );
+  //   },
+  //   customFooter: () => {
+  //     return (
+  //       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+  //         <MuiTableFooter
+  //           totalCount={pageDetailsQuery?.data}
+  //           pageSize={10}
+  //           onPageChange={(value) => { setPage(value) }}
+  //         />
+  //       </div>
+  //     )
+  //   },
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   }
+  // };
 
   return (
     <div className={classes.root}>
       <DataTableViewer
-        rowData={loans}
+        rowData={dpdReportDetails?.data?.data}
         column={column}
-        styles={{ overflowX: "auto", whiteSpace: "nowrap", maxWidth: "100vw" }}
+        styles={{ overflowX: 'auto', whiteSpace: 'nowrap', maxWidth: '100vw' }}
         title={title}
-        loading={loading}
+        loading={dpdReportDetails?.isLoading}
         useAPIPagination
         apiSearch={setSearch}
         totalNoOfPages={pageDetailsQuery?.data}
         page={page}
         setPage={setPage}
+        excelDownload
+        downloadQuery={{ query: () => handleDownload(), isLoading: isLoading }}
       />
     </div>
   )

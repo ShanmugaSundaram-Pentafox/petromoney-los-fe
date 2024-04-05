@@ -181,7 +181,6 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                 message: res?.message,
                 variant: 'error',
               })
-
             }
           })
           .catch(e => {
@@ -287,7 +286,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                             <Text style={{ color: 'gray', fontSize: 12 }}>Available Limit: < Currency value={creditLimit?.available_limit} /></Text>
                             {
                               typeof (creditLimit?.available_tranche_limit) == 'number' &&
-                              <Text mt={'sm'} style={{ color: 'gray', fontSize: 12 }}>Available tranche count: {creditLimit?.available_tranche_limit}</Text>
+                                <Text mt={'sm'} style={{ color: 'gray', fontSize: 12 }}>Available tranche count: {creditLimit?.available_tranche_limit}</Text>
                             }
                           </Box>
                         </Grid.Col>

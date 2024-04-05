@@ -8,7 +8,6 @@ import Currency from '../../components/Number/Currency';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
-import usePageTitle from '../../hooks/usePageTitle';
 import {
   getCreditReload,
 } from '../../services/users.service';
@@ -23,7 +22,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
   const [statusModal, setStatusModal] = useState(false);
   const [filterQry, setFilterQry] = useState();
   const [offset, setOffset] = useState(0);
-  usePageTitle('Credit Reload');
+  // usePageTitle('Credit Reload');
   const { data: tableData = [], refetch, isLoading } = useQuery(['new-request', offset], () => getCreditReload({ processed: 0, filterQry: filterQry, currentUser: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false })
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 

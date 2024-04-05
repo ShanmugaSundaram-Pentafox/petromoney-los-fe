@@ -1,22 +1,16 @@
-import { makeStyles } from '@material-ui/styles';
 import { format } from 'date-fns';
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { useMount } from 'react-use';
 import { getAllDealership } from '../../../services/dealerships.service';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
+import { useQuery } from 'react-query';
 
-
-const useStyles = makeStyles(theme => ({
-  root: {},
-  title: {
-    fontWeight: 500
-  }
-}));
 const DealershipsTable = () => {
-  const [dealerships, setAllDealerships] = useState([]);
-  const classes = useStyles();
-  const [loading, setLoading] = useState(false);
+
+  const delaershipDetailsQuery = useQuery({
+    queryKey: ['dealership-details'],
+    queryFn: () => getAllDealership(),
+  })
 
   const column = [
     {
@@ -28,10 +22,10 @@ const DealershipsTable = () => {
       key: 'name',
       header: 'Name',
       enableColumnFilter: false,
-    }, {
-      key: 'sales_area',
-      header: 'Sales Area',
-      isHeaderDisplay: false,
+      // }, {
+      //   key: 'sales_area',
+      //   header: 'Sales Area',
+      //   isHeaderDisplay: false,
     }, {
       key: 'loan_application_submitted_date',
       header: 'Submitted Date',
@@ -54,27 +48,14 @@ const DealershipsTable = () => {
     },
   ]
 
-  useMount(() => {
-    setLoading(true)
-    getAllDealership()
-      .then(data => {
-        // console.log(data);
-        setAllDealerships(data);
-        setLoading(false)
-        // setData(data)
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  })
-
   return (
     <div>
       <DataTableViewer
-        rowData={dealerships}
+        rowData={delaershipDetailsQuery?.data}
         column={column}
         title={'Dealership List'}
-        loading={loading}
+        loading={delaershipDetailsQuery?.isLoading}
+        excelDownload={true}
       />
     </div>
   )

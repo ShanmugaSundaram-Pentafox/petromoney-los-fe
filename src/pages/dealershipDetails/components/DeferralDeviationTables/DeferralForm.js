@@ -11,6 +11,7 @@ import { displayNotification } from '../../../../components/CommonComponents/Not
 import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEditorBox';
 import FileUpload from '../../../../components/FileUpload';
 import { URL } from '../../../../config/serverUrls';
+import { IconFileTypePdf } from '@tabler/icons-react';
 
 
 const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUser }) => {
@@ -21,11 +22,14 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
   const previews = files.map((file, index) => {
     const imageUrl = window.URL.createObjectURL(file);
     return (
-      <Box key={index} style={{ border: '1px dashed #ADB5BD', borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }}>
-        <Image width={50} height={50} src={imageUrl} onLoad={() => window.URL.revokeObjectURL(imageUrl)} />
-        {/* <Button size={'xxs'} mt={12}>
-          <IconTrash size={12} />
-        </Button> */}
+      <Box key={index} style={{ border: '1px dashed #ADB5BD', borderBottomLeftRadius: 4, borderBottomRightRadius: 4, height: 80, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <>
+          {file?.path?.endsWith('.pdf') ? (
+            <IconFileTypePdf size={28} color='gray' />
+          ) : (
+            <Image width={50} height={50} src={imageUrl} onLoad={() => window.URL.revokeObjectURL(imageUrl)} />
+          )}
+        </>
       </Box>
     )
   });
@@ -142,10 +146,10 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select searchable data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} size='xs' label={'Applicant'} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
+          <Select  data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} size='xs' label={'Applicant'} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select searchable data={checklist} size='xs' label={'Document Type'} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue('checkListData', option)} />
+          <Select  data={checklist} size='xs' label={'Document Type'} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <DateInput value={values?.validDate} onChange={(e) => setFieldValue('validDate', e)} minDate={new Date()} size='xs' label={'Submission date'} />
@@ -157,7 +161,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
             <Dropzone
               onChange={handleSave}
               // onReject={}
-              accept={{IMAGE_MIME_TYPE,PDF_MIME_TYPE}} bg={'#F1F3F5'} multiple onDrop={handleSave}>
+              accept={{ IMAGE_MIME_TYPE, PDF_MIME_TYPE }} bg={'#F1F3F5'} multiple onDrop={handleSave}>
               <Text ta="center">Drop images here</Text>
             </Dropzone>
             <SimpleGrid cols={6} mt={20}>

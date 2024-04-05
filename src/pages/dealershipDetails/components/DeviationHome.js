@@ -36,7 +36,7 @@ const tabStyle = ({ color }) => ({
 })
 
 
-const DeviationHome = ({ id }) => {
+const DeviationHome = ({ id,currentUser }) => {
   const [activeTab, setActiveTab] = useState('approval');
   const [openModal, setOpenModal] = useState(false);
 
@@ -89,12 +89,11 @@ const DeviationHome = ({ id }) => {
         {/* </CheckAllowed> */}
       </Flex>
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deviation Data" centered>
-        <DeviationForm dealershipId={id} close={() => setOpenModal(false)} />
+        <DeviationForm dealershipId={id} close={() => setOpenModal(false)} currentUser={currentUser} />
       </Modal>
       <Tabs
         value={activeTab}
         onChange={handleTabChange}
-      // styles={tabStyle({ color: STATUS_COLORS[activeTab] })}
       >
         <Tabs.List mb={8}>
           {
@@ -123,7 +122,7 @@ const DeviationHome = ({ id }) => {
               (activeTab === item.current_status) && (
                 <>
                   <Tabs.Panel value={item?.current_status} >
-                    <DeviationTable dealershipId={id} status={item?.current_status} refetchStats={refetch} />
+                    <DeviationTable dealershipId={id} currentUser={currentUser} status={item?.current_status} refetchStats={refetch} />
                   </Tabs.Panel>
                 </>
               )

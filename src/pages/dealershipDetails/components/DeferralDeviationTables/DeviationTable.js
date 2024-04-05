@@ -2,13 +2,15 @@ import { useQuery } from 'react-query';
 import React, { useState, useEffect } from 'react';
 import DataTableViewer from '../../../../components/ReactTable/DataTableViewer';
 import { getDeferralDataList, getStatsData } from '../../../../services/deferralDeviation.service';
-import { Badge, Box, Button, Modal, Skeleton, Tabs, Text } from '@mantine/core';
+import { Badge, Box, Button, Flex, Modal, Skeleton, Tabs, Text } from '@mantine/core';
 import DeviationForm from './DeviationForm';
 import { IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { AttachmentOutlined } from '@material-ui/icons';
+import FilePreview from '../../../../components/CommonComponents/FilePreview';
+import { FileListPreview } from './DeferralTable';
 
-const DeviationTable = ({ id, dealershipName }) => {
+const DeviationTable = ({ id, dealershipName, currentUser }) => {
   const [activeTab, setActiveTab] = useState('draft');
   const [openModal, setOpenModal] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
@@ -65,9 +67,11 @@ const DeviationTable = ({ id, dealershipName }) => {
       header: 'Attachment',
       isHeaderDownload: false,
       enableColumnFilter: false,
-      cell: (value) => <Box onClick={() => { open(); setDocUrl(value?.getValue()) }}>
-        <AttachmentOutlined color='gray' size={16} />
-      </Box>
+      cell: (value) => value?.getValue()?.length ? (
+        <Box onClick={() => { open(); setDocUrl(value?.getValue()) }}>
+          <AttachmentOutlined color='gray' size={16} />
+        </Box>
+      ) : null
     },
   ]
 
@@ -144,9 +148,17 @@ const DeviationTable = ({ id, dealershipName }) => {
         filter={false}
       />
       <Modal size={'xl'} opened={opened} onClose={close} title="Preview Attachment">
+        <Flex gap={20}>
+          <Flex direction={'column'} gap={2} rowGap={12}>
+            {Array.isArray(docUrl) ? <FileListPreview docUrl={docUrl} onOpen={(f) => setActiveDoc(f)} /> : null}
+          </Flex>
+          {
+            activeDoc ? <FilePreview data={{ image: activeDoc, type: activeDoc?.endsWith('.pdf') ? 'pdf' : null }} /> : <Text align='center' c={'gray'}>Click the documents to view</Text>
+          }
+        </Flex>
       </Modal>
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deviation Data" centered>
-        <DeviationForm dealershipId={id} refetch={() => { deviationDataRefetch(); statusListRefetch(); }} dealershipName={dealershipName} close={() => setOpenModal(false)} />
+        <DeviationForm dealershipId={id} refetch={() => { deviationDataRefetch(); statusListRefetch(); }} dealershipName={dealershipName} currentUser={currentUser} close={() => setOpenModal(false)} />
       </Modal>
     </>
   );

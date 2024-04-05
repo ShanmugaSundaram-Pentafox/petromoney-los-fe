@@ -1,5 +1,3 @@
-import GetAppIcon from '@material-ui/icons/GetApp';
-import SearchIcon from '@material-ui/icons/Search';
 import { subDays, format, isValid } from 'date-fns'
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
@@ -10,7 +8,7 @@ import { filterStyles, Selector } from '../../../components/CommonComponents/Fil
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getAllRegions, getFilteredProducts, getSignedUrl, getZones } from '../../../services/common.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
-import { ActionIcon, Box, Button, Group, Loader, Paper, Popover, TextInput, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Button, Popover, TextInput, Tooltip } from '@mantine/core';
 import { IconDownload, IconSearch } from '@tabler/icons-react';
 
 const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload, fileData, downloadLoading, searchLoading }) => {
@@ -41,32 +39,32 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   const onDateChange = type => (event) => {
     setSelectedPeriodType(type)
     switch (type) {
-      case 'D':
-        setSelectedPeriod({
-          from: new Date(),
-          to: new Date(),
-        })
-        break;
-      case 'W':
-        setSelectedPeriod({
-          from: subDays(new Date(), 8),
-          to: new Date(),
-        })
-        break;
-      case 'M':
-        setSelectedPeriod({
-          from: new Date(new Date().getFullYear(), new Date().getMonth()),
-          to: new Date(),
-        })
-        break;
-      case 'UTD':
-        setSelectedPeriod({})
-        break;
-      case 'Custom':
-        setShowPicker(event.currentTarget)
-        break;
-      default:
-        break;
+    case 'D':
+      setSelectedPeriod({
+        from: new Date(),
+        to: new Date(),
+      })
+      break;
+    case 'W':
+      setSelectedPeriod({
+        from: subDays(new Date(), 8),
+        to: new Date(),
+      })
+      break;
+    case 'M':
+      setSelectedPeriod({
+        from: new Date(new Date().getFullYear(), new Date().getMonth()),
+        to: new Date(),
+      })
+      break;
+    case 'UTD':
+      setSelectedPeriod({})
+      break;
+    case 'Custom':
+      setShowPicker(event.currentTarget)
+      break;
+    default:
+      break;
     }
   }
   useEffect(() => {
@@ -90,7 +88,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
         .catch(() => null)
     }
   })
-
   useEffect(() => {
     let qry = {}
     if (filters.includes('zone')) {
@@ -176,69 +173,69 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
             filters.includes('zone') &&
-            <Selector title="Zone" width={150} options={zones} value={selectedZones} setValue={setSelectedZones} />
+              <Selector title="Zone" width={150} options={zones} value={selectedZones} setValue={setSelectedZones} />
           }
           {
             filters.includes('region') &&
-            <Selector title="Region" width={150} options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+              <Selector title="Region" width={150} options={regions} value={selectedRegion} setValue={setSelectedRegion} />
           }
           {
             filters.includes('product') &&
-            <Selector title="Product" width={150} options={products} value={selectedProducts} setValue={setSelectedProducts} />
+              <Selector title="Product" width={150} options={products} value={selectedProducts} setValue={setSelectedProducts} />
           }
           {
             filters.includes('type') &&
-            <Box style={{ marginRight: '10px' }}>
-              <label style={{ color: 'hsl(0,0%,75%)' }}>Type</label>
-              <div className={classes.filterWrapper}>
-                <div role="button" className={`${classes.filterItem} ${selectedType === null && 'active'}`} onClick={() => setSelectedType(null)} onKeyDown>All</div>
-                <div role="button" className={`${classes.filterItem} ${selectedType === 'regular' && 'active'}`} onClick={() => setSelectedType('regular')} onKeyDown>Regular</div>
-                <div role="button" className={`${classes.filterItem} ${selectedType === 'express' && 'active'}`} onClick={() => setSelectedType('express')} onKeyDown>Express</div>
-              </div>
-            </Box>
+              <Box style={{ marginRight: '10px' }}>
+                <label style={{ color: 'hsl(0,0%,75%)' }}>Type</label>
+                <div className={classes.filterWrapper}>
+                  <div role="button" className={`${classes.filterItem} ${selectedType === null && 'active'}`} onClick={() => setSelectedType(null)} onKeyDown>All</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedType === 'regular' && 'active'}`} onClick={() => setSelectedType('regular')} onKeyDown>Regular</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedType === 'express' && 'active'}`} onClick={() => setSelectedType('express')} onKeyDown>Express</div>
+                </div>
+              </Box>
           }
           {
             filters.includes('period') &&
-            <Box>
-              <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
-              <div className={classes.filterWrapper}>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                <Tooltip label='Up to Date' withArrow color='gray'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
-                </Tooltip>
-                <Popover
-                  opened={Boolean(showPicker)}
-                  onClose={onDateRangeClose}
-                  withArrow
-                  shadow='md'
-                >
-                  <Popover.Target>
-                    <Tooltip label={selectedPeriodType === 'Custom' ? `${format(dateRange?.startDate, 'MMM dd yyy')} to ${format(dateRange?.endDate || new Date(), 'MMM dd yyy')}` : 'Choose custom Date'} withArrow color='gray'>
-                      <div role={'button'} className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                        Custom
-                      </div>
-                    </Tooltip>
-                  </Popover.Target>
-                  <Popover.Dropdown>
-                    <DateRange
-                      ranges={[dateRange]}
-                      onChange={onDatePickerChange}
-                      maxDate={new Date()}
-                      months={2}
-                      direction="horizontal"
-                      minDate={subDays(new Date(), 1095)}
-                    />
-                    <Box p={1} textAlign='right'>
-                      <Button onClick={onDateRangeClose} fullWidth>
-                        Apply
-                      </Button>
-                    </Box>
-                  </Popover.Dropdown>
-                </Popover>
-              </div>
-            </Box>
+              <Box>
+                <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
+                <div className={classes.filterWrapper}>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                  <Tooltip label='Up to Date' withArrow color='gray'>
+                    <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
+                  </Tooltip>
+                  <Popover
+                    opened={Boolean(showPicker)}
+                    onClose={onDateRangeClose}
+                    withArrow
+                    shadow='md'
+                  >
+                    <Popover.Target>
+                      <Tooltip label={selectedPeriodType === 'Custom' ? `${format(dateRange?.startDate, 'MMM dd yyy')} to ${format(dateRange?.endDate || new Date(), 'MMM dd yyy')}` : 'Choose custom Date'} withArrow color='gray'>
+                        <div role={'button'} className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                          Custom
+                        </div>
+                      </Tooltip>
+                    </Popover.Target>
+                    <Popover.Dropdown>
+                      <DateRange
+                        ranges={[dateRange]}
+                        onChange={onDatePickerChange}
+                        maxDate={new Date()}
+                        months={2}
+                        direction="horizontal"
+                        minDate={subDays(new Date(), 1095)}
+                      />
+                      <Box p={1} textAlign='right'>
+                        <Button onClick={onDateRangeClose} fullWidth>
+                          Apply
+                        </Button>
+                      </Box>
+                    </Popover.Dropdown>
+                  </Popover>
+                </div>
+              </Box>
           }
           {
             filterType == 'processed' && (

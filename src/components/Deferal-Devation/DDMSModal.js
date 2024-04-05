@@ -7,6 +7,18 @@ import { displayNotification } from '../CommonComponents/Notification/displayNot
 import { IconPlus } from '@tabler/icons-react';
 import classes from './DDMS.module.css'
 
+const convertHtmltoString = (remark) => {
+  /**
+      * do the below items to sent html string to a plain string
+      * Set the innerHTML of the div to the HTML string
+      * Get the text content of the div, which will be the plain string
+      */
+  const tempElement = document.createElement('div')
+  tempElement.innerHTML = remark
+  const plainString = tempElement.textContent || tempElement.innerText;
+  return plainString
+}
+
 const DDMSModal = ({
   opened = false,
   onClose = () => { },
@@ -106,18 +118,19 @@ const DDMSModal = ({
   }, [ddmsChecklistQuery?.data])
 
   const handleDocChecklistUpdate = () => {
+
     const result = deferral?.map((i) => ({
       checklist_id: i?.id,
       category: i?.category,
       checklist_name: i?.name,
-      remarks: i?.remarks || null,
+      remarks: convertHtmltoString(i?.remarks) || null,
       deferral_deviation_mapping: i?.status === 'deferral/deviation' ? i?.deferral_deviation_mapping : [],
       status: i?.status,
     }));
     const resultOthers = othersObj?.map((i) => ({
       checklist_id: i?.id,
       category: i?.category,
-      remarks: i?.remarks || null,
+      remarks: convertHtmltoString(i?.remarks) || null,
       checklist_name: i?.name,
       deferral_deviation_mapping: i?.status === 'deferral/deviation' ? i?.deferral_deviation_mapping : [],
       status: i?.status,

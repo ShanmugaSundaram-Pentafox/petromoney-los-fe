@@ -9,6 +9,7 @@ import RichTextEditorBox from '../../../../components/RichTexEditor/RichTextEdit
 import FileUpload from '../../../../components/FileUpload';
 import { Dropzone, IMAGE_MIME_TYPE, PDF_MIME_TYPE } from '@mantine/dropzone';
 import { URL } from '../../../../config/serverUrls';
+import { IconFileTypePdf } from '@tabler/icons-react';
 
 const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUser }) => {
   const [loading, setLoading] = useState(false);
@@ -19,8 +20,14 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
   const previews = files.map((file, index) => {
     const imageUrl = window.URL.createObjectURL(file);
     return (
-      <Box key={index} style={{ border: '1px dashed #ADB5BD', borderBottomLeftRadius: 4, borderBottomRightRadius: 4 }}>
-        <Image width={50} height={50} src={imageUrl} onLoad={() => window.URL.revokeObjectURL(imageUrl)} />
+      <Box key={index} style={{ border: '1px dashed #ADB5BD', borderBottomLeftRadius: 4, borderBottomRightRadius: 4, height: 80, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <>
+          {file?.path?.endsWith('.pdf') ? (
+            <IconFileTypePdf size={28} color='gray' />
+          ) : (
+            <Image width={50} height={50} src={imageUrl} onLoad={() => window.URL.revokeObjectURL(imageUrl)} />
+          )}
+        </>
       </Box>
     )
   });
@@ -98,7 +105,7 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
         setLoading(true);
         let payload = {
           ...values,
-          remarks:plainString,
+          remarks: plainString,
           type: 'deviation',
           party_name: dealershipName,
           party_id: dealershipId,
@@ -106,7 +113,8 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
           applicant_type: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.category,
           applicant_name: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.label,
           checklist_id: values?.checkListData?.value,
-          checklist_name: values?.checkListData?.label
+          checklist_name: values?.checkListData?.label,
+          document_urls: fileUploadObj?.files,
         }
         addDeferralDeviation(payload)
           .then((res) => {
@@ -137,10 +145,10 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
         <Grid.Col span={{ base: 12, sm: 5 }}>
-          <Select size='xs' searchable label="Applicant" data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
+          <Select size='xs' label="Applicant" data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select size='xs' searchable label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue('checkListData', option)} />
+          <Select size='xs' label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 12 }}>
           <Title size={14} c={'#2b2b2b'}>Attachments</Title>
@@ -148,7 +156,7 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
             <Dropzone
               onChange={handleSave}
               // onReject={}
-              accept={[IMAGE_MIME_TYPE,PDF_MIME_TYPE]} bg={'#F1F3F5'} multiple onDrop={handleSave}>
+              accept={{ IMAGE_MIME_TYPE, PDF_MIME_TYPE }} bg={'#F1F3F5'} multiple onDrop={handleSave}>
               <Text ta="center">Drop images here</Text>
             </Dropzone>
             <SimpleGrid cols={6} mt={20}>

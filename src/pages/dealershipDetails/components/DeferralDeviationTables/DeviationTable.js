@@ -14,6 +14,7 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
   const [activeTab, setActiveTab] = useState('draft');
   const [openModal, setOpenModal] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
+  const [activeDoc, setActiveDoc] = useState();
   const [page, setPage] = useState(1);
   const [docUrl, setDocUrl] = useState([]);
 

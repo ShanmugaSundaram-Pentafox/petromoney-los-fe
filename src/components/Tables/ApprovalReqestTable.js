@@ -114,13 +114,15 @@ const ApprovalReqestTable = ({ title, onRowClick, filterQry, currentUser, chartD
       isHeaderDownload: false,
       isHeaderDisplay: Boolean(actionable),
       enableColumnFilter: false,
-      cell: ({ row }) => (
-        <Tooltip label="eSign Application" withArrow color='gray'>
-          <ActionIcon size="xs" color="blue" variant="subtle" onClick={() => { setloanId(row?.['id']); setType('application'); setDealershipId(row?.dealership_id); setModalVisible(true); }}>
-            <ESignIcon />
-          </ActionIcon>
-        </Tooltip>
-      )
+      cell: ({ row }) => {
+        return (
+          <Tooltip label="eSign Application" withArrow color='gray'>
+            <ActionIcon size="xs" color="blue" variant="subtle" onClick={() => { setloanId(row?.original['id']); setType('application'); setDealershipId(row?.original['dealership_id']); setModalVisible(true); }}>
+              <ESignIcon />
+            </ActionIcon>
+          </Tooltip>
+        )
+      }
     },
   ]
 
@@ -141,7 +143,7 @@ const ApprovalReqestTable = ({ title, onRowClick, filterQry, currentUser, chartD
         opened={modalVisible}
         loanId={loanId}
         type={type}
-        title={'eSign Application Form'}
+        title={'eSign Application Forms'}
         onClose={() => setModalVisible(false)}
         currentUser={currentUser}
       />

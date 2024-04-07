@@ -30,7 +30,6 @@ import { validateId } from '../../../services/dealerships.service';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
-import { IconEdit, IconPencil } from '@tabler/icons-react';
 
 const AddNewTransportsOwnerForm = ({
   handleNext,
@@ -428,47 +427,47 @@ const AddNewTransportsOwnerForm = ({
                 values?.pan_file_url ||
                 values?.aadhar_f_file_url ||
                 values?.aadhar_b_file_url ? (
-                <>
-                  <Title order={4} mb="lg">Attachments</Title>
-                  <Flex gap="xs" mb="lg">
-                    {values.profile_image_url && (
-                      <DocAttachment
-                        tooltip='View Profile'
-                        imgUrl={values?.profile_image_url}
-                        docName='Profile'
-                      />
-                    )}
-                    {values.pan_file_url && (
-                      <DocAttachment
-                        tooltip='View PAN'
-                        imgUrl={values?.pan_file_url}
-                        docName='PAN'
-                      />
-                    )}
-                    {values.aadhar_f_file_url && (
-                      <DocAttachment
-                        tooltip='View Aadhar Front'
-                        imgUrl={values?.aadhar_f_file_url}
-                        docName='Aadhar front'
-                      />
-                    )}
-                    {values.aadhar_b_file_url && (
-                      <DocAttachment
-                        tooltip='View Aadhar Back'
-                        imgUrl={values?.aadhar_b_file_url}
-                        docName='Aadhar back'
-                      />
-                    )}
-                  </Flex>
-                </>
-              ) : (
-                <>
-                  <Title order={4} mb="lg">Attachments</Title>
-                  <Flex h="40" align="center" justify="center" mb="lg">
-                    <Text>No Attachments Found</Text>
-                  </Flex>
-                </>
-              )}
+                  <>
+                    <Title order={4} mb="lg">Attachments</Title>
+                    <Flex gap="xs" mb="lg">
+                      {values.profile_image_url && (
+                        <DocAttachment
+                          tooltip='View Profile'
+                          imgUrl={values?.profile_image_url}
+                          docName='Profile'
+                        />
+                      )}
+                      {values.pan_file_url && (
+                        <DocAttachment
+                          tooltip='View PAN'
+                          imgUrl={values?.pan_file_url}
+                          docName='PAN'
+                        />
+                      )}
+                      {values.aadhar_f_file_url && (
+                        <DocAttachment
+                          tooltip='View Aadhar Front'
+                          imgUrl={values?.aadhar_f_file_url}
+                          docName='Aadhar front'
+                        />
+                      )}
+                      {values.aadhar_b_file_url && (
+                        <DocAttachment
+                          tooltip='View Aadhar Back'
+                          imgUrl={values?.aadhar_b_file_url}
+                          docName='Aadhar back'
+                        />
+                      )}
+                    </Flex>
+                  </>
+                ) : (
+                  <>
+                    <Title order={4} mb="lg">Attachments</Title>
+                    <Flex h="40" align="center" justify="center" mb="lg">
+                      <Text>No Attachments Found</Text>
+                    </Flex>
+                  </>
+                )}
             </>
           ) : (
             <form onSubmit={handleSubmit}>
@@ -861,7 +860,7 @@ const AddNewTransportsOwnerForm = ({
 
           {!readOnly ? (
             <Button
-              colorScheme="primary"
+              colorScheme="green"
               variant="filled"
               size="md"
               onClick={loading ? () => null : handleSubmit}
@@ -872,7 +871,6 @@ const AddNewTransportsOwnerForm = ({
           ) : (
             <CheckAllowed currentUser={currentUser} resource={resources_id?.transporters} action={action_id?.transporters?.editOwner}>
               <Button
-                colorScheme="primary"
                 variant="filled"
                 size="md"
                 onClick={loading ? () => null : handleEdit}

@@ -635,14 +635,14 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <Space h="24" />
                 <Flex h="36" align="center" justify="space-between">
-                  <Text fz="xs">Mobile number on Whatsapp?</Text>
+                  <Text fs="xs">Mobile number on Whatsapp?</Text>
                   <Switch
-                    color="indigo"
-                    size="md"
+                    // color="indigo"
+                    // size="sm"
                     checked={state.checkedA}
-                    onChange={handleChange}
-                    onLabel="Yes" 
-                    offLabel="No"
+                    onChange={(event) => setState({...state,checkedA:event.currentTarget.checked})}
+                    // onLabel="Yes" 
+                    // offLabel="No"
                   />
                 </Flex>
               </Grid.Col>
@@ -650,14 +650,14 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <Space h="24" />
                 <Flex h="36" align="center" justify="space-between">
-                  <Text fz="xs">Mobile number linked with Aadhaar?</Text>
+                  <Text fs="xs">Mobile number linked with Aadhaar?</Text>
                   <Switch
-                    color="indigo"
-                    size="md"
+                    // color="indigo"
+                    // size="sm"
                     checked={state.checkedB}
-                    onChange={handleChange}
-                    onLabel="Yes" 
-                    offLabel="No"
+                    onChange={(event) => setState({...state,checkedB:event.currentTarget.checked})}
+                    // onLabel="Yes" 
+                    // offLabel="No"
                   />
                 </Flex>
               </Grid.Col>

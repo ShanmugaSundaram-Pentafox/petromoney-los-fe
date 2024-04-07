@@ -152,7 +152,7 @@ const AddOMCEditForm = ({ data: init_data, dealer_id, isEdit, callback, currentU
   return (
     <div className={classes.sidePanelFormWrapper}>
       <Typography className={classes.sidePanelTitle} variant="h4">
-        <div>Add Outlet Details</div>
+        <div>Add OMC Details</div>
         <IconButton onClick={handleClose} size='small'>
           <CloseIcon />
         </IconButton>
@@ -164,26 +164,26 @@ const AddOMCEditForm = ({ data: init_data, dealer_id, isEdit, callback, currentU
               readOnly ?
                 <Grid container spacing={2}>
                   <Grid item md={6}>
-                    <ViewData title='Outlet category' value={values.sales_officer_name} style={{ marginBottom: 6 }} />
+                    <ViewData title='Sales officer name' value={values.sales_officer_name} style={{ marginBottom: 6 }} />
                   </Grid>
                   <Grid item md={6}>
-                    <ViewData title='Distance from headquarters' value={values.sales_officer_mobile} style={{ marginBottom: 6 }} />
+                    <ViewData title='Sales officer mobile' value={values.sales_officer_mobile} style={{ marginBottom: 6 }} />
                   </Grid>
                   <Grid item md={6}>
-                    <ViewData title='Terminal name' value={values.communication_mode} style={{ marginBottom: 6 }} />
+                    <ViewData title='Mode Call/Mail' value={values.communication_mode} style={{ marginBottom: 6 }} />
                   </Grid>
                   <Grid item md={6}>
-                    <ViewData title='Distance from Terminal (in Km)' value={values.agreement_executed_on} style={{ marginBottom: 6 }} />
+                    <ViewData title='Dealership agreement executed on' value={values.agreement_executed_on} style={{ marginBottom: 6 }} />
                   </Grid>
                   <Grid item md={6}>
-                    <ViewData title='Land Type' value={values.agreement_valid_till} style={{ marginBottom: 6 }} />
+                    <ViewData title='Dealership agreement valid till' value={values.agreement_valid_till} style={{ marginBottom: 6 }} />
                   </Grid>
                 </Grid> :
                 <Grid style={{marginTop:20}} container spacing={2}>
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      label="Sales officer name"
+                      labelText="Sales officer name"
                       name="sales_officer_name"
                       value={values.sales_officer_name}
                       disabled={readOnly || editable}
@@ -194,7 +194,7 @@ const AddOMCEditForm = ({ data: init_data, dealer_id, isEdit, callback, currentU
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
-                      label="Sales officer mobile"
+                      labelText="Sales officer mobile"
                       name="sales_officer_mobile"
                       value={values.sales_officer_mobile}
                       disabled={readOnly || editable}
@@ -206,7 +206,7 @@ const AddOMCEditForm = ({ data: init_data, dealer_id, isEdit, callback, currentU
                   <Grid item md={6} style={{marginTop:24}}>
                     <TextInput
                       {...inputProps}
-                      label="Mode Call/Mail"
+                      labelText="Mode Call/Mail"
                       name="communication_mode"
                       disabled={readOnly || editable}
                       readOnly={readOnly}

@@ -28,8 +28,8 @@ import { deleteDealershipDocument, getDealershipLoansById, validateId } from '..
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
-const DealershipInfo = ({ data, currentUser, isLoading }) => {
-  const [readOnly, setReadOnly] = useState(true);
+const DealershipInfo = ({ viewOnly, data, currentUser, isLoading }) => {
+  const [readOnly, setReadOnly] = useState(viewOnly);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
   const [udyamQuery, setUdyamQuery] = useState({ isLoading: false, data: {} });
@@ -158,6 +158,7 @@ const DealershipInfo = ({ data, currentUser, isLoading }) => {
             setTimeout(() => {
               window.location.reload()
             }, 1500);
+            setReadOnly(true);
             setLoading(false);
           }
           else {

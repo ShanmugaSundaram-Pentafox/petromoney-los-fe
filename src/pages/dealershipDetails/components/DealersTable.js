@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Flex, Table, Text, Title } from '@mantine/core';
+import { ActionIcon, Button, Flex, Table, Title } from '@mantine/core';
 import { Dialog, DialogContent, DialogContentText, DialogTitle, Tooltip } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
@@ -31,7 +31,7 @@ export const applicantTypes = [
   }
 ]
 
-const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, dealersClickRow }) => {
+const DealersTable = ({ id, data, currentUser, dealersClickRow }) => {
   const queryClient = useQueryClient()
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
@@ -127,38 +127,35 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
 
           <Table.Tbody fz="sm">
             {data.map((row, index) => (
-              <Table.Tr key={row.id}>
-                {/* style={{ backgroundColor: row?.is_main_applicant == 1 ? '#EAFAF1' : null }} */}
-
-                <Table.Td 
-                  className="whitespace-nowrap cursor-pointer"
+              <Table.Tr 
+                key={row.id}
+                style={{ backgroundColor: row?.is_main_applicant == 1 ? '#EAFAF1' : null }}
+              >
+                <Table.Td
+                  className="whitespace-normal w-[180px] cursor-pointer"
                   onClick={e => dealersClickRow(e, row, 'DEALER')}
                 >
-                  {row.first_name} 
-                  
-                  {row?.is_main_applicant == 1 ? (
-                    <Text span fz="xs">(mainapplicant)</Text>
-                  ): null}
+                  {row.first_name}
                 </Table.Td>
 
-                <Table.Td 
+                <Table.Td
                   className="cursor-pointer"
                   onClick={e => dealersClickRow(e, row, 'DEALER')}
                 >
                   {row.mobile}
                 </Table.Td>
-                
+
                 <Table.Td>
                   <Flex align="center" justify="center" gap="6">
                     {row.aadhar_file_url && (
                       <Button
-                        variant="subtle" 
+                        variant="subtle"
                         size="xs"
                         onClick={() => {
-                          setOpenFilePreview({ 
-                            open: true, 
-                            image: row.aadhar_file_url, 
-                            type: row?.aadhar_file_url?.endsWith('.pdf') 
+                          setOpenFilePreview({
+                            open: true,
+                            image: row.aadhar_file_url,
+                            type: row?.aadhar_file_url?.endsWith('.pdf')
                           })
                         }}
                       >
@@ -168,12 +165,12 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
 
                     {row.pan_file_url && (
                       <Button
-                        variant="subtle" 
+                        variant="subtle"
                         size="xs"
                         onClick={() => {
-                          setOpenFilePreview({ 
-                            open: true, 
-                            image: row.pan_file_url, 
+                          setOpenFilePreview({
+                            open: true,
+                            image: row.pan_file_url,
                             type: row?.pan_file_url?.endsWith('.pdf')
                           })
                         }}
@@ -187,33 +184,33 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
                 </Table.Td>
 
                 <Table.Td onClick={e => e.stopPropagation()}>
-                  <Flex align="center" justify="center" gap="6">
+                  <Flex align="center" justify="center" gap={6}>
                     {/* dealer crime check access permission */}
                     <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerCrimeCheck}>
                       <Button
-                        variant="outline" 
-                        size="xs"
+                        variant="outline"
+                        size={'xs'}
                         onClick={() => setCrimeData(row)}
                       >
                         Crime check
                       </Button>
                     </CheckAllowed>
-                    
+
                     {/* dealer credit check access permission */}
                     <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerCreditCheck}>
                       <Button
-                        variant="outline" 
+                        variant="outline"
                         size="xs"
                         onClick={() => setRowData(row)}
                       >
                         Credit Info
                       </Button>
                     </CheckAllowed>
-                    
+
                     {/* // dealer status change permission */}
                     <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerStatus}>
-                      <ActionIcon 
-                        variant="subtle" 
+                      <ActionIcon
+                        variant="subtle"
                         color={row.is_active == 0 ? 'gray' : 'green'}
                         aria-label={row.is_active == 0 ? 'Activate' : 'Deactivate'}
                         onClick={() => setOpenDialog({ open: true, data: row })}
@@ -229,7 +226,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
                     </CheckAllowed>
 
                     <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.applicantTypeChange}>
-                      <ActionIcon 
+                      <ActionIcon
                         variant="subtle"
                         color="green"
                         aria-label=""
@@ -247,7 +244,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
           </Table.Tbody>
         </Table>
       </Table.ScrollContainer>
-      
+
       <Dialog
         open={openDialog?.open}
         onClose={() => setOpenDialog({ ...openDialog, open: false })}
@@ -261,7 +258,7 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
           </div>
           <DialogContentText style={{ textAlign: 'center' }}>{`Do you really want to delete ${openDialog?.data?.first_name}?`}</DialogContentText>
         </DialogContent>
-        
+
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 19 }}>
           <Button size='medium' variant='outlined' onClick={() => setOpenDialog({ ...openDialog, open: false })}>Cancel</Button>
           <Button variant='contained' size='medium' style={openDialog?.data?.is_active == 1 ? { backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 16 } : { backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => deleteApplicant(openDialog?.data)}>
@@ -296,28 +293,28 @@ const DealersTable = ({ id, data, titleAlign, onClickAddMenu, currentUser, deale
       <RightSideDrawer
         opened={rowData && !openChangeTypeDialog}
         size="lg"
-        onClose={() => setRowData()} 
+        onClose={() => setRowData()}
         title={`Credit Information (${rowData?.pan || '-'})`}
       >
-        <CreditInfoSideWrapper 
-          dealershipId={id} 
-          data={rowData} 
-          currentUser={currentUser} 
-          onClose={() => setRowData()} 
+        <CreditInfoSideWrapper
+          dealershipId={id}
+          data={rowData}
+          currentUser={currentUser}
+          onClose={() => setRowData()}
         />
       </RightSideDrawer>
 
       <RightSideDrawer
         opened={crimeData}
         size="lg"
-        onClose={() => setCrimeData()} 
+        onClose={() => setCrimeData()}
         title="Crime Information"
       >
-        <CrimeInfoSideWrapper 
-          dealershipId={id} 
-          data={crimeData} 
-          currentUser={currentUser} 
-          onClose={() => setCrimeData()} 
+        <CrimeInfoSideWrapper
+          dealershipId={id}
+          data={crimeData}
+          currentUser={currentUser}
+          onClose={() => setCrimeData()}
         />
       </RightSideDrawer>
 

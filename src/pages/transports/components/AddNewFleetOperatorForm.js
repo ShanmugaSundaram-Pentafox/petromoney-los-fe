@@ -540,7 +540,7 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable, 
 
           {!readOnly ? (
             <Button
-              colorScheme="primary"
+              colorScheme={'green'}
               size="md"
               onClick={loading ? () => null : handleSubmit}
               loading={loading}
@@ -550,7 +550,6 @@ const AddNewFleetOperatorForm = ({ data, dealer_id, isEdit, callback, editable, 
           ) : (
             <CheckAllowed currentUser={currentUser} resource={resources_id?.fleetOperator} action={action_id?.fleetOperator?.edit}>
               <Button
-                colorScheme="primary"
                 size="md"
                 type="submit"
                 onClick={loading ? () => null : handleEdit}

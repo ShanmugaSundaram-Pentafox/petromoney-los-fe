@@ -1127,7 +1127,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
             </Grid>
             {
               status === 'State' &&
-              <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+                <TransferList title='Regions Map' mappedData={() => getStatesMapById(rowData?.id)} unmappedData={getUnmappedRegions} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
             }
             <div className={classes.formFooter}>
               <Button
@@ -1356,7 +1356,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
           </Tooltip>
 
           <Button
-            colorScheme="primary"
             size="md"
             onClick={() => {
               handleClose()

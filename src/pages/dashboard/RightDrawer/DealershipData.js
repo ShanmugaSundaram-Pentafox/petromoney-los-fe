@@ -8,9 +8,9 @@ const DealershipData = ({ data, loanData }) => {
     <Box>
       {data && (
         <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="sm">
-          <div>
+          {/* <div>
             <ViewData title='Name' value={data.name || '-'} />
-          </div>
+          </div> */}
           <div>
             <ViewData title='Address' value={data.address || '-'} />
           </div>  

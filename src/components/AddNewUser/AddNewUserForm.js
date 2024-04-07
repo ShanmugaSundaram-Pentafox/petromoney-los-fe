@@ -209,7 +209,6 @@ const AddNewUserForm = ({ callback, action }) => {
           </Button>
 
           <Button
-            colorScheme="primary"
             variant="filled"
             size="md"
             onClick={handleSubmit}

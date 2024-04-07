@@ -1,15 +1,8 @@
-import { IconButton } from '@material-ui/core'
-import Divider from '@material-ui/core/Divider';
-import Snackbar from '@material-ui/core/Snackbar';
 import Typography from '@material-ui/core/Typography';
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import EditIcon from '@material-ui/icons/Edit';
-import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import RotateLeftOutlinedIcon from '@material-ui/icons/RotateLeftOutlined';
 import DownloadOutlined from '@material-ui/icons/SystemUpdateAltRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -320,7 +313,7 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
         >
           <Flex gap="sm">
             <Button
-              colorScheme="primary"
+              colorScheme={'green'}
               size="md"
               // startIcon={cibilEditMode ? <NavigateNextRounded /> : <EditIcon />}
               onClick={cibilEditMode ? handleSubmit : handleEdit}

@@ -77,7 +77,6 @@ export const RightSideDrawer = ({
               footerAction.right.renderBtnComponent
             ) : (
               <Button
-                colorScheme="primary"
                 size="md"
                 onClick={footerAction.right.onClick}
                 loading={footerAction.right.loading ?? false}

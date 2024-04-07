@@ -3,18 +3,12 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
-// import { Link as RouterLink } from 'react-router-dom';
-// import moment from 'moment';
-// import clsx from 'clsx';
-// import MUIDataTable from "mui-datatables";
-// import Currency from '../../../components/Number/Currency';
 import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
 import DisbursedTable from '../../../components/Tables/DisbursedTable';
 import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 import DisbursementReqestTable from '../../../components/Tables/DisbursementReqestTable';
-// import DueTable from '';
 import DueTable from '../../../components/Tables/DueTable';
 import OverDueTable from '../../../components/Tables/OverDueTable';
 import RejectedTable from '../../../components/Tables/RejectedTable';
@@ -31,7 +25,7 @@ import PendingDisbApprovedDrawer from '../RightDrawer/PendingDisbApprovalDrawer'
 import PendingReviewDrawer from '../RightDrawer/PendingReviewDrawer';
 import RejectedDrawer from '../RightDrawer/RejectedDrawer';
 import SubmittedDrawer from '../RightDrawer/SubmittedDrawer';
-
+import { Badge } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   tableContainer: {
@@ -266,34 +260,11 @@ const LoansTable = ({ currentUser, value, filterQry }) => {
             </>)
         )}
       />
-      {/* <Drawer
-        anchor="right"
-        // elevation={4}
-        ModalProps={{
-          onBackdropClick: () => { setShowPanel({ status: false }) }
-        }}
-        open={showPanel.status}
-        variant={'temporary'}
-      >
-        <div className={classes.sidePanelWrapper}>
-          {
-            showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
-              : showPanel.data === 'loan_review' ? <PendingReviewDrawer {...compProps} />
-                : showPanel.data === 'loan_approval' ? <PendingApprovalDrawer {...compProps} />
-                  : showPanel.data === 'approved' ? <ApprovedDrawer {...compProps} />
-                    : showPanel?.data === 'disbursement_approval' ? <PendingDisbApprovedDrawer {...compProps} />
-                      : showPanel?.data === 'disbursement_approved' ? <DisbApprovedDrawer {...compProps} />
-                        : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
-                          : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null
-          }
-        </div>
-      </Drawer> */}
-
       <RightSideDrawer
         size="60%"
         opened={showPanel.status}
         onClose={() => setShowPanel({ status: false })}
-        title={compProps.data?.id}
+        title={<Badge color="blue" size='lg' variant='light'>{compProps.data?.id} - {compProps.data?.name}</Badge>}
       >
         {
           showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />

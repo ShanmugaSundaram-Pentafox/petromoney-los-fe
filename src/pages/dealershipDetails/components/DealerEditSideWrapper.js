@@ -1,4 +1,4 @@
-import { Box, Flex, Stack } from '@mantine/core';
+import { Box, Flex, Group, Stack } from '@mantine/core';
 import { green } from '@material-ui/core/colors';
 import Typography from '@material-ui/core/Typography';
 import CheckRoundedIcon from '@material-ui/icons/CheckRounded';
@@ -22,6 +22,7 @@ import { addApplicants } from '../../../services/fileUpload.service';
 import { isAllowed } from '../../../utils/cerbos';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { IconChevronLeft, IconEdit } from '@tabler/icons-react';
 
 const DealerEditSideWrapper = ({
   modelType,
@@ -314,8 +315,8 @@ const DealerEditSideWrapper = ({
           id={id}
           onClose={onClose}
         />
-      </div>  
-      
+      </div>
+
       {/* Sticky footer */}
       <Flex
         h="64"
@@ -328,12 +329,11 @@ const DealerEditSideWrapper = ({
         }}
       >
         {!readOnly ? (
-          <>
+          <Flex style={{ width: '100%' }} align={'center'} justify={'space-between'}>
             <Button
               colorScheme="secondary"
               variant="outline"
-              size="md"
-              // startIcon={<NavigateBeforeRoundedIcon />}
+              leftSection={<IconChevronLeft size={14} />}
               disabled={loading}
               onClick={onClose}
             >
@@ -341,61 +341,60 @@ const DealerEditSideWrapper = ({
             </Button>
 
             <Button
-              colorScheme="primary"
+              colorScheme="green"
               variant="filled"
               size="md"
-              // startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
               onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
               disabled={loading}
               loading={loading}
             >
               Save
             </Button>
-          </>
+          </Flex>
         ) : (
-          <>
+          <Flex style={{ width: '100%' }} align={'center'} justify={'space-between'}>
             <Button
               colorScheme="secondary"
               variant="outline"
-              size="md"
+              leftSection={<IconChevronLeft size={14} />}
               onClick={onClose}
               disabled={loading}
             >
               Go back
             </Button>
+            <Group>
+              {kycStatus ? (
+                <div style={{ display: 'flex', alignItems: 'center', marginRight: 12, backgroundColor: green[100], padding: 4, paddingRight: 12, borderRadius: 14 }}>
+                  <CheckRoundedIcon style={{ color: green[400], marginRight: 8 }} />
+                  <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
+                </div>
+              ) : (
+                <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.Vkyc}>
+                  <Button
+                    colorScheme="rgba(19, 135, 73, 1)"
+                    variant="light"
+                    // leftSection={<IconChevronLeft size={14} />}
+                    disabled={loading}
+                    onClick={handleClose}
+                  >
+                    Initiate VKYC
+                  </Button>
+                </CheckAllowed>
+              )}
 
-            {kycStatus ? (
-              <div style={{ display: 'flex', alignItems: 'center', marginRight: 12, backgroundColor: green[100], padding: 4, paddingRight: 12, borderRadius: 14 }}>
-                <CheckRoundedIcon style={{ color: green[400], marginRight: 8 }} />
-                <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
-              </div>
-            ) : (
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.Vkyc}>
+              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerEdit}>
                 <Button
-                  colorScheme="primary"
                   variant="filled"
                   size="md"
+                  startIcon={<IconEdit />}
+                  onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
                   disabled={loading}
-                  onClick={handleClose}
                 >
-                  Initiate VKYC
+                  Edit
                 </Button>
               </CheckAllowed>
-            )}
-
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.dealerEdit}>
-              <Button
-                colorScheme="primary"
-                variant="filled"
-                size="md"
-                // startIcon={!readOnly ? <NavigateNextRoundedIcon /> : <EditIcon />}
-                onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
-                disabled={loading}
-              >
-                Edit
-              </Button>
-            </CheckAllowed>
-          </>
+            </Group>
+          </Flex>
         )}
       </Flex>
 
@@ -405,7 +404,7 @@ const DealerEditSideWrapper = ({
         title="Initiate VKYC"
         centered
       >
-        <Stack mih="320" gap="md">
+        <Stack mih="120" gap="md">
           <Box py="xs">
             <TextInput
               select
@@ -424,8 +423,8 @@ const DealerEditSideWrapper = ({
           </Box>
 
           {agentId?.error && (
-            <Alert 
-              severity="error" 
+            <Alert
+              severity="error"
               style={{ padding: '0px 16px', marginTop: 12 }}
             >
               {agentId?.error}
@@ -438,19 +437,16 @@ const DealerEditSideWrapper = ({
             gap="xs"
             mt="auto"
           >
-            <Button 
+            <Button
               colorScheme="secondary"
               variant="outline"
-              size="md"
               onClick={handleClose}
             >
               Cancel
             </Button>
 
-            <Button 
-              colorScheme="primary"
+            <Button
               variant="filled"
-              size="md"
               onClick={kycStatus ? () => null : handleInitiateKYC}
             >
               Initiate Video KYC

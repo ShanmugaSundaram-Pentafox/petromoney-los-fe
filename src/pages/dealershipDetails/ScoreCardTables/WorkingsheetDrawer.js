@@ -1,4 +1,4 @@
-import { Accordion, Box, Flex, Text } from '@mantine/core';
+import { Accordion, Box, Flex, Text, Title } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import React from 'react';
 import { useQuery } from 'react-query';
@@ -30,6 +30,7 @@ const WorkingSheetDrawer = ({ id }) => {
 
   return (
     <Box my="lg">
+      <Title order={3} mb={12}>Working Sheet</Title>
       {scoreCardData?.ws_summary_data[0] ? (
         <Accordion
           classNames={{

@@ -1,16 +1,8 @@
-import { Dialog, DialogContent, DialogContentText, DialogTitle, Drawer, Tooltip } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import { green, grey } from '@material-ui/core/colors';
-import { makeStyles } from '@material-ui/core/styles';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import { ActionIcon, Divider, Flex, Table, Title } from '@mantine/core';
+import { Dialog, DialogContent, DialogContentText, Tooltip, DialogTitle } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
-import UpdateSharpIcon from '@material-ui/icons/UpdateSharp';
+import { IconCircleCheck, IconReload } from '@tabler/icons-react';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -20,38 +12,40 @@ import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
 import { applicantTypes } from './DealersTable';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
 import FormDialog from '../../../components/CommonComponents/FormDialog/FormDialog';
+import { Button } from '../../../components/Mantine/Button/Button';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { updateApplicantType } from '../../../services/dealers.service';
 import { addApplicants } from '../../../services/fileUpload.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
-const useStyles = makeStyles((theme) => ({
-  wrapper: {
-    padding: 8,
-  },
-  title: {
-    paddingLeft: 8,
-    marginBottom: 8,
-  },
-  table: {
-    padding: 8,
-  },
-  header: {
-    display: 'flex',
-    marginBottom: 8,
-  },
-  tableRow: {
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: '#fafafa',
-    },
-  },
-  sidePanelWrapper: {
-    width: '40vw',
-    minWidth: 300,
-  },
-}));
+// const useStyles = makeStyles((theme) => ({
+//   wrapper: {
+//     padding: 8,
+//   },
+//   title: {
+//     paddingLeft: 8,
+//     marginBottom: 8,
+//   },
+//   table: {
+//     padding: 8,
+//   },
+//   header: {
+//     display: 'flex',
+//     marginBottom: 8,
+//   },
+//   tableRow: {
+//     cursor: 'pointer',
+//     '&:hover': {
+//       backgroundColor: '#fafafa',
+//     },
+//   },
+//   sidePanelWrapper: {
+//     width: '40vw',
+//     minWidth: 300,
+//   },
+// }));
 
 const GuarantorsTable = ({
   id,
@@ -62,7 +56,7 @@ const GuarantorsTable = ({
   currentUser,
   dealersClickRow,
 }) => {
-  const classes = useStyles();
+  const classes = {};
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const [rowData, setRowData] = useState();
@@ -145,116 +139,132 @@ const GuarantorsTable = ({
 
   return (
     (guarantorsData?.length > 0) && (
-      <div className={classes.wrapper}>
-        <div className={classes.header}>
-          <Typography
-            style={{ width: '90%' }}
-            variant="h5"
-            align={titleAlign}
-            className={classes.title}
-          >
-            Guarantor
-          </Typography>
-        </div>
-        <Table className={classes.table} size="small" aria-label="Dealers">
-          <TableHead>
-            <TableRow>
-              <TableCell>Guarantor Name</TableCell>
-              <TableCell align="center">Mobile</TableCell>
-              <TableCell align="center">Documents</TableCell>
-              <TableCell align="center">Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {guarantorsData.map((row, index) => (
-              <TableRow
-                className={classes.tableRow}
-                key={row.id}
-              >
-                <TableCell onClick={(e) => dealersClickRow(e, row, 'GUARANTOR')}>{row.first_name}&nbsp;&nbsp;</TableCell>
-                <TableCell
-                  align="center"
-                  onClick={(e) => (dealersClickRow(e, row, 'GUARANTOR'))}
-                >
-                  {row.mobile}
-                </TableCell>
-                <TableCell align="center">
-                  {
-                    row.aadhar_file_url && (
-                      <TableCell style={{ border: 0 }} align="center">
-                        <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.aadhar_file_url, type: row?.aadhar_file_url?.endsWith('.pdf') }); }}>
-                          <p>{'Aadhaar'}</p>
-                        </div>
-                      </TableCell>
-                    )
-                  }
-                  {
-                    row.pan_file_url && (
-                      <TableCell style={{ border: 0 }} align="center">
-                        <div className={classes.document} onClick={() => { setOpenFilePreview({ open: true, image: row.pan_file_url, type: row?.pan_file_url?.endsWith('.pdf') }); }}>
-                          <p>{'PAN'}</p>
-                        </div>
-                      </TableCell>
-                    )
-                  }
-                  {
-                    !row.pan_file_url && !row.aadhar_file_url &&
-                    <TableCell style={{ border: 0 }} align="center">
-                      -
-                    </TableCell>
-                  }
-                </TableCell>
-
-                <TableCell align="right" onClick={(e) => e.stopPropagation()}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
+      <>
+        <Divider mb="xl" />
+        <Title order={3} mb="sm">Guarantors</Title>
+        <Table.ScrollContainer minWidth={500}>
+          <Table highlightOnHover aria-label="Dealers" mb="xl">
+            <Table.Thead bg="gray.1" fz="xs">
+              <Table.Tr>
+                <Table.Th>Guarantor Name</Table.Th>
+                <Table.Th>Mobile</Table.Th>
+                <Table.Th ta="center">Documents</Table.Th>
+                <Table.Th ta="center">Action</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody fz="sm">
+              {guarantorsData?.map((row, index) => (
+                <Table.Tr key={row.id}>
+                  <Table.Td
+                    className="cursor-pointer"
+                    onClick={e => dealersClickRow(e, row, 'GUARANTOR')}
                   >
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCrimeCheck}>
-                      <Button style={{ marginRight: 12 }} size="small" variant="outlined" color="secondary" onClick={() => setCrimeData(row)}>Crime check</Button>
-                    </CheckAllowed>
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCreditCheck}>
-                      <Button size="small" variant="outlined" color="secondary" onClick={() => setRowData(row)}>Credit Info</Button>
-                    </CheckAllowed>
-                    {
-                      // Guarantor status change permissions
-                      <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorStatus}>
-                        <div style={{ marginLeft: 12 }} onClick={() => { setOpenDialog({ open: true, data: row }) }}>
-                          {
-                            row.is_active == 0 ? (
-                              <Tooltip title="Activate">
-                                <CheckCircleTwoToneIcon
-                                  style={{ color: grey[500] }}
-                                />
-                              </Tooltip>
-                            ) : (
-                              <Tooltip title="Deactivate">
-                                <CheckCircleTwoToneIcon
-                                  style={{ color: green[200] }}
-                                />
-                              </Tooltip>
-                            )
-                          }
-                        </div>
+                    {row.first_name}
+                  </Table.Td>
+                  <Table.Td
+                    className="cursor-pointer"
+                    onClick={e => dealersClickRow(e, row, 'GUARANTOR')}
+                  >
+                    {row.mobile}
+                  </Table.Td>
+                    
+                  <Table.Td>
+                    <Flex align="center" justify="center" gap="6">
+                      {row.aadhar_file_url && (
+                        <Button
+                          variant="subtle" 
+                          size="xs"
+                          onClick={() => {
+                            setOpenFilePreview({ 
+                              open: true, 
+                              image: row.aadhar_file_url, 
+                              type: row?.aadhar_file_url?.endsWith('.pdf') 
+                            })
+                          }}
+                        >
+                          Aadhaar
+                        </Button>
+                      )}
+
+                      {row.pan_file_url && (
+                        <Button
+                          variant="subtle" 
+                          size="xs"
+                          onClick={() => {
+                            setOpenFilePreview({ 
+                              open: true, 
+                              image: row.pan_file_url, 
+                              type: row?.pan_file_url?.endsWith('.pdf')
+                            })
+                          }}
+                        >
+                          PAN
+                        </Button>
+                      )}
+
+                      {!row.pan_file_url && !row.aadhar_file_url && '-'}
+                    </Flex>
+                  </Table.Td>
+
+                  <Table.Td onClick={e => e.stopPropagation()}> 
+                    <Flex align="center" justify="center" gap="6">
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCrimeCheck}> 
+                        <Button
+                          variant="outline" 
+                          size="xs"
+                          onClick={() => setCrimeData(row)}
+                        >
+                          Crime check
+                        </Button>
                       </CheckAllowed>
-                    }
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.applicantTypeChange}>
-                      <div style={{ marginLeft: 12 }} onClick={() => handleUpdate(row)}>
-                        <Tooltip title='Change type'>
-                          <UpdateSharpIcon style={{ color: grey[500] }} />
-                        </Tooltip>
-                      </div>
-                    </CheckAllowed>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                        
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCreditCheck}>
+                        <Button
+                          variant="outline" 
+                          size="xs"
+                          onClick={() => setRowData(row)}
+                        >
+                          Credit Info
+                        </Button>
+                      </CheckAllowed>
+
+                      {/* guarantor status change permission */}
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorStatus}>
+                        <ActionIcon 
+                          variant="subtle" 
+                          color={row.is_active == 0 ? 'gray' : 'green'}
+                          aria-label={row.is_active == 0 ? 'Activate' : 'Deactivate'}
+                          onClick={() => setOpenDialog({ open: true, data: row })}
+                        >
+                          <Tooltip title={row.is_active == 0 ? 'Activate' : 'Deactivate'}>
+                            {row.is_active == 0 ? (
+                              <IconCircleCheck size={20} />
+                            ) : (
+                              <IconCircleCheck size={20} />
+                            )}
+                          </Tooltip>
+                        </ActionIcon>
+                      </CheckAllowed>
+
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.applicantTypeChange}>
+                        <ActionIcon 
+                          variant="subtle"
+                          color="green"
+                          aria-label=""
+                          onClick={() => handleUpdate(row)}
+                        >
+                          <Tooltip title='Change type'>
+                            <IconReload size={20} />
+                          </Tooltip>
+                        </ActionIcon>
+                      </CheckAllowed>
+                    </Flex>
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
+        </Table.ScrollContainer>
         <Dialog
           open={openDialog?.open}
           onClose={() => setOpenDialog({ ...openDialog, open: false })}
@@ -297,7 +307,7 @@ const GuarantorsTable = ({
             <Button size='xs' style={{ backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => saveApplicantTypeUpdate(rowData)}>Update</Button>
           </div>
         </Dialog>
-        <Drawer anchor="right" open={rowData && !openChangeTypeDialog} variant="temporary">
+        <RightSideDrawer anchor="right" opened={rowData && !openChangeTypeDialog} variant="temporary" onClose={() => setRowData()} >
           <div className={classes.sidePanelWrapper}>
             {
               <CreditInfoSideWrapper
@@ -308,10 +318,10 @@ const GuarantorsTable = ({
               />
             }
           </div>
-        </Drawer>
-        <Drawer
+        </RightSideDrawer>
+        <RightSideDrawer
           anchor="right"
-          open={crimeData}
+          opened={crimeData}
           onClose={() => {
             setCrimeData();
           }}
@@ -327,11 +337,11 @@ const GuarantorsTable = ({
               />
             }
           </div>
-        </Drawer>
+        </RightSideDrawer>
         <FormDialog className={classes.dialogBox} onDownload={openFilePreview?.image} open={openFilePreview?.image} onClose={() => setOpenFilePreview({ open: false })}>
           <FilePreview data={openFilePreview} />
         </FormDialog>
-      </div>
+      </>
     ));
 };
 

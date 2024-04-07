@@ -1,4 +1,3 @@
-import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
@@ -16,6 +15,7 @@ import PendingReviewDrawer from '../dashboard/RightDrawer/PendingReviewDrawer';
 import RejectedDrawer from '../dashboard/RightDrawer/RejectedDrawer';
 import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
 import LoansTable from '../dashboard/components/LoansTable';
+import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 
 const FuelLoans = ({ currentUser }) => {
@@ -88,11 +88,10 @@ const FuelLoans = ({ currentUser }) => {
           filterQry={filterQry}
         />
       </Grid>
-      <Drawer
-        anchor="right"
-        ModalProps={{ onBackdropClick: () => setShowPanel({ status: false }) }}
-        open={showPanel?.status}
-        variant={'temporary'}
+      <RightSideDrawer
+        opened={showPanel?.status}
+        onClose={()=> setShowPanel({...showPanel,status:false})}
+        
       >
         <div>
           {showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
@@ -104,7 +103,7 @@ const FuelLoans = ({ currentUser }) => {
                       : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
                         : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null}
         </div>
-      </Drawer>
+      </RightSideDrawer>
     </>
   )
 }

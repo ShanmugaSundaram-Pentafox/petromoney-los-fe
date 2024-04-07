@@ -117,7 +117,6 @@ const AddOmcDetailsForm = ({ open, onClose, data, dealer_id, isEdit, currentUser
           renderBtnComponent: (
             <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.omcEdit}>
               <Button
-                colorScheme="primary"
                 size="md"
                 onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
                 loading={loading}

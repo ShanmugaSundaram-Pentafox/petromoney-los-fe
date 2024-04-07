@@ -128,7 +128,6 @@ const ExternalApi = ({ callback }) => {
           </Button>
 
           <Button 
-            colorScheme="primary"
             size="md"
             onClick={() => setAddForm({})}
           >

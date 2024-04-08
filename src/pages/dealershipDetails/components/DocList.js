@@ -88,7 +88,7 @@ const DocList = ({ id, currentUser }) => {
         Object.entries(checkListData)?.reverse()?.map((item, index) => (
           <div key={index}>
 
-            <Title order={3} mb="lg">Dealership Documents</Title>
+            <Title order={3} mb="lg">{item?.[0]?.replace(/_/, ' ')?.toUpperCase()} DOCUMENTS</Title>
 
             {Array.isArray(item?.[1]) && item?.[1]?.map((row, i) => row.doc_type !== 'dealer' && (
               <DocListPreview

@@ -9,7 +9,7 @@ import UserCan, { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
 import DisbursementApprovalTable from './DisbursementApprovalTable';
-import { Box, Grid, Paper } from '@mantine/core';
+import { Badge, Box, Grid, Paper } from '@mantine/core';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import classes from './ReOnboarding.module.css';
 
@@ -108,7 +108,7 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
       <RightSideDrawer
         opened={showPanel.status}
         onClose={() => setShowPanel({ status: false })}
-        title={showPanel?.id}
+        title={<Badge color="blue" size='lg' variant='light'>{showPanel?.id} - {loansData?.dealership_name}</Badge>}
         size={'70%'}
       >
         <div className={classes.sidePanelWrapper}>

@@ -13,7 +13,7 @@ import { getDealershipById } from '../../services/dealerships.service';
 import { getDocumentsChecklistById, getLoansByStatus, updateDocumentChecklistById } from '../../services/loans.service';
 import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
-import { ActionIcon, Box, Button, Checkbox, Modal, TextInput, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Box, Button, Checkbox, Modal, TextInput, Tooltip } from '@mantine/core';
 import { IconLink, IconPlus } from '@tabler/icons-react';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
@@ -227,6 +227,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
         size={'70%'}
         opened={showPanel.status}
         onClose={() => { setShowPanel({ status: false, data: '' }) }}
+        title={<Badge color="blue" size='lg' variant='light'>{loansData?.dealership_id} - {loansData?.name}</Badge>}
       >
         <SubmittedDrawer id={showPanel?.id} status={showPanel?.data} editable={showPanel?.editable} currentUser={currentUser} data={dealershipData} onClose={() => { setShowPanel({ status: false, data: '' }) }} selectedLoanData={loansData} />
       </RightSideDrawer>

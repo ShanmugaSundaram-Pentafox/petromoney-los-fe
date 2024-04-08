@@ -11,7 +11,7 @@ import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import DisbursementApprovalTable from './DisbursementApprovalTable';
-import { Box, Grid, Paper } from '@mantine/core';
+import { Badge, Box, Grid, Paper } from '@mantine/core';
 
 
 const useStyles = makeStyles(theme => ({
@@ -130,7 +130,7 @@ const EnhancementTable = ({ currentUser, value, filterQry, statusList, statsChan
         opened={showPanel.status}
         size={'70%'}
         onClose={() => setShowPanel({ modal: false })}
-        title={showPanel?.id}
+        title={<Badge color="blue" size='lg' variant='light'>{showPanel?.id} - {loansData?.dealership_name}</Badge>}
       >
         <div className={classes.sidePanelWrapper}>
           {

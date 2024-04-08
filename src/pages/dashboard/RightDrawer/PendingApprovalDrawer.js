@@ -36,6 +36,7 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
             message: res?.message,
             variant: 'success',
           });
+          onClose();
           setTimeout(() => {
             window.location.reload();
             setLoading(false)

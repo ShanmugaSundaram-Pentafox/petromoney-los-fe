@@ -29,7 +29,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   const [solarTab, setSolarTab] = useState(-1);
   // eslint-disable-next-line unused-imports/no-unused-vars
   const [showSolarForm, setShowSolarForm] = useState();
-  const [dealershipReadOnly,setDealershipReadOnly] = useState(true);
+  const [dealershipReadOnly, setDealershipReadOnly] = useState(true);
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
   const history = useHistory();
   // const financialReport_permission = permissionCheck(currentUser.role_name, rulesList.financial_view);
@@ -198,7 +198,7 @@ const DealershipDetails = ({ currentUser, match }) => {
         </Tabs.List>
 
         <Tabs.Panel value={'dealership'}>
-          <DealershipInfo viewOnly={dealershipReadOnly} data={dealershipData.data} isLoading={dealershipData?.isLoading} currentUser={currentUser} />
+          <DealershipInfo viewOnly={dealershipReadOnly} setViewOnly={setDealershipReadOnly} data={dealershipData.data} isLoading={dealershipData?.isLoading} currentUser={currentUser} />
         </Tabs.Panel>
         <Tabs.Panel value={'dealer'}>
           <DealersList id={id} titleAlign="left" currentUser={currentUser} />

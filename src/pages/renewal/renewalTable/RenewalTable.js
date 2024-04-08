@@ -9,7 +9,7 @@ import { rulesList } from '../../../config/userRules';
 import { getDealershipById } from '../../../services/dealerships.service';
 import RenewalDrawer from '../renewalDrawer/RenewalDrawer';
 import DisbursementApprovalTable from './DisbursementApprovalTable';
-import { Box, Grid, Paper } from '@mantine/core';
+import { Badge, Box, Grid, Paper } from '@mantine/core';
 import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import classes from './Renewal.module.css'
 
@@ -110,7 +110,7 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
         opened={showPanel.status}
         onClose={() => setShowPanel({ status: false })}
         size={'70%'}
-        title={showPanel?.id}
+        title={<Badge color="blue" size='lg' variant='light'>{showPanel?.id} - {loansData?.dealership_name}</Badge>}
       >
         <div className={classes.sidePanelWrapper}>
           {

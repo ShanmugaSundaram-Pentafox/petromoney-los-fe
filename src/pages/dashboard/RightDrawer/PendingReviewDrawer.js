@@ -51,8 +51,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
     else {
       displayNotification({
         message: 'Please enter amount to proceed further',
-        variant: 'success',
-        autoClose: false
+        variant: 'warning',
       });
       return null;
     }
@@ -73,6 +72,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             message: res.message,
             variant: 'success',
           });
+          onClose()
           setTimeout(() => {
             window.location.reload();
             setLoading(false)

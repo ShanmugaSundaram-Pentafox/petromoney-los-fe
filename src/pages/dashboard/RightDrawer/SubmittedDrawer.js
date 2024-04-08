@@ -1,15 +1,9 @@
-import { Dialog, DialogContent, DialogContentText, Button } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import Select from 'react-select';
 import { useMount } from 'react-use';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import LoanInfo from './LoanInfo';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
@@ -17,6 +11,9 @@ import { isAllowed } from '../../../utils/cerbos';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 import classes from './SideDrawer.module.css';
+import { Alert, Box, Button, Group, Modal, Select, Text } from '@mantine/core';
+import RichTextEditorBox from '../../../components/RichTexEditor/RichTextEditorBox';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, data, onClose }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
@@ -36,7 +33,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
           res.forEach((item) => {
             d.push({
               label: `${item.first_name} ${item.last_name}`,
-              value: item.id
+              value: item.id?.toString()
             })
           })
           setUserRole(d);
@@ -61,7 +58,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
       setLoading(true)
       let reqBody = {
         user_id: currentUser?.id,
-        reviewer_id: user?.value,
+        reviewer_id: parseInt(user?.value),
         review_remarks: remarks,
         product_id: info?.product_id,
         amount_requested: info?.amount_requested
@@ -72,6 +69,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
             message: res.message,
             variant: 'success',
           });
+          onClose()
           setTimeout(() => {
             window.location.reload();
             setLoading(false)
@@ -129,49 +127,51 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         status={status}
       />
 
-      <Dialog
-        open={reviewModal}
+      <Modal
+        opened={reviewModal}
         onClose={handleReviewModal}
+        zIndex={9999}
+        size={'lg'}
+        withCloseButton={false}
       >
-        <DialogContent>
-          <div className={classes.dialog}>
-            <div style={{ marginBottom: 20 }}>
-              <DialogContentText id="approval-remarks-desc">
-                Please choose whom did you want to sent for review.
-              </DialogContentText>
-              <Select
-                isClearable
-                name='user_approve'
-                onChange={(data) => { setUser(data); setErrorStatus(); }}
-                options={userRole}
-                menuPlacement='bottom'
-                menuPosition='fixed'
-                maxMenuHeight='200px'
-              />
-            </div>
-            <DialogContentText id="approval-remarks-desc">
-              Please enter your remarks for sending this to review.
-            </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true} />
-            {
-              errorStatus &&
-              <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
-            }
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button variant='outlined' onClick={handleReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
-            <LoaderButton
-              variant='contained'
-              color='primary'
-              buttonLabel='Confirm'
-              size='medium'
-              isLoading={loading}
-              loadingText="Submitting..."
-              onClick={() => updateLoanStatus('loan_review')}
-            >Confirm</LoaderButton>
-          </div>
-        </DialogContent>
-      </Dialog>
+        <Box className={classes.dialog}>
+          <Box style={{ marginBottom: 20 }}>
+            <Text>
+              Please choose whom did you want to sent for review.
+            </Text>
+            <Select
+              clearable
+              name='user_approve'
+              onChange={(_value, option) => { setUser(option); setErrorStatus(); }}
+              data={userRole}
+              styles={{ dropdown: { boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', zIndex: 99999 } }}
+              menuPlacement='bottom'
+              menuPosition='fixed'
+              maxMenuHeight='200px'
+            />
+          </Box>
+          <Text>
+            Please enter your remarks for sending this to review.
+          </Text>
+          <RichTextEditorBox onChange={setRemarks} />
+          {
+            errorStatus
+              ? <Alert variant='light' color='orange' title='Error!' withCloseButton={false} icon={<IconInfoCircle />}>
+                {errorStatus}
+              </Alert>
+              : null
+          }
+        </Box>
+        <Group justify='center' mt={10} gap={4}>
+          <Button variant='outline' size='xs' style={{ marginRight: 8 }} onClick={handleReviewModal}>Cancel</Button>
+          <Button
+            color='green'
+            size='xs'
+            loading={loading}
+            onClick={() => updateLoanStatus('loan_review')}
+          >Confirm</Button>
+        </Group>
+      </Modal>
     </>
   );
 }

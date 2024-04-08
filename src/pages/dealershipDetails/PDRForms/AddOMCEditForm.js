@@ -95,7 +95,7 @@ const AddOMCEditForm = ({ data: init_data, dealer_id, isEdit, callback, currentU
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
-      console.log('values -->',values)
+      console.log('values -->', values)
       let obj = {};
       if (!isEdit) {
         obj = compareObject(init_data, values)
@@ -179,7 +179,7 @@ const AddOMCEditForm = ({ data: init_data, dealer_id, isEdit, callback, currentU
                     <ViewData title='Dealership agreement valid till' value={values.agreement_valid_till} style={{ marginBottom: 6 }} />
                   </Grid>
                 </Grid> :
-                <Grid style={{marginTop:20}} container spacing={2}>
+                <Grid style={{ marginTop: 20 }} container spacing={2}>
                   <Grid item md={6}>
                     <TextInput
                       {...inputProps}
@@ -203,7 +203,7 @@ const AddOMCEditForm = ({ data: init_data, dealer_id, isEdit, callback, currentU
                       error={errors.sales_officer_mobile}
                     />
                   </Grid>
-                  <Grid item md={6} style={{marginTop:24}}>
+                  <Grid item md={6} style={{ marginTop: 8 }}>
                     <TextInput
                       {...inputProps}
                       labelText="Mode Call/Mail"

@@ -1,8 +1,9 @@
-import { Divider, Grid, Switch, Tooltip, Typography } from '@material-ui/core';
+import { Grid, Switch, Text, Tooltip } from '@mantine/core';
+import { Divider } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 import { green } from '@material-ui/core/colors';
 import { InfoOutlined } from '@material-ui/icons';
-import { makeStyles, withStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/styles';
 import { IconCheckbox, IconSquare } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import styled from 'styled-components';
@@ -18,17 +19,6 @@ const useStyles = makeStyles(() => ({
     }
   }
 }))
-
-// changing the tooltip look and feel
-const HtmlTooltip = withStyles((theme) => ({
-  tooltip: {
-    backgroundColor: '#f5f5f9',
-    color: 'rgba(0, 0, 0, 0.87)',
-    width: 250,
-    fontSize: theme.typography.pxToRem(12),
-    border: '1px solid #dadde9',
-  },
-}))(Tooltip);
 
 const Card = styled.div`
   background-color: #fff;
@@ -95,26 +85,32 @@ const CardItem = ({ onChange, data, tooltip = false }) => {
               <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 4 }}>
                 <p><strong>{data.first_name} {data.last_name || ''}</strong></p>
                 {tooltip ?
-                  <HtmlTooltip title={
-                    <React.Fragment>
-                      <Grid spacing={2}>
-                        <Grid item xs={12}>
-                          Father Name
+                  <Tooltip
+                    zIndex={9999}
+                    // w={250}
+                    multiline={true}
+                    // color='gray'
+                    withArrow
+                    label={
+                      <React.Fragment>
+                        <Grid gutter={0}>
+                          <Grid.Col span={12}>
+                            Father Name
+                          </Grid.Col>
+                          <Grid.Col span={12}>
+                            <Text maw={200} style={{ whiteSpace: 'wrap' }}>{data?.father_name}</Text>
+                          </Grid.Col>
+                          <Grid.Col span={12} style={{ marginTop: 4 }}>
+                            Address
+                          </Grid.Col>
+                          <Grid.Col span={12}>
+                            <Text maw={200} style={{ whiteSpace: 'wrap' }}>{data?.full_address}</Text>
+                          </Grid.Col>
                         </Grid>
-                        <Grid item xs={12}>
-                          <Typography variant="caption" >{data?.father_name}</Typography>
-                        </Grid>
-                        <Grid item xs={12} style={{ marginTop: 4 }}>
-                          Address
-                        </Grid>
-                        <Grid item xs={12}>
-                          <Typography variant="caption" >{data?.full_address}</Typography>
-                        </Grid>
-                      </Grid>
-                    </React.Fragment>
-                  } placement='top'>
+                      </React.Fragment>
+                    } placement='top'>
                     <InfoOutlined style={{ width: 14 }} />
-                  </HtmlTooltip> : null
+                  </Tooltip> : null
                 }
               </div>
               {data.email && <p><small>{data.email}</small></p>}
@@ -128,26 +124,20 @@ const CardItem = ({ onChange, data, tooltip = false }) => {
               <div className="toogle" style={{ display: 'flex', margin: '8px', alignItems: 'center' }}>
                 <Switch
                   checked={aadharSign}
-                  onChange={handleAadharSign}
-                  size="small"
-                  color="primary"
-                  name="state"
-                  disabled
-                  inputProps={{ 'aria-label': 'secondary checkbox' }}
+                  color='blue'
+                  size="xs"
+                  label={'Aadhar Sign'}
                 />
-                <Typography style={{ fontSize: '10px' }}>Aadhar Sign</Typography>
               </div>
               <Divider orientation="vertical" flexItem />
               <div style={{ display: 'flex', margin: '5px', alignItems: 'center' }}>
                 <Switch
                   checked={virtualSign}
                   onChange={handleVirtualSign}
-                  size="small"
-                  color="primary"
+                  size="xs"
                   name="state"
-                  inputProps={{ 'aria-label': 'secondary checkbox' }}
+                  label={'Virtual Sign'}
                 />
-                <Typography style={{ fontSize: '10px' }} >Virtual Sign</Typography>
               </div>
             </div>
           )

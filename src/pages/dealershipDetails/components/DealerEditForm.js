@@ -193,10 +193,10 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               </Grid.Col>
 
               <Grid.Col span={{ base: 12, sm: 6 }}>
-                <ViewData 
-                  title='Aadhaar' 
-                  value={values.aadhar} 
-                  endIcon={<CustomToken variant={values?.aadhar_verified ? 'success' : 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'} />} 
+                <ViewData
+                  title='Aadhaar'
+                  value={values.aadhar}
+                  endIcon={<CustomToken variant={values?.aadhar_verified ? 'success' : 'error'} label={values?.aadhar_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.aadhar_verified ? 'tick' : 'cross'} />}
                 />
               </Grid.Col>
             </Grid>
@@ -206,7 +206,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
             <Grid gutter="sm" mb="lg">
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='ID' value={values.id} />
-              </Grid.Col>  
+              </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Date of Birth' value={values.dob} />
               </Grid.Col>
@@ -215,24 +215,24 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='State' value={values.state_name} />
-              </Grid.Col>  
+              </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Marital Status' value={values.marital_status} />
-              </Grid.Col>  
+              </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Mobile' value={values.mobile} />
-              </Grid.Col>  
+              </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Email' value={values.email} />
-              </Grid.Col> 
+              </Grid.Col>
 
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
               </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>  
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title={'Father\'s Name'} value={values.father_name} />
               </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>  
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Gender' value={values.gender} />
               </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -245,7 +245,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <ViewData title='Residing since' value={values.residing_since} />
               </Grid.Col>
             </Grid>
-            
+
 
             <Divider my="lg" />
 
@@ -254,24 +254,24 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <Title order={4} my="lg">Attachments</Title>
                 <Flex gap="xs" mb="lg">
                   {values.profile_image_url && (
-                    <DocAttachment 
-                      tooltip='View Profile' 
-                      imgUrl={values?.profile_image_url} 
-                      docName='Profile' 
+                    <DocAttachment
+                      tooltip='View Profile'
+                      imgUrl={values?.profile_image_url}
+                      docName='Profile'
                     />
                   )}
                   {values.pan_file_url && (
-                    <DocAttachment 
-                      tooltip='View PAN' 
-                      imgUrl={values?.pan_file_url} 
-                      docName='PAN' 
+                    <DocAttachment
+                      tooltip='View PAN'
+                      imgUrl={values?.pan_file_url}
+                      docName='PAN'
                     />
                   )}
                   {values.aadhar_file_url && (
-                    <DocAttachment 
-                      tooltip='View Aadhaar' 
-                      imgUrl={values?.aadhar_file_url} 
-                      docName='Aadhaar' 
+                    <DocAttachment
+                      tooltip='View Aadhaar'
+                      imgUrl={values?.aadhar_file_url}
+                      docName='Aadhaar'
                     />
                   )}
                 </Flex>
@@ -298,12 +298,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   disabled={(currentUser.role_id !== 1) && (panValidateData?.loading || values?.pan_verified)}
                   readOnly={readOnly}
                   onChange={onChange}
-                  // InputProps={ValidateProps(panValidateData)}
+                // InputProps={ValidateProps(panValidateData)}
                 />
-                
+
                 {!values?.pan_verified || values?.pan !== data?.pan ? (
-                  <Box 
-                    component="span" 
+                  <Box
+                    component="span"
                     className="cursor-pointer"
                     onClick={() => handleValidate('pan', values?.pan)}
                   >
@@ -321,11 +321,11 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   readOnly={readOnly}
                   error={errors.aadhar}
                   onChange={onChange}
-                  // InputProps={ValidateProps(aadharValidateData)}
+                // InputProps={ValidateProps(aadharValidateData)}
                 />
                 {!values?.aadhar_verified || values?.aadhar !== data?.aadhar ? (
-                  <Box 
-                    component="span" 
+                  <Box
+                    component="span"
                     className="cursor-pointer"
                     onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}
                   >
@@ -333,7 +333,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   </Box>
                 ) : null}
               </Grid.Col>
-            </Grid> 
+            </Grid>
 
             <Divider my="lg" />
             <Title order={4} my="lg">Personal Details</Title>
@@ -550,7 +550,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                 />
               </Grid.Col>
-              
+
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <TextInput
                   select
@@ -627,9 +627,9 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                       }
                     </TextInput>
                   </Grid.Col>
-                </> 
+                </>
               ) : null}
-            </Grid>  
+            </Grid>
 
             <Grid gutter="sm" mb="lg">
               <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -638,11 +638,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <Text fs="xs">Mobile number on Whatsapp?</Text>
                   <Switch
                     // color="indigo"
-                    // size="sm"
+                    size="xs"
                     checked={state.checkedA}
-                    onChange={(event) => setState({...state,checkedA:event.currentTarget.checked})}
-                    // onLabel="Yes" 
-                    // offLabel="No"
+                    onChange={(event) => setState({ ...state, checkedA: event.currentTarget.checked })}
+                    styles={{ track: { cursor: 'pointer' } }}
+                  // onLabel="Yes" 
+                  // offLabel="No"
                   />
                 </Flex>
               </Grid.Col>
@@ -653,11 +654,12 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <Text fs="xs">Mobile number linked with Aadhaar?</Text>
                   <Switch
                     // color="indigo"
-                    // size="sm"
+                    size="xs"
                     checked={state.checkedB}
-                    onChange={(event) => setState({...state,checkedB:event.currentTarget.checked})}
-                    // onLabel="Yes" 
-                    // offLabel="No"
+                    onChange={(event) => setState({ ...state, checkedB: event.currentTarget.checked })}
+                    styles={{ track: { cursor: 'pointer' } }}
+                  // onLabel="Yes" 
+                  // offLabel="No"
                   />
                 </Flex>
               </Grid.Col>
@@ -667,32 +669,32 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
             <Title order={4} my="lg">Attachments</Title>
 
             <Flex gap="xs" mb="lg">
-              <DocAttachment 
-                action={true} 
-                imgUrl={values?.profile_image_url} 
-                docName='Profile' 
-                onUpload={() => docUpload('Profile')} 
-                onDelete={() => onDocDelete('profile')} 
-                disabled={!values?.profile_image_url} 
+              <DocAttachment
+                action={true}
+                imgUrl={values?.profile_image_url}
+                docName='Profile'
+                onUpload={() => docUpload('Profile')}
+                onDelete={() => onDocDelete('profile')}
+                disabled={!values?.profile_image_url}
               />
-              <DocAttachment 
-                action={true} 
-                imgUrl={values?.pan_file_url} 
+              <DocAttachment
+                action={true}
+                imgUrl={values?.pan_file_url}
                 docName='PAN Card'
-                onUpload={() => docUpload('PAN')} 
-                onDelete={() => onDocDelete('pan')} 
-                disabled={!values?.pan_file_url} 
+                onUpload={() => docUpload('PAN')}
+                onDelete={() => onDocDelete('pan')}
+                disabled={!values?.pan_file_url}
               />
-              <DocAttachment 
-                action={true} 
-                imgUrl={values?.aadhar_file_url} 
-                docName='Aadhaar' 
-                onUpload={() => docUpload('AADHAR')} 
-                onDelete={() => onDocDelete('aadhar')} 
-                disabled={!values?.aadhar_file_url} 
+              <DocAttachment
+                action={true}
+                imgUrl={values?.aadhar_file_url}
+                docName='Aadhaar'
+                onUpload={() => docUpload('AADHAR')}
+                onDelete={() => onDocDelete('aadhar')}
+                disabled={!values?.aadhar_file_url}
               />
             </Flex>
-            
+
             {showUpload && (
               <FileUpload
                 handleSave={(value) => {

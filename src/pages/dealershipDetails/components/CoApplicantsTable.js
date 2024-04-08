@@ -108,8 +108,8 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
           <Divider mb="xl" />
 
           <Title order={3} mb="sm">Co-Applicants</Title>
-          <Table.ScrollContainer minWidth={500}>
-            <Table highlightOnHover aria-label="Dealers" mb="xl">
+          <Table.ScrollContainer minWidth={500} pb={0}>
+            <Table highlightOnHover aria-label="Dealers" mb="6px">
               <Table.Thead bg="gray.1" fz="xs">
                 <Table.Tr>
                   <Table.Th>Co Applicant Name</Table.Th>
@@ -128,25 +128,25 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
                     >
                       {row.first_name}
                     </Table.Td>
-                    
+
                     <Table.Td
                       className="cursor-pointer"
                       onClick={e => dealersClickRow(e, row, 'COAPPLICANT')}
                     >
                       {row.mobile}
                     </Table.Td>
-                    
+
                     <Table.Td>
                       <Flex align="center" justify="center" gap="6">
                         {row.aadhar_file_url && (
                           <Button
-                            variant="subtle" 
+                            variant="subtle"
                             size="xs"
                             onClick={() => {
-                              setOpenFilePreview({ 
-                                open: true, 
-                                image: row.aadhar_file_url, 
-                                type: row?.aadhar_file_url?.endsWith('.pdf') 
+                              setOpenFilePreview({
+                                open: true,
+                                image: row.aadhar_file_url,
+                                type: row?.aadhar_file_url?.endsWith('.pdf')
                               })
                             }}
                           >
@@ -156,12 +156,12 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
 
                         {row.pan_file_url && (
                           <Button
-                            variant="subtle" 
+                            variant="subtle"
                             size="xs"
                             onClick={() => {
-                              setOpenFilePreview({ 
-                                open: true, 
-                                image: row.pan_file_url, 
+                              setOpenFilePreview({
+                                open: true,
+                                image: row.pan_file_url,
                                 type: row?.pan_file_url?.endsWith('.pdf')
                               })
                             }}
@@ -174,21 +174,21 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
                       </Flex>
                     </Table.Td>
 
-                    <Table.Td onClick={e => e.stopPropagation()}> 
+                    <Table.Td onClick={e => e.stopPropagation()}>
                       <Flex align="center" justify="center" gap="6">
-                        <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantCrimeCheck}>  
+                        <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantCrimeCheck}>
                           <Button
-                            variant="outline" 
+                            variant="outline"
                             size="xs"
                             onClick={() => setCrimeData(row)}
                           >
                             Crime check
                           </Button>
                         </CheckAllowed>
-                        
+
                         <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantCreditCheck}>
                           <Button
-                            variant="outline" 
+                            variant="outline"
                             size="xs"
                             onClick={() => setRowData(row)}
                           >
@@ -198,8 +198,8 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
 
                         {/* Coapp status change permission */}
                         <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.coapplicantStatus}>
-                          <ActionIcon 
-                            variant="subtle" 
+                          <ActionIcon
+                            variant="subtle"
                             color={row.is_active == 0 ? 'gray' : 'green'}
                             aria-label={row.is_active == 0 ? 'Activate' : 'Deactivate'}
                             onClick={() => setOpenDialog({ open: true, data: row })}
@@ -215,7 +215,7 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
                         </CheckAllowed>
 
                         <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.applicantTypeChange}>
-                          <ActionIcon 
+                          <ActionIcon
                             variant="subtle"
                             color="green"
                             aria-label=""
@@ -277,32 +277,32 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
               <Button variant='contained' size='medium' style={{ backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => saveApplicantTypeUpdate(rowData)}>Update</Button>
             </div>
           </Dialog>
-          
+
           <RightSideDrawer
             opened={rowData && !openChangeTypeDialog}
             size="lg"
-            onClose={() => setRowData()} 
+            onClose={() => setRowData()}
             title={`Credit Information (${rowData?.pan || '-'})`}
           >
-            <CreditInfoSideWrapper 
-              dealershipId={id} 
-              data={rowData} 
-              currentUser={currentUser} 
-              onClose={() => setRowData()} 
+            <CreditInfoSideWrapper
+              dealershipId={id}
+              data={rowData}
+              currentUser={currentUser}
+              onClose={() => setRowData()}
             />
           </RightSideDrawer>
 
           <RightSideDrawer
             opened={crimeData}
             size="lg"
-            onClose={() => setCrimeData()} 
+            onClose={() => setCrimeData()}
             title="Crime Information"
           >
-            <CrimeInfoSideWrapper 
-              dealershipId={id} 
-              data={crimeData} 
-              currentUser={currentUser} 
-              onClose={() => setCrimeData()} 
+            <CrimeInfoSideWrapper
+              dealershipId={id}
+              data={crimeData}
+              currentUser={currentUser}
+              onClose={() => setCrimeData()}
             />
           </RightSideDrawer>
         </>

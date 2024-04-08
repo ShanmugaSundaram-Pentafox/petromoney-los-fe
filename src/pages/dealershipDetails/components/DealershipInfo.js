@@ -28,8 +28,8 @@ import { deleteDealershipDocument, getDealershipLoansById, validateId } from '..
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
-const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, currentUser, isLoading }) => {
-  // const [readOnly, setReadOnly] = useState(viewOnly);
+const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, currentUser, isLoading }) => {
+  const [readOnly, setReadOnly] = useState(viewOnly);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
   const [udyamQuery, setUdyamQuery] = useState({ isLoading: false, data: {} });
@@ -83,6 +83,13 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
         console.log(e);
       });
   });
+  useEffect(() => {
+    if (viewOnly !== readOnly) {
+      setReadOnly(viewOnly);
+    }
+  }, [viewOnly])
+  console.log(readOnly);
+  console.log(viewOnly);
   useEffect(() => {
     setValues(data)
     setDataJSON({ gst: data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {}, udyam: data?.udyam_verified ? JSON.parse(data?.udyam_details) || {} : {} })
@@ -159,6 +166,7 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
               window.location.reload()
             }, 1500);
             setReadOnly(true);
+            setViewOnly(true);
             setLoading(false);
           }
           else {
@@ -172,6 +180,7 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
             )
             setLoading(false);
             setReadOnly(true);
+            setViewOnly(true);
           }
         })
         .catch(e => {
@@ -185,6 +194,7 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
           )
           setLoading(false);
           setReadOnly(true);
+          setViewOnly(true);
           logger(e);
         })
     }
@@ -306,8 +316,46 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
               <ViewData
                 loading={isLoading}
+                title='State'
+                value={(states?.data?.find(function (state) {
+                  if (state.id == values?.state)
+                    return true;
+                }))?.name}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='Business type'
+                value={businessTypes.data?.find(function (type, index) {
+                  if (type.id == values?.business_type)
+                    return true;
+                })?.name}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
                 title='Address'
                 value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='Region'
+                value={values?.region_name}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='OMC'
+                value={omcs?.find(item => { return item?.id === values?.omc })?.name}
               />
             </Grid.Col>
 
@@ -326,45 +374,6 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
               />
             </Grid.Col>
 
-            {values?.gst_verified ? (
-              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData
-                  loading={isLoading}
-                  title='Effective Date of registration'
-                  value={dataJSON?.gst?.rgdt}
-                />
-              </Grid.Col>
-            ) : null}
-
-            {values?.gst_verified ? (
-              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData
-                  loading={isLoading}
-                  title='Legal Trade Name'
-                  value={dataJSON?.gst?.tradeNam}
-                />
-              </Grid.Col>
-            ) : null}
-
-            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData
-                loading={isLoading}
-                title='State'
-                value={(states?.data?.find(function (state) {
-                  if (state.id == values?.state)
-                    return true;
-                }))?.name}
-              />
-            </Grid.Col>
-
-            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData
-                loading={isLoading}
-                title='Region'
-                value={values?.region_name}
-              />
-            </Grid.Col>
-
             <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
               <ViewData
                 loading={isLoading}
@@ -373,35 +382,6 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
                 endIcon={<CustomToken variant={values?.gst_verified ? 'success' : 'error'}
                   label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'}
                   icon={values?.gst_verified ? 'tick' : 'cross'} />}
-              />
-            </Grid.Col>
-
-            {values?.gst_verified ? (
-              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-                <ViewData
-                  loading={isLoading}
-                  title='Taxpayer Type'
-                  value={dataJSON?.gst?.dty}
-                />
-              </Grid.Col>
-            ) : null}
-
-            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData
-                loading={isLoading}
-                title='Business type'
-                value={businessTypes.data?.find(function (type, index) {
-                  if (type.id == values?.business_type)
-                    return true;
-                })?.name}
-              />
-            </Grid.Col>
-
-            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
-              <ViewData
-                loading={isLoading}
-                title='OMC'
-                value={omcs?.find(item => { return item?.id === values?.omc })?.name}
               />
             </Grid.Col>
 
@@ -419,8 +399,38 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
               <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
                 <ViewData
                   loading={isLoading}
+                  title='Taxpayer Type'
+                  value={dataJSON?.gst?.dty}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.gst_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
                   title='GSTIN Status'
                   value={dataJSON?.gst?.sts}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.gst_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Effective Date of registration'
+                  value={dataJSON?.gst?.rgdt}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.gst_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Legal Trade Name'
+                  value={dataJSON?.gst?.tradeNam}
                 />
               </Grid.Col>
             ) : null}
@@ -811,7 +821,7 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
           <Button
             variant="outline"
             color="gray"
-            onClick={() => setReadOnly(true)}
+            onClick={() => { setReadOnly(true); setViewOnly(true); }}
             disabled={loading}
           >
             Cancel
@@ -829,7 +839,7 @@ const DealershipInfo = ({ viewOnly: readOnly, setViewOnly: setReadOnly, data, cu
           <Button
             variant="outline"
             color="gray"
-            onClick={() => setReadOnly(false)}
+            onClick={() => { setReadOnly(false); setViewOnly(false); }}
           >
             Edit Details
           </Button>

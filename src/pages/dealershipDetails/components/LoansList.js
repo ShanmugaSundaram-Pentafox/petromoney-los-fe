@@ -157,7 +157,6 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
             <Table.Thead>
               <Table.Tr>
                 <Table.Th>Type</Table.Th>
-                <Table.Th>Req</Table.Th>
                 <Table.Th>Appr</Table.Th>
                 <Table.Th>Disb</Table.Th>
                 <Table.Th>Status</Table.Th>
@@ -170,8 +169,6 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               {Array.isArray(loanData) && loanData?.map(row => (
                 <Table.Tr key={row.id}>
                   <Table.Td className="whitespace-nowrap">{row.type}</Table.Td>
-
-                  <Table.Td><Currency value={row.amount_requested} /></Table.Td>
 
                   <Table.Td>
                     <Tooltip title={row.approval_remarks} arrow>

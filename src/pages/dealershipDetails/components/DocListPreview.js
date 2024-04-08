@@ -1,4 +1,4 @@
-import { ActionIcon, ActionIconGroup, Badge, Box, Collapse, Flex, Grid, Paper, Text, Title } from '@mantine/core';
+import { ActionIcon, ActionIconGroup, Badge, Box, Collapse, Flex, Grid, Group, Paper, Text, Title } from '@mantine/core';
 import { Typography, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions } from '@material-ui/core'
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import { IconEdit, IconFileMusic, IconFileTypePdf, IconFiles, IconPhoto, IconTrash, IconUpload } from '@tabler/icons-react';
@@ -175,12 +175,12 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
           <DialogContentText style={{ textAlign: 'center' }}>Do you really want to delete this document? This process cannot be undone!</DialogContentText>
         </DialogContent>
 
-        <div>
+        <Group justify='center' p={10} gap={0} mb={10}>
           <Button size='medium' variant='outlined' onClick={() => setDeleteModal({ open: false, loading: true })}>Cancel</Button>
           <Button variant='contained' size='medium' disabled={deleteModal?.loading} style={{ backgroundColor: 'rgb(255,59,48)', color: 'white', marginLeft: 15 }} onClick={() => !deleteModal?.loading ? handleDocDelete(deleteModal?.fileId) : null}>
             {deleteModal?.loading ? 'Deleting..' : 'Delete'}
           </Button>
-        </div>
+        </Group>
       </Dialog>
 
       {/* The modal is to edit the file name of the documents */}

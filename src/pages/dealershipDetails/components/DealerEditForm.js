@@ -208,42 +208,42 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 <ViewData title='ID' value={values.id} />
               </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
-                <ViewData title='Date of Birth' value={values.dob} />
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>
-                <ViewData title='Address' value={values.address} />
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>
-                <ViewData title='State' value={values.state_name} />
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>
-                <ViewData title='Marital Status' value={values.marital_status} />
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>
-                <ViewData title='Mobile' value={values.mobile} />
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, sm: 6 }}>
-                <ViewData title='Email' value={values.email} />
-              </Grid.Col>
-
-              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Name' value={`${values.first_name} ${values.last_name}`} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Date of Birth' value={values.dob} />
               </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title={'Father\'s Name'} value={values.father_name} />
               </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Address' value={values.address} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Gender' value={values.gender} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='State' value={values.state_name} />
               </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='City' value={values.city_name} />
               </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Marital Status' value={values.marital_status} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Pincode' value={values.pincode} />
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Mobile' value={values.mobile} />
               </Grid.Col>
               <Grid.Col span={{ base: 12, sm: 6 }}>
                 <ViewData title='Residing since' value={values.residing_since} />
               </Grid.Col>
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <ViewData title='Email' value={values.email} />
+              </Grid.Col>
+
             </Grid>
 
 

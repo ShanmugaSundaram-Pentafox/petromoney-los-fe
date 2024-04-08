@@ -20,8 +20,10 @@ import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
 import DeferralTable from './components/DeferralDeviationTables/DeferralTable';
-import { IconBriefcase, IconListDetails, IconPinEnd, IconPinInvoke, IconRouteScan, IconScoreboard, IconUserScan, IconUsersGroup } from '@tabler/icons-react';
+import { IconBriefcase, IconListDetails, IconPinEnd, IconPinInvoke, IconRouteScan, IconScoreboard, IconTractor, IconUserScan, IconUsersGroup, IconVariable } from '@tabler/icons-react';
 import DeviationTable from './components/DeferralDeviationTables/DeviationTable';
+import DealershipTransport from './components/DealershipTransport';
+import FleetOperatorsDetails from './components/FleetOperatorsDetails';
 
 
 const DealershipDetails = ({ currentUser, match }) => {
@@ -71,16 +73,18 @@ const DealershipDetails = ({ currentUser, match }) => {
       value: 'documents',
       icon: IconBriefcase
     },
-    // {
-    //   id: action_id?.dealershipNavigation?.transporters,
-    //   name: 'Transporters',
-    //   value: 'transporter'
-    // },
-    // {
-    //   id: action_id?.dealershipNavigation?.fleetOperator,
-    //   name: 'Fleet Operators',
-    //   value: 'fleet_operators'
-    // },
+    {
+      id: action_id?.dealershipNavigation?.transporters,
+      name: 'Transporters',
+      value: 'transporter',
+      icon: IconTractor
+    },
+    {
+      id: action_id?.dealershipNavigation?.fleetOperator,
+      name: 'Fleet Operators',
+      value: 'fleet_operators',
+      icon: IconVariable
+    },
     {
       id: action_id?.dealershipNavigation?.fleetOperator,
       name: 'Deferral',
@@ -215,12 +219,12 @@ const DealershipDetails = ({ currentUser, match }) => {
         <Tabs.Panel value={'documents'}>
           <DealershipDoc id={id} currentUser={currentUser} />
         </Tabs.Panel>
-        {/* <Tabs.Panel value={'transporter'}>
+        <Tabs.Panel value={'transporter'}>
           <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
         </Tabs.Panel>
         <Tabs.Panel value={'fleet_operators'}>
           <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel> */}
+        </Tabs.Panel>
         <Tabs.Panel value={'deferral'}>
           <DeferralTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
         </Tabs.Panel>

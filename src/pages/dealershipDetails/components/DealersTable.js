@@ -114,8 +114,8 @@ const DealersTable = ({ id, data, currentUser, dealersClickRow }) => {
   return (
     <>
       <Title order={3} mb="sm">Dealers</Title>
-      <Table.ScrollContainer minWidth={500}>
-        <Table highlightOnHover aria-label="Dealers" mb="xl">
+      <Table.ScrollContainer minWidth={500} pb={0}>
+        <Table highlightOnHover aria-label="Dealers" mb="6px">
           <Table.Thead bg="gray.1" fz="xs">
             <Table.Tr>
               <Table.Th>Dealer Name</Table.Th>
@@ -127,7 +127,7 @@ const DealersTable = ({ id, data, currentUser, dealersClickRow }) => {
 
           <Table.Tbody fz="sm">
             {data.map((row, index) => (
-              <Table.Tr 
+              <Table.Tr
                 key={row.id}
                 style={{ backgroundColor: row?.is_main_applicant == 1 ? '#EAFAF1' : null }}
               >

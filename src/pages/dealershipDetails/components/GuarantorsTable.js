@@ -142,8 +142,8 @@ const GuarantorsTable = ({
       <>
         <Divider mb="xl" />
         <Title order={3} mb="sm">Guarantors</Title>
-        <Table.ScrollContainer minWidth={500}>
-          <Table highlightOnHover aria-label="Dealers" mb="xl">
+        <Table.ScrollContainer minWidth={500} pb={0}>
+          <Table highlightOnHover aria-label="Dealers" mb="6px">
             <Table.Thead bg="gray.1" fz="xs">
               <Table.Tr>
                 <Table.Th>Guarantor Name</Table.Th>
@@ -167,18 +167,18 @@ const GuarantorsTable = ({
                   >
                     {row.mobile}
                   </Table.Td>
-                    
+
                   <Table.Td>
                     <Flex align="center" justify="center" gap="6">
                       {row.aadhar_file_url && (
                         <Button
-                          variant="subtle" 
+                          variant="subtle"
                           size="xs"
                           onClick={() => {
-                            setOpenFilePreview({ 
-                              open: true, 
-                              image: row.aadhar_file_url, 
-                              type: row?.aadhar_file_url?.endsWith('.pdf') 
+                            setOpenFilePreview({
+                              open: true,
+                              image: row.aadhar_file_url,
+                              type: row?.aadhar_file_url?.endsWith('.pdf')
                             })
                           }}
                         >
@@ -188,12 +188,12 @@ const GuarantorsTable = ({
 
                       {row.pan_file_url && (
                         <Button
-                          variant="subtle" 
+                          variant="subtle"
                           size="xs"
                           onClick={() => {
-                            setOpenFilePreview({ 
-                              open: true, 
-                              image: row.pan_file_url, 
+                            setOpenFilePreview({
+                              open: true,
+                              image: row.pan_file_url,
                               type: row?.pan_file_url?.endsWith('.pdf')
                             })
                           }}
@@ -206,21 +206,21 @@ const GuarantorsTable = ({
                     </Flex>
                   </Table.Td>
 
-                  <Table.Td onClick={e => e.stopPropagation()}> 
+                  <Table.Td onClick={e => e.stopPropagation()}>
                     <Flex align="center" justify="center" gap="6">
-                      <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCrimeCheck}> 
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCrimeCheck}>
                         <Button
-                          variant="outline" 
+                          variant="outline"
                           size="xs"
                           onClick={() => setCrimeData(row)}
                         >
                           Crime check
                         </Button>
                       </CheckAllowed>
-                        
+
                       <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorCreditCheck}>
                         <Button
-                          variant="outline" 
+                          variant="outline"
                           size="xs"
                           onClick={() => setRowData(row)}
                         >
@@ -230,8 +230,8 @@ const GuarantorsTable = ({
 
                       {/* guarantor status change permission */}
                       <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.guarantorStatus}>
-                        <ActionIcon 
-                          variant="subtle" 
+                        <ActionIcon
+                          variant="subtle"
                           color={row.is_active == 0 ? 'gray' : 'green'}
                           aria-label={row.is_active == 0 ? 'Activate' : 'Deactivate'}
                           onClick={() => setOpenDialog({ open: true, data: row })}
@@ -247,7 +247,7 @@ const GuarantorsTable = ({
                       </CheckAllowed>
 
                       <CheckAllowed currentUser={currentUser} resource={resources_id?.dealer} action={action_id?.dealer?.applicantTypeChange}>
-                        <ActionIcon 
+                        <ActionIcon
                           variant="subtle"
                           color="green"
                           aria-label=""

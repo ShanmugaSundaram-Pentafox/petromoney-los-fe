@@ -279,7 +279,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
         opened={opened || false}
         onClose={onClose}
         title={
-          <>
+          <Group gap={10}>
             {
               type === 'sanction' ? (<strong>Sanction Letter</strong>) : type === 'agreement' ? <strong>Loan Agreement</strong> : <strong>{title}</strong>
             }
@@ -294,7 +294,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
               : null
             }
             {loansData?.is_signed == '1' ? <div className={classes.ifSigned}><CustomToken label='Signed' variant='success' icon='tick' /></div> : null}
-          </>
+          </Group>
         }
         style={{ position: 'absolute', zIndex: 9998 }}
         size={'70%'}

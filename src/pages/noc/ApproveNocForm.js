@@ -1,15 +1,12 @@
 import {
-  Typography,
   Box,
   Grid,
   Button,
   Divider,
   TextField,
 } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import { ViewData } from '../../components/CommonComponents/FilePreview';
@@ -27,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
-    width: '40vw',
   },
 
   sidePanelTitle: {
@@ -121,10 +117,6 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
   };
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
-        <div>Approve NOC Form</div>
-        <CloseIcon onClick={callback} />
-      </Typography>
       <>
         <div className={classes.sidePanelFormContentWrapper}>
           <div className={classes.stepperRoot}>

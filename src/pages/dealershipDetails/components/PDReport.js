@@ -344,7 +344,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                       onClick={list.onClick}
                     >
                       {list.icon}
-                      <Text size="xs" fw="bold" ta="center" lineClamp={1}>{list.name}</Text>
+                      <Text size="xs" fw="bold" ta="center" >{list.name}</Text>
                     </Box>
                   </Tooltip>
                 </CheckAllowed>
@@ -355,7 +355,7 @@ const PersonalDiscussionReport = ({ id, currentUser, textAlign }) => {
                     onClick={list.onClick}
                   >
                     {list.icon}
-                    <Text size="xs" fw="bold" ta="center" lineClamp={1}>{list.name}</Text>
+                    <Text size="xs" fw="bold" ta="center">{list.name}</Text>
                   </Box>
                 </Tooltip>
               )}

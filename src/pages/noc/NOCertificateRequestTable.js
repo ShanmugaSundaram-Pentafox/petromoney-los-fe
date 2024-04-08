@@ -1,5 +1,4 @@
 import {
-  Drawer,
   IconButton,
 } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -22,6 +21,7 @@ import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { Button } from '@mantine/core';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
+import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -213,6 +213,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         column={column}
         loading={getAllNOCRequestQuery?.isLoading}
         styles={{ overflowX: 'auto', whiteSpace: 'nowrap', maxWidth: '100vw' }}
+        onRowClick={(i) => { isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) && onRowClick(i) }}
         action={
           isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest)
             ? <Button
@@ -225,14 +226,14 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         }
         title={'NOC Application'}
       />
-      <Drawer
-        anchor="right"
-        open={openModal}
+      <RightSideDrawer
+        opened={openModal}
         onClose={() => {
           setOpenModal(false);
           setRowData({});
         }}
-        variant="temporary"
+        size='md'
+        title={'NOC Request Form'}
       >
         <RequestNocForm
           callback={() => {
@@ -241,15 +242,14 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           }}
           data={rowData}
         />
-      </Drawer>
-      <Drawer
-        anchor="right"
-        open={openApproveModal}
+      </RightSideDrawer>
+      <RightSideDrawer
+        opened={openApproveModal}
         onClose={() => {
           setOpenApproveModal(false);
           setRowData({});
         }}
-        variant="temporary"
+        title={'Approve NOC Form'}
       >
         <ApproveNocForm
           currentUser={currentUser}
@@ -259,7 +259,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           }}
           data={rowData}
         />
-      </Drawer>
+      </RightSideDrawer>
       <FormDialog className={classes.dialogBox} title={'NOC letter'} open={openViewer.open} onClose={() => setOpenViewer({ open: false })}>
         <FilePreview data={openViewer} />
       </FormDialog>

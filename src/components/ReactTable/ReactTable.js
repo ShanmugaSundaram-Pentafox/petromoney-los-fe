@@ -21,6 +21,29 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import React, { useEffect, useState } from 'react';
+import COLORS from '../../theme/colors';
+
+const classes = {
+  expressContainer: {
+    width: '8px',
+    height: '100%',
+    padding: 2,
+    background: COLORS.orange(100),
+    color: 'white',
+    left: 0,
+    position: 'absolute',
+  },
+  expressInner: {
+    color: 'white',
+    position: 'absolute',
+    top: '50%',
+    bottom: '50%',
+    left: '-12.5px',
+    rotate: '270deg',
+    fontSize: '6px',
+    fontWeight: 600,
+  }
+}
 
 // render the table view
 // using the mantine and react table.
@@ -187,6 +210,8 @@ const ReactTable = ({
                   style={{
                     cursor:
                       typeof onRowClick === 'function' ? 'pointer' : 'default',
+                    position: 'relative',
+                    background: row?.original?.reload_type === 'express' && COLORS.red(10),
                   }}
                   key={row.id}
                 >
@@ -205,6 +230,7 @@ const ReactTable = ({
                       )}
                     </Table.Td>
                   ))}
+                  {row?.original?.reload_type === 'express' ? <><div style={{ ...classes.expressContainer }}></div><div style={{ ...classes.expressInner }}>EXP CRR</div></> : null}
                 </Table.Tr>
               ))}
             </Table.Tbody>

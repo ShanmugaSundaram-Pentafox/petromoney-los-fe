@@ -53,7 +53,7 @@ const LoanInfo = ({
               <ViewData title='Old Product' value={newInfo?.old_product_name} />
             </Group>
             <Group gap={6}>
-              <ViewData style={{ marginLeft: 10 }} title='Old loan Amount' value={newInfo?.old_loan_amount} />
+              <ViewData style={{ marginLeft: 10 }} title='Old loan Amount' value={<Currency value={newInfo?.old_loan_amount} />} />
             </Group>
           </Group>
         )}

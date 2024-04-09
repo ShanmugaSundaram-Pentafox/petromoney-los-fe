@@ -135,7 +135,7 @@ const DealersTable = ({ id, data, currentUser, dealersClickRow }) => {
                   className="whitespace-normal w-[180px] cursor-pointer"
                   onClick={e => dealersClickRow(e, row, 'DEALER')}
                 >
-                  {row.first_name}
+                  {row.first_name} {row?.is_main_applicant == 1 ? '(main)' : null}
                 </Table.Td>
 
                 <Table.Td

@@ -134,7 +134,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   let cardData = [
     { label: 'Dealership ID', value: dealershipData?.data?.id },
     { label: 'Business name', value: dealershipData?.data?.name },
-    { label: 'Dealer name', value: mainApplicant?.data?.first_name, },
+    { label: 'Main Applicant', value: mainApplicant?.data?.first_name, },
     { label: 'Mobile', value: mainApplicant?.data?.mobile },
     { label: 'Email', value: mainApplicant?.data?.email }
   ]
@@ -155,7 +155,7 @@ const DealershipDetails = ({ currentUser, match }) => {
                   <dt className="text-xs font-normal text-gray-400 mb-[2px]">
                     {item.label}
                   </dt>
-                  <dd style={{ minWidth: '150px', fontSize: 14, maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'black' }}>
+                  <dd style={{ minWidth: '150px', fontSize: 14, maxWidth: '200px', whiteSpace: 'wrap', overflow: 'hidden', color: 'black' }}>
                     {item.value || '-'}
                   </dd>
                 </div>

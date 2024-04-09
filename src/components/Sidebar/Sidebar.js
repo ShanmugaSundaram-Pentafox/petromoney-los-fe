@@ -1,4 +1,4 @@
-import { IconAlignBoxBottomCenter, IconArrowAutofitRight, IconArrowCapsule, IconArrowIteration, IconArrowLoopRight, IconBooks, IconCertificateOff, IconChecklist, IconClipboardText, IconCoins, IconDashboard, IconFileAnalytics, IconFileDescription, IconFileLambda, IconFileStack, IconGasStation, IconLayersSubtract, IconList, IconPhone, IconReorder, IconRepeat, IconReport, IconSettings, IconTir, IconUserCircle, IconUsers } from '@tabler/icons-react';
+import { IconAlignBoxBottomCenter, IconArrowAutofitRight, IconArrowCapsule, IconArrowIteration, IconArrowLoopRight, IconBooks, IconCertificateOff, IconChecklist, IconClipboardText, IconCoins, IconDashboard, IconFileAnalytics, IconFileDescription, IconFileLambda, IconFileStack, IconGasStation, IconLayersSubtract, IconList, IconPhone, IconReorder, IconRepeat, IconReport, IconScooterElectric, IconSettings, IconTir, IconUserCircle, IconUsers } from '@tabler/icons-react';
 import { ScrollArea, Text } from '@mantine/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -145,11 +145,11 @@ const Sidebar = props => {
           href: '/loans',
           icon: <IconGasStation strokeWidth="2px" size={18} />,
         },
-        // {
-        //   name: 'Vehicle Loans',
-        //   href: '/vehicle-loan',
-        //   icon: <IconScooterElectric strokeWidth="2px" size={18} />,
-        // }
+        {
+          name: 'Vehicle Loans',
+          href: '/vehicle-loan',
+          icon: <IconScooterElectric strokeWidth="2px" size={18} />,
+        }
       ]
     },
     {
@@ -176,7 +176,7 @@ const Sidebar = props => {
       href: '/reports/remarks',
       icon: <IconFileStack strokeWidth="2px" size={18} />
     },
-    
+
     {
       id: action_id?.navigation.dealer_referral,
       name: 'Dealer Referral',

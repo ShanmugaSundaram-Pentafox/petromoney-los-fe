@@ -1,4 +1,3 @@
-import Grid from '@material-ui/core/Grid';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import { permissionCheck } from '../../components/UserCan/UserCan';
@@ -16,6 +15,8 @@ import RejectedDrawer from '../dashboard/RightDrawer/RejectedDrawer';
 import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
 import LoansTable from '../dashboard/components/LoansTable';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
+import LoanStats from '../dashboard/components/LoanStats';
+import { Grid } from '@mantine/core';
 
 
 const FuelLoans = ({ currentUser }) => {
@@ -79,19 +80,26 @@ const FuelLoans = ({ currentUser }) => {
 
   return (
     <>
-      <Grid>
-        <LoansTable
-          currentUser={currentUser}
-          value={selectedStatsCard}
-          handleClick={handleClick}
-          chartData={chartData}
-          filterQry={filterQry}
-        />
+      <Grid gutter={0}>
+        <Grid.Col mt={'xs'}>
+          <LoanStats
+            selectedStatsCard={selectedStatsCard}
+            handleClick={handleClick}
+            chartData={chartData}
+          />
+        </Grid.Col>
       </Grid>
+      <LoansTable
+        currentUser={currentUser}
+        value={selectedStatsCard}
+        handleClick={handleClick}
+        chartData={chartData}
+        filterQry={filterQry}
+      />
       <RightSideDrawer
         opened={showPanel?.status}
-        onClose={()=> setShowPanel({...showPanel,status:false})}
-        
+        onClose={() => setShowPanel({ ...showPanel, status: false })}
+
       >
         <div>
           {showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />

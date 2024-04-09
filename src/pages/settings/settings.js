@@ -1,22 +1,19 @@
-import { Typography } from '@material-ui/core';
+import { Box, Space, Title } from '@mantine/core';
 import React from 'react';
-import MasterData from './components/MasterData';
 import ConfigurationsMaster from './ConfigurationsMaster';
-import usePageTitle from '../../hooks/usePageTitle';
+import MasterData from './components/MasterData';
 
 const Settings = ({ currentUser }) => {
-  usePageTitle('Settings');
   return (
-    <div>
-      <Typography variant="h3" style={{ marginBottom: 10 }}>
-        Master
-      </Typography>
+    <Box> 
+      <Title order={3}>Master</Title>
+      <Space h="md" />
       <MasterData currentUser={currentUser} />
-      <Typography variant="h3" style={{ margin: '20px 0 10px 0' }}>
-        Configurations
-      </Typography>
+      <Space h="xl" />
+      <Title order={3}>Configurations</Title>
+      <Space h="md" />
       <ConfigurationsMaster currentUser={currentUser} />
-    </div>
+    </Box>
   );
 };
 

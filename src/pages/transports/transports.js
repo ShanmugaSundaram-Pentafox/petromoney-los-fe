@@ -5,11 +5,11 @@ import AddNewTransportsForm from './components/AddNewTransportsForm';
 import DealerTransportsTable from './components/DealerTransportsTable';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
-import usePageTitle from '../../hooks/usePageTitle';
+// import usePageTitle from '../../hooks/usePageTitle';
 import TransportTable from '../transports/components/TransportsTable';
 
 const Transport = ({ currentUser }) => {
-  usePageTitle('Transports');
+  // usePageTitle('Transports');
   const [openModal, setOpenModal] = useState(false);
   const [rowData, setRowData] = useState({})
 

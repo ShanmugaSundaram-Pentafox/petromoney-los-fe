@@ -1,27 +1,23 @@
-import { Drawer } from '@material-ui/core';
+import { Button } from '@mantine/core';
 import React, { useState } from 'react';
-// import FormDialog from '../CommonComponents/FormDialog/FormDialog';
-import { useDispatch } from 'react-redux';
 import AddNewUserForm from './AddNewUserForm';
 import { action_id, resources_id } from '../../config/accessControl';
-import { getAllUsers } from '../../services/users.service';
-import { setAllUsers } from '../../store/dashboard/dashboard.actions';
-import Button from '../CommonComponents/Button/Button';
 import CheckAllowed from '../../pages/rbac/CheckAllowed';
+import { getAllUsers } from '../../services/users.service';
+import { RightSideDrawer } from '../Mantine/RightSideDrawer/RightSideDrawer';
 
 
-const AddNewUserAction = ({currentUser}) => {
+const AddNewUserAction = ({ currentUser }) => {
   const [openModal, setOpenModal] = useState(false);
-  const dispatch = useDispatch();
-  // const classes = useStyles()
-
+  const [allusers,setAllUsers] = useState();
 
   const saveUserCallback = () => {
     getAllUsers()
       .then(data => {
-        dispatch(setAllUsers(data));
+        setAllUsers(data);
       })
       .catch(e => {
+        // eslint-disable-next-line no-console
         console.log(e);
       });
 
@@ -36,27 +32,25 @@ const AddNewUserAction = ({currentUser}) => {
     <div>
       <CheckAllowed currentUser={currentUser} resource={resources_id?.users} action={action_id?.users.userCreate}>
         <Button
-          color="primary"
-          variant="contained"
+          color={'blue'}
           onClick={() => setOpenModal(true)}
+          size={'xs'}
         >
           Create New User
         </Button>
       </CheckAllowed>
-      <Drawer
-        anchor="right"
-        open={openModal}
+
+      <RightSideDrawer
+        opened={openModal}
+        size="lg"
         onClose={() => setOpenModal(false)}
-        variant="temporary"
+        title="Add New User Form"
       >
-        <AddNewUserForm callback={saveUserCallback} action={() => handleClose()} />
-      </Drawer>
-      {/* <FormDialog
-        title="New User Form"
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-      > */}
-      {/* </FormDialog> */}
+        <AddNewUserForm
+          callback={saveUserCallback}
+          action={() => handleClose()}
+        />
+      </RightSideDrawer>
     </div>
   )
 }

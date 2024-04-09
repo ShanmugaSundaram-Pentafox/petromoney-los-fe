@@ -1,27 +1,21 @@
-import { Drawer, Fade, IconButton, Modal, Tooltip, Backdrop, Checkbox } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
-import { Add, Clear } from '@material-ui/icons';
-import LinkIcon from '@material-ui/icons/Link';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
-import { useMount } from 'react-use';
-import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../components/Number/Currency';
-import TextInput from '../../components/TextInput/TextInput';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
 import { getDocumentsChecklistById, getLoansByStatus, updateDocumentChecklistById } from '../../services/loans.service';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SubmittedDrawer from '../dashboard/RightDrawer/SubmittedDrawer';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { ActionIcon, Badge, Box, Button, Checkbox, Modal, TextInput, Tooltip } from '@mantine/core';
+import { IconLink, IconPlus } from '@tabler/icons-react';
+import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -31,8 +25,8 @@ const useStyles = makeStyles(theme => ({
     display: 'inline-block',
     borderRadius: '29px',
     padding: '3px 8px',
-    fontSize: '13px',
-    fontWeight: '600',
+    fontSize: '12px',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -71,15 +65,18 @@ const useStyles = makeStyles(theme => ({
 
 const PresubmitLoansTable = ({ currentUser }) => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
   const [dealershipData, setDealershipData] = useState();
   const [loansData, setLoansData] = useState();
-  const [loans, setLoans] = useState([]);
   const [showPanel, setShowPanel] = useState({ status: false, data: '' });
   const [docModal, setDocModal] = useState({ modal: false });
   const [checklistData, setChecklistData] = useState([]);
   const [newValue, setNewValue] = useState('');
   const { enqueueSnackbar } = useSnackbar();
+
+  const getPreSubmitLoansQuery = useQuery({
+    queryKey: ['pre-submit-loans'],
+    queryFn: () => getLoansByStatus('pre_submit', ''),
+  })
 
   // getting the list of doc based on the id
   const getDocChecklistQuery = useQuery({
@@ -89,18 +86,6 @@ const PresubmitLoansTable = ({ currentUser }) => {
     onSuccess: (data) => {
       setChecklistData(data);
     },
-  })
-
-  useMount(() => {
-    setLoading(true);
-    getLoansByStatus('pre_submit', '')
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
   })
 
   const onRowClick = (id, selectedLoanData, status) => {
@@ -113,131 +98,52 @@ const PresubmitLoansTable = ({ currentUser }) => {
     setShowPanel({ status: true, data: status, id: id, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Type',
-        name: 'type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
-
-      },
-      {
-        label: 'Req. Amount',
-        name: 'amount_requested',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'left',
-          }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
-        }
-      },
-      {
-        label: 'Req. Date',
-        name: 'created_date',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-            </div>
-          }
-        }
-      },
-      {
-        label: 'Application state',
-        name: 'application_state',
-        options: {
-          filter: true,
-          filterWidth: '100%',
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>
-              {value ? value : '-'}
-            </div>
-          }
-        }
-      },
-      {
-        label: 'Documents',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: false,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: (value, r) => {
-            return (
-              <>
-                <Tooltip title={'Click to view documents'}>
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => setDocModal({ modal: true, id: value })}><LinkIcon /></IconButton>
-                </Tooltip>
-              </>
-            )
-          }
-        }
-      }
-    ]
-  }, [loans]);
-
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'pre_submit')
-      }
+  const column = [
+    {
+      key: 'dealership_id',
+      header: 'Dealership Id',
+      enableColumnFilter: false,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }, {
+      key: 'name',
+      header: 'Name',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }, {
+      key: 'type',
+      header: 'Type',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }, {
+      key: 'region',
+      header: 'Region',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }, {
+      key: 'amount_requested',
+      header: 'Req. Amount',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
+      key: 'created_date',
+      header: 'Req. Date',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+    }, {
+      key: 'application_state',
+      header: 'Application State',
+      // enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue() || '-'}</span>
+    }, {
+      key: 'action',
+      header: 'Documents',
+      isHeaderDownload: false,
+      enableColumnFilter: false,
+      cell: (value) => (
+        <Tooltip label={'Click to view documents'} color='gray' withArrow>
+          <ActionIcon size="xs" variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id })}><IconLink /></ActionIcon>
+        </Tooltip>
+      )
     },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  ]
 
   // used to check and uncheck the checkbox
   const handleChecked = ({ index, insideIndex, title, value, key }) => {
@@ -273,7 +179,6 @@ const PresubmitLoansTable = ({ currentUser }) => {
           setChecklistData([]);
         })
         .catch(e => {
-          console.log(e);
           enqueueSnackbar(e, {
             anchorOrigin: {
               vertical: 'top',
@@ -310,106 +215,82 @@ const PresubmitLoansTable = ({ currentUser }) => {
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={<Typography className={classes.title} variant="h4" component="h4">{'Pre Submit queue'} ({loans.length})</Typography>}
-            data={loans}
-            columns={columns}
-            options={options}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
-      <Drawer
-        anchor="right"
-        ModalProps={{
-          onBackdropClick: () => { setShowPanel({ status: false, data: '' }) }
-        }}
-        open={showPanel.status}
-        variant={'temporary'}
+      <DataTableViewer
+        column={column}
+        rowData={getPreSubmitLoansQuery?.data}
+        title={'Pre Submit queue'}
+        excelDownload
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'pre_submit')}
+        loading={getPreSubmitLoansQuery?.isLoading}
+      />
+      <RightSideDrawer
+        size={'70%'}
+        opened={showPanel.status}
+        onClose={() => { setShowPanel({ status: false, data: '' }) }}
+        title={<Badge color="blue" size='lg' variant='light'>{loansData?.dealership_id} - {loansData?.name}</Badge>}
       >
-        <div className={classes.sidePanelWrapper}><SubmittedDrawer id={showPanel?.id} status={showPanel?.data} editable={showPanel?.editable} currentUser={currentUser} data={dealershipData} onClose={() => { setShowPanel({ status: false, data: '' }) }} selectedLoanData={loansData} /></div>
-      </Drawer>
+        <SubmittedDrawer id={showPanel?.id} status={showPanel?.data} editable={showPanel?.editable} currentUser={currentUser} data={dealershipData} onClose={() => { setShowPanel({ status: false, data: '' }) }} selectedLoanData={loansData} />
+      </RightSideDrawer>
 
       <Modal
-        aria-labelledby="spring-modal-title"
-        aria-describedby="spring-modal-description"
-        className={classes.modal}
-        open={docModal?.modal}
+        opened={docModal?.modal}
         onClose={() => { setDocModal({}); setChecklistData([]); }}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
+        title={'Document Checklist'}
+        size={'lg'}
       >
-        <Fade in={docModal?.modal}>
-          <div className={classes.paper}>
-            <div>
-              <div className={classes.header} style={{ height: '30px' }}>
-                <h2 id="modal-title">Document Checklist</h2>
-                <IconButton style={{ padding: '8px' }} onClick={() => { setDocModal({}); setChecklistData([]); }}>
-                  <Clear />
-                </IconButton>
-              </div>
-              <p id="modal-description">List of documents that need to collect</p>
-            </div>
-            <div style={{ marginTop: '10px' }} className={classes.outerContent}>
-              {checklistData?.length
-                ? checklistData?.map((item, index) => (
-                  <div key={item}>
-                    <div className={classes.content} style={{ margin: '10px 0', fontWeight: '700', fontSize: '14px' }}>
-                      <p>{(index + 1) + '). '}</p>
-                      <div>{Object.entries(item)?.[0]?.[0]}</div>
-                    </div>
-                    {Object.entries(item)?.[0]?.[1]?.map((value, i) => (
-                      <>
-                        <div key={i} className={classes.header} style={{ marginLeft: '10px' }}>
-                          <div className={classes.content}>
-                            <p>{(index + 1) + '.' + (i + 1) + '). '}</p>
-                            <p style={{ maxWidth: '400px' }}>{Object.entries(value)?.[0]?.[0]}</p>
-                          </div>
-                          <div>
-                            <Checkbox
-                              checked={Boolean(Object.entries(value)?.[0]?.[1])}
-                              size='small'
-                              color="primary"
-                              inputProps={{ 'aria-label': 'secondary checkbox' }}
-                              onChange={() => handleChecked({ index: index, insideIndex: i, title: Object.entries(item)?.[0]?.[0], value: Object.entries(value)?.[0]?.[1], key: Object.entries(value)?.[0]?.[0] })}
-                            />
-                          </div>
-                        </div>
-                      </>
-                    ))}
-                    {Object.entries(item)?.[0]?.[0] == 'Other documents' ? (
-                      <div className={classes.header} style={{ marginLeft: '10px' }}>
-                        <div className={classes.content} style={{ alignItems: 'center' }}>
-                          <TextInput onChange={(e) => setNewValue(e.target.value)} value={newValue} placeholder={'Doc Name'} />
-                          <Tooltip title={'Click to add'}>
-                            <Add style={{ color: 'green', cursor: 'pointer' }} onClick={() => handleOthersAddition(index, item)} />
-                          </Tooltip>
-                        </div>
+        <div>
+          <p id="modal-description">List of documents that need to collect</p>
+        </div>
+        <div style={{ marginTop: '10px' }} className={classes.outerContent}>
+          {checklistData?.length
+            ? checklistData?.map((item, index) => (
+              <div key={item}>
+                <Box className={classes.content} style={{ fontWeight: '700', fontSize: '14px' }} mt={10} mb={4}>
+                  <p>{(index + 1) + '). '}</p>
+                  <div>{Object.entries(item)?.[0]?.[0]}</div>
+                </Box>
+                {Object.entries(item)?.[0]?.[1]?.map((value, i) => (
+                  <>
+                    <Box key={i} className={classes.header} ml={10} mb={4}>
+                      <div className={classes.content}>
+                        <p>{(index + 1) + '.' + (i + 1) + '). '}</p>
+                        <p style={{ maxWidth: '400px' }}>{Object.entries(value)?.[0]?.[0]}</p>
                       </div>
-                    ) : null}
+                      <Checkbox
+                        mr={4}
+                        checked={Boolean(Object.entries(value)?.[0]?.[1])}
+                        size='xs'
+                        styles={{ input: { cursor: 'pointer' } }}
+                        onChange={() => handleChecked({ index: index, insideIndex: i, title: Object.entries(item)?.[0]?.[0], value: Object.entries(value)?.[0]?.[1], key: Object.entries(value)?.[0]?.[0] })}
+                      />
+                    </Box>
+                  </>
+                ))}
+                {Object.entries(item)?.[0]?.[0] == 'Other documents' ? (
+                  <div className={classes.header} style={{ marginLeft: '10px' }}>
+                    <div className={classes.content} style={{ alignItems: 'center' }}>
+                      <TextInput size='xs' onChange={(e) => setNewValue(e.target.value)} value={newValue} placeholder={'Doc Name'} />
+                      <Tooltip label={'Click to add'} color='gray' withArrow>
+                        <ActionIcon size={'md'} onClick={() => handleOthersAddition(index, item)} color='teal'>
+                          <IconPlus />
+                        </ActionIcon>
+                      </Tooltip>
+                    </div>
                   </div>
-                )) : getDocChecklistQuery?.isLoading ? <center><CircularProgress /></center> : <center>No Data to display</center>}
-            </div>
-            <div className={classes.header} style={{ justifyContent: 'right', marginTop: '20px' }}>
-              <LoaderButton
-                variant='contained'
-                size='medium'
-                style={{ color: 'white', marginRight: 8, backgroundColor: 'green' }}
-                isLoading={docModal?.isLoading}
-                onClick={handleDocChecklistUpdate}
-              >
-                Save
-              </LoaderButton>
-            </div>
-          </div>
-        </Fade>
+                ) : null}
+              </div>
+            )) : getDocChecklistQuery?.isLoading ? <center><CircularProgress /></center> : <center>No Data to display</center>}
+        </div>
+        <div className={classes.header} style={{ justifyContent: 'right', marginTop: '20px' }}>
+          <Button
+            size='xs'
+            color='green'
+            loading={docModal?.isLoading}
+            onClick={handleDocChecklistUpdate}
+          >
+            Save
+          </Button>
+        </div>
       </Modal>
     </div>
   )

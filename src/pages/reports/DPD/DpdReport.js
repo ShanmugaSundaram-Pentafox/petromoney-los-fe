@@ -1,11 +1,10 @@
 import { Grid } from '@material-ui/core';
 import React, { useState } from 'react';
 import DpdReportTable from './DPDReportTable';
-import usePageTitle from '../../../hooks/usePageTitle';
 import RenewalFilter from '../../renewal/RenewalFilter';
 
 const DPDReport = ({ currentUser }) => {
-  usePageTitle('DPD Report');
+  // usePageTitle('DPD Report');
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [totalLoans, setTotalLoans] = useState()
   const [filterQry, setFilterQry] = useState();
@@ -22,7 +21,7 @@ const DPDReport = ({ currentUser }) => {
           />
         </Grid>
       </Grid>
-      <DpdReportTable currentUser={currentUser} filterQry={filterQry} />
+      <DpdReportTable currentUser={currentUser} filterQry={filterQry} title={'DPD Report'} />
     </div>
 
   )

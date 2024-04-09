@@ -1,21 +1,20 @@
-import { Dialog, DialogContent, DialogContentText, Button, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
+import { Divider, Collapse } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
-import CloseIcon from '@material-ui/icons/CloseRounded';
 import Alert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import RenewalDrawerFooter from './RenewalDrawerFooter';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { getDealershipById } from '../../../services/dealerships.service';
 import { getRenewalFeeStatus, updateRenewalLoanStatus } from '../../../services/renewal.service';
 import LoanInfo from '../../dashboard/RightDrawer/LoanInfo';
 import DealershipInfo from '../../dealershipDetails/components/DealershipInfo';
 import DealersList from '../../dealershipDetails/components/DealersList';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
+import { Box, Button, Group, Modal, Paper, Text } from '@mantine/core';
+import RichTextEditorBox from '../../../components/RichTexEditor/RichTextEditorBox';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
   if (isReject) {
@@ -54,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
+    height: '90vh',
   },
   dialog: {
     minWidth: '30vw'
@@ -106,7 +105,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
 
   const getRenewalFeeDetails = useQuery({
     queryKey: ['renewal-fee-details', selectedLoanData?.loan_id],
-    queryFn: () => getRenewalFeeStatus({dealership_id: selectedLoanData?.loan_id}),
+    queryFn: () => getRenewalFeeStatus({ dealership_id: selectedLoanData?.loan_id }),
     enabled: Boolean(selectedLoanData?.loan_id),
   })
 
@@ -195,7 +194,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
     {
       id: 0,
       name: 'Loan Info',
-      component: <LoanInfo type='renewal' updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={{...data, ...selectedLoanData, product_id: selectedLoanData?.new_product_id || selectedLoanData?.product_id}} newInfo={selectedLoanData} />
+      component: <LoanInfo type='renewal' updateNewLoanInfo={updateNewLoanInfo} status={status} currentUser={currentUser} data={{ ...data, ...selectedLoanData, product_id: selectedLoanData?.new_product_id || selectedLoanData?.product_id }} newInfo={selectedLoanData} />
     },
     {
       id: 1,
@@ -206,7 +205,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
       id: 2,
       name: 'PD Sheet',
       component: <WorkingSheetDrawer id={id} />
-    }  
+    }
   ]
   const handleClick = (id) => {
     if (id == collapse)
@@ -218,18 +217,14 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
   return (
     <>
       <div className={classes.wrapper}>
-        <div className={classes.wrapperTitle}>
-          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-          <CloseIcon className={classes.closeIcon} onClick={onClose} />
-        </div>
         <div className={classes.contentWrapper}>
-          <DealershipInfo data={{...dealershipData?.data, ...getRenewalFeeDetails?.data?.[0]}} currentUser={currentUser} />
+          <DealershipInfo data={{ ...dealershipData?.data, ...getRenewalFeeDetails?.data?.[0] }} currentUser={currentUser} />
           <Divider />
           <div>
             {
               collapseComponent?.map((item) => {
                 return (
-                  <Paper variant='outlined' key={item?.id} style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}>
+                  <Paper withBorder key={item?.id} p={10} style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}>
                     <div className={classes.collapseCard} onClick={() => handleClick(item.id)}>
                       <Typography variant='h6' style={{ cursor: 'pointer' }}>{item?.name}</Typography>
                       {collapse == item?.id ? <ArrowDropDownSharp /> : <ArrowRightOutlined />}
@@ -247,25 +242,28 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleEnhancement={handleEnhancement} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
-      <Dialog
-        open={reviewModal}
+      <Modal
+        opened={reviewModal}
         onClose={closeReviewModal}
+        title={getMessage(status, isReject, isPushback, isEnhancement)}
+        zIndex={9999}
+        size={'lg'}
       >
-        <DialogTitle>{getMessage(status, isReject, isPushback, isEnhancement)}</DialogTitle>
-        <DialogContent>
+        <Box>
           <div className={classes.dialog}>
-            <DialogContentText id="approval-remarks-desc">
+            <Text id="approval-remarks-desc">
               Please enter your remarks.
-            </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true} remarkData={remarks} />
+            </Text>
+            <RichTextEditorBox onChange={setRemarks} />
             {
               errorStatus ?
                 <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert> : null
             }
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button variant='outlined' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
-            <LoaderButton
+          <Group justify='flex-end' mt={15}>
+            <Button variant='outline' size='xs' onClick={closeReviewModal} mr={8}>Cancel</Button>
+            <Button onClick={() => updateLoanStatus()} loading={loading} size='xs' color='green'>Confirm</Button>
+            {/* <LoaderButton
               variant='contained'
               color='primary'
               buttonLabel='Confirm'
@@ -273,10 +271,10 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
               isLoading={loading}
               loadingText="Submitting..."
               onClick={() => updateLoanStatus()}
-            >Confirm</LoaderButton>
-          </div>
-        </DialogContent>
-      </Dialog>
+            >Confirm</LoaderButton> */}
+          </Group>
+        </Box>
+      </Modal>
     </>
   );
 }

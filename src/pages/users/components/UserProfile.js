@@ -135,7 +135,6 @@ const UserProfile = ({ currentUser, data, }) => {
       })
       .catch(err => {
         setuserLoading(false)
-        console.log(err)
       })
   }
   const handleClose = (event, reason) => {

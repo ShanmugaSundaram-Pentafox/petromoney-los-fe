@@ -1,15 +1,12 @@
-import { IconButton, Grid } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
-import RotateLeftOutlinedIcon from '@material-ui/icons/RotateLeftOutlined';
-import SpeedOutlinedIcon from '@material-ui/icons/SpeedOutlined';
-import { makeStyles } from '@material-ui/styles';
+import { Grid, Title } from '@mantine/core';
+import { IconFileDatabase, IconRefresh } from '@tabler/icons-react';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import DocListPreview from './DocListPreview';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
+import { Button } from '../../../components/Mantine/Button/Button';
+import { Divider } from '../../../components/Mantine/Divider/Divider';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import {
@@ -17,31 +14,7 @@ import {
   getCrimeReport,
 } from '../../../services/dealers.service';
 
-const useStyles = makeStyles((theme) => ({
-  sidePanelTitle: {
-    textAlign: 'center',
-    padding: '12px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333',
-  },
-  sidePanelFormWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-  },
-  sidePanelFormContentWrapper: {
-    flex: 1,
-    overflow: 'auto',
-    padding: 9,
-  },
-}));
-
 const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
-  const classes = useStyles();
   const [editMode, setEditMode] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
   const editable = permissionCheck(
@@ -49,6 +22,7 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
     rulesList.external_view
   );
   const queryClient = useQueryClient();
+  
   const { data: crimeData } = useQuery('crime', () => getCrimeInfo(data?.id, data?.category?.toLowerCase()), {
     onSuccess: (data) => {
       if (data?.length) {
@@ -112,84 +86,68 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
   };
 
   return (
-    <div className={classes.sidePanelFormWrapper}>
-      <div className={classes.sidePanelTitle}>
-        <Typography variant="h4">
-          Credit Information ({data?.pan || '-'})
-        </Typography>
-        <IconButton onClick={onClose} size="small">
-          <CloseRoundedIcon />
-        </IconButton>
-      </div>
-      <div className={classes.sidePanelFormContentWrapper}>
-        <Grid container spacing={2}>
-          <Grid item md={6}>
+    <>
+      {/* Drawer content */}
+      <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
+        <Grid gutter="sm">
+          <Grid.Col span={{ base: 12, lg: 6 }}>
             <ViewData
               title="Name"
               value={data?.first_name}
               style={{ marginBottom: 0 }}
             />
-          </Grid>
-          <Grid item md={6}>
+          </Grid.Col>
+
+          <Grid.Col span={{ base: 12, lg: 6 }}>
             <ViewData
               title="User Type"
               value={data?.category}
               style={{ marginBottom: 0 }}
             />
-          </Grid>
-        </Grid>
-        <div style={{ margin: 10 }}>
-          <Grid container spacing={2} style={{ marginTop: 10, marginBottom: 20 }}>
-            {editMode ? (
-              <Grid
-                item
-                md={12}
-                style={{ display: 'flex', justifyContent: 'space-between' }}
+          </Grid.Col>
+          
+          {editMode ? (
+            <Grid.Col mt="sm">
+              <Button
+                variant="light" 
+                leftSection={<IconRefresh size={18} />}
+                onClick={refreshCrimeReport}
               >
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <Button
-                    variant="text"
-                    color="primary"
-                    startIcon={<RotateLeftOutlinedIcon />}
-                    style={{ marginLeft: 8 }}
-                    onClick={refreshCrimeReport}
-                  >
-                    Refresh Crime Report
-                  </Button>
-                </div>
-              </Grid>
-            ) : (
-              <Grid md={6}>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  style={{ marginTop: 10 }}
-                  onClick={crimeReport}
-                  startIcon={<SpeedOutlinedIcon />}
-                >
-                  Check Crime Data
-                </Button>
-              </Grid>
-            )}
-          </Grid>
-        </div>
-        <Typography variant="h6">Crime Reports</Typography>
-        <div>
-          {Array.isArray(crimeData) &&
-            crimeData.map((row, i) => (
-              <DocListPreview
-                crimeCheck
-                file={row.file_data}
-                docId={row?.request_id}
-                key={i}
-                id={i + 1}
-                dealershipId={data?.id}
-                editable={editable}
-              />
-            ))}
-        </div>
+                Refresh Crime Report
+              </Button>
+            </Grid.Col>  
+          ) : (
+            <Grid.Col mt="sm">
+              <Button
+                variant="outline"
+                leftSection={<IconFileDatabase size={20} />}
+                onClick={crimeReport}
+              >
+                Check Crime Data
+              </Button>
+            </Grid.Col>
+          )}
+        </Grid>  
+        
+        <Divider my="lg" />
+
+        <Title order={4} mb="xs">Crime Reports</Title>
+
+        {Array.isArray(crimeData) &&
+          crimeData.map((row, i) => (
+            <DocListPreview
+              crimeCheck
+              file={row.file_data}
+              docId={row?.request_id}
+              key={i}
+              id={i + 1}
+              dealershipId={data?.id}
+              editable={editable}
+              colSpan={{ base: 12, sm: 6 }}
+            />
+          ))}
       </div>
-    </div>
+    </>
   );
 };
 

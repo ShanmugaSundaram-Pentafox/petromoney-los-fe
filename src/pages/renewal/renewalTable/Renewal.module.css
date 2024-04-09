@@ -1,0 +1,39 @@
+.title {
+  font-weight: 500;
+}
+.pill {
+  display: inline-block;
+  border-radius: 29px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 30px;
+  text-align: center;
+}
+.itemLists {
+  display: flex;
+  gap: 6px;
+  flex-direction: column;
+}
+.listItem {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  height: 22px;
+}
+.listItem:hover {
+  background: #f7f7f7;
+}
+.listIcon {
+  width: 20px;
+  display: flex;
+  justify-content: center;
+}
+.tableContainer {
+  border-radius: 6px;
+}
+.sidePanelWrapper {
+  width: 70vw;
+  max-width: 80vw;
+}

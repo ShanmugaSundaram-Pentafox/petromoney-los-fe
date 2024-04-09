@@ -1,17 +1,12 @@
-import { Button, Tooltip } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
-import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import { getSignedUrl } from '../../../services/common.service';
 import { getPDCReportData, } from '../../../services/report.service';
-import { dateCustomSort } from '../../../utils/commonFunctions.util';
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 
 
 const useStyles = makeStyles(theme => ({
@@ -30,10 +25,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const PDCReportTable = ({ filterQry, currentUser }) => {
+const PDCReportTable = ({ filterQry }) => {
   const classes = useStyles();
-  const [page, setPage] = useState();
-  const [search, setSearch] = useState();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -103,104 +98,44 @@ const PDCReportTable = ({ filterQry, currentUser }) => {
       });
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Applicant Type',
-        name: 'applicant_type',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-      {
-        label: 'Account Number',
-        name: 'account_number',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-      {
-        label: 'Bank',
-        name: 'bank_name',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-      {
-        label: 'IFSC Code',
-        name: 'ifsc_code',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-      {
-        label: 'Branch Name',
-        name: 'branch_name',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-      {
-        label: 'Cheque No',
-        name: 'cheque_number',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-      {
-        label: 'Cheque Status',
-        name: 'cheque_status',
-        options: {
-          filter: true,
-          sort: true,
-        }
-      },
-      {
-        label: 'Cheque Type',
-        name: 'cheque_type',
-        options: {
-          filter: false,
-          sort: true,
-        }
-      },
-      {
-        label: 'Event Date',
-        name: 'event_date',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'Loan Status',
-        name: 'loan_status',
-        option: {
-          filter: false,
-          sort: false,
-        }
-      }
-    ]
-  }, [pdcReportQuery?.data?.data]);
+  const column = [
+    {
+      key: 'dealership_id',
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }, {
+      key: 'applicant_type',
+      header: 'Applicant Type',
+    }, {
+      key: 'account_number',
+      header: 'Account Number',
+    }, {
+      key: 'bank_name',
+      header: 'Bank',
+    }, {
+      key: 'ifsc_code',
+      header: 'IFSC Code',
+    }, {
+      key: 'branch_name',
+      header: 'Branch Name',
+    }, {
+      key: 'cheque_number',
+      header: 'Cheque No',
+    }, {
+      key: 'cheque_status',
+      header: 'Cheque Status',
+    }, {
+      key: 'cheque_type',
+      header: 'Cheque Type',
+    }, {
+      key: 'event_date',
+      header: 'Event Data',
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
+    }, {
+      key: 'loan_status',
+      header: 'Loan Status',
+    },
+  ];
 
   const options = {
     selectableRowsHeader: false,
@@ -216,44 +151,25 @@ const PDCReportTable = ({ filterQry, currentUser }) => {
     onSearchChange: (searchText) => {
       setSearch(searchText)
     },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={() => handleDownload()}></Button>
-          </Tooltip>
-        </>
-      );
-    },
-    customFooter: () => {
-      return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <MuiTableFooter
-            totalCount={pdcReportQuery?.data?.no_of_pages}
-            pageSize={10}
-            onPageChange={(value) => { setPage(value) }}
-          />
-        </div>
-      )
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
   };
 
   return (
     <div className={classes.root}>
-      <MUIDataTable
-        title={null}
-        data={pdcReportQuery?.data?.data}
-        style={classes.tableStyle}
-        columns={columns}
-        options={options}
+      <DataTableViewer
+        rowData={pdcReportQuery?.data?.data}
+        column={column}
+        loading={pdcReportQuery?.isLoading}
+        useAPIPagination
+        page={page}
+        setPage={setPage}
+        title={'PDC Report'}
+        columnsFilter={false}
+        filter={false}
+        totalNoOfPages={pdcReportQuery?.data?.no_of_pages}
+        apiSearch={setSearch}
+        excelDownload
+        downloadQuery={{ isLoading: loading, query: handleDownload }}
       />
-      {
-        pdcReportQuery?.isLoading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
     </div>
   )
 }

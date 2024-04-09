@@ -1,0 +1,32 @@
+.items {
+  border-bottom: 1px solid #c9c7c7;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  &:hover {
+    background-color: #ffffff;
+    border-radius: 2px;
+  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.eachItem {
+  text-overflow: ellipsis;
+  padding-left: 5px;
+}
+.wrapper {
+  padding: 0px 24px 10px 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.contentWrapper {
+  padding: 12px;
+  height: 80vh;
+  overflow: auto;
+  overflow-x: hidden;
+}
+dialog {
+  /* min-width: 30vw; */
+}

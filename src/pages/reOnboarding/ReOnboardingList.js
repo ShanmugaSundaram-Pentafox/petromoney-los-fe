@@ -1,15 +1,10 @@
-import Grid from '@material-ui/core/Grid';
 import React, { useState } from 'react';
 import ReOnboardingTable from './ReOnboardingTable'
 import usePageTitle from '../../hooks/usePageTitle';
 import { getEnhancementStatusList, getStatusWiseRecordCount } from '../../services/enhancement.service';
-import LoanStats from '../dashboard/components/LoanStats';
 import RenewalFilter from '../renewal/RenewalFilter';
-
-const currencyFormat = (value) => {
-  const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
-  return money;
-}
+import { Grid } from '@mantine/core';
+import LoanStatsMin from '../dashboard/components/LoanStatsMin';
 
 const ReOnboardingList = ({ currentUser }) => {
   usePageTitle('Re Opening Loans');
@@ -21,13 +16,15 @@ const ReOnboardingList = ({ currentUser }) => {
   const handleClick = (name) => {
     getEnhancementStatusList()
       .then((status) => {
-        getStatusWiseRecordCount({...filterQry, category: true})
+        getStatusWiseRecordCount({ ...filterQry, category: true })
           .then(res => {
             const cdata = status?.map((item) => {
               const matchingItem = res.find((el) => el.status === item.status);
               return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : { name: item?.status, count: 0 };
             });
-            setChartData(cdata);
+            let result = [...cdata]
+            result?.splice((cdata?.indexOf(cdata?.find(i => i?.name === 'approved')) + 1), 0, { name: 'Disb. Approval', count: res.find((el) => el.status === 'disbursement_approval')?.record_count })
+            setChartData(result);
           })
           .catch(err => {
             console.log(err);
@@ -39,8 +36,8 @@ const ReOnboardingList = ({ currentUser }) => {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
+      <Grid gutter={'md'}>
+        <Grid.Col span={12}>
           <RenewalFilter
             filterQry={setFilterQry}
             setChartData={setChartData}
@@ -48,17 +45,17 @@ const ReOnboardingList = ({ currentUser }) => {
             filterType='enhancement'
             filters={['zone', 'region', 'product', 'period', 'noc']}
           />
-        </Grid>
-        <Grid item xs={12}>
-          <LoanStats
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <LoanStatsMin
             selectedStatsCard={selectedStatsCard}
             handleClick={handleClick}
             chartData={chartData}
             totalLoans={totalLoans}
           />
-        </Grid>
+        </Grid.Col>
       </Grid>
-      <ReOnboardingTable currentUser={currentUser} value={selectedStatsCard} filterQry={{...filterQry, category: true}} />
+      <ReOnboardingTable currentUser={currentUser} value={selectedStatsCard} filterQry={{ ...filterQry, category: true }} />
     </div>
   );
 }

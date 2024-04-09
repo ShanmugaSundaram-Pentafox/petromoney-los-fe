@@ -14,6 +14,7 @@ import CustomToken from '../../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../../components/CommonComponents/FilePreview';
 import { logger } from '../../../../config/logger';
 import { autoVerifyBankDetails, bankAccValidate, deleteBankDetailsByID } from '../../../../services/PDReport.services';
+import Currency from '../../../../components/Number/Currency';
 
 const useStyles = makeStyles((theme) => ({
   token: {
@@ -61,7 +62,6 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
   const deleteBankRow = (row, index) => {
     deleteBankDetailsByID(row, id)
       .then(data => {
-        console.log(data)
         enqueueSnackbar(data, {
           anchorOrigin: {
             vertical: 'top',
@@ -173,7 +173,7 @@ const BankDetailsCard = ({ id, data, editBankDetails, editable, currentUser }) =
           <Typography variant="h5" style={{ textAlign: 'center', marginBottom: 8 }}>Account Verification</Typography>
           <Alert severity='warning' variant='outlined'>
             <AlertTitle>Note</AlertTitle>
-            <Typography variant='body1'>As a part of account verification process an amount of ₹1 will be deposited on your account. Please do not close this window until the process is completed.</Typography>
+            <Typography variant='body1'>As a part of account verification process an amount of <Currency value={1} /> will be deposited on your account. Please do not close this window until the process is completed.</Typography>
           </Alert>
           <Collapse in={verificationLoading}>
             <Typography variant='h5' className={classes.text}>

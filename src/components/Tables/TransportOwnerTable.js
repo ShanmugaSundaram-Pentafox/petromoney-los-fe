@@ -1,35 +1,15 @@
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Paper from '@material-ui/core/Paper';
-import { makeStyles } from '@material-ui/styles';
 import MUIDataTable from 'mui-datatables';
 import React, { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { getOwnersById } from '../../services/transports.service';
 
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    fontWeight: 500
-  },
-  dTitle: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
-}));
-
-
 const TransportOwnerTable = ({ id, onRowClick }) => {
-  const classes = useStyles();
   const { data: ownerData = [], isLoading } = useQuery(['owner-info', id], () => getOwnersById(id), {refetchOnWindowFocus: false})
 
-  const columns = useMemo(() => {
+  const columns = useMemo(() => { 
     return [
       {
         label: 'Owner Id',
@@ -90,24 +70,27 @@ const TransportOwnerTable = ({ id, onRowClick }) => {
 
   return (
     <div >
-      {
-        Array.isArray(ownerData) && ownerData.length ? (
-
-          <MUIDataTable
-            data={ownerData}
-            columns={columns}
-            options={options}
-          />
-        ) : (
-          !isLoading && <Paper style={{ padding: 10 }}>No Owners found</Paper>
+      {Array.isArray(ownerData) && ownerData.length ? (
+        <MUIDataTable
+          data={ownerData}
+          columns={columns}
+          options={options}
+        />
+      ) : (
+        !isLoading && (
+          <Paper className="min-h-32 flex items-center justify-center">
+            No Owners found
+          </Paper>
         )
-      }
-      {
-        isLoading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      )}
+
+      {isLoading && (
+        <div style={{ textAlign: 'center' }}>
+          <CircularProgress />
+        </div>
+      )}
     </div>
   )
 }
-
 
 export default TransportOwnerTable;

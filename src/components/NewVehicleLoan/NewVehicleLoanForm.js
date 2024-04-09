@@ -58,7 +58,6 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
         }
       })
         .then(res => {
-          console.log(res);
           if (res.status == 'SUCCESS') {
             callback();
           } else {
@@ -69,7 +68,6 @@ const NewVehicleLoanForm = ({ vehicleId, callback, currentUser }) => {
           }
         })
         .catch(err => {
-          console.log(err);
           setApiStatus({ type: 'ERROR', message: 'Unable to raise loan/service request. Please contact Admin' })
         })
       // callback();

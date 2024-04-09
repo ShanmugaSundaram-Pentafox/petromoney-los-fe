@@ -1,15 +1,3 @@
-import { Dialog, DialogContentText } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles } from '@material-ui/styles';
-import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import LeegalityAgreementTable from './components/LeegalityAgreementTable';
@@ -25,39 +13,11 @@ import { deleteResignDocument, getDealershipById, getResignList, getTrancheStatu
 import { getPdfContent } from '../../services/leegality.service';
 import { getLoanDocumentHistoryById } from '../../services/loans.service';
 import apiCall from '../../utils/api.util';
-import TextInput from '../TextInput/TextInput';
+import { Box, Button, Grid, Group, Loader, Modal, NumberInput, Text } from '@mantine/core';
+import classes from './SignRequestLayout.module.css'
+import { displayNotification } from '../CommonComponents/Notification/displayNotification';
 
-
-const useStyles = makeStyles(theme => ({
-  dTitle: {
-    margin: 0,
-    padding: theme.spacing(2),
-    display: 'flex',
-  },
-  ifSigned: {
-    width: '100px'
-  },
-  closeButton: {
-    position: 'absolute',
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    color: theme.palette.grey[500],
-  },
-  sendButton: {
-    padding: '10px 20px',
-  },
-  content: {
-    overflowY: 'auto',
-  },
-  info: {
-    color: 'rgb(0,0,0,0.4)',
-    marginTop: 8
-  }
-
-}));
-
-const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callback, loanAmount, productId, currentUser, getStatus = false }) => {
-  const classes = useStyles();
+const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId, loanId, callback, loanAmount, productId, currentUser, getStatus = false }) => {
   const [dealership, setDealership] = useState({})
   const [applicants, setApplicants] = useState([])
   const [selectedDealers, setSelectedDealers] = useState([])
@@ -76,7 +36,6 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
   const [resign, setResign] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const queryClient = useQueryClient();
-  const { enqueueSnackbar } = useSnackbar();
 
   const getTrancheStatus = useQuery({
     queryKey: ['getTrancheStatus', dealershipId],
@@ -87,24 +46,17 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
   const handleResign = () => {
     deleteResignDocument({ dealershipId, docId: loansData?.document_id })
       .then((data) => {
-        enqueueSnackbar('Document Override successfully', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: 'Document Override successfully',
           variant: 'success',
-        })
+        });
         onClose()
       })
       .catch(err => {
-        console.log(err)
-        enqueueSnackbar(err?.message || 'Document Override Failed', {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: err?.message || 'Document Override successfully',
           variant: 'error',
-        })
+        });
       })
   }
 
@@ -121,11 +73,10 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
           setLoading(false);
         })
         .catch(err => {
-          console.log('getLoansData >> ', err)
           setLoansData();
         })
     }
-  }, [reinitiate]);
+  }, [reinitiate, opened]);
 
   useEffect(() => {
     if (loansData?.document_id) {
@@ -134,12 +85,8 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
           setResign(res?.[0]?.is_override == 1);
         })
         .catch(err => {
-          console.log(err);
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: err,
             variant: 'error',
           });
         });
@@ -156,14 +103,10 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
         })
         .catch(err => {
           setPdfLoading(false)
-          console.log('getPdfContent >> ', err);
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: err,
             variant: 'error',
-          });
+          })
         })
     }
     if (dealershipId && !loansData?.document_id || reinitiate) {
@@ -263,14 +206,10 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
       })
         .then(res => {
           if (res.status === 'SUCCESS') {
-            enqueueSnackbar(res.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
+            displayNotification({
+              message: res?.message,
               variant: 'success',
-            }
-            )
+            })
             setTimeout(() => {
               ReloadData();
               onClose();
@@ -278,14 +217,10 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
             }, 3000);
           } else {
             setHideSend(false)
-            enqueueSnackbar(res.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
+            displayNotification({
+              message: res?.message,
               variant: 'error',
             })
-            console.log('>> Document Details status error >> ', res)
           }
         })
         .catch(err => {
@@ -317,13 +252,10 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
                 queryClient.invalidateQueries(['getLegality-document']);
               }
             } else {
-              enqueueSnackbar(res?.message, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
+              displayNotification({
+                message: res?.message,
                 variant: 'error',
-              });
+              })
               setActiveState();
             }
           })
@@ -343,69 +275,75 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
 
   return (
     <>
-      <DialogTitle disableTypography className={classes.dTitle}>
+      <Modal
+        opened={opened || false}
+        onClose={onClose}
+        title={
+          <Group gap={10}>
+            {
+              type === 'sanction' ? (<strong>Sanction Letter</strong>) : type === 'agreement' ? <strong>Loan Agreement</strong> : <strong>{title}</strong>
+            }
+            {getTrancheStatus?.data?.[0]?.tranche_status ?
+              <div className={classes.ifSigned}>
+                <CustomToken
+                  label={getTrancheStatus?.data?.[0]?.tranche_status === 'open' ? `Active (${getTrancheStatus?.data?.[0]?.open_tranche_count})` : `Closed (${getTrancheStatus?.data?.[0]?.open_tranche_count})`}
+                  variant={getTrancheStatus?.data?.[0]?.tranche_status === 'open' ? 'success' : 'error'}
+                  icon={getTrancheStatus?.data?.[0]?.tranche_status === 'open' ? 'tick' : 'cross'}
+                />
+              </div>
+              : null
+            }
+            {loansData?.is_signed == '1' ? <div className={classes.ifSigned}><CustomToken label='Signed' variant='success' icon='tick' /></div> : null}
+          </Group>
+        }
+        style={{ position: 'absolute', zIndex: 9998 }}
+        size={'70%'}
+      >
         {
-          type === 'sanction' ? (<strong>Sanction Letter</strong>) : type === 'agreement' ? <strong>Loan Agreement</strong> : <strong>{title}</strong>
-        }
-        {getTrancheStatus?.data?.[0]?.tranche_status ?
-          <div className={classes.ifSigned}>
-            <CustomToken
-              label={getTrancheStatus?.data?.[0]?.tranche_status === 'open' ? `Active (${getTrancheStatus?.data?.[0]?.open_tranche_count})` : `Closed (${getTrancheStatus?.data?.[0]?.open_tranche_count})`}
-              variant={getTrancheStatus?.data?.[0]?.tranche_status === 'open' ? 'success' : 'error'}
-              icon={getTrancheStatus?.data?.[0]?.tranche_status === 'open' ? 'tick' : 'cross'}
-            />
-          </div>
-          : null
-        }
-        {loansData?.is_signed == '1' ? <div className={classes.ifSigned}><CustomToken label='Signed' variant='success' icon='tick' /></div> : null}
-      </DialogTitle>
-      <IconButton size="small" aria-label="close" className={classes.closeButton} onClick={handleClose}>
-        <CloseIcon />
-      </IconButton>
-      {
-        loansData?.is_signed && !reinitiate ?
-          (
-            <SignedLayout loansData={loansData} />
-          ) : (
-            <DialogContent dividers className={classes.content}>
-              {
-                loading ? (
-                  <CircularProgress className="circular-progress-color" variant="determinate" color="green" />
-                )
-                  :
-                  (loansData?.document_id && !reinitiate ? (
-                    <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} currentUser={currentUser} setActiveState={setActiveState} />
+          loansData?.is_signed && !reinitiate ?
+            (
+              <SignedLayout loansData={loansData} />
+            ) : (
+              <Box className={classes.content}>
+                {
+                  loading ? (
+                    <Group justify={'center'}>
+                      <Loader color="green" />
+                    </Group>
                   )
-                    : (
-                      <Grid container spacing={2}>
-                        {
-                          type === 'sanction' || type === 'application' ? (
-                            <LeegalityPdfView pdfUrl={pdfUrl} loading={pdfLoading} />
-                          ) : (
-                            <LeegalityAgreementTable
-                              loanAmount={loanAmount}
-                              dealership={dealership}
-                              dealers={applicants?.filter(item => item?.category === 'DEALER')}
-                              applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')}
-                              guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')}
-                              productId={productId}
-                              type={type}
-                            />
-                          )
-                        }
-                        <LeegalityInvitees dealers={applicants?.filter(item => item?.category === 'DEALER')} applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')} guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')} updateSelectedDealers={updateSelectedDealers} updateSelectedCoAppicants={updateSelectedCoAppicants} updateSelectedGuarantors={updateSelectedGuarantors} />
-                      </Grid>
-                    ))
-              }
-            </DialogContent>
-          )
-      }
-      <DialogActions>
-        <Box pl={2} pr={2} style={{ display: 'flex' }}>
+                    :
+                    (loansData?.document_id && !reinitiate ? (
+                      <LeegalityLayout docId={loansData?.document_id} dealershipId={dealershipId} currentUser={currentUser} setActiveState={setActiveState} />
+                    )
+                      : (
+                        <Grid container spacing={2} mt={'lg'}>
+                          {
+                            type === 'sanction' || type === 'application' ? (
+                              <LeegalityPdfView pdfUrl={pdfUrl} loading={pdfLoading} />
+                            ) : (
+                              <LeegalityAgreementTable
+                                loanAmount={loanAmount}
+                                dealership={dealership}
+                                dealers={applicants?.filter(item => item?.category === 'DEALER')}
+                                applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')}
+                                guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')}
+                                productId={productId}
+                                type={type}
+                              />
+                            )
+                          }
+                          <LeegalityInvitees dealers={applicants?.filter(item => item?.category === 'DEALER')} applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')} guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')} updateSelectedDealers={updateSelectedDealers} updateSelectedCoAppicants={updateSelectedCoAppicants} updateSelectedGuarantors={updateSelectedGuarantors} />
+                        </Grid>
+                      ))
+                }
+              </Box>
+            )
+        }
+        <Group gap={'8px'} justify={'flex-end'} style={{ display: 'flex' }} mt={'md'}>
           <div style={{ marginRight: '20px' }}>
             {
               status && (
-                <Box pt={2} pl={3} color="error.main"  >
+                <Box pt={2} color="error.main"  >
                   You must select Dealers &amp; CoApplicants...
                 </Box>
               )
@@ -447,42 +385,41 @@ const SignRequestLayout = ({ onClose, title, type, dealershipId, loanId, callbac
               </CheckAllowed>
             ) : null
           }
-        </Box>
-      </DialogActions>
-      <Dialog
-        open={openModal?.modal || false}
-        onClose={() => {
-          setOpenModal(false);
-        }}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogContent>
-          <DialogContentText className={classes.text}>
+        </Group>
+        <Modal
+          opened={openModal?.modal || false}
+          onClose={() => {
+            setOpenModal(false);
+          }}
+          title={'Are you sure'}
+          style={{ position: 'absolute', zIndex: 9999 }}
+        >
+          <Text>
             Do you want to extend the expire date of this document?
-          </DialogContentText>
+          </Text>
           <span style={{ fontSize: '12px', color: 'gray' }}>Enter no of days to extend the expire date. By default it will be 60 Days</span>
-          <TextInput type='number' style={{ marginBottom: 12 }} value={openModal?.value} onChange={(e) => setOpenModal({ value: e.target.value, modal: true })} />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              setOpenModal(false);
-            }}
-            variant='outlined'
-          >
-            No
-          </Button>
-          <Button
-            onClick={() => activateDealer(openModal?.value)}
-            variant='contained'
-            size='medium'
-            style={{ color: 'white', marginLeft: 16, backgroundColor: 'green' }}
-          >
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
+          {/* <TextInput type='number' style={{ marginBottom: 12 }} value={openModal?.value} onChange={(e) => setOpenModal({ value: e.target.value, modal: true })} /> */}
+          <NumberInput value={parseInt(openModal?.value)} onChange={(e) => setOpenModal({ value: e, modal: true })} hideControls />
+          <Group justify={'center'} gap={8} mt={'md'}>
+            <Button
+              onClick={() => {
+                setOpenModal(false);
+              }}
+              variant='outline'
+              size='xs'
+            >
+              No
+            </Button>
+            <Button
+              onClick={() => activateDealer(openModal?.value)}
+              color='green'
+              size='xs'
+            >
+              Yes
+            </Button>
+          </Group>
+        </Modal>
+      </Modal>
     </>
   )
 }

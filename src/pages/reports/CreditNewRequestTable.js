@@ -1,7 +1,4 @@
-import { Button, Grid, Tooltip, Drawer } from '@material-ui/core';
-import Skeleton from '@material-ui/lab/Skeleton';
-import MUIDataTable from 'mui-datatables';
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import CreditReload from './CreditReload';
 import CreditReloadForm from './CreditReloadForm';
@@ -11,129 +8,100 @@ import Currency from '../../components/Number/Currency';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
-import usePageTitle from '../../hooks/usePageTitle';
 import {
   getCreditReload,
 } from '../../services/users.service';
 import { isAllowed } from '../../utils/cerbos';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Button, Drawer, Paper } from '@mantine/core';
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 const CreditNewRequestTable = ({ currentUser }) => {
   const [rowData, setRowData] = useState();
-  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
   const [filterQry, setFilterQry] = useState();
   const [offset, setOffset] = useState(0);
-  usePageTitle('Credit Reload');
-  const { data: tableData = [], refetch } = useQuery(['new-request', offset], () => getCreditReload({ processed: 0, filterQry: filterQry, currentUser: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false })
+  // usePageTitle('Credit Reload');
+  const { data: tableData = [], refetch, isLoading } = useQuery(['new-request', offset], () => getCreditReload({ processed: 0, filterQry: filterQry, currentUser: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false })
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
+  const DisplayValue = ({ value, row }) => {
+    const handleClick = () => {
+      let d = [];
+      d.push({
+        ...row,
+        payment_proof_attachment: typeof (row?.payment_proof_attachment) === 'string' ? JSON.parse(row?.payment_proof_attachment) : (row?.payment_proof_attachment || [])
+      })
+      setRowData(d[0])
+      setStatusModal(true)
+    }
+    return (
+      <div style={{ cursor: 'pointer', color: '#1976d2' }} onClick={() => handleClick()}>{value}</div>
+    )
+  }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        name: 'dealership_id',
-        label: 'Dealership ID',
-        options: {
-          filter: false,
-          customBodyRender: (value) => {
-            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value}</div>
-          }
+  const column = [
+    {
+      key: 'dealership_id',
+      header: 'Dealership Id',
+      enableColumnFilter: false,
+      cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.dealership_id} />
+    }, {
+      key: 'name',
+      header: 'Name',
+      enableColumnFilter: false,
+      cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.name} />
+    }, {
+      key: 'request_id',
+      header: 'Request Id',
+      enableColumnFilter: false,
+    }, {
+      key: 'product_name',
+      header: 'Scheme',
+    }, {
+      key: 'created_date',
+      header: 'Requested Date',
+      enableColumnFilter: false,
+    }, {
+      key: 'region',
+      header: 'Region',
+    }, {
+      key: 'amount',
+      header: 'Amount',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
+      key: 'account_no',
+      header: 'Account Number',
+      enableColumnFilter: false,
+    }, {
+      key: 'last_modified_by',
+      header: 'Submitted (or) Modified By',
+      enableColumnFilter: false,
+    }, {
+      key: 'origin',
+      header: 'Origin',
+    }, {
+      key: 'status',
+      header: 'Status',
+      enableColumnFilter: false,
+      cell: (value) => {
+        if (value?.getValue() === 'Declined') {
+          return (
+            <div><CustomToken label={value?.getValue()} variant='error' icon='cross' /></div>
+          )
         }
-      },
-      {
-        name: 'name',
-        label: 'Name',
-        options: {
-          filter: false,
-          customBodyRender: (value) => {
-            return <div style={{ cursor: 'pointer', color: '#1976d2' }}>{value?.toUpperCase()}</div>
-          }
+        else if (value?.getValue() === 'Disbursed') {
+          return (
+            <div><CustomToken label={value?.getValue()} variant='success' icon='tick' /></div>
+          )
         }
-      },
-      {
-        name: 'request_id',
-        label: 'Request ID',
-        options: { filter: false }
-      },
-      {
-        name: 'product_name',
-        label: 'Product',
-      },
-      {
-        name: 'created_date',
-        label: 'Requested Date',
-        options: { filter: false }
-      },
-      {
-        name: 'region',
-        label: 'Region',
-        options: { filter: false }
-      },
-      {
-        name: 'amount', label: 'Amount',
-        options: {
-          filter: false,
-          customBodyRender: (value) => {
-            return <Currency value={value} />
-          }
-        }
-      },
-      {
-        name: 'account_no',
-        label: 'Account number',
-        options: { filter: false }
-      },
-      {
-        name: 'last_modified_by',
-        label: 'Submitted or Modified by',
-        options: {
-          filter: false,
-          customBodyRender: (value, tableMeta) => {
-            return <div>{value}</div>
-          }
-        }
-      },
-      {
-        name: 'origin',
-        label: 'Origin',
-        options: {
-          customBodyRender: (value, tableMeta) => {
-            return <div>{value?.toUpperCase()}</div>
-          }
-        }
-      },
-      {
-        name: 'status',
-        label: 'Status',
-        options: {
-          filter: false,
-          customBodyRender: (value, tableMeta) => {
-            if (value === 'Declined') {
-              return (
-                <Tooltip title={tableMeta.rowData[7]}>
-                  <div><CustomToken label={value} variant='error' icon='cross' /></div>
-                </Tooltip>
-              )
-            }
-            else if (value === 'Disbursed') {
-              return (
-                <Tooltip title={tableMeta.rowData[7]}>
-                  <div><CustomToken label={value} variant='success' icon='tick' /></div>
-                </Tooltip>
-              )
-            }
-            else if (tableMeta?.rowData[13])
-              return <CustomToken label="Withheld" variant='warn' />
-            else return <CustomToken label={value} variant='success' />
-          },
-        }
-      },
-      { name: 'remarks', options: { display: 'excluded', filter: false } },
-      { name: 'role_name', options: { display: 'excluded', filter: false } },
-      { name: 'is_withheld', options: { display: 'excluded', filter: false } }
-    ];
-  }, [tableData?.data]);
+        else return <CustomToken label={value?.getValue()} variant='success' />
+      }
+    },
+  ]
+
   const options = {
     print: false,
     selectableRowsHeader: false,
@@ -154,8 +122,6 @@ const CreditNewRequestTable = ({ currentUser }) => {
         // Credit Reload create action
         isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.create) ?
           <Button
-            color='primary'
-            variant='contained'
             onClick={() => setOpenModal(true)}
           >
             Add
@@ -176,45 +142,50 @@ const CreditNewRequestTable = ({ currentUser }) => {
   };
 
   return (
-    <div style={{ marginTop: 20 }}>
-      {loading ? (
-        <Grid item xs={12}>
-          <Skeleton variant='rect' width='100%' height={400} />
-        </Grid>
-      ) : (
-        <>
-          <CreditReload refetch={refetch} currentUser={currentUser} filterQry={setFilterQry} filterList={['zone', 'region', 'product', 'type', 'period']} filterType={'new'} stats={tableData?.stats} />
-          <MUIDataTable
-            title={'New Request'}
-            columns={columns}
-            options={options}
-            data={tableData?.data}
-          />
-        </>
-      )}
+    <div>
+      <CreditReload refetch={refetch} currentUser={currentUser} filterQry={setFilterQry} filterList={['zone', 'region', 'product', 'type', 'period']} filterType={'new'} stats={tableData?.stats} />
+      <Paper>
+        <DataTableViewer
+          title={'New Request'}
+          rowData={tableData?.data}
+          loading={isLoading}
+          column={column}
+          action={(isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.create) ?
+            <Button
+              size='xs'
+              onClick={() => setOpenModal(true)}
+              leftSection={<PlusIcon className='w-4 h-4' />}
+            >
+              Add
+            </Button> : null
+          )}
+        />
+      </Paper>
       <Drawer
-        anchor='right'
-        open={statusModal}
+        position='right'
+        opened={statusModal}
         onClose={() => setStatusModal(false)}
-        variant='temporary'
+        styles={{ root: { position: 'absolute', zIndex: 9999 } }}
+        title={'Credit Reload Form'}
+        size={'40%'}
       >
         {
           <CreditReloadRemarks callback={() => setStatusModal(false)} rowData={rowData} currentUser={currentUser} view={view} />
         }
       </Drawer>
       <Drawer
-        anchor='right'
-        open={openModal}
+        position='right'
+        opened={openModal}
+        title={'Credit Reload Form'}
         onClose={() => setOpenModal(false)}
-        variant='temporary'
+        styles={{ root: { position: 'absolute', zIndex: 9999 } }}
       >
-        {
-          <CreditReloadForm
-            callback={() => setOpenModal(false)}
-            currentUser={currentUser}
-            view={view}
-          />
-        }
+        <CreditReloadForm
+          callback={() => setOpenModal(false)}
+          currentUser={currentUser}
+          opened={openModal}
+          view={view}
+        />
       </Drawer>
     </div>
   )

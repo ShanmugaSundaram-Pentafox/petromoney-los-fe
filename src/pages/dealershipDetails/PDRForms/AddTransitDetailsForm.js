@@ -25,12 +25,11 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 4,
   },
   inputFile: {
-    width: '0.1px',
-    height: '0.1px',
+    width: '120px',
+    height: '75px',
     opacity: 0,
     overflow: 'hidden',
     position: 'absolute',
-    zIndex: -1,
   },
   editButton: {
     marginRight: '8px',

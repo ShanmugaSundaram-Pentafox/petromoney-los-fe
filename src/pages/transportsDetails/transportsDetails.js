@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { useQuery } from 'react-query';
 import { useMount } from 'react-use'
 import VehicleInfo from './components/VehicleInfo'
-import usePageTitle from '../../hooks/usePageTitle'
+// import usePageTitle from '../../hooks/usePageTitle'
 import {
   getTransporterInfoFromID,
   getTransportOwnerInfo,
@@ -49,7 +49,7 @@ const TransportsDetails = ({ currentUser, match }) => {
     { label: 'Owner name', value: ownerInfo?.first_name },
     { label: 'Mobile', value: ownerInfo?.mobile },
   ]
-  usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true, cardData)
+  // usePageTitle(`${id} - ${transportsData && transportsData?.name}`, true, cardData)
 
 
   return (

@@ -1,7 +1,3 @@
-import Box from '@material-ui/core/Box';
-import Drawer from '@material-ui/core/Drawer';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import ApprovalTable from './ApprovalTable';
@@ -13,6 +9,9 @@ import SubmittedTable from './SubmittedTable';
 import UserCan, { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import { getDealershipById } from '../../services/dealerships.service';
+import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
+import DisbursementApprovalTable from './DisbursementApprovalTable';
+import { Badge, Box, Grid, Paper } from '@mantine/core';
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const EnhancementTable = ({ currentUser, value, filterQry }) => {
+const EnhancementTable = ({ currentUser, value, filterQry, statusList, statsChange }) => {
   const classes = useStyles();
   const [showPanel, setShowPanel] = useState({
     status: false,
@@ -38,7 +37,7 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
     setLoansData(selectedLoanData);
     getDealershipById(id)
       .then(data => {
-        setDealershipData({...data, 'product_id': selectedLoanData?.new_product_id})
+        setDealershipData({ ...data, 'product_id': selectedLoanData?.new_product_id })
       })
       .catch(e => null);
 
@@ -59,70 +58,86 @@ const EnhancementTable = ({ currentUser, value, filterQry }) => {
         role={currentUser.role_name}
         perform={rulesList.dashboard}
         yes={() => (
-          <Grid container spacing={2}>
+          <Grid gutter={2} mt={15}>
             {
               value === 'submit' ? (
-                <Grid item md={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
               ) : null
             }
             {
               value === 'review' ? (
-                <Grid item md={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <ReviewTable title={'Pending for Review'} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
               ) : null
             }
             {
               value === 'approval' ? (
-                <Grid item md={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <ApprovalTable title={'Pending for Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
               ) : null
             }
             {
               value === 'approved' ? (
-                <Grid item xs={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <ApprovedTable title={'Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
 
               ) : null
             }
             {
               value === 'rejected' ? (
-                <Grid item xs={12}>
+                <Grid.Col span={12}>
                   <Paper className={classes.tableContainer}>
                     <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
                   </Paper>
-                </Grid>
+                </Grid.Col>
               ) : null
             }
+            {
+              value === 'Disb. Approval' ? (
+                <Grid.Col span={12}>
+                  <Paper className={classes.tableContainer}>
+                    <DisbursementApprovalTable title={'Disbursement Approval Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
+                  </Paper>
+                </Grid.Col>
+              ) : null
+            }
+            {/* {
+              value ? (
+                <Grid.Col span={12}>
+                  <Paper className={classes.tableContainer}>
+                    <EnhancementTableList currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} status={value} statusList={statusList} statusChange={statsChange} />
+                  </Paper>
+                </Grid.Col>
+              ) : null
+            } */}
           </Grid>
         )}
       />
-      <Drawer
-        anchor="right"
-        ModalProps={{
-          onBackdropClick: () => { setShowPanel({ status: false }) }
-        }}
-        open={showPanel.status}
-        variant={'temporary'}
+      <RightSideDrawer
+        opened={showPanel.status}
+        size={'70%'}
+        onClose={() => setShowPanel({ modal: false })}
+        title={<Badge color="blue" size='lg' variant='light'>{showPanel?.id} - {loansData?.dealership_name}</Badge>}
       >
         <div className={classes.sidePanelWrapper}>
           {
             showPanel.data && <EnhancementDrawer {...compProps} />
           }
         </div>
-      </Drawer>
+      </RightSideDrawer>
     </Box>
   )
 }

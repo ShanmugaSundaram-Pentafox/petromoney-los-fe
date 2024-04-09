@@ -1,4 +1,5 @@
-import { Box, Avatar, Typography } from '@material-ui/core';
+import { Image, Loader, Text } from '@mantine/core';
+import { Avatar, Typography } from '@material-ui/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { makeStyles } from '@material-ui/styles';
 import React, { useEffect, useState } from 'react'
@@ -33,43 +34,48 @@ const useStyles = makeStyles(() => ({
 }))
 
 const PreviewWrapper = styled.div`
+  width:100%;
+  .image {
+    width: 100%;
+    object-fit: contain;
+  }
+  .iframe-container {
+    height:72vh;
+    overflow: hidden;
+    padding-top: 45%;
+    position: relative;
+  }
+  .iframe-container iframe {
     width:100%;
-    .image {
-        width: 100%;
-        object-fit: contain;
-        }
-    .iframe-container {
-        height:72vh;
-        overflow: hidden;
-        padding-top: 45%;
-        position: relative;
-    }
-    .iframe-container iframe {
-        width:100%;
-        height:100%;
-        left: 0;
-        position: absolute;
-        top: 0;
-    }
+    height:100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+  }
 `;
 
-export const ViewData = ({ title, value, style = { marginBottom: 8 }, endIcon }) => {
-  const classes = useStyles()
+export const ViewData = ({ title, value, endIcon, loading = false }) => {
   return (
-    <Box className={classes.details} style={style}>
-      <p className={classes.title}>{title}</p>
-      <strong className={classes.text}>
-        {value ? value : '-'}
-        {
-          endIcon && endIcon
-        }
-      </strong>
-    </Box >
+    <>
+      <Text size="sm" fw="600" c="gray.7">{title}</Text>
+
+      <Text
+        size="sm"
+        c="gray.6"
+        className="flex items-center gap-2"
+      >
+        {loading ? <Loader size={'xs'} type='dots' /> : (value ? value : '-')}
+
+        {!loading ? endIcon : null}
+      </Text>
+    </>
   )
 }
+
 export const AvatarCard = ({ file, title, tooltip }) => {
   const classes = useStyles()
   const [imageModal, setImageModal] = useState({})
+
   return (
     <>
       <div onClick={() => setImageModal({ open: true, image: file, type: file?.endsWith('.pdf') })} style={{ margin: 10, paddingLeft: 10 }} tabIndex={0} role="button" onKeyDown={'click'}>
@@ -89,35 +95,55 @@ export const AvatarCard = ({ file, title, tooltip }) => {
 
 
 const FilePreview = ({ data, title }) => {
-  const [signedUrl, setSignedUrl] = useState()
+  const [signedUrl, setSignedUrl] = useState();
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (data?.image) {
+      setLoading(true);
       getSignedUrl(data?.image)
         .then((res) => {
           setSignedUrl(res?.url)
         })
         .catch((err) => console.log('err >>>>>', err))
+        .finally(() => setLoading(false));
     }
 
   }, [data?.image])
   return (
-    <PreviewWrapper>
-      {
-        (data?.type == true || data?.type == 'pdf') ?
-          (title == 'Leegality') ? (
-            <div className="iframe-container">
-              <iframe title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
-            </div>
-          ) : (
-            <div style={{ width: '45vw', height: '80vh',paddingTop:16 }}>
-              <iframe style={{ width: '100%', height: '100%' }} title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
-            </div>
-          )
-          :
-          <img className="image" src={signedUrl} alt='viewer' />
-      }
-    </PreviewWrapper>
+    loading ? (
+      < Image
+        src={null}
+        h={'auto'}
+        maw={500}
+        fallbackSrc={'https://placehold.co/600x400?text=Loading...'}
+      />
+    ) : (
+      <PreviewWrapper>
+        {
+          (data?.type == true || data?.type == 'pdf') ?
+            (title == 'Leegality') ? (
+              <div className="iframe-container">
+                <iframe title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
+              </div>
+            ) : (
+              <div style={{ width: '45vw', height: '80vh', paddingTop: 16 }}>
+                <iframe style={{ width: '100%', height: '100%' }} title='File Preview' src={signedUrl} frameBorder="0" ></iframe>
+              </div>
+            )
+            :
+            // eslint-disable-next-line react/jsx-indent
+            <Image
+              src={signedUrl}
+              h={'auto'}
+              maw={500}
+              fallbackSrc={'https://placehold.co/600x400?text=Not%20%20Found!'}
+            />
+        }
+      </PreviewWrapper>
+    )
   )
 
 }
+
 export default FilePreview;

@@ -31,32 +31,38 @@ module.exports = {
     // "prettier/prettier": "warn",
     indent: ['warn', 2],
     quotes: ['warn', 'single'],
+    "react/no-unknown-property": ["warn", { "ignore": ["css"] }],
     'react/prop-types': 'off',
     'no-console': 'warn',
+    'no-unsafe-optional-chaining': 'off',
+    'no-dupe-keys': 'warn',
+    'react/no-unescaped-entities': 'warn',
     'no-duplicate-imports': 'error',
-    'no-unused-vars': 'off',
+    'no-useless-escape': 'warn',
+    'no-unused-vars': 'warn',
     'unused-imports/no-unused-imports': 'warn',
     'unused-imports/no-unused-vars': [
       'warn',
       { 'vars': 'all', 'varsIgnorePattern': '^_', 'args': 'after-used', 'argsIgnorePattern': '^_' }
     ],
     'max-len': ['warn', { code: 200 }],
-    'import/order': ['warn', {
-      alphabetize: {
-        caseInsensitive: true,
-        order: 'asc'
-      },
-      groups: [
-        'builtin',
-        'external',
-        'index',
-        'sibling',
-        'parent',
-        'internal'
-      ]
-    }
-    ],
-    'no-restricted-imports': ['error', {
+    'import/order': 'off',
+    // 'import/order': ['warn', {
+    //   alphabetize: {
+    //     caseInsensitive: true,
+    //     order: 'asc'
+    //   },
+    //   groups: [
+    //     'builtin',
+    //     'external',
+    //     'index',
+    //     'sibling',
+    //     'parent',
+    //     'internal'
+    //   ]
+    // }
+    //],
+    'no-restricted-imports': ['warn', {
       paths: [
         {
           message: 'Please use import foo from \'lodash-es/foo\' instead.',
@@ -87,11 +93,13 @@ module.exports = {
       indentLogicalExpressions: true
     }
     ],
-    'react/jsx-indent-props': ['error', 2],
+    'react/jsx-indent-props': ['warn', 2],
     'jsx-a11y/label-has-associated-control': 'off',
     'jsx-a11y/interactive-supports-focus': 'off',
-    'jsx-a11y/no-static-element-interactions':'off',
+    'jsx-a11y/no-noninteractive-element-interactions': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
     'jsx-a11y/click-events-have-key-events': 'warn',
+    'jsx-a11y/no-autofocus': 'warn',
   },
   settings: {
     react: {

@@ -1,0 +1,13 @@
+.root {
+  &::before {
+    background-color: var(--mantine-color-white);
+  }
+}
+
+.closeButton {
+  color: var(--mantine-color-white);
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}

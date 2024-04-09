@@ -1,0 +1,50 @@
+.title {
+  font-weight: 500;
+}
+.pill {
+  display: inline-block;
+  border-radius: 29px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 30px;
+  text-align: center;
+}
+.pills_FUEL {
+  color: #d35178;
+  background-color: #f7eae8;
+}
+.pills_SOLAR {
+  color: #51b37f;
+  background-color: #e1f8e5;
+}
+.dTitle {
+  margin: 0px;
+  padding: 4px;
+}
+.closeButton {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  color: #808080;
+}
+.itemLists {
+  display: flex;
+  gap: 6px;
+  flex-direction: column;
+}
+.listItem {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  height: 22px;
+}
+.listItem:hover {
+  background: #f7f7f7;
+}
+.listIcon {
+  width: 20px;
+  display: flex;
+  justify-content: center;
+}

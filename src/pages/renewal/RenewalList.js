@@ -4,7 +4,7 @@ import RenewalFilter from './RenewalFilter';
 import RenewalTable from './renewalTable/RenewalTable';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getRenewalStatusList, getStatusWiseRecordCount } from '../../services/renewal.service';
-import LoanStats from '../dashboard/components/LoanStats';
+import LoanStatsMin from '../dashboard/components/LoanStatsMin';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -27,7 +27,9 @@ const RenewalList = ({ currentUser }) => {
               const matchingItem = res.find((el) => el.status === item.status);
               return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : { name: item?.status, count: 0 };
             });
-            setChartData(cdata);
+            let result = [...cdata]
+            result?.splice((cdata?.indexOf(cdata?.find(i => i?.name === 'approved')) + 1), 0, { name: 'Disb. Approval', count: res.find((el) => el.status === 'disbursement_approval')?.record_count })
+            setChartData(result);
           })
           .catch(err => {
             console.log(err);
@@ -46,11 +48,11 @@ const RenewalList = ({ currentUser }) => {
             setChartData={setChartData}
             setTotalLoans={setTotalLoans}
             filterType='renewal'
-            filters={['zone', 'region', 'product', 'period','month']}
+            filters={['zone', 'region', 'product', 'period', 'month']}
           />
         </Grid>
         <Grid item xs={12}>
-          <LoanStats
+          <LoanStatsMin
             selectedStatsCard={selectedStatsCard}
             handleClick={handleClick}
             chartData={chartData}

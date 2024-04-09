@@ -53,39 +53,39 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
     selectedMonth && setSelectedMonth([{ label: 'ALL', value: 0 }]);
     setSelectedPeriodType(type)
     switch (type) {
-    case 'D':
-      setSelectedPeriod({
-        from: today,
-        to: today,
-      })
-      break;
-    case 'W':
-      setSelectedPeriod({
-        from: subDays(today, 8),
-        to: today,
-      })
-      break;
-    case 'M':
-      setSelectedPeriod({
-        from: new Date(year, month),
-        to: new Date(),
-      })
-      break;
-    case 'Y':
-      year = month < 3 ? year - 1 : year // if the user choose YTD from the month between JAN to March the period is set from the previous year APR month.
-      setSelectedPeriod({
-        from: new Date(year, 3),
-        to: new Date(),
-      })
-      break;
-    case 'UTD':
-      setSelectedPeriod({})
-      break;
-    case 'Custom':
-      setShowPicker(event.currentTarget)
-      break;
-    default:
-      break;
+      case 'D':
+        setSelectedPeriod({
+          from: today,
+          to: today,
+        })
+        break;
+      case 'W':
+        setSelectedPeriod({
+          from: subDays(today, 8),
+          to: today,
+        })
+        break;
+      case 'M':
+        setSelectedPeriod({
+          from: new Date(year, month),
+          to: new Date(),
+        })
+        break;
+      case 'Y':
+        year = month < 3 ? year - 1 : year // if the user choose YTD from the month between JAN to March the period is set from the previous year APR month.
+        setSelectedPeriod({
+          from: new Date(year, 3),
+          to: new Date(),
+        })
+        break;
+      case 'UTD':
+        setSelectedPeriod({})
+        break;
+      case 'Custom':
+        setShowPicker(event.currentTarget)
+        break;
+      default:
+        break;
     }
   }
 
@@ -153,7 +153,9 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
               const matchingItem = res.find((el) => el.status === item.status);
               return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : { name: item?.status, count: 0 };
             });
-            setChartData(cdata);
+            let result = [...cdata]
+            result?.splice((cdata?.indexOf(cdata?.find(i => i?.name === 'approved')) + 1), 0, { name: 'Disb. Approval', count: res.find((el) => el.status === 'disbursement_approval')?.record_count })
+            setChartData(result);
             let s = 0;
             for (let i = 0; i < cdata.length; i++) {
               s += cdata[i].record_count;
@@ -176,85 +178,85 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
   }
 
   return (
-    <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10 }}>
+    <Box>
       <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
             filters.includes('zone') &&
-              <Selector title="Zone" options={zones} value={selectedZones} setValue={(e) => { setSelectedZones(e); (selectedRegion?.[0]?.value != 0 && setSelectedRegion([{ label: 'ALL', value: 0 }])) }} />
+            <Selector width={150} title="Zone" options={zones} value={selectedZones} setValue={(e) => { setSelectedZones(e); (selectedRegion?.[0]?.value != 0 && setSelectedRegion([{ label: 'ALL', value: 0 }])) }} />
           }
           {
             filters.includes('region') &&
-              <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+            <Selector width={150} title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
           }
           {
             filters.includes('product') &&
-              <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
+            <Selector width={150} title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
           }
           {
             filters.includes('entity') &&
-              <Selector title="Entity" isMulti={false} options={entity} value={selectedEntity} setValue={setSelectedEntity} />
+            <Selector width={150} title="Entity" isMulti={false} options={entity} value={selectedEntity} setValue={setSelectedEntity} />
           }
+          <>
+            {
+              ['Y', 'UTD', 'Custom'].includes(selectedPeriodType) && filters.includes('month') &&
+              <Selector width={150} title="Renewal month" options={month} value={selectedMonth} setValue={setSelectedMonth} />
+            }
+          </>
         </Box>
         {
           filters.includes('period') &&
-            <Box>
-              <>
-                <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
-                <div className={classes.filterWrapper}>
-                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
-                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
-                  <Tooltip title='Up to Date'>
-                    <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
-                  </Tooltip>
-                  <Tooltip title='Choose custom dates'>
-                    <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                      {
-                        selectedPeriodType === 'Custom' ? (
-                          `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                        ) : 'Custom'
-                      }
-                    </div>
-                  </Tooltip>
-                </div>
-              </>
-              <>
-                {
-                  ['Y', 'UTD', 'Custom'].includes(selectedPeriodType) && filters.includes('month') &&
-                    <Selector title="Renewal month" options={month} value={selectedMonth} setValue={setSelectedMonth} />
-                }
-              </>
-              <Popover
-                id={showPicker ? 'dp' : undefined}
-                open={Boolean(showPicker)}
-                anchorEl={showPicker}
-                onClose={onDateRangeClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
-              >
-                <DateRange
-                  ranges={[dateRange]}
-                  onChange={onDatePickerChange}
-                  maxDate={new Date()}
-                  months={2}
-                  direction="horizontal"
-                  minDate={subDays(new Date(), 1095)}
-                />
-                <Box p={1} textAlign='right'>
-                  <Button variant="contained" color="primary" onClick={onDateRangeClose}>
-                    Apply
-                  </Button>
-                </Box>
-              </Popover>
-            </Box>
+          <Box>
+            <>
+              <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
+              <div className={classes.filterWrapper}>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
+                <Tooltip title='Up to Date'>
+                  <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
+                </Tooltip>
+                <Tooltip title='Choose custom dates'>
+                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                    {
+                      selectedPeriodType === 'Custom' ? (
+                        `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                      ) : 'Custom'
+                    }
+                  </div>
+                </Tooltip>
+              </div>
+            </>
+            <Popover
+              id={showPicker ? 'dp' : undefined}
+              open={Boolean(showPicker)}
+              anchorEl={showPicker}
+              onClose={onDateRangeClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+            >
+              <DateRange
+                ranges={[dateRange]}
+                onChange={onDatePickerChange}
+                maxDate={new Date()}
+                months={2}
+                direction="horizontal"
+                minDate={subDays(new Date(), 1095)}
+              />
+              <Box p={1} textAlign='right'>
+                <Button variant="contained" color="primary" onClick={onDateRangeClose}>
+                  Apply
+                </Button>
+              </Box>
+            </Popover>
+          </Box>
         }
       </Box>
     </Box>

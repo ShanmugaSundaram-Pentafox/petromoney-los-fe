@@ -1,18 +1,11 @@
 import {
-  Button,
-  Drawer,
   IconButton,
 } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
 import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/styles';
 import { format, parse } from 'date-fns';
-import MUIDataTable from 'mui-datatables';
-import { useSnackbar } from 'notistack';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ApproveNocForm from './ApproveNocForm';
 import RequestNocForm from './RequestNocForm';
 import CustomToken from '../../components/CommonComponents/CustomToken';
@@ -24,6 +17,11 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { getAllNocRequest } from '../../services/noc.services';
 import { isAllowed } from '../../utils/cerbos';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { useQuery } from 'react-query';
+import { Button } from '@mantine/core';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
+import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -33,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'inline-block',
     borderRadius: '29px',
     padding: '3px 8px',
-    fontSize: '13px',
+    fontSize: '12px',
     fontWeight: '600',
     minWidth: '30px',
     textAlign: 'center',
@@ -60,42 +58,33 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   const [openModal, setOpenModal] = useState();
   const [openApproveModal, setOpenApproveModal] = useState();
   const [openViewer, setOpenViewer] = useState({ open: false });
-  const [list, setList] = useState();
-  const { enqueueSnackbar } = useSnackbar();
 
   const actionable = !permissionCheck(
     currentUser.role_name,
     rulesList.external_view
   );
-  useEffect(() => {
-    setLoading(true);
-    getAllNocRequest()
-      .then((data) => {
-        let d = data.map((item) => {
-          const parsedDate = parse(item?.issued_date || undefined, 'dd-MM-yyyy', new Date());
-          return {
-            ...item,
-            formated_date: format(parsedDate, 'MMM, yyyy'),
-          }
-        });
-        setList(d);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setLoading(false);
-        console.log(e);
+
+  const getAllNOCRequestQuery = useQuery({
+    queryKey: ['noc-request', refresh],
+    queryFn: () => getAllNocRequest(),
+    select: (data) => {
+      let d = data.map((item) => {
+        const parsedDate = parse(item?.issued_date || undefined, 'dd-MM-yyyy', new Date());
+        return {
+          ...item,
+          formated_date: format(parsedDate, 'MMM, yyyy'),
+        }
       });
-  }, [refresh]);
+      return d;
+    }
+  });
 
   const onRowClick = (rowData) => {
     if (rowData?.status == 'approved' || rowData?.status == 'rejected') {
-      enqueueSnackbar(`NOC is already ${rowData?.status}`, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'warning',
-      });
+      displayNotification({
+        message: `NOC is already ${rowData?.status}`,
+        variant: 'warning'
+      })
     }
     else {
       setOpenApproveModal(true);
@@ -103,212 +92,148 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     }
   };
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value}</>;
-          },
-        },
+  const column = [
+    {
+      key: 'dealership_id',
+      header: 'Dealership Id',
+      enableColumnFilter: false,
+    }, {
+      key: 'name',
+      header: 'Name',
+      enableColumnFilter: false,
+    }, {
+      key: 'applicant_code',
+      header: 'Applicant Code',
+      enableColumnFilter: false,
+    }, {
+      key: 'noc_type',
+      header: 'Type'
+    }, {
+      key: 'approved_amount',
+      header: 'Approved Amount',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
+      key: 'disbursed_amount',
+      header: 'Disbursed Amount',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
+      key: 'product_name',
+      header: 'Scheme'
+    }, {
+      key: 'formated_date',
+      header: 'Issued Month'
+    }, {
+      key: 'remarks',
+      header: 'Remarks',
+      enableColumnFilter: false,
+    }, {
+      key: 'status',
+      header: 'Status',
+      cell: (value) => {
+        if (value?.getValue() == 'rejected') {
+          return (
+            <div>
+              <CustomToken label={value?.getValue()} variant="error" icon="cross" />
+            </div>
+          );
+        } else if (value?.getValue() == 'approved') {
+          return (
+            <div>
+              <CustomToken label={value?.getValue()} variant="success" icon="tick" />
+            </div>
+          );
+        } else return <CustomToken label={value?.getValue()} variant="warn" />;
       },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>;
-          },
-        },
+    }, {
+      key: 'noc_letter_url',
+      header: 'Documents',
+      enableColumnFilter: false,
+      isHeaderDownload: false,
+      cell: ({ row }) => {
+        return (
+          <div style={{ minWidth: 70 }}>
+            {row?.original?.noc_letter_url ? (
+              <Tooltip title="Download noc letter">
+                <IconButton
+                  size="small"
+                  color="primary"
+                  aria-label="application"
+                  onClick={() =>
+                    setOpenViewer({
+                      ...openViewer,
+                      open: true,
+                      image: row?.original?.noc_letter_url,
+                      type: row?.original?.noc_letter_url?.endsWith('.pdf')
+                    })
+                  }
+                >
+                  <DescriptionIcon style={{ width: 19 }} />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              '-'
+            )}
+          </div>
+        );
       },
-      {
-        label: 'Applicant code',
-        name: 'applicant_code',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => <span>{value}</span>,
-        },
-      },
-      {
-        label: 'Type',
-        name: 'noc_type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => <>{value}</>,
-        },
-      },
-      {
-        label: 'Approved Amount',
-        name: 'approved_amount',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => <strong><Currency value={value} /></strong>,
-        },
-      },
-      {
-        label: 'Disbursed Amount',
-        name: 'disbursed_amount',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => <strong><Currency value={value} /></strong>,
-        },
-      },
-      {
-        label: 'Product',
-        name: 'product_name',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => <>{value}</>,
-        },
-      },
-      {
-        label: 'Issued Month',
-        name: 'formated_date',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => <>{value ? value : '-'}</>,
-        },
-      },
-      {
-        label: 'Remarks',
-        name: 'remarks',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => <>{value ? value : '-'}</>,
-        },
-      },
-      {
-        name: 'status',
-        label: 'Status',
-        options: {
-          customBodyRender: (value, tableMeta) => {
-            if (value == 'rejected') {
-              return (
-                <div>
-                  <CustomToken label={value} variant="error" icon="cross" />
-                </div>
-              );
-            } else if (value == 'approved') {
-              return (
-                <div>
-                  <CustomToken label={value} variant="success" icon="tick" />
-                </div>
-              );
-            } else return <CustomToken label={value} variant="warn" />;
-          },
-          filter: false,
-        },
-      },
-      {
-        label: 'Documents',
-        name: 'noc_letter_url',
-        options: {
-          filter: false,
-          sort: false,
-          display: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: (value, r) => {
-            return (
-              <div style={{ minWidth: 70 }}>
-                {value ? (
-                  <Tooltip title="Download noc letter">
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      aria-label="application"
-                      onClick={() =>
-                        setOpenViewer({
-                          ...openViewer,
-                          open: true,
-                          image: value,
-                          type: value?.endsWith('.pdf')
-                        })
-                      }
-                    >
-                      <DescriptionIcon style={{ width: 19 }} />
-                    </IconButton>
-                  </Tooltip>
-                ) : (
-                  '-'
-                )}
-              </div>
-            );
-          },
-        },
-      },
-    ];
-  }, [list]);
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    customToolbar: () => {
-      return (
-        // noc request raise permissions
-        isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest) ?
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => setOpenModal(true)}
-          >
-            Raise Request
-          </Button> : null
-      );
     },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 6) {
-        isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) &&
-          onRowClick(list[cellMeta.dataIndex], list[cellMeta.dataIndex]);
-      }
-    },
-  };
+  ];
+
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => false,
+  //   customToolbar: () => {
+  //     return (
+  //       // noc request raise permissions
+  //       isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest) ?
+  //         <Button
+  //           color="primary"
+  //           variant="contained"
+  //           onClick={() => setOpenModal(true)}
+  //         >
+  //           Raise Request
+  //         </Button> : null
+  //     );
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex !== 6) {
+  //       isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) &&
+  //         onRowClick(list[cellMeta.dataIndex], list[cellMeta.dataIndex]);
+  //     }
+  //   },
+  // };
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(list) ? (
-          <MUIDataTable
-            title={
-              <Typography className={classes.title} variant="h4" component="h4">
-                {'NOC Applications'} ({list.length})
-              </Typography>
-            }
-            data={list}
-            columns={columns}
-            options={options}
-          />
-        ) : (
-          !loading && <Paper style={{ padding: 10 }}>No Request found</Paper>
-        )
-      }
-      {
-        loading && (
-          <div style={{ textAlign: 'center' }}><CircularProgress /></div>
-        )
-      }
-      <Drawer
-        anchor="right"
-        open={openModal}
+      <DataTableViewer
+        rowData={getAllNOCRequestQuery?.data}
+        column={column}
+        loading={getAllNOCRequestQuery?.isLoading}
+        styles={{ overflowX: 'auto', whiteSpace: 'nowrap', maxWidth: '100vw' }}
+        onRowClick={(i) => { isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) && onRowClick(i) }}
+        action={
+          isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest)
+            ? <Button
+              size='xs'
+              onClick={() => setOpenModal(true)}
+            >
+              Raise Request
+            </Button>
+            : null
+        }
+        title={'NOC Application'}
+      />
+      <RightSideDrawer
+        opened={openModal}
         onClose={() => {
           setOpenModal(false);
           setRowData({});
         }}
-        variant="temporary"
+        size='md'
+        title={'NOC Request Form'}
       >
         <RequestNocForm
           callback={() => {
@@ -317,15 +242,14 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           }}
           data={rowData}
         />
-      </Drawer>
-      <Drawer
-        anchor="right"
-        open={openApproveModal}
+      </RightSideDrawer>
+      <RightSideDrawer
+        opened={openApproveModal}
         onClose={() => {
           setOpenApproveModal(false);
           setRowData({});
         }}
-        variant="temporary"
+        title={'Approve NOC Form'}
       >
         <ApproveNocForm
           currentUser={currentUser}
@@ -335,7 +259,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           }}
           data={rowData}
         />
-      </Drawer>
+      </RightSideDrawer>
       <FormDialog className={classes.dialogBox} title={'NOC letter'} open={openViewer.open} onClose={() => setOpenViewer({ open: false })}>
         <FilePreview data={openViewer} />
       </FormDialog>

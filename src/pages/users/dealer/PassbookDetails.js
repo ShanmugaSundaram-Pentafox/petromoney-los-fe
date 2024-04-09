@@ -8,7 +8,7 @@ import MUIDataTable from 'mui-datatables';
 import React, { useState, useMemo } from 'react'
 import { useMount } from 'react-use';
 import Currency from '../../../components/Number/Currency';
-import usePageTitle from '../../../hooks/usePageTitle';
+// import usePageTitle from '../../../hooks/usePageTitle';
 import { getPassbookDetails } from '../../../services/common.service';
 import { getDealerDetails } from '../../../services/dealers.service';
 const useStyles = makeStyles(theme => ({
@@ -39,12 +39,10 @@ const PassbookDetails = ({ CurrentUser }) => {
           })
           .catch((e) => {
             setLoading(false)
-            console.log(e);
           });
       })
       .catch((e) => {
         setLoading(false)
-        console.log(e);
       });
   });
   const columns = useMemo(() => {
@@ -97,7 +95,7 @@ const PassbookDetails = ({ CurrentUser }) => {
     rowsPerPageOptions: [15, 20, 30],
 
   };
-  usePageTitle('Passbook')
+  // usePageTitle('Passbook')
   return (
     <>
       <div className={classes.root} >

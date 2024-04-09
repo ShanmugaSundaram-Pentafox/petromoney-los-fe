@@ -1,4 +1,3 @@
-import { Box, Tooltip, Popover, Button } from '@material-ui/core';
 import { subDays, format } from 'date-fns'
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-date-range';
@@ -7,6 +6,7 @@ import { useMount } from 'react-use';
 import { filterStyles, Selector } from '../../../components/CommonComponents/FilterCard';
 import { getAllRegions, getFilteredProducts, getZones } from '../../../services/common.service';
 import { getLoanStats } from '../../../services/loans.service';
+import { Box, Button, Popover, Tooltip } from '@mantine/core';
 
 
 
@@ -38,39 +38,42 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
     let month = today.getMonth(); // to get the current month if it is with January being 0 and December being 11. 
     setSelectedPeriodType(type)
     switch (type) {
-    case 'D':
-      setSelectedPeriod({
-        from: today,
-        to: today,
-      })
-      break;
-    case 'W':
-      setSelectedPeriod({
-        from: subDays(today, 8),
-        to: today,
-      })
-      break;
-    case 'M':
-      setSelectedPeriod({
-        from: new Date(year, month),
-        to: new Date(),
-      })
-      break;
-    case 'Y':
-      year = month < 3 ? year - 1 : year // if the user choose YTD from the month between JAN to March the period is set from the previous year APR month.
-      setSelectedPeriod({
-        from: new Date(year, 3),
-        to: new Date(),
-      })
-      break;
-    case 'UTD':
-      setSelectedPeriod({})
-      break;
-    case 'Custom':
-      setShowPicker(event.currentTarget)
-      break;
-    default:
-      break;
+      case 'D':
+        setSelectedPeriod({
+          from: today,
+
+
+
+          to: today,
+        })
+        break;
+      case 'W':
+        setSelectedPeriod({
+          from: subDays(today, 8),
+          to: today,
+        })
+        break;
+      case 'M':
+        setSelectedPeriod({
+          from: new Date(year, month),
+          to: new Date(),
+        })
+        break;
+      case 'Y':
+        year = month < 3 ? year - 1 : year // if the user choose YTD from the month between JAN to March the period is set from the previous year APR month.
+        setSelectedPeriod({
+          from: new Date(year, 3),
+          to: new Date(),
+        })
+        break;
+      case 'UTD':
+        setSelectedPeriod({})
+        break;
+      case 'Custom':
+        setShowPicker(true)
+        break;
+      default:
+        break;
     }
   }
 
@@ -149,77 +152,73 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
       from: dateRange.startDate,
       to: dateRange.endDate,
     });
-    setShowPicker();
+    setShowPicker(false);
   }
 
   return (
-    <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10 }}>
+    <Box p={3} mb={0}>
       <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} >
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
             filters.includes('zone') &&
-              <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
+            <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
           }
           {
             filters.includes('region') &&
-              <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+            <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
           }
           {
             filters.includes('product') &&
-              <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
+            <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
           }
         </Box>
         {
           filters.includes('period') &&
-            <Box>
-              <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
-              <div className={classes.filterWrapper}>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
-                <Tooltip title='Up to Date'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
-                </Tooltip>
-                <Tooltip title='Choose custom dates'>
-                  <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                    {
-                      selectedPeriodType === 'Custom' ? (
-                        `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                      ) : 'Custom'
-                    }
-                  </div>
-                </Tooltip>
-              </div>
+          <Box>
+            <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
+            <div className={classes.filterWrapper}>
+              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
+              <Tooltip label='Up to Date' withArrow color='gray'>
+                <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
+              </Tooltip>
               <Popover
-                id={showPicker ? 'dp' : undefined}
-                open={Boolean(showPicker)}
-                anchorEl={showPicker}
+                opened={showPicker}
                 onClose={onDateRangeClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'center',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
+                position='bottom-end'
+                withArrow
               >
-                <DateRange
-                  ranges={[dateRange]}
-                  onChange={onDatePickerChange}
-                  maxDate={new Date()}
-                  months={2}
-                  direction="horizontal"
-                  minDate={subDays(new Date(), 1095)}
-                />
-                <Box p={1} textAlign='right'>
-                  <Button variant="contained" color="primary" onClick={onDateRangeClose}>
-                    Apply
-                  </Button>
-                </Box>
+                <Popover.Target>
+                  <Tooltip withArrow color='gray' label='Choose custom dates'>
+                    <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                      {
+                        selectedPeriodType === 'Custom' ? (
+                          `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                        ) : 'Custom'
+                      }
+                    </div>
+                  </Tooltip>
+                </Popover.Target>
+                <Popover.Dropdown>
+                  <DateRange
+                    ranges={[dateRange]}
+                    onChange={onDatePickerChange}
+                    maxDate={new Date()}
+                    months={2}
+                    direction="horizontal"
+                    minDate={subDays(new Date(), 1095)}
+                  />
+                  <Box >
+                    <Button onClick={onDateRangeClose}>
+                      Apply
+                    </Button>
+                  </Box>
+                </Popover.Dropdown>
               </Popover>
-            </Box>
+            </div>
+          </Box>
         }
       </Box>
     </Box>

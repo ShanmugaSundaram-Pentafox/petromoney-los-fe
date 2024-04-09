@@ -1,92 +1,32 @@
-import { Grid } from '@material-ui/core'
-import { Paper } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography'
-import Skeleton from '@material-ui/lab/Skeleton';
-import { makeStyles } from '@material-ui/styles'
-import MUIDataTable from 'mui-datatables'
-import React, { useMemo, useState } from 'react'
-import { connect } from 'react-redux'
+import React, { useState } from 'react'
 import { NavLink as RouterLink } from 'react-router-dom'
 import { useMount } from 'react-use'
-import { createStructuredSelector } from 'reselect'
 import { getOmcList } from '../../../services/common.service'
 import { getAllTransport, getTransportersOwnerById } from '../../../services/transports.service'
-import { setAllTransports } from '../../../store/transports/transports.actions'
-import { selectAllTransports } from '../../../store/transports/transports.selector'
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 
-
-
-
-const useStyles = makeStyles((theme) => ({
-  title: {
-    fontWeight: 500,
-    marginRight: 12,
-  },
-  button: {
-    display: 'flex',
-    marginTop: theme.spacing(1),
-    marginRight: theme.spacing(1),
-  },
-}))
-function getSteps() {
-  return ['Add Transport Owner Information', 'Add Transport Information'];
-}
-
-
-
-const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, transporterId }) => {
-
-
+const TransportsTable = ({ onRowClick, portal, transporterId }) => {
+  const [transports, setAllTransports] = useState();
   const [loading, setLoading] = useState(false);
   const [omcs, setOmcs] = useState([]);
 
-  const classes = useStyles()
-
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Code',
-        name: 'transporter_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
-          },
-        },
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        },
-      },
-      {
-        label: 'Mobile Number',
-        name: 'mobile',
-        options: {
-          filter: false,
-          sort: true,
-        },
-      },
-      {
-        label: 'OMC',
-        name: 'omc_value',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value || '-'}</>
-          },
-        },
-      },
-    ]
-  }, [transports])
+  const column = [
+    {
+      key: 'transporter_id',
+      header: 'Code',
+      cell: (value) => <RouterLink to={`/transports/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }, {
+      key: 'name',
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }, {
+      key: 'mobile',
+      header: 'Mobile Number',
+    }, {
+      key: 'omc_value',
+      header: 'OMC',
+    },
+  ]
 
   useMount(() => {
     if (portal) {
@@ -101,19 +41,17 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
           setLoading(false)
         })
     } else
-    if (!transports.length) {
       setLoading(true)
-      getAllTransport()
-        .then((data) => {
-          setAllTransports(data)
-          setLoading(false)
-          // setData(data)
-        })
-        .catch((e) => {
-          console.log(e);
-          setLoading(false);
-        })
-    }
+    getAllTransport()
+      .then((data) => {
+        setAllTransports(data)
+        setLoading(false)
+        // setData(data)
+      })
+      .catch((e) => {
+        console.log(e);
+        setLoading(false);
+      })
     getOmcList()
       .then((data) => {
         setOmcs(data);
@@ -134,54 +72,21 @@ const TransportsTable = ({ transports, setAllTransports, onRowClick, portal, tra
     onRowClick: (rowData, { dataIndex }) => {
       onRowClick(transports[dataIndex].dealership_id, transports[dataIndex])
     },
-
-    // customToolbar: () => {
-    //   return (
-    //     <Button
-    //       color="primary"
-    //       variant="contained"
-    //       onClick={() => setOpenModal(true)}
-    //     >
-    //       Add Transport
-    //     </Button>
-    //   );
-    // }
   }
 
   return (
     <div>
-      {
-        loading ? (
-          <Grid item xs={12}>
-            <Skeleton variant="rect" width="100%" height={400} />
-          </Grid>
-        ) :
-          Array.isArray(transports) && transports.length ? (
-            <MUIDataTable
-              title={
-                <div className={classes.button}>
-                  <Typography className={classes.title} variant="h5" component="h5">
-                    Transports List
-                  </Typography>
-                </div>
-              }
-              data={transports}
-              columns={columns}
-              options={options}
-            />
-          ) : (
-            <Paper style={{ marginTop: 10, padding: 10 }}>No Transporters found</Paper>
-          )}
+      <DataTableViewer
+        title={'Transporter List'}
+        column={column}
+        filter={false}
+        rowData={transports}
+        onRowClick={i => onRowClick(i?.dealership_id, i)}
+        loading={loading}
+      />
     </div>
   )
 }
 
-const mapStateToProps = createStructuredSelector({
-  transports: selectAllTransports,
-})
 
-const mapDispatchToProps = (dispatch) => ({
-  setAllTransports: (data) => dispatch(setAllTransports(data)),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(TransportsTable)
+export default TransportsTable;

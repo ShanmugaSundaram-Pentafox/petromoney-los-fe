@@ -79,10 +79,6 @@ const apiCall = async (route, options = {}) => {
    */
   const request = new Promise((resolve, reject) => {
     console.log(requestURL);
-    // console.log(body);
-    // console.log(JSON.stringify(body));
-    // console.log(method);
-    // console.log(headers);
 
     async function handleResponse(response) {
       /**
@@ -103,8 +99,6 @@ const apiCall = async (route, options = {}) => {
         });
       */
 
-      // console.log(response.status);
-      // console.log(response.statusText);
 
       /**
        * User session has expired and he must be forced to logout
@@ -168,8 +162,6 @@ const apiCall = async (route, options = {}) => {
     fetch(requestURL, requestDetails)
       .then(handleResponse) // will return the data or handles any errors in the network request
       .then(data => {
-        // console.log(data);
-        // console.log(JSON.stringify(data));
         /**
          * // LOG TO SENTRY
          

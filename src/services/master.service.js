@@ -239,7 +239,6 @@ export const getExternalApi = () => {
 }
 
 export const updateExternalApi = (data, id) => {
-  console.log(data, id);
   let apiUrl = 'master/external'
   if (id) {
     apiUrl += `/${id}`

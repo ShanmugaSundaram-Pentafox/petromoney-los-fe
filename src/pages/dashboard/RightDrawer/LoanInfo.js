@@ -1,4 +1,4 @@
-import { Box, Table } from '@mantine/core';
+import { Box, Group, Table } from '@mantine/core';
 import { Select as MSelect } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
@@ -48,10 +48,14 @@ const LoanInfo = ({
     <>
       <Box p="sm" bg="indigo.0" mb="md" className="rounded-lg">
         {type === 'enhancement' || type === 're-onboarding' && (
-          <div style={{ display: 'flex' }}>
-            <ViewData title='Old Product' value={newInfo?.old_product_name} />
-            <ViewData style={{ marginLeft: 10 }} title='Old loan Amount' value={newInfo?.old_loan_amount} />
-          </div>
+          <Group gap={20}>
+            <Group gap={6}>
+              <ViewData title='Old Product' value={newInfo?.old_product_name} />
+            </Group>
+            <Group gap={6}>
+              <ViewData style={{ marginLeft: 10 }} title='Old loan Amount' value={newInfo?.old_loan_amount} />
+            </Group>
+          </Group>
         )}
 
         <Table

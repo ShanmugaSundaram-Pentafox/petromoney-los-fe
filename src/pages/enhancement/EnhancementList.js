@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import EnhancementTable from './EnhancementTable'
 import usePageTitle from '../../hooks/usePageTitle';
 import { getEnhancementStatusList, getStatusWiseRecordCount } from '../../services/enhancement.service';
-import LoanStats from '../dashboard/components/LoanStats';
 import RenewalFilter from '../renewal/RenewalFilter';
 import { Grid } from '@mantine/core';
+import LoanStatsMin from '../dashboard/components/LoanStatsMin';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -52,7 +52,7 @@ const EnhancementList = ({ currentUser }) => {
           />
         </Grid.Col>
         <Grid.Col span={12}>
-          <LoanStats
+          <LoanStatsMin
             selectedStatsCard={selectedStatsCard}
             handleClick={handleClick}
             chartData={chartData}

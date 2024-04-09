@@ -1,4 +1,4 @@
-import { Stack, Table, Text, Title, Button, Select as MantineSelect, Group, Box } from '@mantine/core';
+import { Stack, Table, Text, Title, Button, Select as MantineSelect, Group, Box, ScrollArea } from '@mantine/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
@@ -153,121 +153,123 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       <Title order={3} mb="lg">Loans</Title>
       <Box style={{ display: 'flex', }}>
         <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
-          <Table fz="xs" aria-label="Dealers" >
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Type</Table.Th>
-                <Table.Th>Appr</Table.Th>
-                <Table.Th>Disb</Table.Th>
-                <Table.Th>Status</Table.Th>
-                <Table.Th>Application Status</Table.Th>
-                <Table.Th ta="center">Actions</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-
-            <Table.Tbody>
-              {Array.isArray(loanData) && loanData?.map(row => (
-                <Table.Tr key={row.id}>
-                  <Table.Td className="whitespace-nowrap">{row.type}</Table.Td>
-
-                  <Table.Td>
-                    <Tooltip title={row.approval_remarks} arrow>
-                      <Currency value={row.amount_approved} />
-                    </Tooltip>
-                  </Table.Td>
-
-                  <Table.Td>
-                    <Tooltip title={row.disbursement_approval_remarks} arrow>
-                      <Currency value={row.amount_disbursed} />
-                    </Tooltip>
-                  </Table.Td>
-
-                  <Table.Td>{row.status}</Table.Td>
-
-                  <Table.Td>
-                    {row?.status?.toLowerCase() !== 'disbursed' && row?.status?.toLowerCase() !== 'rejected' && (
-                      <MantineSelect
-                        w={200}
-                        placeholder='Select Status'
-                        value={selectedStatus?.value}
-                        disabled={!isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
-                        onChange={(_value, option) => {
-                          setSelectedStatus(option)
-                          updateApplicationStatus({
-                            application_state: option?.id
-                          })
-                        }}
-                        size='xs'
-                        data={status?.map((i) => ({
-                          label: i?.application_state,
-                          value: `${i?.id}-${i?.application_state}`,
-                          ...i,
-                        }))}
-                      />
-                      // <MSelect
-                      //   fullWidth
-                      //   native
-                      //   placeholder={'Select status'}
-                      //   value={selectedStatus?.id}
-                      //   disabled={!isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
-                      //   onChange={e => {
-                      //     const d = status?.find(i => i.id == e.target.value)
-                      //     setSelectedStatus(d)
-                      //     updateApplicationStatus({
-                      //       application_state: e.target.value
-                      //     })
-                      //   }}
-                      // >
-                      //   <option value=''>-</option>
-                      //   {
-                      //     status?.map((item, i) => item.application_state !== row.application_state && <option key={i} value={item.id}>{item.application_state}</option>)
-                      //   }
-                      // </MSelect>
-                    )}
-                  </Table.Td>
-
-                  <Table.Td>
-                    {row?.status?.toLowerCase() === 'submitted' && editable && (
-                      <Button
-                        variant="outline"
-                        size="xs"
-                        onClick={getRemarks(row)}
-                        disabled={loading}
-                      >
-                        {loading ? 'Please wait...' : 'Send for review'}
-                      </Button>
-                    )}
-
-                    {row?.status?.toLowerCase() === 'loan_review' && editable && (
-                      <Button
-                        variant="outline"
-                        size="xs"
-                        onClick={getRemarks(row)}
-                        disabled={loading}
-                      >
-                        {loading ? 'Please wait...' : 'Send for Approval'}
-                      </Button>
-                    )}
-
-                    {row?.status?.toLowerCase() === 'approved' && editable && (
-                      <Button
-                        variant="outline"
-                        size="xs"
-                        onClick={getRemarks(row)}
-                        disabled={loading}
-                      >
-                        {loading ? 'Please wait...' : 'Send for Disbursement Approval'}
-                      </Button>
-                    )}
-
-                    {row?.status?.toLowerCase() === 'loan_approval' && 'Pending for approval'}
-
-                    {row?.status?.toLowerCase() === 'disbursement_approval' && 'Pending for disbursement approval'}
-                  </Table.Td>
+          <ScrollArea.Autosize>
+            <Table fz="xs" aria-label="Dealers">
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>Type</Table.Th>
+                  <Table.Th>Appr</Table.Th>
+                  <Table.Th>Disb</Table.Th>
+                  <Table.Th>Status</Table.Th>
+                  <Table.Th>Application Status</Table.Th>
+                  <Table.Th ta="center">Actions</Table.Th>
                 </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
+              </Table.Thead>
+
+              <Table.Tbody>
+                {Array.isArray(loanData) && loanData?.map(row => (
+                  <Table.Tr key={row.id}>
+                    <Table.Td className="whitespace-nowrap">{row.type}</Table.Td>
+
+                    <Table.Td>
+                      <Tooltip title={row.approval_remarks} arrow>
+                        <Currency value={row.amount_approved} />
+                      </Tooltip>
+                    </Table.Td>
+
+                    <Table.Td>
+                      <Tooltip title={row.disbursement_approval_remarks} arrow>
+                        <Currency value={row.amount_disbursed} />
+                      </Tooltip>
+                    </Table.Td>
+
+                    <Table.Td>{row.status}</Table.Td>
+
+                    <Table.Td>
+                      {row?.status?.toLowerCase() !== 'disbursed' && row?.status?.toLowerCase() !== 'rejected' && (
+                        <MantineSelect
+                          w={200}
+                          placeholder='Select Status'
+                          value={selectedStatus?.value}
+                          disabled={!isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
+                          onChange={(_value, option) => {
+                            setSelectedStatus(option)
+                            updateApplicationStatus({
+                              application_state: option?.id
+                            })
+                          }}
+                          size='xs'
+                          data={status?.map((i) => ({
+                            label: i?.application_state,
+                            value: `${i?.id}-${i?.application_state}`,
+                            ...i,
+                          }))}
+                        />
+                        // <MSelect
+                        //   fullWidth
+                        //   native
+                        //   placeholder={'Select status'}
+                        //   value={selectedStatus?.id}
+                        //   disabled={!isAllowed(currentUser?.permissions, resources_id?.loansList, action_id?.loansList?.applicationStatus)}
+                        //   onChange={e => {
+                        //     const d = status?.find(i => i.id == e.target.value)
+                        //     setSelectedStatus(d)
+                        //     updateApplicationStatus({
+                        //       application_state: e.target.value
+                        //     })
+                        //   }}
+                        // >
+                        //   <option value=''>-</option>
+                        //   {
+                        //     status?.map((item, i) => item.application_state !== row.application_state && <option key={i} value={item.id}>{item.application_state}</option>)
+                        //   }
+                        // </MSelect>
+                      )}
+                    </Table.Td>
+
+                    <Table.Td>
+                      {row?.status?.toLowerCase() === 'submitted' && editable && (
+                        <Button
+                          variant="outline"
+                          size="xs"
+                          onClick={getRemarks(row)}
+                          disabled={loading}
+                        >
+                          {loading ? 'Please wait...' : 'Send for review'}
+                        </Button>
+                      )}
+
+                      {row?.status?.toLowerCase() === 'loan_review' && editable && (
+                        <Button
+                          variant="outline"
+                          size="xs"
+                          onClick={getRemarks(row)}
+                          disabled={loading}
+                        >
+                          {loading ? 'Please wait...' : 'Send for Approval'}
+                        </Button>
+                      )}
+
+                      {row?.status?.toLowerCase() === 'approved' && editable && (
+                        <Button
+                          variant="outline"
+                          size="xs"
+                          onClick={getRemarks(row)}
+                          disabled={loading}
+                        >
+                          {loading ? 'Please wait...' : 'Send for Disbursement Approval'}
+                        </Button>
+                      )}
+
+                      {row?.status?.toLowerCase() === 'loan_approval' && 'Pending for approval'}
+
+                      {row?.status?.toLowerCase() === 'disbursement_approval' && 'Pending for disbursement approval'}
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          </ScrollArea.Autosize>
         </Box>
       </Box>
 

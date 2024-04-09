@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import ReOnboardingTable from './ReOnboardingTable'
 import usePageTitle from '../../hooks/usePageTitle';
 import { getEnhancementStatusList, getStatusWiseRecordCount } from '../../services/enhancement.service';
-import LoanStats from '../dashboard/components/LoanStats';
 import RenewalFilter from '../renewal/RenewalFilter';
 import { Grid } from '@mantine/core';
+import LoanStatsMin from '../dashboard/components/LoanStatsMin';
 
 const ReOnboardingList = ({ currentUser }) => {
   usePageTitle('Re Opening Loans');
@@ -47,7 +47,7 @@ const ReOnboardingList = ({ currentUser }) => {
           />
         </Grid.Col>
         <Grid.Col span={12}>
-          <LoanStats
+          <LoanStatsMin
             selectedStatsCard={selectedStatsCard}
             handleClick={handleClick}
             chartData={chartData}

@@ -1,6 +1,5 @@
 export const URL = {
-  // base: process.env.REACT_APP_API_BASE,
-  base: 'https://api-uat.petromoney.in/api/',
+  base: process.env.REACT_APP_API_BASE,
   login: 'login/user',
   verifyMobileNumber: 'login/otp',
   resendOtp: 'otp/resend',

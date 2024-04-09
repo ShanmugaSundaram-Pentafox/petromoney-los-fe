@@ -1,6 +1,4 @@
 import {
-  Typography,
-  Paper,
   FormControl,
   RadioGroup,
   FormControlLabel,
@@ -8,27 +6,20 @@ import {
   TextField,
   InputAdornment,
   Box,
-  TableFooter,
 } from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import { Formik } from 'formik';
 import { head } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { logger } from '../../config/logger';
-import usePageTitle from '../../hooks/usePageTitle';
+// import usePageTitle from '../../hooks/usePageTitle';
 import {
   getPotentialOpportunity,
 } from '../../services/loans.service';
 import LoaderButton from '../CommonComponents/Button/LoaderButton';
-import { ViewData } from '../CommonComponents/FilePreview';
 import Currency from '../Number/Currency';
+import { Paper, Table, Text } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   totalamount: {
@@ -44,26 +35,26 @@ const useStyles = makeStyles(theme => ({
     flexGrow: '2'
   },
   currencyvalue: {
-    fontSize: '2rem', 
+    fontSize: '2rem',
     color: '#3f51b5'
   },
   crs: {
-    color: '#a9a9a9', 
-    fontWeight: '900', 
-    fontSize: '1.3rem', 
-    alignSelf: 'flex-end', 
+    color: '#a9a9a9',
+    fontWeight: '900',
+    fontSize: '1.3rem',
+    alignSelf: 'flex-end',
     marginBottom: '3px'
   },
   title: {
-    display: 'flex', 
-    justifyContent: 'center', 
-    fontSize: '10px', 
+    display: 'flex',
+    justifyContent: 'center',
+    fontSize: '10px',
     color: '#888'
   }
 }))
 
 const OpportunityReport = () => {
-  usePageTitle('Opportunity Report');
+  // usePageTitle('Opportunity Report');
   const classes = useStyles();
   const [view, setView] = useState('state');
   const [potentialOpportunity, setPotentialOpportunity] = useState([]);
@@ -132,24 +123,24 @@ const OpportunityReport = () => {
       >
         {({ handleChange, handleSubmit, values, errors }) => (
           <Paper
+            m={8}
+            radius={4}
             style={{
-              margin: 8,
-              borderRadius: 4,
               display: 'flex',
               alignItems: 'center',
-              backgroundColor: '#f3f3f3',
-              gap: '18px'
+              gap: '18px',
+              background: '#f1f5f9',
             }}
           >
             <div className={classes.totalamount}>
-                {/* title="Potential Opportunity" */}
-                  <span style={{ display: 'flex', gap: '5px' }}>
-                    <strong style={{ alignSelf: 'flex-end' }}>
-                      <Currency value={total?.total_average_ticket_count} className={classes.currencyvalue}/>
-                    </strong>
-                    <span className={classes.crs}>Crs</span>
-                  </span>
-                  <span className={classes.title}>Potential Opportunity</span>
+              {/* title="Potential Opportunity" */}
+              <span style={{ display: 'flex', gap: '5px' }}>
+                <span style={{ alignSelf: 'flex-end' }} className={classes.currencyvalue}>
+                  <Currency value={total?.total_average_ticket_count} />
+                </span>
+                <span className={classes.crs}>Crs</span>
+              </span>
+              <span className={classes.title}>Potential Opportunity</span>
             </div>
             <div className={classes.getdata}>
               <TextField
@@ -195,7 +186,7 @@ const OpportunityReport = () => {
                 Get Data
               </LoaderButton>
             </div>
-            
+
           </Paper>
         )}
       </Formik>
@@ -208,7 +199,7 @@ const OpportunityReport = () => {
             alignItems: 'flex-end',
           }}
         >
-          <Typography variant="h4">Potential Opportunity</Typography>
+          <Text style={{ fontSize: '16px' }} fw={600}>Potential Opportunity</Text>
           <FormControl component="fieldset">
             <RadioGroup
               row
@@ -229,65 +220,65 @@ const OpportunityReport = () => {
             </RadioGroup>
           </FormControl>
         </div>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell onClick={() => handleSortRequest('name')}>
-                <TableSortLabel active={true} direction={orderDirection}>
-                  {view.charAt(0).toUpperCase() + view.slice(1)}
-                </TableSortLabel>
-              </TableCell>
-              <TableCell>IOCL</TableCell>
-              <TableCell>HPCL</TableCell>
-              <TableCell>BPCL</TableCell>
-              <TableCell>Total</TableCell>
-              <TableCell>Converted Dealer Count</TableCell>
-              <TableCell
+        <Table horizontalSpacing="md" style={{ fontSize: '12px' }} striped highlightOnHover>
+          <Table.Thead style={{ background: 'rgba(228, 237, 253, 1)' }}>
+            <Table.Tr>
+              <Table.Th onClick={() => handleSortRequest('name')}>
+                {/* <TableSortLabel active={true} direction={orderDirection}> */}
+                {view.charAt(0).toUpperCase() + view.slice(1)}
+                {/* </TableSortLabel> */}
+              </Table.Th>
+              <Table.Th>IOCL</Table.Th>
+              <Table.Th>HPCL</Table.Th>
+              <Table.Th>BPCL</Table.Th>
+              <Table.Th>Total</Table.Th>
+              <Table.Th>Converted Dealer Count</Table.Th>
+              <Table.Th
                 style={{ width: '20%' }}
                 onClick={() => handleSortRequest('average_ticket_count')}
               >
-                <TableSortLabel active={true} direction={orderDirection}>
-                  Proposed Exposure (in Crs)
-                </TableSortLabel>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+                {/* <TableSortLabel active={true} direction={orderDirection}> */}
+                Proposed Exposure (in Crs)
+                {/* </TableSortLabel> */}
+              </Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
             {(rowData)?.map((item, index) => (
-              <TableRow key={index}>
-                <TableCell>{item?.name}</TableCell>
-                <TableCell>{item?.IOCL}</TableCell>
-                <TableCell>{item?.HPCL}</TableCell>
-                <TableCell>{item?.BPCL}</TableCell>
-                <TableCell>{item?.opportunities}</TableCell>
-                <TableCell>{item?.converted_dealers_count}</TableCell>
-                <TableCell>{item?.average_ticket_count}</TableCell>
-              </TableRow>
+              <Table.Tr key={index}>
+                <Table.Td>{item?.name}</Table.Td>
+                <Table.Td>{item?.IOCL}</Table.Td>
+                <Table.Td>{item?.HPCL}</Table.Td>
+                <Table.Td>{item?.BPCL}</Table.Td>
+                <Table.Td>{item?.opportunities}</Table.Td>
+                <Table.Td>{item?.converted_dealers_count}</Table.Td>
+                <Table.Td>{item?.average_ticket_count}</Table.Td>
+              </Table.Tr>
             ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell>Total</TableCell>
-              <TableCell>
-                <strong>{total?.total_IOCL}</strong>
-              </TableCell>
-              <TableCell>
-                <strong>{total?.total_HPCL}</strong>
-              </TableCell>
-              <TableCell>
-                <strong>{total?.total_BPCL}</strong>
-              </TableCell>
-              <TableCell>
-                <strong>{total?.total_opportunities}</strong>
-              </TableCell>
-              <TableCell>
-                <strong>{total?.total_converted_dealers_count}</strong>
-              </TableCell>
-              <TableCell>
-                <strong>{total?.total_average_ticket_count}</strong>
-              </TableCell>
-            </TableRow>
-          </TableFooter>
+          </Table.Tbody>
+          <Table.Tfoot>
+            <Table.Td>
+              <strong>Total</strong>
+            </Table.Td>
+            <Table.Td>
+              <strong>{total?.total_IOCL}</strong>
+            </Table.Td>
+            <Table.Td>
+              <strong>{total?.total_HPCL}</strong>
+            </Table.Td>
+            <Table.Td>
+              <strong>{total?.total_BPCL}</strong>
+            </Table.Td>
+            <Table.Td>
+              <strong>{total?.total_opportunities}</strong>
+            </Table.Td>
+            <Table.Td>
+              <strong>{total?.total_converted_dealers_count}</strong>
+            </Table.Td>
+            <Table.Td>
+              <strong>{total?.total_average_ticket_count}</strong>
+            </Table.Td>
+          </Table.Tfoot>
         </Table>
       </Box>
     </>

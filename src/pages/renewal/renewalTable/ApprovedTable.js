@@ -1,409 +1,176 @@
-import { Button, Dialog, DialogActions, DialogContent, Popover } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { green } from '@material-ui/core/colors';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
-import { List } from '@material-ui/icons';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-import DescriptionIcon from '@material-ui/icons/Description';
-import SyncIcon from '@material-ui/icons/Sync';
-import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
-import { useSnackbar } from 'notistack';
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
-import MuiTableFooter from '../../../components/CommonComponents/MuiTableFooter';
 import SignRequestLayout from '../../../components/Leegality/SignRequestLayout';
 import Currency from '../../../components/Number/Currency';
-import { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../../icons/e-sign.svg';
 import { ReactComponent as LoanAgreementIcon } from '../../../icons/loan_agreement.svg';
 import { getSignedUrl } from '../../../services/common.service';
-import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, syncRenewalData } from '../../../services/renewal.service';
-import { dateCustomSort } from '../../../utils/commonFunctions.util';
-
-const useStyles = makeStyles(theme => ({
-  title: {
-    fontWeight: 500
-  },
-  pill: {
-    display: 'inline-block',
-    borderRadius: '29px',
-    padding: '3px 8px',
-    fontSize: '13px',
-    fontWeight: '600',
-    minWidth: '30px',
-    textAlign: 'center',
-  },
-  itemLists: {
-    padding: '10px',
-    display: 'flex',
-    gap: '6px',
-    flexDirection: 'column',
-  },
-  listItem: {
-    display: 'flex',
-    gap: '10px',
-    alignItems: 'center',
-    cursor: 'pointer',
-    '&:hover': {
-      background: '#f7f7f7',
-    },
-    height: '22px',
-  },
-  listIcon: {
-    width: '20px',
-    display: 'flex',
-    justifyContent: 'center',
-  }
-}));
+import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
+import { ActionIcon, Popover, Text, Tooltip } from '@mantine/core';
+import { IconList } from '@tabler/icons-react';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import DescriptionIcon from '@material-ui/icons/Description';
+import classes from './Renewal.module.css';
 
 
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
-  const classes = useStyles();
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [loanAmount, setLoanAmount] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [type, setType] = useState('');
-  const [loans, setLoans] = useState([]);
-  const [page, setPage] = useState();
+  const [page, setPage] = useState(1);
   const [productTypeId, setProductTypeId] = useState();
   const [search, setSearch] = useState();
-  const [loading, setLoading] = useState(false);
-  const actionable = !permissionCheck(currentUser?.role_name, rulesList?.external_view);
-  const [openDialog, setOpenDialog] = useState(false);
-  const [renewalId, setRenewalId] = useState();
-  const { enqueueSnackbar } = useSnackbar();
-  const [anchorEl, setAnchorEl] = React.useState({});
-  const documentPopover = Boolean(anchorEl?.document);
-  const documentId = documentPopover ? 'document-popover' : undefined;
 
   const pageDetailsQuery = useQuery(
     ['renewal_approvedRecordCount', filterQry, search],
     () => getPageDetails('approved', filterQry),
   );
 
-  useEffect(() => {
-    setLoading(true);
-    getRenewalLoanByStatus('approved', filterQry, page, search)
-      .then(data => {
-        setLoans(data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }, [filterQry, page, search])
+  const getRenewalDataQuery = useQuery(
+    ['renewal_approved', filterQry, page, search],
+    () => getRenewalLoanByStatus('approved', filterQry, page, search),
+  );
 
-  const handleClose = () => {
-    setAnchorEl({});
-  };
-
-  const onDownloadClick = () => {
-    downloadRenewalData('approved', filterQry)
-      .then(data => {
-        getSignedUrl(data[0]?.url)
-          .then((res) => {
-            window.open(res?.url, '_blank');
-          })
-          .catch(e => {
-            enqueueSnackbar(e, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            });
-          })
-      })
-      .catch(e => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
-      })
-  }
-
-  const syncData = () => {
-    syncRenewalData({ renewal_application_id: renewalId })
-      .then(res => {
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+  const renewalDownloadQuery = useQuery({
+    queryKey: 'renewal-download-approved',
+    queryFn: () => downloadRenewalData('approved', filterQry),
+    onSuccess: (data) => {
+      getSignedUrl(data[0]?.url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
         })
-        setOpenDialog(false)
-      })
-      .catch(err => {
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
+        .catch(e => {
+          displayNotification({ message: e, variant: 'error' });
         })
-        setOpenDialog(false)
-      })
-  }
+    },
+    onError: (e) => {
+      displayNotification({ message: e, variant: 'error' })
+    },
+    enabled: Boolean(false),
+    retry: Boolean(false),
+  });
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      }, {
-        label: 'Name',
-        name: 'dealership_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      }, {
-        label: 'Old Product Type',
-        name: 'old_product_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      }, {
-        label: 'New Product Type',
-        name: 'new_product_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      }, {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
-      }, {
-        label: 'New Loan Amount',
-        name: 'approved_amount',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'right',
-          }),
-          setCellHeaderProps: () => ({
-            align: 'right',
-          }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
-        }
-      }, {
-        label: 'Month of renewal',
-        name: 'renewal_month',
-        options: {
-          filter: true,
-          filterWidth: '100%',
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value), 'YYYY-MM-DD').format('MMM, YY') : '-'}</div>
-          }
-        }
-      }, {
-        label: 'Sync',
-        name: 'is_sync',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value, r) => {
-            return (
-              value == 1 ?
-                <Tooltip title='Already synced'>
-                  <CheckCircleTwoToneIcon style={{ color: green[200] }} />
-                </Tooltip> :
-                <div>
-                  <Tooltip title="click to sync">
-                    <SyncIcon style={{ color: 'grey' }} onClick={() => { setOpenDialog(true); setRenewalId(loans?.[r.rowIndex]['loan_id']) }} />
-                  </Tooltip>
+  const column = [
+    {
+      key: 'dealership_id',
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }, {
+      key: 'dealership_name',
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }, {
+      key: 'old_product_name',
+      header: 'Old Scheme',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }, {
+      key: 'new_product_name',
+      header: 'New Scheme',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }, {
+      key: 'region',
+      header: 'Region',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }, {
+      key: 'new_loan_amount',
+      header: 'Disbursed Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
+      key: 'renewal_month',
+      header: 'Month Of Renewal',
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
+    }, {
+      key: 'action',
+      header: 'Documents',
+      isHeaderDownload: false,
+      cell: ({ row }) => {
+        return (
+          row?.original?.['is_document_signed'] == 1 ? (
+            <CustomToken label={'Renewed'} variant="success" icon="tick" />
+          ) : (
+            <Popover
+              withArrow
+              position='left-start'
+              shadow="lg"
+            >
+              <Popover.Target>
+                <Tooltip label={'Click to view documents'} withArrow color='gray' offset={10}>
+                  <span>
+                    <ActionIcon size="xs" variant='subtle' color={'blue'} mt={4}><IconList /></ActionIcon>
+                  </span>
+                </Tooltip>
+              </Popover.Target>
+              <Popover.Dropdown>
+                <div className={classes.itemLists}>
+                  <div className={classes.listItem} onClick={() => { setloanId(row?.original?.['loan_id']); setDealershipId(row?.original?.dealership_id); setType('sanction'); setModalVisible(true); }}>
+                    <div className={classes.listIcon}>
+                      <DescriptionIcon style={{ width: 19, color: 'blue' }} />
+                    </div>
+                    <Text>Sanction Letter</Text>
+                  </div>
+                  <div className={classes.listItem} onClick={() => { setloanId(row?.original?.['loan_id']); setDealershipId(row?.original?.dealership_id); setType('agreement'); setModalVisible(true); setLoanAmount(row?.original?.['current_loan_amount']); setProductTypeId(row?.original?.['new_product_id']) }}>
+                    <div className={classes.listIcon} >
+                      <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
+                    </div>
+                    <Text>Loan Agreement</Text>
+                  </div>
+                  <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setloanId(row?.original?.['loan_id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
+                    <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
+                      <ESignIcon width={17} style={{ color: 'blue' }} />
+                    </div>
+                    <Text>eSign Application</Text>
+                  </div>
+                  <div className={classes.listItem} onClick={() => { setloanId(row?.original?.['loan_id']); setType('loc'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); setLoanAmount(row?.original?.['current_loan_amount']); }}>
+                    <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
+                      <AssignmentIcon style={{ width: 19, color: 'blue' }} />
+                    </div>
+                    <Text>Letter Of Continuity</Text>
+                  </div>
                 </div>
-            )
-          },
-        }
-      },
-      {
-        label: 'Documents',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: false,
-          display: actionable ? true : 'excluded',
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: (value, r) => {
-            return (
-              loans?.[r.rowIndex]['is_document_signed'] == 1 ? (
-                <CustomToken label={'Renewed'} variant="success" icon="tick" />
-              ) : (
-                <>
-                  <Tooltip title={'Click to view Documents'}>
-                    <IconButton size="small" color="primary" aria-label="application" onClick={(e) => setAnchorEl({ document: e.currentTarget, value, r })} ><List /></IconButton>
-                  </Tooltip>
-                </>
-              ))
-          }
-        }
-      }
-    ]
-  }, [loans]);
-
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => true,
-    rowsPerPage: 10,
-    filter: false,
-    print: false,
-    download: false,
-    sort: false,
-    viewColumns: false,
-    searchPlaceholder: 'Search by dealreship ID/Name',
-    onSearchChange: (searchText) => {
-      setSearch(searchText)
-    },
-    customFooter: (count, page, rowsPerPage, changeRowsPerPage, changePage, textLabels) => {
-      return (
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <MuiTableFooter
-            totalCount={pageDetailsQuery?.data?.total_number_of_pages}
-            pageSize={10}
-            onPageChange={(value) => { setPage(value) }}
-          />
-        </div>
-      )
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex != 8 && cellMeta.colIndex != 7) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'approved')
+              </Popover.Dropdown>
+            </Popover>
+          ))
       }
     },
-    customToolbar: () => {
-      return (
-        <>
-          <Tooltip title="Download">
-            <Button style={{ marginTop: 0 }} size='small' startIcon={<CloudDownloadIcon style={{ width: 24, height: 24, color: '#525252' }} color="#f5f5f5" />} onClick={onDownloadClick}></Button>
-          </Tooltip>
-        </>
-      );
-    },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  ]
 
   return (
     <div className={classes.root}>
-      <MUIDataTable
-        title={title ? <Typography className={classes.title} variant="h4" component="h4">{title}</Typography> : null}
-        data={loans}
-        columns={columns}
-        options={options}
+      <DataTableViewer
+        rowData={getRenewalDataQuery?.data}
+        column={column}
+        title={title}
+        onRowClick={i => onRowClick(i?.dealership_id, i, 'approved')}
+        useAPIPagination
+        apiSearch={setSearch}
+        loading={getRenewalDataQuery?.isLoading}
+        page={page}
+        setPage={setPage}
+        totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
+        filter={false}
+        downloadQuery={{ query: renewalDownloadQuery?.refetch, isLoading: renewalDownloadQuery?.isFetching }}
+        excelDownload
       />
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
-      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
-        <SignRequestLayout
-          dealershipId={dealershipId}
-          loanId={loanId}
-          loanAmount={loanAmount}
-          productId={productTypeId}
-          type={type}
-          getStatus={true}
-          title={type === 'application' ? 'eSign Application Form' : type === 'loc' ? 'Letter Of Continuity' : 'Sanction Letter'}
-          onClose={() => setModalVisible(false)}
-          currentUser={currentUser}
-        />
-      </Dialog>
-      <Dialog fullWidth maxWidth="xs" open={openDialog} onClose={() => setOpenDialog(true)}>
-        <DialogContent dividers>
-          <Typography>Ready to sync data with LMS?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <div>
-            <Button variant='outlined' onClick={() => setOpenDialog(false)}>Cancel</Button>
-            <Button variant='contained' color='primary' style={{ color: 'white', marginLeft: 15 }} onClick={() => syncData()}>Yes</Button>
-          </div>
-        </DialogActions>
-      </Dialog>
-
-      <Popover
-        id={documentId}
-        open={documentPopover}
-        anchorEl={anchorEl?.document}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <div className={classes.itemLists}>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('sanction'); setModalVisible(true); }}>
-            <div className={classes.listIcon}>
-              <DescriptionIcon style={{ width: 19, color: 'blue' }} />
-            </div>
-            <Typography>Sanction Letter</Typography>
-          </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setDealershipId(anchorEl?.value); setType('agreement'); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['current_loan_amount']); setProductTypeId(loans?.[anchorEl?.r?.rowIndex]['new_product_id']) }}>
-            <div className={classes.listIcon} >
-              <LoanAgreementIcon width={12} style={{ color: 'blue' }} />
-            </div>
-            <Typography>Loan Agreement</Typography>
-          </div>
-          <div className={classes.listItem} style={{ padding: '3px 0' }} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setType('application'); setDealershipId(anchorEl?.value); setModalVisible(true); }}>
-            <div className={classes.listIcon} style={{ marginLeft: '2px', width: '18px' }}>
-              <ESignIcon width={17} style={{ color: 'blue' }} />
-            </div>
-            <Typography>eSign Application</Typography>
-          </div>
-          <div className={classes.listItem} onClick={() => { setAnchorEl({}); setloanId(loans?.[anchorEl?.r?.rowIndex]['loan_id']); setType('loc'); setDealershipId(anchorEl?.value); setModalVisible(true); setLoanAmount(loans?.[anchorEl?.r?.rowIndex]['current_loan_amount']); }}>
-            <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
-              <AssignmentIcon style={{ width: 19, color: 'blue' }} />
-            </div>
-            <Typography>Letter Of Continuity</Typography>
-          </div>
-        </div>
-      </Popover>
+      <SignRequestLayout
+        dealershipId={dealershipId}
+        loanId={loanId}
+        opened={modalVisible}
+        loanAmount={loanAmount}
+        productId={productTypeId}
+        type={type}
+        getStatus={true}
+        title={type === 'application' ? 'eSign Application Form' : type === 'loc' ? 'Letter Of Continuity' : 'Sanction Letter'}
+        onClose={() => setModalVisible(false)}
+        currentUser={currentUser}
+      />
     </div>
   )
 }

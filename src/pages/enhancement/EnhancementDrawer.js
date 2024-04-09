@@ -1,14 +1,7 @@
-import { Dialog, DialogContent, DialogContentText, Button, DialogTitle, Divider, Paper, Collapse } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+import { Divider, Collapse } from '@material-ui/core';
 import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
-import CloseIcon from '@material-ui/icons/CloseRounded';
-import Alert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/styles';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
-import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { getDealershipById } from '../../services/dealerships.service';
 import { updateEnhancementLoanStatus } from '../../services/enhancement.service';
 import { getLoanById } from '../../services/loans.service';
@@ -17,6 +10,10 @@ import DealershipInfo from '../dealershipDetails/components/DealershipInfo';
 import DealersList from '../dealershipDetails/components/DealersList';
 import WorkingSheetDrawer from '../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import RenewalDrawerFooter from '../renewal/renewalDrawer/RenewalDrawerFooter';
+import { Alert, Box, Button, Group, Modal, Paper, Text, Title } from '@mantine/core';
+import RichTextEditorBox from '../../components/RichTexEditor/RichTextEditorBox';
+import classes from './Enhancement.module.css';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const getRemarksMessage = (status, isReject, isPushback) => {
   if (isReject) {
@@ -46,47 +43,6 @@ const getMessage = (status, isReject, isPushback) => {
   return 'Move to Next Stage?'
 }
 
-const useStyles = makeStyles(theme => ({
-  wrapper: {
-    padding: '0 24px 10px 24px',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-  },
-  dialog: {
-    minWidth: '30vw'
-  },
-  contentWrapper: {
-    padding: 12,
-    flex: 1,
-    overflow: 'auto',
-    overflowX: 'hidden'
-  },
-  wrapperTitle: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginRight: 24,
-  },
-  title: {
-    top: 0,
-    left: 0,
-    padding: '8px 16px',
-    background: theme.palette.grey[300],
-    borderBottomRightRadius: 12,
-    boxShadow: '0px 0px 4px #8d8d8d',
-  },
-  closeIcon: {
-    marginTop: 8,
-  },
-  collapseCard: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10
-  }
-}))
-
 
 const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, onClose }) => {
   const [reviewModal, setReviewModal] = useState(false);
@@ -97,10 +53,8 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
   const [errorStatus, setErrorStatus] = useState()
   const [collapse, setCollapse] = useState(false);
   const [info, setInfo] = useState();
-  const classes = useStyles();
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.loan_id))
   const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), { refetchOnWindowFocus: false })
-  const { enqueueSnackbar } = useSnackbar();
   const closeReviewModal = () => {
     setIsReject(false);
     setIsPushback(false);
@@ -137,11 +91,8 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
       }
       updateEnhancementLoanStatus(reqBody, selectedLoanData?.id)
         .then(res => {
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: res,
             variant: 'success',
           })
           setTimeout(() => {
@@ -149,12 +100,9 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
           }, 1000)
         })
         .catch(err => {
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
+          displayNotification({
+            message: err,
+            variant: 'error'
           })
         })
         .finally(() => {
@@ -200,10 +148,6 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
   return (
     <>
       <div className={classes.wrapper}>
-        <div className={classes.wrapperTitle}>
-          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-          <CloseIcon className={classes.closeIcon} onClick={onClose} />
-        </div>
         <div className={classes.contentWrapper}>
           <DealershipInfo viewOnly={true} data={dealershipData?.data} currentUser={currentUser} />
           <Divider />
@@ -213,7 +157,7 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
                 return (
                   <Paper variant='outlined' key={item?.id} style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}>
                     <div className={classes.collapseCard} onClick={() => handleClick(item.id)}>
-                      <Typography variant='h6' style={{ cursor: 'pointer' }}>{item?.name}</Typography>
+                      <Title order={6} style={{ cursor: 'pointer' }}>{item?.name}</Title>
                       {collapse == item?.id ? <ArrowDropDownSharp /> : <ArrowRightOutlined />}
                     </div>
                     <Collapse in={collapse == item?.id}>
@@ -229,36 +173,30 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
           <RenewalDrawerFooter filterType={'enhancement'} selectedLoanData={selectedLoanData} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
-      <Dialog
-        open={reviewModal}
+      <Modal
+        opened={reviewModal}
         onClose={closeReviewModal}
+        title={getMessage(status, isReject, isPushback)}
+        zIndex={9999}
+        size={'lg'}
       >
-        <DialogTitle>{getMessage(status, isReject, isPushback)}</DialogTitle>
-        <DialogContent>
+        <Box>
           <div className={classes.dialog}>
-            <DialogContentText id="approval-remarks-desc">
+            <Text id="approval-remarks-desc">
               Please enter your remarks.
-            </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true} remarkData={remarks} />
+            </Text>
+            <RichTextEditorBox onChange={setRemarks} />
             {
               errorStatus ?
-                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert> : null
+                <Alert title={'Error'} withCloseButton={false}>{errorStatus}</Alert> : null
             }
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button variant='outlined' onClick={closeReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
-            <LoaderButton
-              variant='contained'
-              color='primary'
-              buttonLabel='Confirm'
-              size='medium'
-              isLoading={loading}
-              loadingText="Submitting..."
-              onClick={() => updateLoanStatus()}
-            >Confirm</LoaderButton>
-          </div>
-        </DialogContent>
-      </Dialog>
+          <Group justify='flex-end' mt={15}>
+            <Button size='xs' variant='outline' onClick={closeReviewModal}>Cancel</Button>
+            <Button size='xs' loading={loading} onClick={() => updateLoanStatus()} color='green'>Confirm</Button>
+          </Group>
+        </Box>
+      </Modal>
     </>
   );
 }

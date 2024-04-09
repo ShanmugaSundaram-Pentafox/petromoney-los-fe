@@ -1,18 +1,13 @@
-import { Paper } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
-import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
-import React, { useEffect, useMemo, useState } from 'react';
-import { connect } from 'react-redux';
-import { NavLink as RouterLink } from 'react-router-dom';
+import React from 'react';
 // import { createStructuredSelector } from 'reselect';
 import { getLoansByStatus } from '../../services/loans.service';
-import { setLoansByStatus } from '../../store/loans/loans.actions';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
+import DataTableViewer from '../ReactTable/DataTableViewer';
 import Currency from '../Number/Currency';
+import { NavLink as RouterLink } from 'react-router-dom';
+import moment from 'moment';
+import clsx from 'clsx';
+import { useQuery } from 'react-query';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,8 +21,8 @@ const useStyles = makeStyles(theme => ({
     display: 'inline-block',
     borderRadius: '29px',
     padding: '3px 8px',
-    fontSize: '13px',
-    fontWeight: '600',
+    fontSize: '12px',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -41,157 +36,95 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ReviewerTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
-  const [loading, setLoading] = useState(false);
+const ReviewerTable = ({ title, onRowClick, filterQry }) => {
   const classes = useStyles();
 
-  useEffect(() => {
-    // if (!loans || !loans.length) {
-    setLoading(true);
-    getLoansByStatus('loan_review', filterQry)
-      .then(data => {
-        setLoansData('loan_review', data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-    // }
-  }, [filterQry]);
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
+  const getLoanDetailsQuery = useQuery({
+    queryKey: ['loan-details-review', filterQry],
+    queryFn: () => getLoansByStatus('loan_review', filterQry),
+  })
 
-      },
-      {
-        label: 'Type',
-        name: 'type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
+  // useEffect(() => {
+  //   // if (!loans || !loans?.length) {
+  //   setLoading(true);
+  //   getLoansByStatus('loan_review', filterQry)
+  //     .then(data => {
+  //       setLoansData('loan_review', data);
+  //       setLoading(false);
+  //     })
+  //     .catch(e => {
+  //       setLoading(false);
+  //     })
+  //   // }
+  // }, [filterQry]);
 
-      },
-      {
-        label: 'Field Officer',
-        name: 'field_officer',
-        options: {
-          filter: true,
-          sort: true,
-        }
-      },
-      {
-        label: 'Req. Amount',
-        name: 'amount_requested',
-        options: {
-          filter: false,
-          sort: true,
-          // setCellProps: () => ({
-          //   align: 'right',
-          // }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
-        }
-      },
-      {
-        label: 'Req. Date',
-        name: 'modified_date',
-        options: {
-          filter: false,
-          sort: true,
-          // setCellProps: () => ({
-          //   align: 'left',
-          // }),
-          customBodyRender: value => {
-            return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-              {/* {value ? value : '-'} */}
-            </div>
-          }
-        }
-      },
-      {
-        label: 'Reviewer',
-        name: 'reviewer',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <>{value?.toUpperCase() || '-'}</>
-          }
-        }
-      }
-    ]
-  }, []);
-
-  const options = {
-    // filterType: 'checkbox',
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    onRowClick: (rowData, { dataIndex }) => {
-      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'loan_review')
+  const column = [
+    {
+      key: 'dealership_id',
+      header: 'Dealership Id',
+      enableColumnFilter: false,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }, {
+      key: 'name',
+      header: 'Name',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }, {
+      key: 'type',
+      header: 'Type',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }, {
+      key: 'region',
+      header: 'Region',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }, {
+      key: 'field_officer',
+      header: 'Field Officer',
+    }, {
+      key: 'amount_requested',
+      header: 'Req. Amount',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
+      key: 'modified_date',
+      header: 'Req. Date',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+    }, {
+      key: 'reviewer',
+      header: 'Reviewer',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
     },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  ];
+
+  // const options = {
+  //   // filterType: 'checkbox',
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => false,
+  //   onRowClick: (rowData, { dataIndex }) => {
+  //     onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'loan_review')
+  //   },
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   }
+  // };
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
-            data={loans}
-            columns={columns}
-            options={options}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }} >No Pending loans for Review</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      <DataTableViewer
+        rowData={getLoanDetailsQuery?.data}
+        column={column}
+        title={title}
+        count={getLoanDetailsQuery?.data?.length}
+        excelDownload
+        loading={getLoanDetailsQuery?.isLoading}
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'loan_review')}
+      />
     </div>
   )
 }
 
-const mapStateToProps = ({ loans }) => ({
-  loans: loans.loan_review
-});
-
-const mapDispatchToProps = dispatch => ({
-  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ReviewerTable);
+export default ReviewerTable;

@@ -1,17 +1,14 @@
-import { Button, Drawer, Tooltip } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
+import { Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import AddSettlementForm from './AddSettlementForm';
 import EditReferralDataForm from './EditReferralDataForm';
 import Currency from '../../components/Number/Currency';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Button, Paper, Tooltip } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -21,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     display: 'inline-block',
     borderRadius: '29px',
     padding: '3px 8px',
-    fontSize: '13px',
+    fontSize: '12px',
     fontWeight: '600',
     minWidth: '30px',
     textAlign: 'center',
@@ -60,140 +57,86 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
     }
   };
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Dealership Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Disbursed Date',
-        name: 'loan_disbursed_date',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{moment(value).format('DD/MM/YYYY')}</>
-          },
-        }
-      },
-      {
-        label: 'Created By',
-        name: 'created_by',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Referred by Id',
-        name: 'referred_dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <>{value}</>
-        }
-      },
-      {
-        label: 'Referred by Name',
-        name: 'referred_dealership_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Bonus Amount',
-        name: 'current_eligible_bonus',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <Currency value={value ? value : '-'} />
-        }
-      },
-      {
-        label: 'Action',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          customBodyRender: (value, tableMeta) => {
-            return (
-              !tableMeta?.rowData[8] ?
-                <Tooltip title="click to add settlement">
-                  <Button variant='outlined' size='small' color='primary'
-                    onClick={() => setOpen({ open: true, id: value })}
-                  >
-                    Add settlement
-                  </Button>
-                </Tooltip> : '-'
-            )
-          }
-        }
-      },
-    ]
-  }, [loans]);
+  const column = [
+    {
+      key: 'dealership_id',
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }, {
+      key: 'name',
+      header: 'Dealership Name',
+      cell: (value) => <span>{value?.getValue()}</span>
+    }, {
+      key: 'loan_disbursed_date',
+      header: 'Disbursed Date',
+      cell: (value) => <span>{moment(value?.getValue()).format('DD/MM/YYYY')}</span>
+    }, {
+      key: 'created_by',
+      header: 'Created By',
+    }, {
+      key: 'referred_dealership_id',
+      header: 'Referred By Id',
+    }, {
+      key: 'referred_dealership_name',
+      header: 'Referred By Name',
+      cell: (value) => <span>{value?.getValue()}</span>
+    }, {
+      key: 'current_eligible_bonus',
+      header: 'Bonus Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
+      key: 'action',
+      header: 'Action',
+      isHeaderDownload: false,
+      cell: ({ row }) => {
+        return (
+          <Tooltip label="click to add settlement" color='gray' withArrow>
+            <Button variant='outline' size='compact-xs' style={{ fontSize: '12px' }}
+              onClick={() => { setOpen({ open: true, id: row?.original?.dealership_id }); setRowData(row?.original) }}
+            >
+              Add settlement
+            </Button>
+          </Tooltip>
+        )
+      }
+    },
+  ]
 
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex === 7) {
-        setRowData(loans[cellMeta.dataIndex])
-      }
-      else {
-        (currentUser.role_id == 1 || currentUser.role_id == 9) &&
-          onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex]);
-      }
-    },
-    filter: false,
-    viewColumns: false,
-    print: false,
-  };
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => false,
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   },
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex === 7) {
+  //       setRowData(loans[cellMeta.dataIndex])
+  //     }
+  //     else {
+  //       (currentUser.role_id == 1 || currentUser.role_id == 9) &&
+  //         onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex]);
+  //     }
+  //   },
+  //   filter: false,
+  //   viewColumns: false,
+  //   print: false,
+  // };
 
   return (
-    <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={<Typography className={classes.title} variant="h4" component="h4">{'Referral List'}</Typography>}
-            data={loans}
-            columns={columns}
-            options={options}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+    <Paper>
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        filter={false}
+        loading={loading}
+        title={'Referral List'}
+        onRowClick={i => {
+          (currentUser.role_id == 1 || currentUser.role_id == 9) &&
+            onRowClick(i?.dealership_id, i);
+        }}
+      />
       <Drawer
         anchor="right"
         ModalProps={{
@@ -209,7 +152,7 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
           }
         </div>
       </Drawer>
-    </div>
+    </Paper>
   )
 }
 

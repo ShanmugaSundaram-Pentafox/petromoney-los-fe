@@ -1,75 +1,19 @@
-import { Dialog, DialogContent, DialogContentText, Button } from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/CloseRounded';
-import Alert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/styles';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import Select from 'react-select';
 import { useMount } from 'react-use';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import LoanInfo from './LoanInfo';
-import LoaderButton from '../../../components/CommonComponents/Button/LoaderButton';
-import { TextEditor } from '../../../components/TextEditor/TextEditor';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getUserRoleForReview } from '../../../services/common.service';
 import { getLoanById, updateLoanApprovalStatusById } from '../../../services/loans.service';
 import { isAllowed } from '../../../utils/cerbos';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
-
-
-const useStyles = makeStyles(theme => ({
-  wrapper: {
-    padding: '0 24px 10px 24px',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-  },
-  dialog: {
-    minWidth: '30vw'
-  },
-  contentWrapper: {
-    padding: 12,
-    flex: 1,
-    overflow: 'auto',
-    overflowX: 'hidden'
-  },
-  wrapperTitle: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginRight: 24,
-  },
-  title: {
-    top: 0,
-    left: 0,
-    padding: '8px 16px',
-    background: theme.palette.grey[300],
-    borderBottomRightRadius: 12,
-    boxShadow: '0px 0px 4px #8d8d8d',
-  },
-  closeIcon: {
-    marginTop: 8,
-  },
-  actionButtonsWrapper: {
-    paddingTop: 16,
-  },
-  btn: {
-    marginLeft: 16
-  },
-  btnSuccess: {
-    '&.MuiButton-contained': {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.white
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark
-    }
-  },
-}))
-
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
+import classes from './SideDrawer.module.css';
+import { Alert, Box, Button, Group, Modal, Select, Text } from '@mantine/core';
+import RichTextEditorBox from '../../../components/RichTexEditor/RichTextEditorBox';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, data, onClose }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
@@ -80,18 +24,16 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   const [remarks, setRemarks] = useState();
   const [info, setInfo] = useState({})
   const [errorStatus, setErrorStatus] = useState()
-  const classes = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
 
   useMount(() => {
-    if(isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_review)) {
+    if (isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_review)) {
       getUserRoleForReview('is_review=1')
         .then(res => {
           let d = [];
           res.forEach((item) => {
             d.push({
               label: `${item.first_name} ${item.last_name}`,
-              value: item.id
+              value: item.id?.toString()
             })
           })
           setUserRole(d);
@@ -100,40 +42,34 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
     }
   })
   const handleReviewModal = () => {
-    if(info?.amount_requested > 0) {
+    if (info?.amount_requested > 0) {
       setReviewModal(!reviewModal)
     }
     else {
-      enqueueSnackbar('Please enter amount to proceed further', {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'error',
-      })
+      displayNotification({
+        message: 'Please enter amount to proceed further',
+        variant: 'warning',
+      });
       return null;
     }
   }
-
   const updateLoanStatus = () => {
     if ((user && remarks) || status == 'pre_submit') {
       setLoading(true)
       let reqBody = {
         user_id: currentUser?.id,
-        reviewer_id: user?.value,
+        reviewer_id: parseInt(user?.value),
         review_remarks: remarks,
         product_id: info?.product_id,
         amount_requested: info?.amount_requested
       }
       updateLoanApprovalStatusById(id, loanData?.id, 'approval', reqBody)
         .then(res => {
-          enqueueSnackbar(res.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: res.message,
             variant: 'success',
-          })
+          });
+          onClose()
           setTimeout(() => {
             window.location.reload();
             setLoading(false)
@@ -141,13 +77,10 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         })
         .catch(err => {
           setLoading(false)
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: err,
             variant: 'error',
-          })
+          });
         })
     } else {
       setErrorStatus('Please select reviewer and enter remarks.')
@@ -159,65 +92,86 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
       ...d
     })
   }
+
   return (
     <>
-      <div className={classes.wrapper}>
-        <div className={classes.wrapperTitle}>
-          <Typography className={classes.title} variant="h4" component="h4">{data?.id}</Typography>
-          <CloseIcon className={classes.closeIcon} onClick={onClose} />
-        </div>
-        <div className={classes.contentWrapper}>
-          <DealershipData data={data} readOnly={true} />
-          <WorkingSheetDrawer id={id} />
-          <LoanInfo status={status} viewable={false} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
-        </div>
-        <div>
-          <DrawerFooter selectedLoanData={selectedLoanData} handleReviewModal={status == 'pre_submit' ? updateLoanStatus : handleReviewModal} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
-        </div>
-      </div >
-      <Dialog
-        open={reviewModal}
+      {/* Drawer content */}
+      <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
+
+        <DealershipData
+          data={data}
+          readOnly={true}
+        />
+
+        <WorkingSheetDrawer id={id} />
+
+        <LoanInfo
+          status={status}
+          viewable={false}
+          currentUser={currentUser}
+          newInfo={loanData}
+          editable={editable}
+          data={selectedLoanData}
+          updateNewLoanInfo={updateNewLoanInfo}
+        />
+      </div>
+
+      {/* Sticky footer */}
+      <DrawerFooter
+        selectedLoanData={selectedLoanData}
+        handleReviewModal={status == 'pre_submit' ? updateLoanStatus : handleReviewModal}
+        data={data}
+        onClose={onClose}
+        id={id}
+        currentUser={currentUser}
+        status={status}
+      />
+
+      <Modal
+        opened={reviewModal}
         onClose={handleReviewModal}
+        zIndex={9999}
+        size={'lg'}
+        withCloseButton={false}
       >
-        <DialogContent>
-          <div className={classes.dialog}>
-            <div style={{ marginBottom: 20 }}>
-              <DialogContentText id="approval-remarks-desc">
-                Please choose whom did you want to sent for review.
-              </DialogContentText>
-              <Select
-                isClearable
-                name='user_approve'
-                onChange={(data) => { setUser(data); setErrorStatus(); }}
-                options={userRole}
-                menuPlacement='bottom'
-                menuPosition='fixed'
-                maxMenuHeight='200px'
-              />
-            </div>
-            <DialogContentText id="approval-remarks-desc">
-              Please enter your remarks for sending this to review.
-            </DialogContentText>
-            <TextEditor setJSON={setRemarks} toolBar={true} />
-            {
-              errorStatus &&
-                <Alert severity="error" style={{ padding: '0px 16px' }}>{errorStatus}</Alert>
-            }
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
-            <Button variant='outlined' onClick={handleReviewModal} style={{ marginRight: 8 }}>Cancel</Button>
-            <LoaderButton
-              variant='contained'
-              color='primary'
-              buttonLabel='Confirm'
-              size='medium'
-              isLoading={loading}
-              loadingText="Submitting..."
-              onClick={() => updateLoanStatus('loan_review')}
-            >Confirm</LoaderButton>
-          </div>
-        </DialogContent>
-      </Dialog>
+        <Box className={classes.dialog}>
+          <Box style={{ marginBottom: 20 }}>
+            <Text>
+              Please choose whom did you want to sent for review.
+            </Text>
+            <Select
+              clearable
+              name='user_approve'
+              onChange={(_value, option) => { setUser(option); setErrorStatus(); }}
+              data={userRole}
+              styles={{ dropdown: { boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', zIndex: 99999 } }}
+              menuPlacement='bottom'
+              menuPosition='fixed'
+              maxMenuHeight='200px'
+            />
+          </Box>
+          <Text>
+            Please enter your remarks for sending this to review.
+          </Text>
+          <RichTextEditorBox onChange={setRemarks} />
+          {
+            errorStatus
+              ? <Alert variant='light' color='orange' title='Error!' withCloseButton={false} icon={<IconInfoCircle />}>
+                {errorStatus}
+              </Alert>
+              : null
+          }
+        </Box>
+        <Group justify='center' mt={10} gap={4}>
+          <Button variant='outline' size='xs' style={{ marginRight: 8 }} onClick={handleReviewModal}>Cancel</Button>
+          <Button
+            color='green'
+            size='xs'
+            loading={loading}
+            onClick={() => updateLoanStatus('loan_review')}
+          >Confirm</Button>
+        </Group>
+      </Modal>
     </>
   );
 }

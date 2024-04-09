@@ -1,21 +1,11 @@
-import { Typography, Box, Grid, Button, Divider, FormHelperText } from '@material-ui/core';
-import Checkbox from '@material-ui/core/Checkbox';
 import { green } from '@material-ui/core/colors';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import CloseIcon from '@material-ui/icons/Close';
-import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import * as Yup from 'yup';
-import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../components/Number/Currency';
 import TextInput from '../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../config/accessControl';
@@ -24,84 +14,87 @@ import { addCreditReport } from '../../services/creditreport.service';
 import { getCreditReloadLimitById } from '../../services/dealerships.service';
 import { getBankDetailsbyID } from '../../services/PDReport.services';
 import { isAllowed } from '../../utils/cerbos';
+import { Box, Button, Grid, Text, Title, Alert, Checkbox, Group } from '@mantine/core';
+import { IconCheck, IconInfoCircle } from '@tabler/icons-react';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles((theme) => ({
-  sidePanelFormWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '40vw',
-  },
+  // sidePanelFormWrapper: {
+  //   position: 'relative',
+  //   display: 'flex',
+  //   flexDirection: 'column',
+  //   height: '100vh',
+  //   width: '40vw',
+  // },
 
-  sidePanelTitle: {
-    padding: '12px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333',
-  },
+  // sidePanelTitle: {
+  //   padding: '12px 16px',
+  //   display: 'flex',
+  //   justifyContent: 'space-between',
+  //   zIndex: 0,
+  //   boxShadow: '0 1px 4px -3px #333',
+  // },
 
-  sidePanelFormContentWrapper: {
-    flex: 1,
-    overflow: 'auto'
-  },
-  stepperRoot: {
-    padding: 16,
-    paddingTop: 8
-  },
-  inputFile: {
-    width: '0.1px',
-    height: '0.1px',
-    opacity: 0,
-    overflow: 'hidden',
-    position: 'absolute',
-    zIndex: -1,
-  },
-  actionButtonsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '12px 16px'
-  },
-  dropdown: {
-    boxShadow: '1px 1px 4px -3px #333'
-  },
-  option: {
-    padding: 6,
-  },
-  editButton: {
-    marginRight: '8px',
-    '&.MuiButton-contained': {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.white
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark
-    }
-  },
-  image: {
-    borderRadius: 6,
-    padding: 1
-  },
-  number: {
-    backgroundColor: 'white',
-    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0
-    }
-  },
-  grid: {
-    marginLeft: 4,
-    marginRight: 4,
-    marginTop: 2
-  },
-  alert: {
-    display: 'flex',
-    flexDirection: 'column',
-    border: '1px solid #ccc',
-    padding: 4,
-    borderRadius: 4,
-  }
+  // sidePanelFormContentWrapper: {
+  //   flex: 1,
+  //   overflow: 'auto'
+  // },
+  // stepperRoot: {
+  //   padding: 16,
+  //   paddingTop: 8
+  // },
+  // inputFile: {
+  //   width: '0.1px',
+  //   height: '0.1px',
+  //   opacity: 0,
+  //   overflow: 'hidden',
+  //   position: 'absolute',
+  //   zIndex: -1,
+  // },
+  // actionButtonsWrapper: {
+  //   display: 'flex',
+  //   justifyContent: 'space-between',
+  //   padding: '12px 16px'
+  // },
+  // dropdown: {
+  //   boxShadow: '1px 1px 4px -3px #333'
+  // },
+  // option: {
+  //   padding: 6,
+  // },
+  // editButton: {
+  //   marginRight: '8px',
+  //   '&.MuiButton-contained': {
+  //     backgroundColor: theme.palette.success.main,
+  //     color: theme.palette.white
+  //   },
+  //   '&.MuiButton-contained:hover': {
+  //     backgroundColor: theme.palette.success.dark
+  //   }
+  // },
+  // image: {
+  //   borderRadius: 6,
+  //   padding: 1
+  // },
+  // number: {
+  //   backgroundColor: 'white',
+  //   '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+  //     '-webkit-appearance': 'none',
+  //     margin: 0
+  //   }
+  // },
+  // grid: {
+  //   marginLeft: 4,
+  //   marginRight: 4,
+  //   marginTop: 2
+  // },
+  // alert: {
+  //   display: 'flex',
+  //   flexDirection: 'column',
+  //   border: '1px solid #ccc',
+  //   padding: 4,
+  //   borderRadius: 4,
+  // }
 }));
 const CreditReloadForm = ({ callback, currentUser, view }) => {
   const [repaymentType, setRepaymentType] = useState();
@@ -112,7 +105,6 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [expressCRR, setExpressCRR] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
   const [bankId, setBankId] = useState();
   const { data: bankData = [] } = useQuery(['bank-data', selectedValue], () => getBankDetailsbyID(selectedValue), {
     refetchOnWindowFocus: false,
@@ -175,38 +167,28 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
             if (res.status === 'SUCCESS') {
               setLoading(false)
               callback()
-              enqueueSnackbar(res.message, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
+              displayNotification({
+                message: res?.message,
                 variant: 'success',
-              });
+              })
               setTimeout(() => {
                 window.location.reload(false)
               }, 1000);
             }
             else {
               setLoading(false)
-              enqueueSnackbar(res.message, {
-                anchorOrigin: {
-                  vertical: 'top',
-                  horizontal: 'right',
-                },
+              displayNotification({
+                message: res?.message,
                 variant: 'error',
-              });
-
+              })
             }
           })
           .catch(e => {
             setLoading(false)
-            enqueueSnackbar(e.message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
+            displayNotification({
+              message: e?.message,
               variant: 'error',
-            });
+            })
           })
       }
       else {
@@ -245,18 +227,14 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
         setFieldValue('proof_3_file', e.target.files[0])
   }
   return (
-    <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant='h4'>
-        <div>Credit Reload Form</div>
-        <CloseIcon onClick={callback} />
-      </Typography>
+    <Box>
       <>
-        <div className={classes.sidePanelFormContentWrapper}>
-          <div className={classes.stepperRoot}>
+        <Box>
+          <Box>
             <Box>
               <form>
-                <Grid container spacing={2}>
-                  <Grid item md={8} style={{ marginBottom: 10 }}>
+                <Grid>
+                  <Grid.Col span={12}>
                     <label style={{ marginBottom: 8 }}>Dealership</label>
                     {
                       isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) ?
@@ -272,22 +250,18 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                             placeholder='Search Dealership ID or Name'
                           />
                         ) : (
-                          <Typography variant='h6' style={{ marginTop: 7 }}>{selectedValue}</Typography>
+                          <Title order={'6'} mt={6}>{selectedValue}</Title>
                         )
                     }
-                  </Grid>
-                </Grid>
-                {
-                  (!isError && isFetched) && (
-                    <>
-                      <Grid container spacing={2}>
-                        <Grid item md={8} style={{ marginBottom: 10 }}>
+                  </Grid.Col>
+                  {
+                    (!isError && isFetched) && (
+                      <>
+                        <Grid.Col span={12}>
                           <label style={{ marginBottom: 8 }}>Choose Bank</label>
                           <Select name='bankId' isClearable value={bankId} onChange={setBankId} options={bankData} />
-                        </Grid>
-                      </Grid>
-                      <Grid container spacing={2}>
-                        <Grid item md={8} style={{ marginBottom: 10 }}>
+                        </Grid.Col>
+                        <Grid.Col span={12}>
                           <label style={{ marginBottom: 8 }}>Repayment Made</label>
                           <Select
                             isClearable
@@ -296,63 +270,57 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                               { label: 'Today', value: 'today' },
                               { label: 'Earlier today', value: 'earlier today' },
                             ]} />
-                        </Grid>
-                      </Grid>
-                      <Grid container spacing={2}>
-                        <Grid item md={8}>
+                        </Grid.Col>
+                        <Grid.Col span={12}>
                           <label>Amount</label>
                           <TextInput
                             money
                             name="amount"
                             type="number"
-                            className={classes.number}
                             value={values.amount}
                             error={errors.amount}
                             helperText={errors.amount}
                             onChange={handleChange}
                           />
-                          <FormHelperText variant='contained'>
-                            <div>
-                              <h3 style={{ color: 'black' }}>Available Limit: < Currency value={creditLimit?.available_limit} /></h3>
-                              {
-                                typeof (creditLimit?.available_tranche_limit) == 'number' &&
-                                  <h3 style={{ color: 'black', marginTop: 10 }}>Available tranche count: {creditLimit?.available_tranche_limit}</h3>
-                              }
-                            </div>
-                          </FormHelperText>
-                        </Grid>
-                      </Grid>
-                      <Grid container spacing={2}>
-                        <Grid item md={8}>
-                          <div>
+                          <Box>
+                            <Text style={{ color: 'gray', fontSize: 12 }}>Available Limit: < Currency value={creditLimit?.available_limit} /></Text>
+                            {
+                              typeof (creditLimit?.available_tranche_limit) == 'number' &&
+                                <Text mt={'sm'} style={{ color: 'gray', fontSize: 12 }}>Available tranche count: {creditLimit?.available_tranche_limit}</Text>
+                            }
+                          </Box>
+                        </Grid.Col>
+                        <Grid.Col span={12}>
+                          <Group>
                             <label>Do you want proceed with express reload</label>
                             <Checkbox
-                              color='blue'
                               checked={expressCRR}
-                              onChange={(e) => setExpressCRR(e.target.checked)}
-                              icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                              checkedIcon={<CheckBoxIcon fontSize="small" />}
+                              size='xs'
+                              onChange={(e) => setExpressCRR(e.currentTarget.checked)}
                             />
-                          </div>
-                          <div className={classes.alert}>
-                            <span style={{ fontWeight: 600 }}>Note</span>
-                            <span style={{ fontSize: 11, color: 'gray' }}>Express Reload will charge Rs. 590 (including GST) will be deducted, and your request will be processed.</span>
-                          </div>
-                        </Grid>
-                      </Grid>
-                      <Grid container spacing={2} style={{ marginTop: 11 }}>
-                        <Grid item md={12}>
-                          <Grid container spacing={1}>
-                            <Grid style={{ marginLeft: 4 }} md={12}>
+                          </Group>
+                          <Alert mt={'md'} radius={'md'} variant="light" color="orange" title="Note" icon={<IconInfoCircle />} styles={{ message: { fontSize: 12 } }}>
+                            Express Reload will charge Rs. 590 (including GST) will be deducted, and your request will be processed.
+                          </Alert>
+                        </Grid.Col>
+                        <Grid.Col span={12}>
+                          <Grid>
+                            <Grid.Col span={12}>
                               <label>Payment Reference</label>
-                            </Grid>
-                            <Grid md={3}>
+                            </Grid.Col>
+                            <Grid.Col span={4}>
                               <div className={classes.grid}>
                                 <input
                                   type='file'
                                   name='file'
                                   id='proof1'
-                                  className={classes.inputFile}
+                                  style={{
+                                    width: '120px',
+                                    height: '75px',
+                                    opacity: 0,
+                                    overflow: 'hidden',
+                                    position: 'absolute',
+                                  }}
                                   accept="image/jpeg,image/png,application/pdf"
                                   onChange={(e) => { onChangeHandler(e, 'proof1') }}
                                 />
@@ -363,10 +331,10 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                                     {
                                       values?.proof_1_file ? (
                                         <>
-                                          <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                                          <IconCheck size={30} color={green[300]} />
                                         </>
                                       ) : (
-                                        <label htmlFor='proof1' style={{ fontSize: 32, color: 'grey' }}>+</label>
+                                        <label htmlFor='proof1' style={{ fontSize: 32, color: errors.proof_1_file ? 'red' : 'grey' }}>+</label>
                                       )
                                     }
                                   </div>
@@ -377,18 +345,24 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                                   )
                                 }
                               </div>
-                            </Grid>
+                            </Grid.Col>
                             {
                               values.proof_1_file && (
                                 <>
-                                  <Grid md={3}>
+                                  <Grid.Col span={4}>
                                     <div className={classes.grid}>
                                       <input
                                         type='file'
                                         name='file'
                                         id='proof2'
                                         accept="image/jpeg,image/png,application/pdf"
-                                        className={classes.inputFile}
+                                        style={{
+                                          width: '120px',
+                                          height: '75px',
+                                          opacity: 0,
+                                          overflow: 'hidden',
+                                          position: 'absolute',
+                                        }}
                                         onChange={(e) => { onChangeHandler(e, 'proof2') }}
                                       />
                                       <label htmlFor='proof2'>
@@ -396,7 +370,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                                           {
                                             values?.proof_2_file ? (
                                               <>
-                                                <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                                                <IconCheck color={green[300]} size={30} />
                                               </>
                                             ) : (
                                               <label htmlFor='proof2' style={{ fontSize: 32, color: 'grey' }}>+</label>
@@ -410,17 +384,23 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                                         )
                                       }
                                     </div>
-                                  </Grid>
+                                  </Grid.Col>
                                   {
                                     values.proof_2_file && (
-                                      <Grid md={3}>
+                                      <Grid.Col span={4}>
                                         <div className={classes.grid}>
                                           <input
                                             type='file'
                                             name='file'
                                             id='proof3'
                                             accept="image/jpeg,image/png,application/pdf"
-                                            className={classes.inputFile}
+                                            style={{
+                                              width: '120px',
+                                              height: '75px',
+                                              opacity: 0,
+                                              overflow: 'hidden',
+                                              position: 'absolute',
+                                            }}
                                             onChange={(e) => { onChangeHandler(e, 'proof3') }}
                                           />
                                           <label htmlFor='proof3'>
@@ -428,7 +408,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                                               {
                                                 values?.proof_3_file ? (
                                                   <>
-                                                    <CheckCircleTwoToneIcon style={{ color: green[300], fontSize: 30 }} />
+                                                    <IconCheck color={green[300]} size={30} />
                                                   </>
                                                 ) : (
                                                   <label htmlFor='proof3' style={{ fontSize: 32, color: 'grey' }}>+</label>
@@ -442,56 +422,46 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                                             )
                                           }
                                         </div>
-                                      </Grid>
+                                      </Grid.Col>
                                     )
                                   }
                                 </>
                               )
                             }
                           </Grid>
-                        </Grid>
-                      </Grid>
-                    </>
-                  )
-                }
+                        </Grid.Col>
+                      </>
+                    )
+                  }
+                </Grid>
               </form>
             </Box>
-          </div>
-        </div>
-        <div className={classes.actionFooter}>
-          {errorMessage && <Alert severity={'error'}>{errorMessage}</Alert>}
-          <Divider />
-          <div className={classes.actionButtonsWrapper}>
-            <div>
-              <Button variant='outlined' onClick={callback}>
-                Back
-              </Button>
-            </div>
-            <div>
-              {
-                (!isError && isFetched) && (
-                  <LoaderButton
-                    variant='contained'
-                    className={clsx(classes.btn, classes.editButton)}
-                    isLoading={loading}
-                    loadingText='Submitting...'
-                    type='submit'
-                    onClick={() => {
-                      if (repaymentType?.value == 'today') {
-                        !values?.proof_1_file ? setFieldError('proof_1_file', 'Please add proof') : handleSubmit();
-                      }
-                      else {
-                        handleSubmit();
-                      }
-                    }}
-                  >Submit</LoaderButton>
-                )
-              }
-            </div>
-          </div>
-        </div>
+          </Box>
+        </Box>
+        <Box mt={'xl'}>
+          {errorMessage && <Alert radius={'md'} variant="light" color="red" title="Error" icon={<IconInfoCircle />} styles={{ message: { fontSize: 12 } }}>{errorMessage}</Alert>}
+          <Group justify='right' mt={'md'}>
+            {
+              (!isError && isFetched) && (
+                <Button
+                  loading={loading}
+                  type='submit'
+                  color='green'
+                  onClick={() => {
+                    if (repaymentType?.value == 'today') {
+                      !values?.proof_1_file ? setFieldError('proof_1_file', 'Please add proof') : handleSubmit();
+                    }
+                    else {
+                      handleSubmit();
+                    }
+                  }}
+                >Submit</Button>
+              )
+            }
+          </Group>
+        </Box>
       </>
-    </div >
+    </Box >
   );
 };
 

@@ -1,80 +1,31 @@
-import { CircularProgress } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
+import { Flex, Grid, TextInput, Text, Select } from '@mantine/core';
 import Alert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import { addNewUser, getAllUserRoles } from '../../services/users.service';
-import Button from '../CommonComponents/Button/Button';
-import TextInput from '../TextInput/TextInput';
-
-const useStyles = makeStyles((theme) => ({
-  sidePanelTitle: {
-    padding: '24px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333',
-  },
-  sidePanelFormWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '40vw',
-  },
-  sidePanelFormContentWrapper: {
-    flex: 1,
-    overflow: 'auto',
-  },
-  stepperRoot: {
-    padding: 16,
-    paddingTop: 8,
-  },
-  actionButtonsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '12px 16px',
-  },
-  editButton: {
-    marginRight: '8px',
-    '&.MuiButton-contained': {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.white,
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark,
-    },
-  },
-}));
+import { displayNotification } from '../CommonComponents/Notification/displayNotification';
+import { Button } from '../Mantine/Button/Button';
+// import TextInput from '../TextInput/TextInput';
 
 const AddNewUserForm = ({ callback, action }) => {
   const [apiStatus, setApiStatus] = useState({});
   const [userRoles, setUserRoles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState('')
-  const classes = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
   let isDealership = {};
   useMount(() => {
     getAllUserRoles()
       .then((data) => {
-        setUserRoles(data);
+        setUserRoles(data?.map((item, index) => ({ label: `( ${item?.role_name} ) - ${item.name}`, value: `${item?.id}`, role_name: item?.role_name })));
       })
       .catch((e) => {
         console.log(e);
       });
   });
-  if(type.role_id == 13){
-    isDealership= {
+  if (type.role_id == 13) {
+    isDealership = {
       dealership_id: Yup.string().nullable('Enter dealership id').required('Enter valid dealership id')
     };
   }
@@ -83,6 +34,7 @@ const AddNewUserForm = ({ callback, action }) => {
     errors,
     handleChange,
     handleSubmit,
+    setFieldValue,
     isSubmitting,
     setSubmitting,
   } = useFormik({
@@ -90,7 +42,7 @@ const AddNewUserForm = ({ callback, action }) => {
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      role_id: Yup.number().nullable('Choose Proper User Role').required('Choose Proper User Role'),
+      role_id: Yup.string().nullable('Choose Proper User Role').required('Choose Proper User Role'),
       first_name: Yup.string().nullable('Enter first name').matches(/^[A-Za-z_ ]+$/, 'Enter valid name').required('Enter first name'),
       last_name: Yup.string().nullable('Enter last name').min(1).matches(/^[A-Za-z_ ]+$/, 'Enter valid name').required('Enter last name'),
       mobile: Yup.string().nullable('Enter mobile number').matches(/^\d{10}$/, 'Enter valid mobile number').required('Enter mobile number'),
@@ -102,188 +54,171 @@ const AddNewUserForm = ({ callback, action }) => {
     onSubmit: (formData) => {
       setLoading(true);
       const userType = userRoles.find(
-        (role) => role.id === Number(formData.role_id)
+        (role) => role.value == parseInt(formData.role_id)
       );
       Object.keys(formData).forEach(k => (formData[k] === '') && delete formData[k]);
       addNewUser(formData, userType.role_name)
         .then((message) => {
           setLoading(false);
-          enqueueSnackbar(message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: message,
             variant: 'success',
           });
           callback &&
-          setTimeout(() => {
-            callback();
-          }, 1000);
+            setTimeout(() => {
+              callback();
+            }, 1000);
         })
         .catch((e) => {
           setLoading(false);
-          enqueueSnackbar(e, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: e,
             variant: 'error',
-          });
+          })
         });
     },
   });
   const inputProps = {
-    direction: 'column',
-    alignTop: true,
     onChange: handleChange,
   };
-    
 
   return (
-    <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant='h4'>
-        <div>Add New User Form</div>
-        <CloseIcon onClick={action} />
-      </Typography>
-      <div className={classes.sidePanelFormContentWrapper}>
-        <div className={classes.stepperRoot}>
-          <Box>
-            <form onSubmit={handleSubmit}>
-              <Grid container spacing={2}>
-                <Grid item md={12}>
-                  <TextInput
-                    {...inputProps}
-                    select
-                    labelText='User Role'
-                    name='role_id'
-                    value={values.role_id}
-                    
-                    error={errors.role_id}
-                    helperText={errors.role_id}
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option value=''  >Choose user role</option>
-                    {(values.role_id) && type != values && setType(values)}
-                    {userRoles.map((userRole) => (
-                      <option key={userRole.role_name} value={userRole.id}  >
-                        ({userRole.role_name}) - {userRole.name} 
-                      </option>
-                    ))}
-                  </TextInput>
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    name='first_name'
-                    labelText='First Name'
-                    value={values.first_name?.toUpperCase()}
-                    error={errors.first_name}
-                    helperText={errors.first_name}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    name='last_name'
-                    labelText='Last Name'
-                    value={values.last_name?.toUpperCase()}
-                    error={errors.last_name}
-                    helperText={errors.last_name}
-                  />
-                </Grid>
-                {
-                  (values.role_id == 13) &&
-                    <Grid item md={6}>
-                      <TextInput
-                        {...inputProps}
-                        type='number'
-                        name='dealership_id'
-                        labelText='Dealership ID'
-                        value={values.dealership_id}
-                        error={errors.dealership_id}
-                        helperText={errors.dealership_id}
-                      />
-                    </Grid>
-                }
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    type='mobile'
-                    name='mobile'
-                    labelText='Mobile'
-                    value={values.mobile}
-                    error={errors.mobile}
-                    helperText={errors.mobile}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    type='email'
-                    name='email'
-                    labelText='Email'
-                    value={values.email}
-                    error={errors.email}
-                    helperText={errors.email}
-                  />
-                </Grid>
-                <Grid item md={6}>
-                  <TextInput
-                    {...inputProps}
-                    type='password'
-                    name='password'
-                    labelText='Password (Optional)'
-                    value={values.password}
-                    error={errors.password}
-                    helperText={
-                      errors.password || 'Default password is Petromall@2020'
-                    }
-                  />
-                </Grid>
-              </Grid>
-            </form>
-            {apiStatus.type && (
-              <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+    <>
+      {/* Drawer content */}
+      <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
+        <form onSubmit={handleSubmit}>
+          <Grid gutter="sm">
+
+            <Grid.Col>
+              <Select
+                data={userRoles}
+                name='role_id'
+                id='role_id'
+                label={'User Roles'}
+                value={values.role_id}
+                onChange={(e) => setFieldValue('role_id', e)}
+                error={errors.role_id}
+                styles={{ dropdown: { position: 'absolute', zIndex: 99999 } }}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6 }}>
+              <TextInput
+                {...inputProps}
+                name='first_name'
+                label='First Name'
+                value={values.first_name}
+                error={errors.first_name}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6 }}>
+              <TextInput
+                {...inputProps}
+                name='last_name'
+                label='Last Name'
+                value={values.last_name}
+                error={errors.last_name}
+              />
+            </Grid.Col>
+
+            {(values.role_id == 13) && (
+              <Grid.Col span={{ base: 12, sm: 6 }}>
+                <TextInput
+                  {...inputProps}
+                  type='number'
+                  name='dealership_id'
+                  label='Dealership ID'
+                  value={values.dealership_id}
+                  error={errors.dealership_id}
+                />
+              </Grid.Col>
             )}
-          </Box>
-        </div>
-      </div>
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <div>
-            <Button variant='outlined' onClick={action}>
-              Back
-            </Button>
-          </div>
-          <div>
-            {!loading ? (
-              <Button
-                variant='contained'
-                type='submit'
-                onClick={handleSubmit}
-                className={clsx(classes.btn, classes.editButton)}
-              >
-                Create New User
-              </Button>
-            ) : (
-              <div
+
+            <Grid.Col span={{ base: 12, sm: 6 }}>
+              <TextInput
+                {...inputProps}
+                type='mobile'
+                name='mobile'
+                label='Mobile'
+                value={values.mobile}
+                error={errors.mobile}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6 }}>
+              <TextInput
+                {...inputProps}
+                type='email'
+                name='email'
+                label='Email'
+                value={values.email}
+                error={errors.email}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6 }}>
+              <TextInput
+                {...inputProps}
+                type='text'
+                name='password'
+                description='Default password is Petromall@2020'
+                label='Password (Optional)'
+                value={values.password}
+                error={errors.password}
+              />
+              <Text
+                mt="4"
+                size="xs"
                 style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  width: '90%',
-                  margin: '0 auto',
+                  color: '#868E96'
                 }}
               >
-                <CircularProgress size={30} />
-              </div>
-            )}
-          </div>
-        </div>
+                {errors.password}
+              </Text>
+            </Grid.Col>
+          </Grid>
+        </form>
+
+        {apiStatus.type && (
+          <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>
+        )}
       </div>
-    </div>
+
+      {/* Sticky footer */}
+      <Flex
+        h="64"
+        style={{
+          flexShrink: 0,
+          alignItems: 'center',
+          justifyContent: 'end',
+          padding: '0 16px',
+          background: '#FFFFFF',
+          borderTop: '1px solid #eaeaea',
+          zIndex: 9
+        }}
+      >
+        <Flex gap="sm">
+          <Button
+            colorScheme="secondary"
+            variant="outline"
+            size="md"
+            onClick={action}
+          >
+            Go back
+          </Button>
+
+          <Button
+            variant="filled"
+            size="md"
+            onClick={handleSubmit}
+            loading={loading}
+          >
+            Create New User
+          </Button>
+        </Flex>
+      </Flex>
+    </>
   );
 };
 

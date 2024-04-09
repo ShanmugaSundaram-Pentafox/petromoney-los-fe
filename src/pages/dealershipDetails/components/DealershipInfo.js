@@ -1,13 +1,9 @@
-import { Drawer, Tooltip, Typography } from '@material-ui/core';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
+import { Box, Card, Flex, Grid, Space, Text, Title } from '@mantine/core';
+import { Tooltip, Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Grid from '@material-ui/core/Grid';
 import { Sync } from '@material-ui/icons';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
@@ -16,10 +12,11 @@ import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
 import { DocAttachment } from '../../../components/Attachment/DocAttachment';
-import Button from '../../../components/CommonComponents/Button/Button';
 import CustomToken from '../../../components/CommonComponents/CustomToken';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import FileUpload from '../../../components/FileUpload';
+import { Button } from '../../../components/Mantine/Button/Button';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import TextInput from '../../../components/TextInput/TextInput';
 import TextInputMask from '../../../components/TextInput/TextInputMask';
 import { action_id, resources_id } from '../../../config/accessControl';
@@ -31,41 +28,8 @@ import { deleteDealershipDocument, getDealershipLoansById, validateId } from '..
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 
-
-const useStyles = makeStyles(theme => ({
-  root: {},
-  actionFooter: {
-    justifyContent: 'flex-start',
-    padding: 0,
-    marginTop: 20,
-  },
-  readOnlyWrapper: {
-    margin: '8px 4px',
-    maxWidth: '100%',
-  },
-  icon: {
-    marginRight: 4,
-    marginTop: 12,
-  },
-  fileStyle: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: 24,
-  },
-  icons: {
-    marginRight: 16,
-  },
-  sidePanelWrapper: {
-    width: '40vw',
-    minWidth: 300
-  },
-  attachmentContainer: {
-    display: 'flex', width: '39vw', marginLeft: 8, paddingRight: 12, flexWrap: 'wrap'
-  }
-}));
-
-const DealershipInfo = ({ data, className, currentUser }) => {
-  const [readOnly, setReadOnly] = useState(true);
+const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, currentUser, isLoading }) => {
+  const [readOnly, setReadOnly] = useState(viewOnly);
   const [loading, setLoading] = useState();
   const [showUpload, setShowUpload] = useState(false);
   const [udyamQuery, setUdyamQuery] = useState({ isLoading: false, data: {} });
@@ -102,7 +66,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
           setFieldValue('address', res?.details?.pradr?.adr);
         })
         .catch(e => {
-          console.log(e);
           action === 'pan' ?
             setPanValidateData({ icon: true, idType: 'PAN' }) :
             setGstValidateData({ icon: true, idType: 'GST' })
@@ -120,6 +83,13 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         console.log(e);
       });
   });
+  useEffect(() => {
+    if (viewOnly !== readOnly) {
+      setReadOnly(viewOnly);
+    }
+  }, [viewOnly])
+  console.log(readOnly);
+  console.log(viewOnly);
   useEffect(() => {
     setValues(data)
     setDataJSON({ gst: data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {}, udyam: data?.udyam_verified ? JSON.parse(data?.udyam_details) || {} : {} })
@@ -195,6 +165,8 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             setTimeout(() => {
               window.location.reload()
             }, 1500);
+            setReadOnly(true);
+            setViewOnly(true);
             setLoading(false);
           }
           else {
@@ -208,6 +180,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
             )
             setLoading(false);
             setReadOnly(true);
+            setViewOnly(true);
           }
         })
         .catch(e => {
@@ -221,6 +194,7 @@ const DealershipInfo = ({ data, className, currentUser }) => {
           )
           setLoading(false);
           setReadOnly(true);
+          setViewOnly(true);
           logger(e);
         })
     }
@@ -282,11 +256,6 @@ const DealershipInfo = ({ data, className, currentUser }) => {
         });
       })
   }
-  const classes = useStyles();
-  const gridProps = {
-    item: true,
-    className: classes.gridItemStyle
-  }
 
   const fieldProps = {
     direction: 'column',
@@ -331,363 +300,571 @@ const DealershipInfo = ({ data, className, currentUser }) => {
       </div>
     })
   }
-
   return (
-    <Card className={clsx(classes.root, className)}>
-      <div style={{ marginBottom: 20 }}>
-        {
-          readOnly ? (
-            <>
-              <Grid container spacing={2} className={classes.readOnlyWrapper}>
-                <Grid md={4}>
-                  <ViewData title='Name' value={values?.name} />
-                  <ViewData title='Address' value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')} />
-                  <ViewData title='PAN' value={values?.pan} endIcon={<CustomToken variant={values?.pan_verified ? 'success' : 'error'} label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.pan_verified ? 'tick' : 'cross'} />} />
-                  {values?.gst_verified ? <ViewData title='Effective Date of registration' value={dataJSON?.gst?.rgdt} /> : null}
-                  {values?.gst_verified ? <ViewData title='Legal Trade Name' value={dataJSON?.gst?.tradeNam} /> : null}
-                </Grid>
-                <Grid md={4}>
-                  <ViewData title='State' value={(states?.data?.find(function (state, index) {
-                    if (state.id == values?.state)
-                      return true;
-                  }))?.name} />
-                  <ViewData title='Region' value={values?.region_name} />
-                  <ViewData title='GST' value={values?.gst} endIcon={<CustomToken variant={values?.gst_verified ? 'success' : 'error'} label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'} icon={values?.gst_verified ? 'tick' : 'cross'} />} />
-                  {values?.gst_verified ? <ViewData title='Taxpayer Type' value={dataJSON?.gst?.dty} /> : null}
-                </Grid>
-                <Grid md={4}>
-                  <ViewData title='Business type' value={businessTypes.data?.find(function (type, index) {
-                    if (type.id == values?.business_type)
-                      return true;
-                  })?.name} />
-                  <ViewData title='OMC' value={omcs?.find(item => { return item?.id === values?.omc })?.name} />
-                  {values?.gst_verified ? <ViewData title='Legal Business Name' value={dataJSON?.gst?.lgnm} /> : null}
-                  {values?.gst_verified ? <ViewData title='GSTIN Status' value={dataJSON?.gst?.sts} /> : null}
-                  {data?.renewal_fee_payment_status ? <ViewData title='Renewal Fee Status' value={data?.renewal_fee_payment_status?.toUpperCase()} /> : null}
-                </Grid>
-                <Grid md={12} style={{ marginBottom: 10, marginTop: 20 }}>
-                  <Typography variant="title" style={{ fontSize: 16 }}><strong>Udyam Details</strong></Typography>
-                </Grid>
-                <Grid md={4}>
-                  {values?.udyam_verified ? <ViewData title='UDYAM No.' value={dataJSON?.udyam?.udyamRegistrationNo} /> : '-'}
-                </Grid>
-                <Grid md={4}>
-                  {values?.udyam_verified ? <ViewData title='Name of Enterprise' value={dataJSON?.udyam?.profile?.name} /> : null}
-                </Grid>
-                <Grid md={4}>
-                  {values?.udyam_verified ? <ViewData title='Organization Type' value={dataJSON?.udyam?.profile?.organizationType} /> : null}
-                </Grid>
-                <Grid md={4}>
-                  {values?.udyam_verified ? <ViewData title='Gender' value={dataJSON?.udyam?.profile?.gender} /> : null}
-                </Grid>
-                <Grid md={4}>
-                  {values?.udyam_verified ? <ViewData title='Date of Incorporation' value={dataJSON?.udyam?.profile?.dateOfIncorporation} /> : null}
-                </Grid>
-                <Grid md={4}>
-                  {values?.udyam_verified ? <ViewData title='Classification Year' value={dataJSON?.udyam?.enterpriseType?.[0]?.classificationYear} /> : null}
-                </Grid>
-              </Grid>
-              {
-                values?.pan_file_url ||
-                  values?.gst_file_url ? (
-                    <div className={classes.readOnlyWrapper}>
-                      <Typography variant='h4'>Attachments</Typography>
-                      <div style={{ marginTop: 16, display: 'flex', width: '39vw' }}>
-                        {values.pan_file_url && <DocAttachment tooltip='View PAN' imgUrl={values?.pan_file_url} docName='PAN Card' style={{ marginRight: 10 }} />}
-                        {values.gst_file_url && <DocAttachment tooltip='View GST' imgUrl={values?.gst_file_url} docName='GST' style={{ marginRight: 10 }} />}
-                        {values.udyam_file_url && <DocAttachment tooltip='View UDYAM' imgUrl={values?.udyam_file_url} docName='UDYAM' style={{ marginRight: 10 }} />}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className={classes.readOnlyWrapper}>
-                      <Typography variant='h4'>Attachments</Typography>
-                      <div
-                        style={{
-                          marginTop: '20px',
-                        }}
-                      >
-                        <Typography variant='h7'>No Attachments Found</Typography>
-                      </div>
-                    </div>
-                  )}
-            </>
-          ) : (
-            <>
-              <Grid container spacing={2}>
-                <Grid {...gridProps} md={12}>
-                  <TextInput
-                    labelText="Name"
-                    name="name"
-                    readOnly={readOnly}
-                    value={values?.name?.toUpperCase()}
-                    error={errors.name}
-                    helperText={errors.name}
-                    {...fieldProps}
-                  />
-                </Grid>
-                <Grid {...gridProps} md={6}>
-                  <TextInput
-                    labelText="GST"
-                    name="gst"
-                    readOnly={readOnly}
-                    disabled={gstValidateData?.loading || (values?.gst_verified && (currentUser.role_id !== 1))}
-                    value={values?.gst?.toUpperCase()}
-                    error={errors.gst}
-                    helperText={errors.gst}
-                    InputProps={ValidateProps(gstValidateData, values?.gst_verified)}
-                    {...fieldProps}
-                  />
-                  {
-                    !values?.gst_verified || values?.gst !== data?.gst ?
-                      <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
-                  }
-                </Grid>
-                <Grid {...gridProps} md={6}>
-                  <TextInput
-                    labelText="PAN"
-                    name="pan"
-                    readOnly={readOnly}
-                    disabled={panValidateData?.loading || (values?.pan_verified && (currentUser.role_id !== 1))}
-                    value={values?.pan?.toUpperCase()}
-                    error={errors.pan}
-                    helperText={errors.pan}
-                    InputProps={ValidateProps(panValidateData, values?.pan_verified)}
-                    {...fieldProps}
-                  />
-                  {
-                    !values?.pan_verified || values?.pan !== data?.pan ?
-                      <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
-                  }
-                </Grid>
-                <Grid {...gridProps} md={6}>
-                  <TextInput
-                    labelText="Address"
-                    name="address"
-                    readOnly={readOnly}
-                    disabled={readOnly}
-                    value={values?.address}
-                    error={errors.address}
-                    helperText={errors.address}
-                    {...fieldProps}
-                  />
-                </Grid>
-                <Grid {...gridProps} md={6}>
-                  <TextInput
-                    select
-                    labelText="Business Type"
-                    name="business_type"
-                    readOnly={readOnly}
-                    disabled={readOnly}
-                    defaultValue={values?.business_type}
-                    error={errors.business_type}
-                    helperText={errors.business_typeF}
-                    {...fieldProps}
-                  >
-                    {
-                      businessTypes.data?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
-                    }
-                  </TextInput>
-                </Grid>
-                <Grid {...gridProps} sm={6} md={6}>
-                  <TextInput
-                    select
-                    labelText="State"
-                    name="state"
-                    readOnly={readOnly}
-                    disabled={readOnly}
-                    value={values?.state}
-                    error={errors.state}
-                    helperText={errors.state}
-                    {...fieldProps}
-                  >
-                    {
-                      states.data?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
-                    }
-                  </TextInput>
-                </Grid>
-                <Grid {...gridProps} md={6}>
-                  {
-                    <TextInput
-                      select
-                      labelText="Region"
-                      name="region"
-                      value={values?.region}
-                      readOnly={readOnly}
-                      disabled={readOnly}
-                      error={errors.region}
-                      helperText={errors.region}
-                      {...fieldProps}
-                    >
-                      {
-                        getRegion?.data?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
-                      }
-                    </TextInput>
-                  }
+    <>
+      {readOnly ? (
+        <>
+          <Grid gutter="lg">
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                title='Name'
+                value={values?.name}
+                loading={isLoading}
+              />
+            </Grid.Col>
 
-                </Grid>
-                <Grid {...gridProps} xs={6}>
-                  <TextInput
-                    name="district"
-                    labelText="District"
-                    labelWidth={40}
-                    value={values?.district}
-                    readOnly={readOnly}
-                    disabled={readOnly}
-                    error={errors.district}
-                    helperText={errors.district}
-                    // select
-                    alignTop
-                    direction="column"
-                    {...fieldProps}
-                  >
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='State'
+                value={(states?.data?.find(function (state) {
+                  if (state.id == values?.state)
+                    return true;
+                }))?.name}
+              />
+            </Grid.Col>
 
-                  </TextInput>
-                </Grid>
-                <Grid {...gridProps} md={6}>
-                  <TextInput
-                    number
-                    labelText="Pincode"
-                    name="pincode"
-                    readOnly={readOnly}
-                    value={values?.pincode}
-                    error={errors.pincode}
-                    helperText={errors.pincode}
-                    {...fieldProps}
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='Business type'
+                value={businessTypes.data?.find(function (type, index) {
+                  if (type.id == values?.business_type)
+                    return true;
+                })?.name}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='Address'
+                value={values?.address ? values.address + '' : '' + (values?.pincode ? values?.pincode : '')}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='Region'
+                value={values?.region_name}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='OMC'
+                value={omcs?.find(item => { return item?.id === values?.omc })?.name}
+              />
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='PAN'
+                value={values?.pan}
+                endIcon={
+                  <CustomToken
+                    variant={values?.pan_verified ? 'success' : 'error'}
+                    label={values?.pan_verified ? 'VERIFIED' : 'UNVERIFIED'}
+                    icon={values?.pan_verified ? 'tick' : 'cross'}
                   />
-                </Grid>
-                <Grid {...gridProps} md={6}>
-                  <TextInputMask
-                    mask={'UDYAM-aa-99-9999999'}
-                    maskChar={' '}
-                    labelText="UDYAM / UAM No."
-                    name="udyam_no"
-                    readOnly={readOnly}
-                    disabled={udyamQuery?.isLoading || values?.udyam_verified}
-                    value={values?.udyam_no?.toUpperCase()}
-                    error={errors.udyam_no}
-                    helperText={errors.udyam_no}
-                    InputProps={ValidateUdyamProps(udyamQuery, values?.udyam_verified)}
-                    {...fieldProps}
-                  />
-                  {
-                    !values?.udyam_verified || values?.udyam_no !== data?.udyam_no ?
-                      <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => { !udyamQuery?.isLoading && getUDYAMDetails() }}>Validate Udyam</Typography> : null
-                  }
-                </Grid>
-                {
-                  dataJSON?.gst?.gstin || gstValidateData?.details ?
-                    <>
-                      <Grid item md={12}>
-                        <Typography variant="title" style={{ fontWeight: 600 }}>GST Details</Typography>
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='Effective Date of registration' value={dataJSON?.gst?.rgdt || gstValidateData?.details?.rgdt} />
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='Taxpayer Type' value={dataJSON?.gst?.dty || gstValidateData?.details?.dty} />
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='Legal Business Name' value={dataJSON?.gst?.lgnm || gstValidateData?.details?.lgnm} />
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='GSTIN Status' value={dataJSON?.gst?.sts || gstValidateData?.details?.sts} />
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='Legal Trade Name' value={dataJSON?.gst?.tradeNam || gstValidateData?.details?.tradeNam} />
-                      </Grid>
-                    </> : null
                 }
-                {
-                  dataJSON?.udyam?.profile || udyamQuery?.data?.profile ?
-                    <>
-                      <Grid item md={12}>
-                        <Typography variant="title"><strong>UDYAM Details</strong></Typography>
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='Name of Enterprise' value={udyamQuery?.data?.profile?.name || dataJSON?.udyam?.profile?.name} />
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='Organization Type' value={udyamQuery?.data?.profile?.organizationType || dataJSON?.udyam?.profile?.organizationType} />
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='Gender' value={udyamQuery?.data?.profile?.gender || dataJSON?.udyam?.profile?.gender} />
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='Date Of Incorporation' value={udyamQuery?.data?.profile?.dateOfIncorporation || dataJSON?.udyam?.profile?.dateOfIncorporation} />
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='Major Activity' value={udyamQuery?.data?.profile?.majorActivity || dataJSON?.udyam?.profile?.majorActivity} />
-                      </Grid>
-                      <Grid item md={3}>
-                        <ViewData title='classification Year' value={udyamQuery?.data?.enterpriseType?.[0]?.classificationYear || dataJSON?.udyam?.enterpriseType?.[0]?.classificationYear} />
-                      </Grid>
-                    </> : null
-                }
-                <Grid {...gridProps} md={12} >
-                  <Typography variant="title"><strong>Attachments</strong></Typography>
-                </Grid>
-                <div className={classes.attachmentContainer}>
-                  <DocAttachment action={true} imgUrl={values?.pan_file_url} docName='PAN Card' onUpload={() => docUpload('PAN')} onDelete={() => onDocDelete({ pan_file_url: '' })} disabled={!values?.pan_file_url} style={{ marginRight: 15 }} />
-                  <DocAttachment action={true} imgUrl={values?.gst_file_url} docName='GST' onUpload={() => docUpload('GST')} onDelete={() => onDocDelete({ gst_file_url: '' })} disabled={!values?.gst_file_url} style={{ marginRight: 15 }} />
-                  <DocAttachment action={true} imgUrl={values?.udyam_file_url} docName='UDYAM' onUpload={() => docUpload('UDYAM')} onDelete={() => onDocDelete({ udyam_file_url: '' })} disabled={!values?.udyam_file_url} style={{ marginRight: 15 }} />
-                </div>
-              </Grid>
-            </>
-          )
-        }
-        {/* <Divider /> */}
+              />
+            </Grid.Col>
 
-        {showUpload && (
-          <FileUpload
-            handleSave={(value) => handleSave(value)}
-            id={values.id}
-            title='Upload Dealership Documents'
-            open={showUpload}
-            onCloseUploader={onCloseUploader}
-          />
-        )}
-        <CardActions className={classes.actionFooter}>
-          {!readOnly ? (
-            !loading ? (
-              <>
-                <Button variant="contained" size="small" onClick={() => { setReadOnly(true); }}>Cancel</Button>
-                <Button type="submit" color="primary" onClick={handleSubmit} variant="contained" size="small">Save</Button>
-              </>
-            ) : <CircularProgress size={20} />
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              <ViewData
+                loading={isLoading}
+                title='GST'
+                value={values?.gst}
+                endIcon={<CustomToken variant={values?.gst_verified ? 'success' : 'error'}
+                  label={values?.gst_verified ? 'VERIFIED' : 'UNVERIFIED'}
+                  icon={values?.gst_verified ? 'tick' : 'cross'} />}
+              />
+            </Grid.Col>
+
+            {values?.gst_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Legal Business Name'
+                  value={dataJSON?.gst?.lgnm}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.gst_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Taxpayer Type'
+                  value={dataJSON?.gst?.dty}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.gst_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='GSTIN Status'
+                  value={dataJSON?.gst?.sts}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.gst_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Effective Date of registration'
+                  value={dataJSON?.gst?.rgdt}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.gst_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Legal Trade Name'
+                  value={dataJSON?.gst?.tradeNam}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {data?.renewal_fee_payment_status ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Renewal Fee Status'
+                  value={data?.renewal_fee_payment_status?.toUpperCase()}
+                />
+              </Grid.Col>
+            ) : null}
+
+            <Grid.Col>
+              <Title order={3}>Udyam Details</Title>
+            </Grid.Col>
+
+            <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+              {values?.udyam_verified ? <ViewData
+                loading={isLoading}
+                title='UDYAM No.'
+                value={dataJSON?.udyam?.udyamRegistrationNo}
+              /> : '-'}
+            </Grid.Col>
+
+            {values?.udyam_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Name of Enterprise'
+                  value={dataJSON?.udyam?.profile?.name}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.udyam_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Organization Type'
+                  value={dataJSON?.udyam?.profile?.organizationType}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.udyam_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Gender'
+                  value={dataJSON?.udyam?.profile?.gender}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.udyam_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Date of Incorporation'
+                  value={dataJSON?.udyam?.profile?.dateOfIncorporation}
+                />
+              </Grid.Col>
+            ) : null}
+
+            {values?.udyam_verified ? (
+              <Grid.Col span={{ base: 12, sm: 6, lg: 4 }}>
+                <ViewData
+                  loading={isLoading}
+                  title='Classification Year'
+                  value={dataJSON?.udyam?.enterpriseType?.[0]?.classificationYear}
+                />
+              </Grid.Col>
+            ) : null}
+          </Grid>
+
+          {values?.pan_file_url || values?.gst_file_url ? (
+            <Box mt="sm">
+              <Title order={3} mb="md">Attachments</Title>
+
+              <Flex gap="xs">
+                {values.pan_file_url && (
+                  <DocAttachment
+                    tooltip='View PAN'
+                    imgUrl={values?.pan_file_url}
+                    docName='PAN Card'
+                  />
+                )}
+                {values.gst_file_url && (
+                  <DocAttachment
+                    tooltip='View GST'
+                    imgUrl={values?.gst_file_url}
+                    docName='GST'
+                  />
+                )}
+                {values.udyam_file_url && (
+                  <DocAttachment
+                    tooltip='View UDYAM'
+                    imgUrl={values?.udyam_file_url}
+                    docName='UDYAM'
+                  />
+                )}
+              </Flex>
+            </Box>
           ) : (
-            <>
-              <Button
-                color="primary"
-                variant="contained"
-                size="small"
-                onClick={() => { setReadOnly(false); }}
-              >
-                Edit Details
-              </Button>
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.crimeCheck}>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  size="small"
-                  onClick={() => setCrimeData({ ...crimeData, category: 'dealership', id: data?.id, first_name: data?.name })}>Crime check</Button>
-              </CheckAllowed>
-            </>
+            <Box mt="sm">
+              <Title order={3} mb="xs">Attachments</Title>
+              <Text fz="xs" c="gray.6">No Attachments Found!</Text>
+            </Box>
           )}
-        </CardActions>
-        <Drawer
-          anchor="right"
-          open={crimeData}
-          onClose={() => { setCrimeData() }}
-          variant="temporary"
-        >
-          <div className={classes.sidePanelWrapper}>
-            {
-              <CrimeInfoSideWrapper dealershipId={data?.id} data={crimeData} currentUser={currentUser} onClose={() => setCrimeData()} />
-            }
-          </div>
-        </Drawer>
-      </div>
-    </Card >
+        </>
+      ) : (
+        <>
+          <Grid gutter="lg">
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                labelText="Name"
+                name="name"
+                readOnly={readOnly}
+                value={values?.name?.toUpperCase()}
+                error={errors.name}
+                helperText={errors.name}
+                {...fieldProps}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                labelText="GST"
+                name="gst"
+                readOnly={readOnly}
+                disabled={gstValidateData?.loading || (values?.gst_verified && (currentUser.role_id !== 1))}
+                value={values?.gst?.toUpperCase()}
+                error={errors.gst}
+                helperText={errors.gst}
+                InputProps={ValidateProps(gstValidateData, values?.gst_verified)}
+                {...fieldProps}
+              />
+              {
+                !values?.gst_verified || values?.gst !== data?.gst ?
+                  <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('gst', values?.gst)}>Validate GST</Typography> : null
+              }
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                labelText="PAN"
+                name="pan"
+                readOnly={readOnly}
+                disabled={panValidateData?.loading || (values?.pan_verified && (currentUser.role_id !== 1))}
+                value={values?.pan?.toUpperCase()}
+                error={errors.pan}
+                helperText={errors.pan}
+                InputProps={ValidateProps(panValidateData, values?.pan_verified)}
+                {...fieldProps}
+              />
+              {
+                !values?.pan_verified || values?.pan !== data?.pan ?
+                  <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => handleValidate('pan', values?.pan)}>Validate PAN</Typography> : null
+              }
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                labelText="Address"
+                name="address"
+                readOnly={readOnly}
+                disabled={readOnly}
+                value={values?.address}
+                error={errors.address}
+                helperText={errors.address}
+                {...fieldProps}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                select
+                labelText="Business Type"
+                name="business_type"
+                readOnly={readOnly}
+                disabled={readOnly}
+                defaultValue={values?.business_type}
+                error={errors.business_type}
+                helperText={errors.business_typeF}
+                {...fieldProps}
+              >
+                {
+                  businessTypes.data?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                }
+              </TextInput>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                select
+                labelText="State"
+                name="state"
+                readOnly={readOnly}
+                disabled={readOnly}
+                value={values?.state}
+                error={errors.state}
+                helperText={errors.state}
+                {...fieldProps}
+              >
+                {
+                  states.data?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
+                }
+              </TextInput>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              {
+                <TextInput
+                  select
+                  labelText="Region"
+                  name="region"
+                  value={values?.region}
+                  readOnly={readOnly}
+                  disabled={readOnly}
+                  error={errors.region}
+                  helperText={errors.region}
+                  {...fieldProps}
+                >
+                  {
+                    getRegion?.data?.map((item, i) => (<option key={i} value={item.id}>{item.name}</option>))
+                  }
+                </TextInput>
+              }
+
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                name="district"
+                labelText="District"
+                labelWidth={40}
+                value={values?.district}
+                readOnly={readOnly}
+                disabled={readOnly}
+                error={errors.district}
+                helperText={errors.district}
+                // select
+                alignTop
+                direction="column"
+                {...fieldProps}
+              >
+
+              </TextInput>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInput
+                number
+                labelText="Pincode"
+                name="pincode"
+                readOnly={readOnly}
+                value={values?.pincode}
+                error={errors.pincode}
+                helperText={errors.pincode}
+                {...fieldProps}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, lg: 6 }}>
+              <TextInputMask
+                mask={'UDYAM-aa-99-9999999'}
+                maskChar={' '}
+                labelText="UDYAM / UAM No."
+                name="udyam_no"
+                readOnly={readOnly}
+                disabled={udyamQuery?.isLoading || values?.udyam_verified}
+                value={values?.udyam_no?.toUpperCase()}
+                error={errors.udyam_no}
+                helperText={errors.udyam_no}
+                InputProps={ValidateUdyamProps(udyamQuery, values?.udyam_verified)}
+                {...fieldProps}
+              />
+              {
+                !values?.udyam_verified || values?.udyam_no !== data?.udyam_no ?
+                  <Typography variant="caption" style={{ color: 'blue', cursor: 'pointer' }} onClick={() => { !udyamQuery?.isLoading && getUDYAMDetails() }}>Validate Udyam</Typography> : null
+              }
+            </Grid.Col>
+          </Grid>
+
+          <Space h="xl" />
+
+          {dataJSON?.gst?.gstin || gstValidateData?.details ? (
+            <Card padding="lg" radius="md" withBorder mb="xl">
+              <Card.Section withBorder inheritPadding py="xs">
+                <Text fw={600}>GST Details</Text>
+              </Card.Section>
+
+              <Grid mt="lg" gutter="lg">
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='Effective Date of registration' value={dataJSON?.gst?.rgdt || gstValidateData?.details?.rgdt} />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='Taxpayer Type' value={dataJSON?.gst?.dty || gstValidateData?.details?.dty} />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='Legal Business Name' value={dataJSON?.gst?.lgnm || gstValidateData?.details?.lgnm} />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='GSTIN Status' value={dataJSON?.gst?.sts || gstValidateData?.details?.sts} />
+                </Grid.Col>
+
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='Legal Trade Name' value={dataJSON?.gst?.tradeNam || gstValidateData?.details?.tradeNam} />
+                </Grid.Col>
+              </Grid>
+            </Card>
+          ) : null}
+
+          {dataJSON?.udyam?.profile || udyamQuery?.data?.profile ? (
+            <Card padding="lg" radius="md" withBorder mb="xl">
+              <Card.Section withBorder inheritPadding py="xs">
+                <Text fw={600}>UDYAM Details</Text>
+              </Card.Section>
+
+              <Grid mt="lg" gutter="lg">
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='Name of Enterprise' value={udyamQuery?.data?.profile?.name || dataJSON?.udyam?.profile?.name} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='Organization Type' value={udyamQuery?.data?.profile?.organizationType || dataJSON?.udyam?.profile?.organizationType} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='Gender' value={udyamQuery?.data?.profile?.gender || dataJSON?.udyam?.profile?.gender} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='Date Of Incorporation' value={udyamQuery?.data?.profile?.dateOfIncorporation || dataJSON?.udyam?.profile?.dateOfIncorporation} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='Major Activity' value={udyamQuery?.data?.profile?.majorActivity || dataJSON?.udyam?.profile?.majorActivity} />
+                </Grid.Col>
+                <Grid.Col span={{ base: 12, lg: 6 }}>
+                  <ViewData title='classification Year' value={udyamQuery?.data?.enterpriseType?.[0]?.classificationYear || dataJSON?.udyam?.enterpriseType?.[0]?.classificationYear} />
+                </Grid.Col>
+              </Grid>
+            </Card>
+          ) : null}
+
+
+          <Title order={3} mb="md">Attachments</Title>
+          <Flex gap="sm">
+            <DocAttachment
+              action={true}
+              imgUrl={values?.pan_file_url}
+              docName='PAN Card'
+              onUpload={() => docUpload('PAN')}
+              onDelete={() => onDocDelete({ pan_file_url: '' })}
+              disabled={!values?.pan_file_url}
+              style={{ marginRight: 15 }}
+            />
+
+            <DocAttachment
+              action={true}
+              imgUrl={values?.gst_file_url}
+              docName='GST'
+              onUpload={() => docUpload('GST')}
+              onDelete={() => onDocDelete({ gst_file_url: '' })}
+              disabled={!values?.gst_file_url}
+              style={{ marginRight: 15 }}
+            />
+
+            <DocAttachment
+              action={true}
+              imgUrl={values?.udyam_file_url}
+              docName='UDYAM'
+              onUpload={() => docUpload('UDYAM')}
+              onDelete={() => onDocDelete({ udyam_file_url: '' })}
+              disabled={!values?.udyam_file_url}
+              style={{ marginRight: 15 }}
+            />
+          </Flex>
+        </>
+      )}
+
+
+      {showUpload && (
+        <FileUpload
+          handleSave={(value) => handleSave(value)}
+          id={values.id}
+          title='Upload Dealership Documents'
+          open={showUpload}
+          onCloseUploader={onCloseUploader}
+        />
+      )}
+
+      {!readOnly ? (
+        <Flex gap="sm" mt="xl">
+          <Button
+            variant="outline"
+            color="gray"
+            onClick={() => { setReadOnly(true); setViewOnly(true); }}
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            onClick={handleSubmit}
+            loading={isLoading}
+          >
+            Save
+          </Button>
+        </Flex>
+      ) : (
+        <Flex gap="sm" mt="xl">
+          <Button
+            variant="outline"
+            color="gray"
+            onClick={() => { setReadOnly(false); setViewOnly(false); }}
+          >
+            Edit Details
+          </Button>
+
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.crimeCheck}>
+            <Button onClick={() => setCrimeData({ ...crimeData, category: 'dealership', id: data?.id, first_name: data?.name })}>
+              Crime check
+            </Button>
+          </CheckAllowed>
+        </Flex>
+      )}
+
+      <RightSideDrawer
+        opened={crimeData}
+        onClose={() => setCrimeData()}
+        title={`Credit Information (${data?.pan || '-'})`}
+      >
+        <CrimeInfoSideWrapper
+          dealershipId={data?.id}
+          data={crimeData}
+          currentUser={currentUser}
+          onClose={() => setCrimeData()}
+        />
+      </RightSideDrawer>
+    </>
   );
 };
 

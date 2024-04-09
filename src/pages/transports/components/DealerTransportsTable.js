@@ -1,21 +1,14 @@
-import { Grid } from '@material-ui/core'
-import { Paper } from '@material-ui/core';
+import { Grid, Paper } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography'
 import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/styles'
 import MUIDataTable from 'mui-datatables'
 import React, { useMemo, useState } from 'react'
-import { connect } from 'react-redux'
 import { NavLink as RouterLink } from 'react-router-dom'
 import { useMount } from 'react-use'
-import { createStructuredSelector } from 'reselect'
 import Button from '../../../components/CommonComponents/Button/Button';
 import { getDealerTransportsList } from '../../../services/dealers.service'
 import { getTransporterInfoFromID, getTransportOwnerInfo, getVehicleInfoFromID } from '../../../services/transports.service'
-import { setAllTransports } from '../../../store/transports/transports.actions'
-import { selectAllTransports } from '../../../store/transports/transports.selector'
-
-
 
 
 
@@ -144,18 +137,7 @@ const DealerTransportsTable = ({ currentUser }) => {
 
   return (
     <>
-      {/* <Grid container spacing={4}>
-                <Grid item md={6}>
-                    <InfoCard
-                        title={"Owner Info"}
-                        userInitial={ownerInfo?.first_name?.charAt(0)}
-                        name={ownerInfo?.first_name ? `${ownerInfo?.first_name} ${ownerInfo?.last_name}` : 'Transporter Name'}
-                        caption={ownerInfo?.mobile}
-                        content={ownerInfo?.email}
-                        description={ownerInfo?.address}
-                    />
-                </Grid>
-            </Grid> */}
+
       <div>
         {
           loading ? (
@@ -177,28 +159,10 @@ const DealerTransportsTable = ({ currentUser }) => {
             )
         }
       </div>
-      {/* <FormDialog
-                title="Add Transport"
-                open={openModal}
-                onClose={() => setOpenModal(false)}
-            >
-                <AddNewTransportsForm data={transportsData} id={transportsData.} currentUser={currentUser} callback={handleClose} />
-            </FormDialog> */}
-      {/* {
-            view && vehicleData && (
-                <VehicleInfo id={id} data={vehicleData} currentUser={currentUser} />
-            )
-        } */}
     </>
   )
 }
 
-const mapStateToProps = createStructuredSelector({
-  transports: selectAllTransports,
-})
 
-const mapDispatchToProps = (dispatch) => ({
-  setAllTransports: (data) => dispatch(setAllTransports(data)),
-})
 
-export default connect(mapStateToProps, mapDispatchToProps)(DealerTransportsTable)
+export default DealerTransportsTable;

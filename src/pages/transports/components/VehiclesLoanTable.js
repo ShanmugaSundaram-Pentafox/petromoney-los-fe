@@ -1,138 +1,52 @@
 import { Grid } from '@material-ui/core'
-import { Paper } from '@material-ui/core'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/styles'
-import MUIDataTable from 'mui-datatables'
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import { NavLink as RouterLink } from 'react-router-dom'
-import { useMount } from 'react-use'
 import Currency from '../../../components/Number/Currency'
 import { getAllVehicleLoans } from '../../../services/transports.service'
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer'
+import { useQuery } from 'react-query'
 // import AddNewVehicleForm from "./AddNewVehicleForm"
 
-
-const useStyles = makeStyles((theme) => ({
-  title: {
-    fontWeight: 500,
-  },
-}))
-
 const VehiclesLoanTable = () => {
-  const [data, setData] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const classes = useStyles()
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Code',
-        name: 'transporter_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <RouterLink to={`/transports/${value}`}>{value}</RouterLink>
-          },
-        },
-      },
-      {
-        label: 'Name',
-        name: 'transporter_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        },
-      },
-      {
-        label: 'Vehicle Number',
-        name: 'tt_no',
-        options: {
-          filter: false,
-          sort: true,
-        },
-      },
-      {
-        label: 'Loan Type',
-        name: 'credit_head',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value, tableMeta) => {
-            // console.log(tableMeta)
-            return value
-          },
-        },
-      },
-      {
-        label: 'Amount',
-        name: 'loan_amount',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <Currency value={value} />
-          },
-        },
-      },
-    ]
-  }, [])
+  const getVehicleLoanDetailsQuery = useQuery({
+    queryKey: 'vehicle',
+    queryFn: () => getAllVehicleLoans()
+  });
 
-  useMount(() => {
-    setLoading(true)
-    getAllVehicleLoans()
-      .then((data) => {
-        setData(data)
-        setLoading(false)
-      })
-      .catch((e) => {
-        setLoading(false)
-        console.log(e);
-      })
-  })
-  const options = {
-    // filterType: 'checkbox',
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    rowsPerPage: 10,
-    viewColumns: false,
-    print: false,
-    isRowSelectable: () => false,
-    // customToolbar: () => {
-    //   return (
-    //     <Button
-    //       color="primary"
-    //       variant="contained"
-    //       onClick={() => setOpenModal(true)}
-    //     >
-    //       Add Vehicle
-    //     </Button>
-    //   );
-    // }
-  }
+  const column = [
+    {
+      key: 'transporter_id',
+      header: 'Code',
+      cell: (value) => <RouterLink to={`/transports/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }, {
+      key: 'transporter_name',
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }, {
+      key: 'tt_no',
+      header: 'Vehicle Number',
+    }, {
+      key: 'credit_head',
+      header: 'Loan Type',
+    }, {
+      key: 'loan_amount',
+      header: 'Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    },
+  ]
 
   return (
     <Grid item md={12}>
-      {Array.isArray(data) && data.length ? (
-        <MUIDataTable
-          title={
-            <Typography className={classes.title} variant="h5" component="h5">
-              Vehicle Loans List
-            </Typography>
-          }
-          data={data}
-          columns={columns}
-          options={options}
-        />
-      ) : (!loading && <Paper style={{ padding: 10 }}>No Vehicle Loans</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      <DataTableViewer
+        column={column}
+        rowData={getVehicleLoanDetailsQuery?.data}
+        filter={false}
+        title={'Vehicle Loans List'}
+        columnsFilter={false}
+        excelDownload
+        loading={getVehicleLoanDetailsQuery?.isLoading}
+      />
     </Grid>
   )
 }

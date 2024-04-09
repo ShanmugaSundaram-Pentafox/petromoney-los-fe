@@ -1,15 +1,14 @@
-import { Drawer, Grid, TextField, IconButton, Tooltip, Box, Typography, makeStyles } from '@material-ui/core';
+import { Drawer, TextField, IconButton, Tooltip, Box, Typography, makeStyles } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import SearchIcon from '@material-ui/icons/Search';
-import { Skeleton } from '@material-ui/lab';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useQuery } from 'react-query';
 import Select from 'react-select'
 import { CollectionRemarksDrawer } from './CollectionRemarksDrawer';
 import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getCollectionRemarkData } from '../../services/users.service';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -41,106 +40,62 @@ const CollectionRemarks = () => {
   const [searchData, setSearchData] = useState();
   const [error, setError] = useState()
   const classes = useStyles();
-  const filterOption = [{ value: 'name', label: 'Dealership Name' },{ value: 'id', label: 'Dealership ID' }];
-  const { data: testData = [], isFetching } = useQuery(['remark-Data', searchData], () => getCollectionRemarkData(searchData), { refetchOnWindowFocus: false,enabled: searchData ? true : false })
+  const filterOption = [{ value: 'name', label: 'Dealership Name' }, { value: 'id', label: 'Dealership ID' }];
+  const { data: testData = [], isFetching } = useQuery(['remark-Data', searchData], () => getCollectionRemarkData(searchData), { refetchOnWindowFocus: false, enabled: searchData ? true : false });
 
-  const columns = useMemo(() => {
-    return [
-      {
-        name: 'cust_code',
-        label: 'Dealership ID',
-        options: {
-          filter: false,
-        }
-      },
-      { name: 'applicant_name', label: 'Applicant Name' },
-      {
-        name: 'cust_region',
-        label: 'Region',
-        options: {
-          filter: false,
-        }
-      },
-      {
-        name: 'omc',
-        label: 'OMC',
-        options: {
-          filter: false,
-        }
-      },
-      {
-        name: 'tot_disb_amt',
-        label: 'Total Disbursed Amount',
-        options: {
-          filter: false,
-          customBodyRender: value => {
-            return <Currency value={value} />
-          }
-        }
-      },
-      {
-        name: 'tot_due',
-        label: 'Total Due',
-        options: {
-          filter: false,
-          customBodyRender: value => {
-            return <Currency value={value} />
-          }
-        }
-      },
-      {
-        name: 'tot_overdue',
-        label: 'Total Overdue',
-        options: {
-          filter: false,
-          customBodyRender: value => {
-            return <Currency value={value} />
-          }
-        }
-      },
-      {
-        name: 'loan_data',
-        label: 'Details',
-        options: {
-          filter: false,
-          display: 'excluded',
-          download: false
-        }
-      },
-      {
-        name: 'tot_prin_due',
-        label: 'Total Prin Due',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      {
-        name: 'tot_prin_overdue',
-        label: 'Total Prin Overdue',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      {
-        name: 'tot_int_overdue',
-        label: 'Total Int Overdue',
-        options: {
-          filter: false,
-          display: false
-        }
-      },
-      {
-        name: 'tot_penal_overdue',
-        label: 'Total Penal Overdue',
-        options: {
-          filter: false,
-          display: false
-        }
-      }
-    ]
-  }, []);
+  const column = [
+    {
+      key: 'cust_code',
+      header: 'Dealership Id',
+      enableColumnFilter: false,
+    }, {
+      key: 'applicant_name',
+      header: 'Applicant Name',
+      enableColumnFilter: false,
+    }, {
+      key: 'cust_region',
+      header: 'Region',
+    }, {
+      key: 'omc',
+      header: 'OMC',
+    }, {
+      key: 'tot_disb_amt',
+      header: 'Total Disbursed Amount',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value.getValue()} />
+    }, {
+      key: 'tot_due',
+      header: 'Total Due',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value.getValue()} />
+    }, {
+      key: 'tot_overdue',
+      header: 'Total Overdue',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value.getValue()} />
+    }, {
+      key: 'loan_data',
+      header: 'Details',
+      enableColumnFilter: false,
+    }, {
+      key: 'tot_prin_due',
+      header: 'Total Principle Due',
+      enableColumnFilter: false,
+    }, {
+      key: 'tot_prin_overdue',
+      header: 'Total Principle Overdue',
+      enableColumnFilter: false,
+    }, {
+      key: 'tot_int_overdue',
+      header: 'Total Interest Overdue',
+      enableColumnFilter: false,
+    }, {
+      key: 'tot_penal_overdue',
+      header: 'Total Penal Overdue',
+      enableColumnFilter: false,
+    },
+  ]
+
   const onChangeSearch = () => {
     if (searchValue?.value) {
       setSearchData({ ...searchValue })
@@ -157,7 +112,7 @@ const CollectionRemarks = () => {
     download: false,
     search: false,
     viewColumns: false,
-    print:false,
+    print: false,
     rowsPerPageOptions: [15, 20, 30],
     onRowClick: (value) => {
       setRowData(value)
@@ -200,27 +155,20 @@ const CollectionRemarks = () => {
                 <SearchIcon />
               </IconButton>
             </Tooltip>
-            <IconButton onClick={() => {setSearchValue({type:'name',value:''}); setSearchData();setError('') }} style={{ marginLeft: 10 }} size='small'>
+            <IconButton onClick={() => { setSearchValue({ type: 'name', value: '' }); setSearchData(); setError('') }} style={{ marginLeft: 10 }} size='small'>
               <CloseIcon />
             </IconButton>
           </div>
         </div >
 
       </Box>
-      {
-        isFetching ? (
-          <Grid item xs={12}>
-            <Skeleton variant='rect' width='100%' height={400} />
-          </Grid>
-        ) : (
-          <MUIDataTable
-            title="Remarks"
-            columns={columns}
-            options={options}
-            data={testData}
-          />
-        )
-      }
+      <DataTableViewer
+        rowData={testData}
+        title={'Remarks'}
+        column={column}
+        loading={isFetching}
+        onRowClick={i => { setRowData(i); setOpenModal(true) }}
+      />
       <Drawer
         anchor="right"
         open={openModal}

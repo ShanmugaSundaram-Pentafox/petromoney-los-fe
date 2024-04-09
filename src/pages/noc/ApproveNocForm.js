@@ -1,15 +1,12 @@
 import {
-  Typography,
   Box,
   Grid,
   Button,
   Divider,
   TextField,
 } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import { ViewData } from '../../components/CommonComponents/FilePreview';
@@ -19,6 +16,7 @@ import {
   rejectNocRequestbyDealershipID,
 } from '../../services/noc.services';
 import CheckAllowed from '../rbac/CheckAllowed';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelFormWrapper: {
@@ -26,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
-    width: '40vw',
   },
 
   sidePanelTitle: {
@@ -72,30 +69,23 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
   const classes = useStyles();
   const [remark, setRemark] = useState('');
   const [loading, setLoading] = useState({ approve: false, reject: false });
-  const { enqueueSnackbar } = useSnackbar();
 
   const handleReject = () => {
     setLoading({ ...loading, reject: true })
     rejectNocRequestbyDealershipID(data?.dealership_id, remark)
       .then((message) => {
-        enqueueSnackbar(message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: message,
           variant: 'success',
-        });
+        })
         setLoading({ ...loading, reject: false });
         callback();
       })
       .catch((e) => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: e,
           variant: 'error',
-        });
+        })
         setLoading({ ...loading, reject: false });
         callback();
       });
@@ -105,24 +95,18 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
     setLoading({ ...loading, approve: true })
     approveNocRequestbyDealershipID(data?.dealership_id, remark)
       .then((message) => {
-        enqueueSnackbar(message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: message,
           variant: 'success',
-        });
+        })
         setLoading({ ...loading, approve: false });
         callback();
       })
       .catch((e) => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
+        displayNotification({
+          message: e,
+          variant: 'success',
+        })
         setLoading({ ...loading, approve: false });
         callback();
       });
@@ -133,10 +117,6 @@ const ApproveNocForm = ({ data, callback, currentUser, view }) => {
   };
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
-        <div>Approve NOC Form</div>
-        <CloseIcon onClick={callback} />
-      </Typography>
       <>
         <div className={classes.sidePanelFormContentWrapper}>
           <div className={classes.stepperRoot}>

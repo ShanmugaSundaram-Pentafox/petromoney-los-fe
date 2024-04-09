@@ -1,27 +1,12 @@
-import { Collapse, makeStyles, Paper, Typography } from '@material-ui/core';
-import { ArrowDropDownSharp, ArrowRightOutlined } from '@material-ui/icons';
-import React, { useState } from 'react';
+import { Accordion, Box, Flex, Text, Title } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
+import React from 'react';
 import { useQuery } from 'react-query';
 import { BankDetailsTable, BunkDetailsTable, BusinessAnalysisTable, CibilAnalysisTable, DemographicsTable, DeviationTable, FacultyBankDetailsTable, FacultySalesTable, MonthlySalesTable, ReferrenceTable, RemarksTable, SanctionConditionTable, ShareHoldingTable, SummaryDataTable } from './WorkingSheetTable';
 import { getScoreCard } from '../../../services/common.service';
 
-const useStyles = makeStyles(() => ({
-  subtitle: {
-    color: 'rgba(0,0,0,0.4)',
-    marginTop: 8
-  },
-  collapseCard:
-  {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 10
-  }
-}))
 
 const WorkingSheetDrawer = ({ id }) => {
-  const classes = useStyles()
-  const [collapse, setCollapse] = useState();
   const { data } = useQuery('scorecard', () => getScoreCard(id), { refetchOnWindowFocus: false })
 
   const scoreCardData = data?.working_sheet
@@ -42,33 +27,38 @@ const WorkingSheetDrawer = ({ id }) => {
     { id: 13, name: 'Deviation details', component: <DeviationTable data={scoreCardData} /> },
     { id: 14, name: 'Sanction details', component: <SanctionConditionTable data={scoreCardData} /> },
   ]
-  console.log('data >>>>>>>>>>>',scoreCardData)
 
-  const handleClick = (id) => {
-    if (id == collapse)
-      setCollapse();
-    else
-      setCollapse(id);
-  }
   return (
-    <div style={{ marginBottom: 20,marginTop:20,padding:10 }}>
-      {/* <Typography variant='h3' component='h3' style={{ cursor: 'pointer' }}>Working sheet</Typography> */}
-      {
-        scoreCardData?.ws_summary_data[0] ? (tableData?.map(item => {
-          return (
-            <Paper variant='outlined' key={item?.id} style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}>
-              <div className={classes.collapseCard} onClick={() => handleClick(item.id)}>
-                <Typography variant='h6' style={{ cursor: 'pointer' }}>{item?.name}</Typography>
-                {collapse == item?.id ? <ArrowDropDownSharp /> : <ArrowRightOutlined />}
-              </div>
-              <Collapse in={collapse == item?.id}>
-                {item.component}
-              </Collapse>
-            </Paper>
-          )
-        })) : <Typography className={classes.subtitle} variant='body2'>No data found!</Typography>
-      }
-    </div>
+    <Box my="lg">
+      <Title order={3} mb={12}>Working Sheet</Title>
+      {scoreCardData?.ws_summary_data[0] ? (
+        <Accordion
+          classNames={{
+            chevron: '!transform !rotate-0 data-[rotate]:!rotate-45',
+            label: 'text-sm !text-gray-900',
+          }}
+          chevron={<IconPlus className="w-4 h-4" />}
+        >
+          {tableData?.map(item => {
+            return (
+              <Accordion.Item key={item?.id} value={item?.name}>
+                <Accordion.Control px="xs">
+                  {item?.name}
+                </Accordion.Control>
+
+                <Accordion.Panel>
+                  {item.component}
+                </Accordion.Panel>
+              </Accordion.Item>
+            )
+          })}
+        </Accordion>
+      ) : (
+        <Flex h="60" align="center" justify="center">
+          <Text c="gray.6" fz="sm">No data found!</Text>
+        </Flex>
+      )}
+    </Box>
   )
 }
 export default WorkingSheetDrawer;

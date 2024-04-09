@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     display: 'inline-block',
     borderRadius: '29px',
     padding: '3px 8px',
-    fontSize: '13px',
+    fontSize: '12px',
     fontWeight: '600',
     minWidth: '30px',
     textAlign: 'center',
@@ -108,7 +108,7 @@ const OverDueTable = ({ id, onRowClick, style }) => {
       onRowClick(loans[dataIndex].dealership_id, loans[dataIndex])
     },
     rowsPerPage: 10,
-    rowsPerPageOptions: [10, 15, 20, 25,   30],
+    rowsPerPageOptions: [10, 15, 20, 25, 30],
   };
   return (
     <div className={classes.root}>

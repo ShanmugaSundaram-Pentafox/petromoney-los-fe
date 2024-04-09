@@ -293,7 +293,7 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd, editable }) => {
               {
                 tankerData && tankerData.map((item, i) => {
                   return (
-                    <Grid item md={6}>
+                    <Grid item md={6} key={i}>
                       <PreviewCard
                         onEdit={() => {
                           editTankerRow(item, i)
@@ -301,7 +301,7 @@ const AddTankerDetails = ({ dealer_id, tankerAdd, setTankerAdd, editable }) => {
                           setTankerAdd(true)
                         }}
                         onDelete={() => deleteTankerRow(item, i)}
-                        action={editable? false : true}
+                        action={editable ? false : true}
                       >
                         <Grid container spacing={2} >
                           <Grid item md={6}>

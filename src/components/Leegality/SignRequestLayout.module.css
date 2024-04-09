@@ -1,0 +1,25 @@
+.dTitle {
+  margin: '0px';
+  padding: '4px';
+  display: 'flex';
+}
+.ifSigned {
+  width: '100px'
+}
+.closeButton {
+  position: 'absolute';
+  right: '2px';
+  top: '2px';
+  color: 'gray';
+}
+.sendButton {
+  padding: '10px 20px';
+}
+.content {
+  overflow-y: 'auto';
+  margin-top: '10px';
+}
+.info {
+  color: 'rgb(0,0,0,0.4)';
+  margin-top: '8px';
+}

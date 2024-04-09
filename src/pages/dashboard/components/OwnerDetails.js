@@ -14,7 +14,7 @@ import styled from 'styled-components';
 import Button from '../../../components/CommonComponents/Button/Button';
 import { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
-import usePageTitle from '../../../hooks/usePageTitle';
+// import usePageTitle from '../../../hooks/usePageTitle';
 import AddNewTransportForm from '../../../pages/transports/components/AddNewTransportsForm';
 import AddNewTransportsOwnerForm from '../../../pages/transports/components/AddNewTransportsOwnerForm';
 import { getTransportsByOwnersId, getOwnerDetailsById } from '../../../services/transports.service';
@@ -60,7 +60,7 @@ export const OwnerInfoCard = ({ id, ownerData, currentUser }) => {
   const [openEditModal, setOpenEditModal] = useState(false)
   // const [apiStatus, setApiStatus] = useState({});
 
-  usePageTitle(`${id} - ${ownerData && (ownerData.first_name || '')}`, true)
+  // usePageTitle(`${id} - ${ownerData && (ownerData.first_name || '')}`, true)
 
   const handleEdit = () => {
     setOpenEditModal(!openEditModal)
@@ -150,7 +150,7 @@ const OwnerDetails = ({ currentUser, match }) => {
     { label: 'Mobile', value: ownerData?.mobile },
     // { label: 'Email', value: ownerData?.email }
   ]
-  usePageTitle(`${id} - ${ownerData && (ownerData.name || '')} `, true, cardData)
+  // usePageTitle(`${id} - ${ownerData && (ownerData.name || '')} `, true, cardData)
 
   const columns = useMemo(() => {
     return [

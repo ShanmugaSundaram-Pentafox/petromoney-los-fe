@@ -1,67 +1,61 @@
-import { Box, Grid, makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import CardsCheckList from './CardsCheckList';
-
-const useStyles = makeStyles(() => ({
-  info: {
-    color: 'rgb(0,0,0,0.4)',
-    marginTop: 8,
-  }
-}));
+import { Box, Grid, Text, Title } from '@mantine/core';
 
 const LeegalityInvitees = ({ dealers, applicants, guarantor, updateSelectedDealers, updateSelectedCoAppicants, updateSelectedGuarantors }) => {
-  const classes = useStyles();
 
   return (
-    <Grid item sm={3} md={4}>
-      <Box>
-        <Typography variant="h4">Select Invitees</Typography>
-      </Box>
-      <Box pt={2}>
-        <Typography variant="body1">Dealers</Typography>
-        {dealers?.length !== 0 ? (
-          <Box pt={1}>
-            <CardsCheckList data={dealers} onChange={updateSelectedDealers} />
-          </Box>
-        ) : (
-          <Typography variant="body1" className={classes.info}>
-            No Dealers Found!
-          </Typography>
-        )}
-      </Box>
+    <Box style={{ width: '40%' }}>
+      <Grid ml={'md'}>
+        <Grid.Col>
+          <Title order={4}>Select Invitees</Title>
+        </Grid.Col>
+        <Grid.Col pt={2}>
+          <Text>Dealers</Text>
+          {dealers?.length !== 0 ? (
+            <Box pt={1}>
+              <CardsCheckList data={dealers} onChange={updateSelectedDealers} />
+            </Box>
+          ) : (
+            <Text c={'#ccc'} ta={'center'}>
+              No Dealers Found!
+            </Text>
+          )}
+        </Grid.Col>
 
-      <Box pt={2}>
-        <Typography variant="body1">Co-applicants</Typography>
-        {applicants?.length !== 0 ? (
-          <Box pt={1}>
-            <CardsCheckList
-              data={applicants}
-              onChange={updateSelectedCoAppicants}
-              tooltip={true}
-            />
-          </Box>
-        ) : (
-          <Typography variant="body1" className={classes.info}>
-            No Applicants Found!
-          </Typography>
-        )}
-      </Box>
-      <Box pt={2}>
-        <Typography variant="body1">Guarantors</Typography>
-        {guarantor?.length !== 0 ? (
-          <Box pt={1}>
-            <CardsCheckList
-              data={guarantor}
-              onChange={updateSelectedGuarantors}
-            />
-          </Box>
-        ) : (
-          <Typography variant="body1" className={classes.info}>
-            No Guarantors Found!
-          </Typography>
-        )}
-      </Box>
-    </Grid>
+        <Grid.Col>
+          <Text variant="body1">Co-applicants</Text>
+          {applicants?.length !== 0 ? (
+            <Box pt={1}>
+              <CardsCheckList
+                data={applicants}
+                onChange={updateSelectedCoAppicants}
+                tooltip={true}
+              />
+            </Box>
+          ) : (
+            <Text c={'#ccc'} ta={'center'}>
+              No Applicants Found!
+            </Text>
+          )}
+        </Grid.Col>
+        <Grid.Col>
+          <Text variant="body1">Guarantors</Text>
+          {guarantor?.length !== 0 ? (
+            <Box pt={1}>
+              <CardsCheckList
+                data={guarantor}
+                onChange={updateSelectedGuarantors}
+              />
+            </Box>
+          ) : (
+            <Text c={'#ccc'} ta={'center'}>
+              No Guarantors Found!
+            </Text>
+          )}
+        </Grid.Col>
+      </Grid>
+    </Box>
   );
 };
 

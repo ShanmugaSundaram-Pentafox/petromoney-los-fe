@@ -1,6 +1,4 @@
-import { Grid } from '@material-ui/core';
-import { Divider } from '@material-ui/core';
-import { CircularProgress } from '@material-ui/core';
+import { Grid, Divider, CircularProgress } from '@material-ui/core';
 import NavigateNextRounded from '@material-ui/icons/NavigateNextRounded';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -92,8 +90,8 @@ const AssetsEditForm = ({ dealer_id, assetData = {}, data, handleClose }) => {
             <label style={{ marginBottom: '20px' }}><strong>Asset type : </strong> {data.name}</label>
             <Grid container spacing={2}>
               {
-                fields.length ? fields.map(item => (
-                  <Grid item md={6}>
+                fields.length ? fields.map((item, i) => (
+                  <Grid item md={6} key={i}>
                     <TextInput
                       {...inputProps}
                       labelText={item.label}
@@ -215,8 +213,8 @@ export const AssetCard = ({ id, assetData = {}, data }) => {
   return (
     <>
       {
-        fields.length ? fields.map(item => (
-          <ViewData title={item.label} value={item.value} />
+        fields.length ? fields.map((item, i) => (
+          <ViewData title={item.label} value={item.value} key={i} />
         )) : null
       }
     </>

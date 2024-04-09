@@ -1,5 +1,4 @@
-import { Typography, Table, TableBody, Button, makeStyles, withStyles } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
+import { Loader, Title } from '@mantine/core';
 import { groupBy } from 'lodash';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
@@ -11,74 +10,8 @@ import { URL } from '../../../config/serverUrls';
 import { rulesList } from '../../../config/userRules';
 import { getDealershipCheckList } from '../../../services/dealerships.service';
 
-const DeleteButton = withStyles(() => ({
-  root: {
-    background: '#DC143C',
-    textTransform: 'none',
-    lineHeight: 1.5,
-    border: 0,
-    borderRadius: 3,
-    color: 'white',
-    height: 38,
-    padding: '0 30px',
-    marginBottom: '8px',
-
-    '&:hover': {
-      background: '#DC143C',
-    },
-    '&:focus': {
-
-    },
-    '&:active': {
-
-    },
-  }
-}))(Button)
-
-
-const useStyles = makeStyles((theme) => ({
-  wrapper: {
-    padding: 8,
-  },
-  title: {
-    paddingLeft: 8,
-    marginBottom: 8,
-    marginTop: 20,
-    // textTransform: 'capitalize',
-  },
-  table: {
-    padding: 8,
-  },
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inner_modal: {
-    backgroundColor: theme.palette.background.paper,
-    minWidth: 600,
-  },
-  content: {
-    padding: '10px 40px',
-    fontSize: 14,
-
-  },
-  modal_title: {
-    marginBottom: 20,
-
-  },
-  list: {
-    textAlign: 'center',
-  },
-  button: {
-    margin: 0,
-    float: 'right',
-  },
-}));
-
 const DocList = ({ id, currentUser }) => {
   const queryClient = useQueryClient()
-  const classes = useStyles();
   const [showUpload, setShowUpload] = useState(false);
   const [rowData, setRowData] = useState();
   const editable = permissionCheck(currentUser.role_name, rulesList.external_view);
@@ -115,6 +48,7 @@ const DocList = ({ id, currentUser }) => {
       formData.append('id', rowData.doc_id);
     });
 
+
     fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
       method: 'POST',
       body: formData,
@@ -138,25 +72,39 @@ const DocList = ({ id, currentUser }) => {
 
 
   return (
-    <div className={classes.wrapper}>
-      {showUpload && <FileUpload handleSave={handleSave} id={id} data={rowData} title='Upload Dealership Document' open={showUpload} onCloseUploader={onCloseUploader} FILE_FORMAT={rowData.doc_id == '17' ? FILE_FORMAT_ALL : undefined} />}
+    <>
+      {showUpload && (
+        <FileUpload
+          id={id}
+          handleSave={handleSave}
+          data={rowData}
+          title='Upload Dealership Document'
+          open={showUpload}
+          onCloseUploader={onCloseUploader}
+          FILE_FORMAT={rowData.doc_id == '17' ? FILE_FORMAT_ALL : undefined}
+        />
+      )}
       {(!checklistLoading && Object.entries(checkListData)?.length) ?
         Object.entries(checkListData)?.reverse()?.map((item, index) => (
           <div key={index}>
-            <Typography variant="h5" align={'Left'} className={classes.title}>
-              {item?.[0]?.replace(/_/, " ")?.toUpperCase()} DOCUMENTS
-            </Typography>
-            <Table className={classes.table} size="small" aria-label="Dealers">
-              <TableBody>
-                {Array.isArray(item?.[1]) && item?.[1]?.map((row, i) => row.doc_type !== 'dealer' && (
-                  <DocListPreview currentUser={currentUser} docName={row.description} upload={() => onDocUpload(row)} file={row.file_data} docId={row?.doc_id} id={i + 1} dealershipId={id} editable={editable} />
-                ))}
-              </TableBody>
-            </Table>
+
+            <Title order={3} mb="lg">{item?.[0]?.replace(/_/, ' ')?.toUpperCase()} DOCUMENTS</Title>
+
+            {Array.isArray(item?.[1]) && item?.[1]?.map((row, i) => row.doc_type !== 'dealer' && (
+              <DocListPreview
+                key={i}
+                currentUser={currentUser}
+                docName={row.description}
+                upload={() => onDocUpload(row)}
+                file={row.file_data}
+                docId={row?.doc_id} id={i + 1}
+                dealershipId={id}
+                editable={editable}
+              />
+            ))}
           </div>
-        )) : checklistLoading ? <Skeleton /> : <center>No data to display</center>
-      }
-    </div >
+        )) : checklistLoading ? <Loader /> : <center>No data to display</center>}
+    </ >
 
   );
 };

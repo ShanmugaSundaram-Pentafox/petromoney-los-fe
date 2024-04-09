@@ -137,7 +137,7 @@ const Login = ({ setCurrentUser }) => {
     validFields = {
       otp: Yup.string().nullable().required('Enter OTP'),
       new_password: Yup.string().nullable('Enter New password').required('Enter New Password').min(8, 'Password should have minimum of 8 characters'),
-      confirm_password: Yup.string().oneOf([Yup.ref('new_password'), null], "Password doesn't match").required('Re Enter Password')
+      confirm_password: Yup.string().oneOf([Yup.ref('new_password'), null], 'Password doesn\'t match').required('Re Enter Password')
     }
   }
 
@@ -157,20 +157,20 @@ const Login = ({ setCurrentUser }) => {
       if(forgetPass){
         let body = {mobile: values?.mobile, otp: values?.otp, password: values?.new_password}
         resetPassword(body)
-        .then(res => {
-          if(res?.status === 'SUCCESS'){
-            setApiStatus({ type: 'SUCCESS', message: 'Password Successfully Reset!' })
-            setTimeout(() => {
-              goBackLogin();
-              setApiStatus({});
-            }, 2000);
-          } else {
-            setApiStatus({ type: 'ERROR', message: res?.message })
-          }
-        })
-        .catch(e => {
-          setApiStatus({ type: 'ERROR', message: e })
-        })
+          .then(res => {
+            if(res?.status === 'SUCCESS'){
+              setApiStatus({ type: 'SUCCESS', message: 'Password Successfully Reset!' })
+              setTimeout(() => {
+                goBackLogin();
+                setApiStatus({});
+              }, 2000);
+            } else {
+              setApiStatus({ type: 'ERROR', message: res?.message })
+            }
+          })
+          .catch(e => {
+            setApiStatus({ type: 'ERROR', message: e })
+          })
       } else {
         apiCall(URL.login, {
           method: 'POST',
@@ -179,17 +179,17 @@ const Login = ({ setCurrentUser }) => {
           .then(({ status, data, message }) => {
             if (status == 'SUCCESS') {
               AccessPermission(data)
-              .then(({results}) => {
-                let permissions = {}
+                .then(({results}) => {
+                  let permissions = {}
                   for (const res of results) {
                     const { resource, actions } = res;
                     for (let key in actions) {
                       permissions[`${resource?.kind}_${key}`] = actions[key];
                     }
                   }
-                setCurrentUser({...data, access: results, permissions: permissions})
-              })
-              .catch(e => console.log(e))
+                  setCurrentUser({...data, access: results, permissions: permissions})
+                })
+                .catch(e => console.log(e))
             }
             setApiStatus({ type: status, message })
           })
@@ -229,7 +229,6 @@ const Login = ({ setCurrentUser }) => {
           }
         })
         .catch((error) => {
-          console.log('error', error)
           setApiStatus({ type: 'ERROR', message: error })
         })
     } else {
@@ -284,16 +283,16 @@ const Login = ({ setCurrentUser }) => {
 
         {
           !forgetPass ?
-          <p className="section-title">
-            <span>Login</span>
-            Please login to your account
-          </p> :
-          <p className="section-title">
-            <span>Reset Password</span>
-            <Typography variant='body1' style={{fontSize: '1rem'}}>
-            Please enter your mobile number to request a password reset.
-            </Typography>
-          </p>
+            <p className="section-title">
+              <span>Login</span>
+              Please login to your account
+            </p> :
+            <p className="section-title">
+              <span>Reset Password</span>
+              <Typography variant='body1' style={{fontSize: '1rem'}}>
+                Please enter your mobile number to request a password reset.
+              </Typography>
+            </p>
         }
 
 
@@ -329,30 +328,30 @@ const Login = ({ setCurrentUser }) => {
                   />
                   {
                     forgetPass &&
-                    <>
-                      <TextField
-                        name="new_password"
-                        label="New Password"
-                        type="password"
-                        onChange={handleChange}
-                        className={classes.textFieldStyle}
-                        fullWidth
-                        value={values.new_password}
-                        error={errors.new_password}
-                        helperText={errors.new_password}
-                      />
-                      <TextField
-                        name="confirm_password"
-                        label="Confirm New Password"
-                        type="password"
-                        onChange={handleChange}
-                        className={classes.textFieldStyle}
-                        fullWidth
-                        value={values.confirm_password}
-                        error={errors.confirm_password}
-                        helperText={errors.confirm_password}
-                      />
-                    </>
+                      <>
+                        <TextField
+                          name="new_password"
+                          label="New Password"
+                          type="password"
+                          onChange={handleChange}
+                          className={classes.textFieldStyle}
+                          fullWidth
+                          value={values.new_password}
+                          error={errors.new_password}
+                          helperText={errors.new_password}
+                        />
+                        <TextField
+                          name="confirm_password"
+                          label="Confirm New Password"
+                          type="password"
+                          onChange={handleChange}
+                          className={classes.textFieldStyle}
+                          fullWidth
+                          value={values.confirm_password}
+                          error={errors.confirm_password}
+                          helperText={errors.confirm_password}
+                        />
+                      </>
                   }
                   <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
                     <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -395,22 +394,22 @@ const Login = ({ setCurrentUser }) => {
 
                   {
                     !forgetPass ?
-                    <div style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
-                      {
-                        showOtpLogin() ? null : (
-                          <label className={classes.label} onClick={() => {
-                            setLoginWithOTP(false)
-                            // setOtpLogin(false)
-                            setFieldValue('otp', undefined)
-                          }}>Login with password</label>                      
-                        )
-                      }
-                      <label className={classes.forgetLabel} onClick={() => {
-                        setLoginWithOTP(true)
-                        setForgetPass(true)
-                      }}>Forgot Password ?</label>
-                    </div> :
-                    <label className={classes.returnLabel}>Return to <span style={{color: '#1E88E5'}} onClick={goBackLogin}>Login Page</span></label>
+                      <div style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                        {
+                          showOtpLogin() ? null : (
+                            <label className={classes.label} onClick={() => {
+                              setLoginWithOTP(false)
+                              // setOtpLogin(false)
+                              setFieldValue('otp', undefined)
+                            }}>Login with password</label>                      
+                          )
+                        }
+                        <label className={classes.forgetLabel} onClick={() => {
+                          setLoginWithOTP(true)
+                          setForgetPass(true)
+                        }}>Forgot Password ?</label>
+                      </div> :
+                      <label className={classes.returnLabel}>Return to <span style={{color: '#1E88E5'}} onClick={goBackLogin}>Login Page</span></label>
                   }
                 </div>
               )

@@ -14,18 +14,18 @@ import { getDealershipCheckList } from '../../services/dealerships.service';
 
 const useStyles = makeStyles(theme => ({
   title: {
-    display: 'flex', 
+    display: 'flex',
     justifyContent: 'space-between'
   },
   titlename: {
-    width:'200px',
-    height:'20px', 
-    whiteSpace: 'nowrap', 
-    textOverflow:'ellipsis', 
+    width: '200px',
+    height: '20px',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
     overflow: 'hidden'
   },
   tablebody: {
-    display: 'flex', 
+    display: 'flex',
     justifyContent: 'flex-start'
   }
 }))
@@ -36,11 +36,11 @@ const DocCheckListDetailsTable = ({ title }) => {
 
   return (
     <div>
-      <div style={{ minHeight: 150, width: 380, padding: 20 }}>
+      <div style={{ minHeight: 150, width: 380, padding: 10 }}>
         <div style={{ marginBottom: 12 }}>
           <div className={classes.title}>
             <Typography variant='body1' className={classes.titlename}>{title?.name}</Typography>
-            <Typography variant='caption' style={{ color:'rgb(0,0,0,0.4)' }}>&nbsp;{title?.region}</Typography>
+            <Typography variant='caption' style={{ color: 'rgb(0,0,0,0.4)' }}>&nbsp;{title?.region}</Typography>
           </div>
           <div className={classes.tablebody}>
             <Typography variant='body1'> {title?.dealership_id}</Typography>

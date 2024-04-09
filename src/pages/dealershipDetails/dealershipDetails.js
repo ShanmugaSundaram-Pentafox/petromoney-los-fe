@@ -1,114 +1,101 @@
+import { Tabs, Text, Box, Card, Title, Group } from '@mantine/core';
 import Button from '@material-ui/core/Button';
-import Collapse from '@material-ui/core/Collapse';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
-import { makeStyles } from '@material-ui/styles';
-import toInteger from 'lodash-es/toInteger';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useMount } from 'react-use';
 import DealershipInfo from './components/DealershipInfo';
-import DealershipTransport from './components/DealershipTransport';
 import DealersList from './components/DealersList';
 import DealershipDoc from './components/DocList';
-import FleetOperatorsDetails from './components/FleetOperatorsDetails';
 import LoansList from './components/LoansList';
 import PersonalDiscussionReport from './components/PDReport';
 import ScoreCard from './components/ScoreCard';
 import SolarEnquiryForm from './components/SolarEnquiryForm';
-import InfoBox from '../../components/CommonComponents/InfoBox';
-import { tabA11yProps, TabPanel } from '../../components/CommonComponents/Tabs/TabPanel';
 import LeegalityLayout from '../../components/Leegality/LeegalityLayout';
-import { permissionCheck } from '../../components/UserCan/UserCan';
 import { action_id, resources_id } from '../../config/accessControl';
-import { rulesList } from '../../config/userRules';
-import usePageTitle from '../../hooks/usePageTitle';
 import { getDealersByDealershipId } from '../../services/dealers.service';
 import { getDealershipById } from '../../services/dealerships.service';
 import { isAllowed } from '../../utils/cerbos';
-
-const useStyles = makeStyles((theme) => ({
-
-  tabsWrapper: {
-    display: 'flex',
-    flexGrow: 1,
-    marginTop: 20,
-  },
-  tabs: {
-    borderRight: 'none',
-    minWidth: 180,
-  },
-  solarTabs: {
-    paddingLeft: 16,
-  },
-  title: {
-    fontWeight: 600,
-    marginBottom: theme.spacing(1),
-  },
-  titleActionContainer: {
-    textAlign: 'right',
-  },
-  topSpacing: {
-    marginTop: theme.spacing(2),
-  },
-  bottomSpacing: {
-    marginBottom: theme.spacing(2),
-  },
-  sidePanelWrapper: {
-    width: '60vw'
-  },
-  solarPanelWrapper: {
-    width: '80vw',
-    backgroundColor: '#e5e5e5',
-  },
-}));
-
+import DeferralTable from './components/DeferralDeviationTables/DeferralTable';
+import { IconBriefcase, IconListDetails, IconPinEnd, IconPinInvoke, IconRouteScan, IconScoreboard, IconTractor, IconUserScan, IconUsersGroup, IconVariable } from '@tabler/icons-react';
+import DeviationTable from './components/DeferralDeviationTables/DeviationTable';
+import DealershipTransport from './components/DealershipTransport';
+import FleetOperatorsDetails from './components/FleetOperatorsDetails';
 
 
 const DealershipDetails = ({ currentUser, match }) => {
-  const classes = useStyles();
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState('dealership');
   const [solarTab, setSolarTab] = useState(-1);
+  // eslint-disable-next-line unused-imports/no-unused-vars
   const [showSolarForm, setShowSolarForm] = useState();
+  const [dealershipReadOnly, setDealershipReadOnly] = useState(true);
   const [leegalityModalVisible, setLeegalityModalVisible] = useState(false);
   const history = useHistory();
-  const financialReport_permission = permissionCheck(currentUser.role_name, rulesList.financial_view);
+  // const financialReport_permission = permissionCheck(currentUser.role_name, rulesList.financial_view);
+
   const pageData = [
     {
       id: action_id?.dealershipNavigation?.dealership,
       name: 'Dealership',
+      value: 'dealership',
+      icon: IconUserScan
     },
     {
       id: action_id?.dealershipNavigation?.dealers,
       name: 'Dealers',
+      value: 'dealer',
+      icon: IconUsersGroup
     },
     {
       id: action_id?.dealershipNavigation?.scoreCard,
       name: 'Score Card',
+      value: 'score_card',
+      icon: IconScoreboard,
     },
     {
       id: action_id?.dealershipNavigation?.loansList,
       name: 'Loans List',
+      value: 'loans_list',
+      icon: IconListDetails,
     },
     {
       id: action_id?.dealershipNavigation?.personalDiscussion,
       name: 'Personal Discussion',
+      value: 'personal_discussion',
+      icon: IconRouteScan
     },
     {
       id: action_id?.dealershipNavigation?.docChecklist,
       name: 'Documents',
+      value: 'documents',
+      icon: IconBriefcase
     },
     {
       id: action_id?.dealershipNavigation?.transporters,
       name: 'Transporters',
+      value: 'transporter',
+      icon: IconTractor
     },
     {
       id: action_id?.dealershipNavigation?.fleetOperator,
       name: 'Fleet Operators',
+      value: 'fleet_operators',
+      icon: IconVariable
+    },
+    {
+      id: action_id?.dealershipNavigation?.fleetOperator,
+      name: 'Deferral',
+      value: 'deferral',
+      icon: IconPinEnd
+    },
+    {
+      id: action_id?.dealershipNavigation?.fleetOperator,
+      name: 'Deviation',
+      value: 'deviation',
+      icon: IconPinInvoke
     },
   ]
 
@@ -117,7 +104,7 @@ const DealershipDetails = ({ currentUser, match }) => {
   // Allowed navigations inside dealership 
   for (const page in pageData) {
     if (isAllowed(currentUser?.permissions, resources_id?.dealershipNavigation, pageData[page]?.id)) {
-      tabs.push(pageData[page]?.name)
+      tabs.push(pageData[page])
     }
   }
 
@@ -133,103 +120,127 @@ const DealershipDetails = ({ currentUser, match }) => {
     },
     refetchOnWindowFocus: false
   })
-  const onChangeTab = (e, newTab) => {
+  const onChangeTab = (newTab) => {
     setActiveTab(newTab);
+    setDealershipReadOnly(true);
     history.replace(`?t=${newTab}`)
   }
 
   useMount(() => {
     const queryString = window.location.hash;
     const test = queryString.split('=');
-    setActiveTab(toInteger(test[1]))
+    setActiveTab(test[1])
   });
   let cardData = [
     { label: 'Dealership ID', value: dealershipData?.data?.id },
     { label: 'Business name', value: dealershipData?.data?.name },
-    { label: 'Dealer name', value: mainApplicant?.data?.first_name },
+    { label: 'Main Applicant', value: mainApplicant?.data?.first_name, },
     { label: 'Mobile', value: mainApplicant?.data?.mobile },
     { label: 'Email', value: mainApplicant?.data?.email }
   ]
-  usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
+  // usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
+
   return (
-    <div>
-      <div className={classes.tabsWrapper}>
-        <div>
-          <Collapse in={!showSolarForm}>
-            <Tabs
-              orientation="vertical"
-              value={activeTab}
-              onChange={onChangeTab}
-              aria-label="Dealership Details Panel"
-              className={classes.tabs}
-              TabIndicatorProps={{
-                style: { display: 'none' }
-              }}
-            >
-              {
-                tabs.map((title, i) => {
-                  return (<Tab key={1} label={<InfoBox active={activeTab === i} number={i + 1} title={title} />} {...tabA11yProps(i)} />)
-                })
-              }
-            </Tabs>
-          </Collapse>
-        </div>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealership')}>
-          {!dealershipData.isLoading && activeTab == tabs.indexOf('Dealership') && (
-            <DealershipInfo data={dealershipData.data} currentUser={currentUser} />
-          )}
-        </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Dealers')}>
-          {
-            activeTab == tabs.indexOf('Dealers') &&
-              <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+    <Box style={{ maxWidth: 1200 }}>
+      <Group gap={6}>
+        <Title my={4} order={2}>{dealershipData?.data?.name}</Title>
+        <Text>({dealershipData?.data?.id})</Text>
+      </Group>
+      <Card radius={'md'} my={'md'} p={0}>
+        {typeof cardData !== 'string' && (
+          <div className="hidden lg:block py-3">
+            <dl className="grid grid-flow-col auto-cols-max overflow-hidden divide-x divide-gray-200">
+              {Array.isArray(cardData) && cardData.map((item, i) => (
+                <div key={item.name + i} className="px-4">
+                  <dt className="text-xs font-normal text-gray-400 mb-[2px]">
+                    {item.label}
+                  </dt>
+                  <dd style={{ minWidth: '150px', fontSize: 14, maxWidth: '200px', whiteSpace: 'wrap', overflow: 'hidden', color: 'black' }}>
+                    {item.value || '-'}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
+      </Card>
+
+      <Tabs
+        // color="blue.1"
+        variant="pills"
+        orientation="vertical"
+        color={'##5a67f500'}
+        onChange={onChangeTab}
+        value={activeTab}
+        defaultValue={'dealership'}
+        styles={{
+          tab: {
+            paddingBottom: 5,
+            paddingTop: 5,
           }
-        </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Score Card')}>
-          {
-            activeTab == tabs.indexOf('Score Card') &&
-              <ScoreCard currentUser={currentUser} dealership_id={id} />
+        }}
+        classNames={{
+          root: 'gap-4',
+          tabLabel: 'flex grow items-center gap-2',
+          panel: 'h-full bg-white p-4 rounded-md',
+          list: 'gap-0',
+        }}
+      >
+        <Tabs.List>
+          {tabs.map((item, i) => {
+            return (
+              <Tabs.Tab
+                key={1}
+                value={item?.value}
+                leftSection={<item.icon size={16} color={(item?.value) === activeTab ? '#5a67f5' : '#2b2b2b'} />}
+              >
+                <Text c={(item?.value) === activeTab ? '#5a67f5' : '#2b2b2b'}>{item?.name}</Text>
+              </Tabs.Tab>
+            )
+          })
           }
-        </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Loans List')}>
-          {
-            activeTab == tabs.indexOf('Loans List') &&
-              <LoansList id={id} titleAlign="left" currentUser={currentUser} />
-          }
-        </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Personal Discussion')}>
-          {
-            activeTab == tabs.indexOf('Personal Discussion') &&
-              <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
-          }
-        </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Documents')}>
-          {
-            activeTab == tabs.indexOf('Documents') &&
-              <DealershipDoc id={id} currentUser={currentUser} />
-          }
-        </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Transporters')}>
-          {
-            activeTab == tabs.indexOf('Transporters') &&
-              <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
-          }
-        </TabPanel>
-        <TabPanel activeTab={activeTab} index={tabs.indexOf('Fleet Operators')}>
-          {
-            activeTab == tabs.indexOf('Fleet Operators') &&
-              <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
-          }
-        </TabPanel>
-        <SolarEnquiryForm
-          dealershipId={id}
-          mainApplicant={mainApplicant}
-          solarTab={solarTab}
-          onChangeTab={setSolarTab}
-          currentUser={currentUser}
-          onClose={() => setShowSolarForm(false)}
-        />
-      </div>
+        </Tabs.List>
+
+        <Tabs.Panel value={'dealership'}>
+          <DealershipInfo viewOnly={dealershipReadOnly} setViewOnly={setDealershipReadOnly} data={dealershipData.data} isLoading={dealershipData?.isLoading} currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'dealer'}>
+          <DealersList id={id} titleAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'score_card'}>
+          <ScoreCard currentUser={currentUser} dealership_id={id} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'loans_list'}>
+          <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'personal_discussion'}>
+          <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'documents'}>
+          <DealershipDoc id={id} currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'transporter'}>
+          <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'fleet_operators'}>
+          <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'deferral'}>
+          <DeferralTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+        <Tabs.Panel value={'deviation'}>
+          <DeviationTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
+        </Tabs.Panel>
+      </Tabs>
+
+      <SolarEnquiryForm
+        dealershipId={id}
+        mainApplicant={mainApplicant}
+        solarTab={solarTab}
+        onChangeTab={setSolarTab}
+        currentUser={currentUser}
+        onClose={() => setShowSolarForm(false)}
+      />
 
       <Dialog
         fullScreen
@@ -249,7 +260,7 @@ const DealershipDetails = ({ currentUser, match }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </div >
+    </Box>
   );
 };
 

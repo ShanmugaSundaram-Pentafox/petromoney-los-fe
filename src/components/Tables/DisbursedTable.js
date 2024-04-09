@@ -1,23 +1,14 @@
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { getLoansByStatus } from '../../services/loans.service';
-import { setLoansByStatus } from '../../store/loans/loans.actions';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
 import Currency from '../Number/Currency';
+import DataTableViewer from '../ReactTable/DataTableViewer';
+import { useQuery } from 'react-query';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    // padding: theme.spacing(3),
-    // paddingTop: 0,
-  },
   title: {
     fontWeight: 500
   },
@@ -25,8 +16,8 @@ const useStyles = makeStyles(theme => ({
     display: 'inline-block',
     borderRadius: '29px',
     padding: '3px 8px',
-    fontSize: '13px',
-    fontWeight: '600',
+    fontSize: '12px',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -40,193 +31,88 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DisbursedTable = ({ title, loans, setLoansData, onRowClick, filterQry }) => {
+const DisbursedTable = ({ title, onRowClick, filterQry }) => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setLoading(true);
-    getLoansByStatus('disbursed', filterQry)
-      .then(data => {
-        setLoansData('disbursed', data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }, [filterQry])
+  const getLoanDetailsQuery = useQuery({
+    queryKey: ['loan-details-disb', filterQry],
+    queryFn: () => getLoansByStatus('disbursed', filterQry),
+  })
 
-  // useMount(() => {
-  //   if (!loans || !loans.length) {
-  //     setLoading(true);
-  //     getLoansByStatus('disbursed')
-  //       .then(data => {
-  //         setLoansData('disbursed', data);
-  //         setLoading(false);
-  //       })
-  //       .catch(e => {
-  //         setLoading(false);
-  //       })
-  //   }
-  // });
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Customer code',
-        name: 'applicant_code',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value}</>
-          },
-        }
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Type',
-        name: 'type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
+  // useEffect(() => {
+  //   setLoading(true);
+  //   getLoansByStatus('disbursed', filterQry)
+  //     .then(data => {
+  //       setLoansData('disbursed', data);
+  //       setLoading(false);
+  //     })
+  //     .catch(e => {
+  //       setLoading(false);
+  //     })
+  // }, [filterQry])
 
-      },
-      {
-        label: 'Field Officer',
-        name: 'field_officer',
-        options: {
-          filter: true,
-          sort: true,
-        }
-      },
-      {
-        label: 'Sanctioned Amount',
-        name: 'amount_approved',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <strong><Currency value={value} /></strong>
-        }
-      },
-      {
-        label: 'Sanctioned Date',
-        name: 'loan_approved_rejected_date',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <div>{value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}</div>
-          }
-        }
-      },
-      {
-        label: 'Actual Amount Disbursed',
-        name: 'actual_amount_disbursed',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <strong><Currency value={value || 0} /></strong>
-        }
-      },
-      {
-        label: 'Amount Disbursed',
-        name: 'amount_disbursed',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <strong><Currency value={value || 0} /></strong>
-        }
-      },
-      {
-        label: 'Disbursed Date',
-        name: 'loan_disbursed_date',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'left',
-          }),
-          customBodyRender: value => {
-            return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-              {/* {value ? value : '-'} */}
-            </div>
-          }
-        }
-      }
-    ]
-  }, []);
-
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    onRowClick: (rowData, { dataIndex }) => {
-      onRowClick(loans[dataIndex].dealership_id, loans[dataIndex], 'disbursed')
+  const column = [
+    {
+      key: 'dealership_id',
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value.getValue()}`}>{value.getValue()}</RouterLink>,
+      enableColumnFilter: false,
+    }, {
+      key: 'applicant_code',
+      header: 'Customer Code',
+      enableColumnFilter: false,
+    }, {
+      key: 'name',
+      header: 'Name',
+      cell: (value) => <span>{value.getValue()?.toUpperCase()}</span>,
+      enableColumnFilter: false,
+    }, {
+      key: 'type',
+      header: 'Type',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.row?.original?.type}`])}>{value.getValue()}</span>,
+    }, {
+      key: 'region',
+      header: 'Region',
+      cell: (value) => <>{value.getValue() ? value.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>,
+    }, {
+      key: 'field_officer',
+      header: 'Field Officer',
+    }, {
+      key: 'amount_approved',
+      header: 'Sanction Amount',
+      cell: (value) => <Currency value={value.getValue()} />,
+      enableColumnFilter: false,
+    }, {
+      key: 'loan_approved_rejected_date',
+      header: 'Sanction Date',
+      cell: (value) => <div>{value.getValue() ? moment(new Date(value.getValue())).format('DD-MM-YYYY') : '-'}</div>,
+      enableColumnFilter: false,
+    }, {
+      key: 'amount_disbursed',
+      header: 'Disbursed Amount',
+      cell: (value) => <Currency value={value.getValue()} />,
+      enableColumnFilter: false,
+    }, {
+      key: 'loan_disbursed_date',
+      header: 'Disbursed Date',
+      cell: (value) => <div>{value.getValue() ? moment(new Date(value.getValue())).format('DD-MM-YYYY') : '-'}</div>,
+      enableColumnFilter: false,
     },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 7
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  ];
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
-            data={loans}
-            columns={columns}
-            options={options}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Disbursed Loans</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+      <DataTableViewer
+        column={column}
+        rowData={getLoanDetailsQuery?.data || []}
+        title={title}
+        count={getLoanDetailsQuery?.data?.length}
+        excelDownload={true}
+        onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursed')}
+        loading={getLoanDetailsQuery?.isLoading}
+      />
     </div>
   )
 }
 
-const mapStateToProps = ({ loans }) => ({
-  loans: loans.disbursed
-});
-
-const mapDispatchToProps = dispatch => ({
-  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(DisbursedTable);
+export default DisbursedTable;

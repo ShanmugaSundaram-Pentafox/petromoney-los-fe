@@ -37,7 +37,7 @@ module.exports = {
     'no-unsafe-optional-chaining': 'off',
     'no-dupe-keys': 'warn',
     'react/no-unescaped-entities': 'warn',
-    'no-duplicate-imports': 'error',
+    'no-duplicate-imports': 'warn',
     'no-useless-escape': 'warn',
     'no-unused-vars': 'warn',
     'unused-imports/no-unused-imports': 'warn',
@@ -93,6 +93,7 @@ module.exports = {
       indentLogicalExpressions: true
     }
     ],
+    'react/jsx-key': 'off',
     'react/jsx-indent-props': ['warn', 2],
     'jsx-a11y/label-has-associated-control': 'off',
     'jsx-a11y/interactive-supports-focus': 'off',

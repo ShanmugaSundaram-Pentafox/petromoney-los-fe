@@ -13,6 +13,7 @@ import Currency from '../../components/Number/Currency';
 import DueTable from '../../components/Tables/DueTable';
 import OverDueTable from '../../components/Tables/OverDueTable';
 import { getDealerDetails } from '../../services/dealers.service';
+import { Paper, Title } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   modal: {
@@ -86,34 +87,45 @@ const DealersDueReport = ({ currentUser }) => {
 
   return (
     <>
-      {
-        currentUser.role_name === 'DEALER' && (
-          <>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={12}>
-                <Box mb={2} p={2} borderRadius={4} bgcolor="background.paper">
-                  <Typography variant="h5">Sanctioned Loan : {dealerDetail.sanctioned_loan_amount ? <Currency value={dealerDetail.sanctioned_loan_amount[0]} /> : 0} </Typography>
-                  <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
-                    {
-                      dealerChartData.map((item, i) => (
-                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={ item.name === 'Total Due Amount' ? <Currency value={item.count} /> :item.count || item.string
-                        } text={item.name}/>))
-                    }
-                  </Box>
-                </Box>
-              </Grid>
-            </Grid>
-            <Grid container spacing={2}>
-              <Grid item md={6}>
-                <OverDueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} style='red'/>
-              </Grid>
-              <Grid item md={6}>
-                <DueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} style='green'/>
-              </Grid>
-            </Grid>
-          </>
-        )
-      }
+      {/* {currentUser.role_name === 'DEALER' && ( */}
+      <>
+        <Paper shadow="xs" p="lg" radius="lg" mb="lg">
+          <Title order={3} mb="sm" className="text-gray-700">
+            Sanctioned Loan : {dealerDetail.sanctioned_loan_amount ? <Currency value={dealerDetail.sanctioned_loan_amount[0]} /> : 0}
+          </Title>
+
+          {dealerChartData?.length ? (
+            <dl className="grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-2 lg:grid-cols-4">
+              {dealerChartData?.map((item, i) => {
+                return (
+                  <>
+                    {item.name || item.count ? (
+                      <DashCard 
+                        key={item.name + i} 
+                        text={item.name} 
+                        value={item.name === 'Total Due Amount' ? <Currency value={item.count} /> : item.count || item.string} 
+                        amount={item.amount} 
+                      />
+                    ) : null}
+                  </>
+                )
+              })}
+            </dl>
+          ) : null}
+        </Paper>
+
+        <Grid container spacing={2}>
+          <Grid item md={6}>
+            <OverDueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} style='red'/>
+          </Grid>
+
+          <Grid item md={6}>
+            <DueTable id={currentUser.dealership_id} onRowClick={showReportsInfo} style='green'/>
+          </Grid>
+        </Grid>
+      </>
+      {/* )} */}
+
       <Modal
         className={classes.modal}
         open={modalData.open}

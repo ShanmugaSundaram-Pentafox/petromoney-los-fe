@@ -317,8 +317,6 @@ export const SendReports = () => {
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {
-          console.log(status, 'status');
-          console.log(message, 'status');
           resolve({ status, message });
         } else {
           reject(message);
@@ -851,6 +849,38 @@ export const getProducts = () => {
 export const getProductsMaster = () => {
   return new Promise((resolve, reject) => {
     apiCall('business/products')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((err) => {
+        reject(err.message);
+      });
+  });
+};
+
+export const getPdcChecklistCategoryMaster = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('master/pre_disbursal_document_checklist/category')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data || []);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((err) => {
+        reject(err.message);
+      });
+  });
+};
+
+export const getPdcChecklistMaster = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('master/pre_disbursal_document_checklist')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data || []);

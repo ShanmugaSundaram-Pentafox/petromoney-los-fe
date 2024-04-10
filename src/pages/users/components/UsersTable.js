@@ -1,192 +1,99 @@
-import { Drawer, Tooltip } from '@material-ui/core';
-import { green, grey } from '@material-ui/core/colors';
-import Typography from '@material-ui/core/Typography';
-import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import EditIcon from '@material-ui/icons/Edit';
-import { makeStyles } from '@material-ui/styles'
-import MUIDataTable from 'mui-datatables'
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import { NavLink as RouterLink } from 'react-router-dom';
-import RightDrawer from './RightDrawer'
 import { action_id, resources_id } from '../../../config/accessControl';
 import { isAllowed } from '../../../utils/cerbos';
+import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
+import { Paper, Tooltip } from '@mantine/core';
+import { IconCheck, IconEdit, IconX } from '@tabler/icons-react';
+import AddNewUserAction from '../../../components/AddNewUser/AddNewUserAction';
 
-const useStyles = makeStyles((theme) => ({
-  title: {
-    fontWeight: 500,
-  },
+const UsersTable = ({ title, data, withRole, currentUser, loading }) => {
 
-  button: {
-    backgroundColor: '#CE2029',
-    color: 'white',
-    '&hover': {
-      color: 'black',
-    }
-  },
-  head: {
-    fontSize: '24px',
-    fontWeight: 700,
-  },
-  text: {
-    fontWeight: 700,
-  },
-}))
-const UsersTable = ({ title, data, withRole, currentUser }) => {
-  const classes = useStyles()
-  const [rowData, setRowData] = useState({});
-  const [openModal, setOpenModal] = useState(false)
+  const column = [
+    {
+      key: 'id',
+      header: 'User Id',
+      enableColumnFilter: false,
+    }, {
+      key: 'first_name',
+      header: 'Name',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue()}</span>
+    }, {
+      key: 'mobile',
+      header: 'Mobile Number',
+      enableColumnFilter: false,
+    }, {
+      key: 'email',
+      header: 'Email',
+      enableColumnFilter: false,
+    }, {
+      key: 'role_name',
+      header: 'Role',
+    },
+  ]
 
-
-  const columns = useMemo(() => {
-    const d = [
-      {
-        label: 'User ID',
-        name: 'id',
-        options: {
-          filter: false,
-          sort: false,
-        }
-      },
-      {
-        label: 'Name',
-        name: 'first_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        },
-      },
-      {
-        label: 'Mobile Number',
-        name: 'mobile',
-        options: {
-          filter: false,
-          sort: true,
-        },
-      },
-      {
-        label: 'Email',
-        name: 'email',
-        options: {
-          filter: false,
-          sort: true,
-        },
-      },
-      {
-        label: 'Role',
-        name: 'role_name',
-        options: {
-          filter: true,
-          sort: true,
-        },
-      },
-    ];
-    const actionColumnData = [{
-      label: 'Status',
-      name: 'status',
-      options: {
-        filter: true,
-        sort: false,
-        setCellProps: () => ({
-          align: 'center',
-        }),
-        customBodyRender: (value) => {
+  const actionColumn = [
+    {
+      key: 'status',
+      header: 'Status',
+      cell: (value) => {
+        if (value?.getValue() === 'Active') {
           return (
-            <div key={`vi-${value}`}>
-              {
-                value === 'Active' ? (
-                  <Tooltip title='Active'>
-                    <CheckCircleTwoToneIcon style={{ color: green[200] }} />
-                  </Tooltip>
-                ) : (
-                  <Tooltip title='Inactive'>
-                    <CheckCircleTwoToneIcon style={{ color: grey[500] }} />
-                  </Tooltip>
-                )
-              }
-            </div>
+            <Tooltip label='Active' color='gray' withArrow>
+              <IconCheck color={'green'} size={16} />
+            </Tooltip>
+          )
+        } else {
+          return (
+            <Tooltip label='Inactive' color='gray' withArrow>
+              <IconX color={'tomato'} size={16} />
+            </Tooltip>
           )
         }
+      }
+    }, {
+      key: 'action',
+      header: 'Action',
+      enableColumnFilter: false,
+      isHeaderDownload: false,
+      cell: ({ row }) => {
+        return (
+          <RouterLink to={{
+            pathname: `/user/${row?.original?.id}`,
+            params: row?.original
+          }}>
+            <div key={`vi-${row?.original?.id}`} style={{ cursor: 'pointer' }}>
+              <IconEdit color={'gray'} size={16} />
+            </div>
+          </RouterLink>
+        )
       }
     },
-    {
-      label: 'Profile',
-      name: 'id',
-      options: {
-        filter: true,
-        sort: true,
-        setCellProps: () => ({
-          style: { minWidth: '10px', maxWidth: '10px' },
-          align: 'center',
-        }),
-        customBodyRender: (value, r) => {
-          return (
-            <RouterLink to={{
-              pathname: `/user/${value}`,
-              params: data[r.rowIndex]
-            }}>
-              <div key={`vi-${value}`} style={{ cursor: 'pointer' }}>
-                <EditIcon fontSize='small' style={{ color: grey[500] }} />
-              </div>
-            </RouterLink>
-          )
-        }
-      },
-    }
-    ]
-    return withRole ? [
-      ...d,
-      {
-        label: 'Role',
-        name: 'role_name',
-        options: {
-          filter: true,
-          sort: true,
-        },
-      }
-    ] :
-      isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userStatus) ?
-        [...d, ...actionColumnData] : [...d]
-  }, [withRole])
-
-  const options = {
-    filter: true,
-    // filterType: 'checkbox',
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    rowsPerPage: 10,
-    isRowSelectable: () => false,
-    // onRowClick: (rowData, { dataIndex }) => {
-    //   isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userEdit) &&
-    //     onRowClick(data[dataIndex].dealership_id, data[dataIndex])
-    // }
-  }
+  ]
   return (
-    <div>
-      {Array.isArray(data) && data.length ? (
-        <MUIDataTable
-          title={
-            <Typography className={classes.title} variant="h4" component="h4">
-              {title}
-            </Typography>
-          }
-          data={data}
-          columns={columns}
-          options={options}
-        />
-      ) : null}
-      <Drawer
-        anchor="right"
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        variant="temporary"
-      >
-        <RightDrawer key={rowData.id} userId={rowData.id} currentUser={currentUser} callback={() => setOpenModal(false)} data={rowData} />
-      </Drawer>
-
-    </div>
+    <Paper>
+      <DataTableViewer
+        rowData={data}
+        loading={loading}
+        column={
+          withRole ?
+            [
+              ...column,
+            ] :
+            isAllowed(currentUser?.permissions, resources_id.users, action_id?.users.userStatus) ?
+              [
+                ...column,
+                ...actionColumn
+              ] :
+              column
+        }
+        action={
+          <AddNewUserAction currentUser={currentUser} />
+        }
+        title={title}
+      />
+    </Paper>
   )
 }
 

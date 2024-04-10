@@ -1,22 +1,14 @@
 import Box from '@material-ui/core/Box';
-import Drawer from '@material-ui/core/Drawer';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-// import { Link as RouterLink } from 'react-router-dom';
-// import moment from 'moment';
-// import clsx from 'clsx';
-// import MUIDataTable from "mui-datatables";
-// import Currency from '../../../components/Number/Currency';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable';
 import ApprovedTable from '../../../components/Tables/ApprovedTable';
 import DisbursedTable from '../../../components/Tables/DisbursedTable';
 import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
 import DisbursementReqestTable from '../../../components/Tables/DisbursementReqestTable';
-// import DueTable from '';
 import DueTable from '../../../components/Tables/DueTable';
 import OverDueTable from '../../../components/Tables/OverDueTable';
 import RejectedTable from '../../../components/Tables/RejectedTable';
@@ -25,8 +17,6 @@ import SubmittedTable from '../../../components/Tables/SubmittedTable';
 import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getDealershipById } from '../../../services/dealerships.service';
-import { setAllLoans } from '../../../store/loans/loans.actions';
-import { selectAllLoans } from '../../../store/loans/loans.selector';
 import ApprovedDrawer from '../RightDrawer/ApprovedDrawer';
 import DisbApprovedDrawer from '../RightDrawer/DisbApprovedDrawer';
 import DisbursedDrawer from '../RightDrawer/DisbursedDrawer';
@@ -35,9 +25,7 @@ import PendingDisbApprovedDrawer from '../RightDrawer/PendingDisbApprovalDrawer'
 import PendingReviewDrawer from '../RightDrawer/PendingReviewDrawer';
 import RejectedDrawer from '../RightDrawer/RejectedDrawer';
 import SubmittedDrawer from '../RightDrawer/SubmittedDrawer';
-
-
-
+import { Badge } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   tableContainer: {
@@ -272,38 +260,25 @@ const LoansTable = ({ currentUser, value, filterQry }) => {
             </>)
         )}
       />
-      <Drawer
-        anchor="right"
-        // elevation={4}
-        ModalProps={{
-          onBackdropClick: () => { setShowPanel({ status: false }) }
-        }}
-        open={showPanel.status}
-        variant={'temporary'}
+      <RightSideDrawer
+        size="60%"
+        opened={showPanel.status}
+        onClose={() => setShowPanel({ status: false })}
+        title={<Badge color="blue" size='lg' variant='light'>{compProps.data?.id} - {compProps.data?.name}</Badge>}
       >
-        <div className={classes.sidePanelWrapper}>
-          {
-            showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
-              : showPanel.data === 'loan_review' ? <PendingReviewDrawer {...compProps} />
-                : showPanel.data === 'loan_approval' ? <PendingApprovalDrawer {...compProps} />
-                  : showPanel.data === 'approved' ? <ApprovedDrawer {...compProps} />
-                    : showPanel?.data === 'disbursement_approval' ? <PendingDisbApprovedDrawer {...compProps} />
-                      : showPanel?.data === 'disbursement_approved' ? <DisbApprovedDrawer {...compProps} />
-                        : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
-                          : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null
-          }
-        </div>
-      </Drawer>
+        {
+          showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
+            : showPanel.data === 'loan_review' ? <PendingReviewDrawer {...compProps} />
+              : showPanel.data === 'loan_approval' ? <PendingApprovalDrawer {...compProps} />
+                : showPanel.data === 'approved' ? <ApprovedDrawer {...compProps} />
+                  : showPanel?.data === 'disbursement_approval' ? <PendingDisbApprovedDrawer {...compProps} />
+                    : showPanel?.data === 'disbursement_approved' ? <DisbApprovedDrawer {...compProps} />
+                      : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
+                        : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null
+        }
+      </RightSideDrawer>
     </Box>
   )
 }
 
-const mapStateToProps = createStructuredSelector({
-  all_loans: selectAllLoans
-});
-
-const mapDispatchToProps = dispatch => ({
-  setAllLoans: loans => dispatch(setAllLoans(loans))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(LoansTable);
+export default LoansTable;

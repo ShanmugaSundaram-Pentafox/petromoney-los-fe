@@ -1,6 +1,3 @@
-import { Box, Tooltip, Popover, Button, CircularProgress } from '@material-ui/core';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import SearchIcon from '@material-ui/icons/Search';
 import { subDays, format, isValid } from 'date-fns'
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
@@ -8,10 +5,11 @@ import { DateRange } from 'react-date-range';
 import { useQuery } from 'react-query';
 import { useMount } from 'react-use';
 import { filterStyles, Selector } from '../../../components/CommonComponents/FilterCard';
-import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getAllRegions, getFilteredProducts, getSignedUrl, getZones } from '../../../services/common.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { ActionIcon, Box, Button, Popover, TextInput, Tooltip } from '@mantine/core';
+import { IconDownload, IconSearch } from '@tabler/icons-react';
 
 const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload, fileData, downloadLoading, searchLoading }) => {
   const classes = filterStyles();
@@ -90,7 +88,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
         .catch(() => null)
     }
   })
-
   useEffect(() => {
     let qry = {}
     if (filters.includes('zone')) {
@@ -131,14 +128,17 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }
   const handleSearch = () => {
     if (filterType == 'processed') {
-      if (selectedDealership?.id || selectedPeriodType == 'D')
-        refetch()
+      if (selectedDealership?.id || selectedPeriodType == 'D') {
+        refetch();
+        setSelectedDealership({ ...selectedDealership, error: null });
+      }
       else
-        setSelectedDealership({ ...selectedDealership, error: 'Please enter dealership ID to get data' })
+        setSelectedDealership({ ...selectedDealership, error: 'Please enter dealership ID to get data' });
     }
     else {
-      refetch()
-      setChartData({ name: 'Zone', count: selectedZones })
+      refetch();
+      setSelectedDealership({ ...selectedDealership, error: null });
+      setChartData({ name: 'Zone', count: selectedZones });
     }
   }
   const downloadExistingReport = () => {
@@ -169,19 +169,19 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }
   return (
     <CheckAllowed currentUser={currentUser} resource={resources_id.creditReload} action={action_id.creditReload.dealer_search}>
-      <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10 }}>
+      <Box>
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
             filters.includes('zone') &&
-              <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
+              <Selector title="Zone" width={150} options={zones} value={selectedZones} setValue={setSelectedZones} />
           }
           {
             filters.includes('region') &&
-              <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+              <Selector title="Region" width={150} options={regions} value={selectedRegion} setValue={setSelectedRegion} />
           }
           {
             filters.includes('product') &&
-              <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
+              <Selector title="Product" width={150} options={products} value={selectedProducts} setValue={setSelectedProducts} />
           }
           {
             filters.includes('type') &&
@@ -202,93 +202,84 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                  <Tooltip title='Up to Date'>
+                  <Tooltip label='Up to Date' withArrow color='gray'>
                     <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
                   </Tooltip>
-                  <Tooltip title='Choose custom dates'>
-                    <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                      {
-                        selectedPeriodType === 'Custom' ? (
-                          `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                        ) : 'Custom'
-                      }
-                    </div>
-                  </Tooltip>
+                  <Popover
+                    opened={Boolean(showPicker)}
+                    onClose={onDateRangeClose}
+                    withArrow
+                    shadow='md'
+                  >
+                    <Popover.Target>
+                      <Tooltip label={selectedPeriodType === 'Custom' ? `${format(dateRange?.startDate, 'MMM dd yyy')} to ${format(dateRange?.endDate || new Date(), 'MMM dd yyy')}` : 'Choose custom Date'} withArrow color='gray'>
+                        <div role={'button'} className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                          Custom
+                        </div>
+                      </Tooltip>
+                    </Popover.Target>
+                    <Popover.Dropdown>
+                      <DateRange
+                        ranges={[dateRange]}
+                        onChange={onDatePickerChange}
+                        maxDate={new Date()}
+                        months={2}
+                        direction="horizontal"
+                        minDate={subDays(new Date(), 1095)}
+                      />
+                      <Box p={1} textAlign='right'>
+                        <Button onClick={onDateRangeClose} fullWidth>
+                          Apply
+                        </Button>
+                      </Box>
+                    </Popover.Dropdown>
+                  </Popover>
                 </div>
-                <Popover
-                  id={showPicker ? 'dp' : undefined}
-                  open={Boolean(showPicker)}
-                  anchorEl={showPicker}
-                  onClose={onDateRangeClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                  }}
-                >
-                  <DateRange
-                    ranges={[dateRange]}
-                    onChange={onDatePickerChange}
-                    maxDate={new Date()}
-                    months={2}
-                    direction="horizontal"
-                    minDate={subDays(new Date(), 1095)}
-                  />
-                  <Box p={1} textAlign='right'>
-                    <Button variant="contained" color="primary" onClick={onDateRangeClose}>
-                      Apply
-                    </Button>
-                  </Box>
-                </Popover>
               </Box>
           }
           {
             filterType == 'processed' && (
-              <div style={{ marginLeft: 10, minWidth: '20%' }}>
+              <div style={{ marginLeft: 10, width: '150px' }}>
                 <label style={{ color: 'hsl(0,0%,75%)' }}>Enter dealership ID</label>
                 <TextInput
-                  number
+                  type={'number'}
+                  size='xs'
                   value={selectedDealership?.id}
-                  onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value }) }}
+                  onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value, error: null }); }}
                   error={selectedDealership?.error}
-                  helperText={selectedDealership?.error}
                 />
               </div>
             )
           }
-          <div style={{ display: 'flex', marginTop: 15, marginLeft: 10 }}>
-            <Button
-              color="primary"
-              variant="contained"
-              size='small'
-              disabled={searchLoading}
+          <Tooltip label={'Click to search'} withArrow color={'gray'}>
+            <ActionIcon
+              variant="white"
               onClick={handleSearch}
+              ml={10}
+              mt={21}
+              loading={searchLoading}
             >
-              {searchLoading ? <CircularProgress size={14} /> : <SearchIcon />}
-            </Button>
+              <IconSearch size={16} color={'#4196f0'} />
+            </ActionIcon>
+          </Tooltip>
+          <Box mt={10}>
             {
               filterType == 'processed' && (
                 <>
                   <Button
-                    color="primary"
-                    variant="outlined"
-                    size='small'
+                    variant="outline"
+                    size='xs'
                     disabled={downloadLoading}
-                    startIcon={<GetAppIcon />}
-                    style={{ marginLeft: 10 }}
+                    leftSection={<IconDownload size={16} />}
                     onClick={handleDownload}
                   >
                     Download Report
                   </Button>
                   <Button
-                    color="primary"
-                    variant="outlined"
-                    size='small'
+                    variant="outline"
+                    size='xs'
                     disabled={!fileData?.file_url}
-                    style={{ marginLeft: 10 }}
+                    ml={10}
                     onClick={downloadExistingReport}
                   >
                     {fileData?.file_url ? `Show Report ( Last update : ${isValid(new Date(fileData?.modified_date)) && format(new Date(fileData?.modified_date), 'MMM dd yyyy hh:mma')} )` : fileData?.status}
@@ -296,10 +287,11 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                 </>
               )
             }
-          </div>
+          </Box>
+          {/* </Group> */}
         </Box>
       </Box>
-    </CheckAllowed>
+    </CheckAllowed >
   )
 }
 

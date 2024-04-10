@@ -1,21 +1,22 @@
-import { Button, CircularProgress, Dialog, DialogContent, DialogContentText, DialogTitle, Paper, Tooltip, Typography, makeStyles } from '@material-ui/core';
+import { Dialog, DialogContent, DialogContentText, DialogTitle, makeStyles } from '@material-ui/core';
 import moment from 'moment/moment';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import LoaderButton from '../../components/CommonComponents/Button/LoaderButton';
 import Currency from '../../components/Number/Currency';
 import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { rejectDealerReferralById } from '../../services/dealerships.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Button, Paper, Tooltip } from '@mantine/core';
 
 const useStyles = makeStyles(theme => ({
   title: {
     fontWeight: 500
   },
 }));
-const RejectedListTable = ({loans, loading, fetchData}) => {
+const RejectedListTable = ({ loans, loading, fetchData }) => {
   const classes = useStyles();
   const [modalObj, setModalObj] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -45,102 +46,50 @@ const RejectedListTable = ({loans, loading, fetchData}) => {
       })
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Dealership Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Disbursed Date',
-        name: 'loan_disbursed_date',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{moment(value).format('DD/MM/YYYY')}</>
-          },
-        }
-      },
-      {
-        label: 'Created By',
-        name: 'created_by',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Referred by Id',
-        name: 'referred_dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <>{value}</>
-        }
-      },
-      {
-        label: 'Referred by Name',
-        name: 'referred_dealership_name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Bonus Amount',
-        name: 'current_eligible_bonus',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => <Currency value={value ? value : '-'} />
-        }
-      },
-      {
-        label: 'Action',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          customBodyRender: (value, tableMeta) => {
-            return (
-              !tableMeta?.rowData[8] ?
-                <Tooltip title="click to pushback">
-                  <Button variant='outlined' size='small' color='primary'
-                    onClick={() => setModalObj({ open: true, id: value })}
-                  >
-                    Pushback
-                  </Button>
-                </Tooltip> : '-'
-            )
-          }
-        }
-      },
-    ]
-  }, [loans]);
+  const column = [
+    {
+      key: 'dealership_id',
+      header: 'Dealership Id',
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }, {
+      key: 'name',
+      header: 'Dealership Name',
+      cell: (value) => <span>{value?.getValue()}</span>
+    }, {
+      key: 'loan_disbursed_date',
+      header: 'Disbursed Date',
+      cell: (value) => <span>{moment(value?.getValue()).format('DD/MM/YYYY')}</span>
+    }, {
+      key: 'created_by',
+      header: 'Created By',
+    }, {
+      key: 'referred_dealership_id',
+      header: 'Referred By Id',
+    }, {
+      key: 'referred_dealership_name',
+      header: 'Referred By Name',
+      cell: (value) => <span>{value?.getValue()}</span>
+    }, {
+      key: 'current_eligible_bonus',
+      header: 'Bonus Amount',
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
+      key: 'action',
+      header: 'Action',
+      isHeaderDownload: false,
+      cell: ({ row }) => {
+        return (
+          <Tooltip label="click to pushback" color='gray' withArrow>
+            <Button variant='outline' size='compact-xs'
+              onClick={() => setModalObj({ open: true, id: row?.original?.dealership_id })}
+            >
+              Pushback
+            </Button>
+          </Tooltip>
+        )
+      }
+    },
+  ]
 
   const options = {
     selectableRowsHeader: false,
@@ -156,18 +105,15 @@ const RejectedListTable = ({loans, loading, fetchData}) => {
   };
 
   return (
-    <div>
-      {Array.isArray(loans) && loans.length ?
-        <MUIDataTable
-          title={<Typography className={classes.title} variant="h4" component="h4">{'Rejected'}</Typography>}
-          data={loans}
-          columns={columns}
-          options={options}
-        /> : (!loading && <Paper style={{ padding: 10 }}>No Records found</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
+    <Paper>
+      <DataTableViewer
+        rowData={loans}
+        column={column}
+        filter={false}
+        loading={loading}
+        title={'Rejected'}
+        excelDownload
+      />
       <Dialog
         open={modalObj?.open}
         onClose={() => setModalObj({})}
@@ -178,7 +124,7 @@ const RejectedListTable = ({loans, loading, fetchData}) => {
             <DialogContentText id="pushback-remarks-desc">
               Please enter your remarks.
             </DialogContentText>
-            <TextEditor setJSON={(e) => setModalObj(old => ({...old, remarks: e}))} toolBar={true} remarkData={modalObj?.remarks} />
+            <TextEditor setJSON={(e) => setModalObj(old => ({ ...old, remarks: e }))} toolBar={true} remarkData={modalObj?.remarks} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginTop: 8, marginBottom: 5 }}>
             <Button variant='outlined' onClick={() => setModalObj({})} style={{ marginRight: 8 }}>Cancel</Button>
@@ -194,7 +140,7 @@ const RejectedListTable = ({loans, loading, fetchData}) => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </Paper>
   )
 }
 

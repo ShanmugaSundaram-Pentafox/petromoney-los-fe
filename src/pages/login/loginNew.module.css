@@ -1,0 +1,81 @@
+.root {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: flex-end;
+  background-image: url('https://i.imgur.com/q5fROUN.png');
+  padding: 4%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  @media (max-width: $mantine-breakpoint-md) {
+    justify-content: center;
+  }
+}
+.text_content {
+  position: absolute;
+  bottom: 160px;
+  left: 90px;
+  color: #002859;
+  @media (max-width: $mantine-breakpoint-md) {
+    display: none;
+  }
+}
+.title_text {
+  font-size: 2.3rem;
+  font-weight: 600;
+  @media (max-width: $mantine-breakpoint-lg) {
+    font-size: 1.5rem;
+  }
+}
+.sub_text {
+  font-size: 1.4rem;
+  margin-top: 10px;
+  @media (max-width: $mantine-breakpoint-lg) {
+    font-size: 1.2rem;
+    margin-top: 5px;
+  }
+}
+.login_card {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 40px;
+  padding-top: 30px;
+  min-height: 78%;
+  margin-top: 60px;
+  margin-right: 80px;
+  background-color: rgba(54, 128, 255, 0.12);
+  border-radius: 10px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  position: relative;
+  @media (max-width: $mantine-breakpoint-lg) {
+    width: 40%;
+  }
+  @media (max-width: $mantine-breakpoint-md) {
+    width: 60%;
+    margin-right: 0;
+  }
+  @media (max-width: $mantine-breakpoint-xs) {
+    width: 100%;
+    margin-top: 0;
+  }
+}
+.logo {
+  height: 75px;
+  width: 70px;
+  margin-bottom: 2rem;
+}
+.logo_container {
+  display: flex;
+  width: 100%;
+  @media (max-width: $mantine-breakpoint-xs) {
+    justify-content: center;
+  }
+}
+form {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}

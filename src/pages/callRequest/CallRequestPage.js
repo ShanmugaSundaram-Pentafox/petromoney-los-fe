@@ -32,13 +32,13 @@ const CallRequestPage = () => {
   usePageTitle('Call Request');
   const [selectedTab, setSelectedTab] = useState('new');
 
-  const { data: callbackData = [], isLoading } = useQuery('new-request', () => getCallbackRequest(0), {refetchOnWindowFocus: false})
-  const { data: callbackProcessed = [] } = useQuery('processed-request', () => getCallbackRequest(1), {refetchOnWindowFocus: false})
+  const { data: callbackData = [], isLoading: callBackDataLoading } = useQuery('new-request', () => getCallbackRequest(0), { refetchOnWindowFocus: false })
+  const { data: callbackProcessed = [], isLoading: callBackProcessedLoading } = useQuery('processed-request', () => getCallbackRequest(1), { refetchOnWindowFocus: false })
 
   return (
     <>
       {
-        isLoading ?
+        callBackDataLoading ?
           <Grid container spacing={2}>
             <Grid item md={6}>
               <Skeleton variant='rectangular' height={60} />
@@ -68,9 +68,9 @@ const CallRequestPage = () => {
             </PaperWrapper>
             {
               selectedTab === 'new' ? (
-                <NewCallRequest callbackData={callbackData} />
+                <NewCallRequest callbackData={callbackData} isLoading={callBackDataLoading} />
               ) : (
-                <ProcessedCallRequest callbackProcessed={callbackProcessed} />
+                <ProcessedCallRequest callbackProcessed={callbackProcessed} isLoading={callBackProcessedLoading} />
               )
             }
           </>

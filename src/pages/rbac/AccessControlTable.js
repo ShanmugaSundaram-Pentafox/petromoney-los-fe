@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
 
 const AccessControlTable = ({ data, selectedResource, buffer, setBuffer, selectedRole }) => {
   const classes = useStyles();
-  const [rowData, setRowData] = useState({edit: false});
+  const [rowData, setRowData] = useState({ edit: false });
   const queryClient = useQueryClient();
 
   // Filtered selected resource
@@ -71,7 +71,7 @@ const AccessControlTable = ({ data, selectedResource, buffer, setBuffer, selecte
   };
 
   const handleDescriptionChange = (event) => {
-    setRowData({...rowData, data: {...rowData?.data, description: event.target.value}});
+    setRowData({ ...rowData, data: { ...rowData?.data, description: event.target.value } });
   }
 
   const handleDescriptionSave = () => {
@@ -81,7 +81,7 @@ const AccessControlTable = ({ data, selectedResource, buffer, setBuffer, selecte
     updateRbacActionsDescription(body, rowData?.data?.action_id)
       .then(() => {
         queryClient.invalidateQueries('rbac-access')
-        setRowData({edit: false})
+        setRowData({ edit: false })
       })
       .catch((e) => console.log(e))
   }
@@ -122,29 +122,29 @@ const AccessControlTable = ({ data, selectedResource, buffer, setBuffer, selecte
                             value={rowData?.data?.description}
                             onChange={handleDescriptionChange}
                             InputProps={{
-                              endAdornment: 
-                          <div style={{padding: 8, display: 'flex'}}>
-                            <IconButton size='small' onClick={handleDescriptionSave}>
-                              <Tooltip title="Save" >
-                                <Check fontSize='small' style={{color: '#4caf50'}} />
-                              </Tooltip>
-                            </IconButton>
-                            <IconButton size='small' onClick={() => setRowData({edit: false})}>
-                              <Tooltip title="Cancel" >
-                                <Close fontSize='small' color='error' />
-                              </Tooltip>
-                            </IconButton>
-                          </div>
+                              endAdornment:
+                                <div style={{ padding: 8, display: 'flex' }}>
+                                  <IconButton size='small' onClick={handleDescriptionSave}>
+                                    <Tooltip title="Save" >
+                                      <Check fontSize='small' style={{ color: '#4caf50' }} />
+                                    </Tooltip>
+                                  </IconButton>
+                                  <IconButton size='small' onClick={() => setRowData({ edit: false })}>
+                                    <Tooltip title="Cancel" >
+                                      <Close fontSize='small' color='error' />
+                                    </Tooltip>
+                                  </IconButton>
+                                </div>
                             }}
                           />
                         </div> :
-                      action?.description
+                        action?.description
                     }
                   </TableCell>
                   <TableCell>
-                    <IconButton size="small" className={classes.btn} onClick={() => setRowData({edit: true, data: action})}>
+                    <IconButton size="small" className={classes.btn} onClick={() => setRowData({ edit: true, data: action })}>
                       <Tooltip title="Edit">
-                        <EditIcon fontSize="small" style={{color: 'rgb(0,0,0,0.4)'}}/>
+                        <EditIcon fontSize="small" style={{ color: 'rgb(0,0,0,0.4)' }} />
                       </Tooltip>
                     </IconButton>
                   </TableCell>

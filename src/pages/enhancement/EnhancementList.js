@@ -1,10 +1,10 @@
-import Grid from '@material-ui/core/Grid';
 import React, { useState } from 'react';
 import EnhancementTable from './EnhancementTable'
 import usePageTitle from '../../hooks/usePageTitle';
 import { getEnhancementStatusList, getStatusWiseRecordCount } from '../../services/enhancement.service';
-import LoanStats from '../dashboard/components/LoanStats';
 import RenewalFilter from '../renewal/RenewalFilter';
+import { Grid } from '@mantine/core';
+import LoanStatsMin from '../dashboard/components/LoanStatsMin';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -27,7 +27,9 @@ const EnhancementList = ({ currentUser }) => {
               const matchingItem = res.find((el) => el.status === item.status);
               return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : { name: item?.status, count: 0 };
             });
-            setChartData(cdata);
+            let result = [...cdata]
+            result?.splice((cdata?.indexOf(cdata?.find(i => i?.name === 'approved')) + 1), 0, { name: 'Disb. Approval', count: res.find((el) => el.status === 'disbursement_approval')?.record_count })
+            setChartData(result);
           })
           .catch(err => {
             console.log(err);
@@ -39,8 +41,8 @@ const EnhancementList = ({ currentUser }) => {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
+      <Grid gutter={'md'}>
+        <Grid.Col span={12}>
           <RenewalFilter
             filterQry={setFilterQry}
             setChartData={setChartData}
@@ -48,17 +50,17 @@ const EnhancementList = ({ currentUser }) => {
             filterType='enhancement'
             filters={['zone', 'region', 'product', 'period']}
           />
-        </Grid>
-        <Grid item xs={12}>
-          <LoanStats
+        </Grid.Col>
+        <Grid.Col span={12}>
+          <LoanStatsMin
             selectedStatsCard={selectedStatsCard}
             handleClick={handleClick}
             chartData={chartData}
             totalLoans={totalLoans}
           />
-        </Grid>
+        </Grid.Col>
       </Grid>
-      <EnhancementTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} />
+      <EnhancementTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} statusList={chartData} statsChange={handleClick} />
     </div>
   );
 }

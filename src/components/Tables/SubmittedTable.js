@@ -1,26 +1,19 @@
-import { Dialog } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import Tooltip from '@material-ui/core/Tooltip';
-import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
-import MUIDataTable from 'mui-datatables';
-import React, { useMemo, useState, useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import { action_id, resources_id } from '../../config/accessControl';
 import { rulesList } from '../../config/userRules';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { getLoansByStatus } from '../../services/loans.service';
-import { setLoansByStatus } from '../../store/loans/loans.actions';
-import { dateCustomSort } from '../../utils/commonFunctions.util';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
 import Currency from '../Number/Currency';
 import { permissionCheck } from '../UserCan/UserCan';
+import DataTableViewer from '../ReactTable/DataTableViewer';
+import { ActionIcon, Tooltip } from '@mantine/core';
+import { useQuery } from 'react-query';
 
 
 const useStyles = makeStyles(theme => ({
@@ -31,8 +24,8 @@ const useStyles = makeStyles(theme => ({
     display: 'inline-block',
     borderRadius: '29px',
     padding: '3px 8px',
-    fontSize: '13px',
-    fontWeight: '600',
+    fontSize: '12px',
+    fontWeight: '500',
     minWidth: '30px',
     textAlign: 'center',
   },
@@ -56,198 +49,124 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SubmittedTable = ({ title, loans, setLoansData, onRowClick, filterQry, currentUser }) => {
+const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
   const classes = useStyles();
   const [loanId, setloanId] = useState();
   const [dealershipId, setDealershipId] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [type, setType] = useState('');
-  const [loading, setLoading] = useState(false);
   const actionable = !permissionCheck(currentUser.role_name, rulesList.external_view);
 
-  useEffect(() => {
-    setLoading(true);
-    getLoansByStatus('submitted', filterQry)
-      .then(data => {
-        setLoansData('submitted', data);
-        setLoading(false);
-      })
-      .catch(e => {
-        setLoading(false);
-      })
-  }, [filterQry])
+  const getLoanDetailsQuery = useQuery({
+    queryKey: ['loan-details-submit', filterQry],
+    queryFn: () => getLoansByStatus('submitted', filterQry),
+  })
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership Id',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: value => {
-            return <RouterLink to={`/dealership/${value}`}>{value}</RouterLink>
-          }
-        }
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: false,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        }
-      },
-      {
-        label: 'Type',
-        name: 'type',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => <span className={clsx(classes.pill, classes[`pills_${value}`])}>{value}</span>
-        }
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: value => (<>{value ? value.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>)
-        }
+  // useEffect(() => {
+  //   setLoading(true);
+  //   getLoansByStatus('submitted', filterQry)
+  //     .then(data => {
+  //       setLoansData('submitted', data);
+  //       setLoading(false);
+  //     })
+  //     .catch(e => {
+  //       setLoading(false);
+  //     })
+  // }, [filterQry])
 
-      },
-      {
-        label: 'Field Officer',
-        name: 'field_officer',
-        options: {
-          filter: true,
-          sort: true,
-        }
-      },
-      {
-        label: 'Req. Amount',
-        name: 'amount_requested',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'left',
-          }),
-          customBodyRender: value => <strong><Currency value={value} /></strong>
-        }
-      },
-      {
-        label: 'Req. Date',
-        name: 'created_date',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>
-              {value ? moment(new Date(value)).format('DD-MM-YYYY') : '-'}
-            </div>
-          }
-        }
-      },
-      {
-        label: 'Application state',
-        name: 'application_state',
-        options: {
-          filter: true,
-          filterWidth: '100%',
-          sort: true,
-          setCellProps: () => ({
-            align: 'center',
-          }),
-          customBodyRender: value => {
-            return <div>
-              {value ? value : '-'}
-            </div>
-          }
-        }
-      },
-      {
-        label: 'Documents',
-        name: 'dealership_id',
-        options: {
-          filter: false,
-          sort: false,
-          display: actionable ? true : 'excluded',
-          customBodyRender: (value, r) => {
-            return (
-              <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
-                <Tooltip title="eSign Application">
-                  <IconButton size="small" color="primary" aria-label="application" onClick={() => { setloanId(loans?.[r.rowIndex]['id']); setType('application'); setDealershipId(value); setModalVisible(true); }}>
-                    <div>
-                      <ESignIcon width={24} />
-                    </div>
-                  </IconButton>
-                </Tooltip>
-              </CheckAllowed>
-            )
-          }
-        }
-      }
-    ]
-  }, [loans]);
-
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    isRowSelectable: () => false,
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex !== 8) {
-        onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'submitted')
-      }
+  const column = [
+    {
+      header: 'Dealership Id',
+      key: 'dealership_id',
+      enableColumnFilter: false,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+    }, {
+      header: 'Name',
+      enableColumnFilter: false,
+      key: 'name',
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+    }, {
+      header: 'Type',
+      key: 'type',
+      cell: (value) => <span className={clsx(classes.pill, classes[`pills_${value?.getValue()}`])}>{value?.getValue()}</span>
+    }, {
+      header: 'Region',
+      key: 'region',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
+    }, {
+      header: 'Field Officer',
+      key: 'field_officer',
+    }, {
+      header: 'Req. Amount',
+      key: 'amount_requested',
+      enableColumnFilter: false,
+      cell: (value) => <Currency value={value?.getValue()} />
+    }, {
+      header: 'Req. Date',
+      key: 'created_date',
+      enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+    }, {
+      header: 'Application State',
+      key: 'application_state',
+      cell: (value) => <span>{value?.getValue() || '-'}</span>
+    }, {
+      header: 'Documents',
+      key: 'action',
+      isHeaderDisplay: Boolean(actionable),
+      isHeaderDownload: false,
+      enableColumnFilter: false,
+      cell: ({ row }) => (
+        <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard?.submitted_documents}>
+          <Tooltip label={'eSign Application'} withArrow>
+            <ActionIcon size="xs" color="blue" variant="subtle" onClick={() => { setloanId(row?.original?.['id']); setType('application'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); }}>
+              <ESignIcon />
+            </ActionIcon>
+          </Tooltip>
+        </CheckAllowed>
+      )
     },
-    customSort: (data, dataIndex, rowIndex) => {
-      let dateIndex = 5
-      return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
-    }
-  };
+  ]
+
+  // const options = {
+  //   selectableRowsHeader: false,
+  //   selectableRows: 'none',
+  //   isRowSelectable: () => false,
+  //   onCellClick: (colData, cellMeta) => {
+  //     if (cellMeta.colIndex !== 8) {
+  //       onRowClick(loans[cellMeta.dataIndex].dealership_id, loans[cellMeta.dataIndex], 'submitted')
+  //     }
+  //   },
+  //   customSort: (data, dataIndex, rowIndex) => {
+  //     let dateIndex = 5
+  //     return dateCustomSort(data, dataIndex, rowIndex, dateIndex)
+  //   }
+  // };
 
   return (
     <div className={classes.root}>
-      {
-        Array.isArray(loans) && loans.length ? (
-          <MUIDataTable
-            title={title ? <Typography className={classes.title} variant="h4" component="h4">{title} ({loans.length})</Typography> : null}
-            data={loans}
-            columns={columns}
-            options={options}
-          />
-        ) : (!loading && <Paper style={{ padding: 10 }}>No Submitted Records</Paper>)
-      }
-      {
-        loading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-      }
-      <Dialog fullWidth maxWidth="md" open={modalVisible} onClose={() => setModalVisible(false)}>
-        <SignRequestLayout
-          dealershipId={dealershipId}
-          loanId={loanId}
-          type={type}
-          title={'eSign Application Form'}
-          onClose={() => setModalVisible(false)}
-          currentUser={currentUser}
-        />
-      </Dialog>
+      <DataTableViewer
+        column={column}
+        rowData={getLoanDetailsQuery?.data}
+        title={'Dashboard'}
+        // count={loans?.length}
+        // showStatusTab={chartData}
+        excelDownload
+        loading={getLoanDetailsQuery?.isLoading}
+        onRowClick={(i) => onRowClick(i?.dealership_id, i, 'submitted')}
+      />
+      <SignRequestLayout
+        dealershipId={dealershipId}
+        opened={modalVisible}
+        loanId={loanId}
+        type={type}
+        title={'eSign Application Form'}
+        onClose={() => setModalVisible(false)}
+        currentUser={currentUser}
+      />
     </div>
   )
 }
 
-const mapStateToProps = ({ loans }) => ({
-  loans: loans.submitted
-});
 
-const mapDispatchToProps = dispatch => ({
-  setLoansData: (status, data) => dispatch(setLoansByStatus(status, data))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(SubmittedTable);
+export default SubmittedTable;

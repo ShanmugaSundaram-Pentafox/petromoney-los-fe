@@ -45,6 +45,7 @@ import PassbookDetails from '../pages/users/dealer/PassbookDetails';
 import Users from '../pages/users/users';
 import { selectCurrentUser } from '../store/user/user.selector';
 import { isAllowed } from '../utils/cerbos';
+import LoginNew from '../pages/login/loginNew';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -122,7 +123,7 @@ const Routes = ({ currentUser }) => {
           return <Redirect to={authUrl != 'undefined' ? authUrl : '/'} />
         }
 
-        return <Login {...props} />
+        return <LoginNew {...props} />
       }} />
 
       <Route exact path="/access/revoke">

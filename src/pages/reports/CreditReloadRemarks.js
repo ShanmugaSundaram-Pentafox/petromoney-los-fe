@@ -1,13 +1,7 @@
-import { Box, Button, CircularProgress, Divider, FormHelperText, Grid, IconButton, InputAdornment, Tooltip, Typography } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
-import { Check, Close } from '@material-ui/icons';
 import CheckCircleTwoToneIcon from '@material-ui/icons/CheckCircleTwoTone';
-import CloseIcon from '@material-ui/icons/Close';
 import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
-import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import CreatableSelect from 'react-select/creatable';
@@ -19,74 +13,12 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { addCreditReport, updateCreditReload } from '../../services/creditreport.service';
 import { getAllWithheldRemarks } from '../../services/withheld.services';
 import { isAllowed } from '../../utils/cerbos';
-
-
-const useStyles = makeStyles((theme) => ({
-  sidePanelFormWrapper: {
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
-    width: '40vw',
-  },
-
-  sidePanelTitle: {
-    padding: '12px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333',
-  },
-  image: {
-    borderRadius: 6,
-    padding: 1,
-    objectFit: 'cover'
-  },
-  sidePanelFormContentWrapper: {
-    flex: 1,
-    overflow: 'auto',
-  },
-  stepperRoot: {
-    padding: 16,
-    paddingTop: 8,
-  },
-  actionButtonsWrapper: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '12px 16px',
-  },
-  dropdown: {
-    boxShadow: '1px 1px 4px -3px #333',
-  },
-  option: {
-    padding: 6,
-  },
-  editButton: {
-    marginRight: '8px',
-    '&.MuiButton-contained': {
-      backgroundColor: theme.palette.success.main,
-      color: theme.palette.white,
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: theme.palette.success.dark,
-    },
-  },
-
-  declineButton: {
-    marginRight: '8px',
-    '&.MuiButton-contained': {
-      backgroundColor: '#FF5C58',
-      color: theme.palette.white,
-    },
-    '&.MuiButton-contained:hover': {
-      backgroundColor: '#DF2E2E',
-    },
-  },
-}));
+import { Box, Button, Divider, Grid, Group, Text, Title } from '@mantine/core';
+import Currency from '../../components/Number/Currency';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
-  const classes = useStyles();
+  const classes = {};
   const [status, setStatus] = useState('');
   const [remarks, setRemarks] = useState();
   const [newRemarks, setNewRemarks] = useState()
@@ -94,7 +26,6 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
   const [utrNumber, setUtrNumber] = useState();
   const [disburseLoading, setDisburseLoading] = useState(false);
   const [amount, setAmount] = useState({ isEdit: false, value: rowData?.amount, loading: false })
-  const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient()
 
   const postApiCall = (submitData) => {
@@ -107,26 +38,20 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
       .then((res) => {
         setDisburseLoading(false)
         callback()
-        enqueueSnackbar(res.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: res?.message,
           variant: 'success',
-        });
+        })
         setTimeout(() => {
           window.location.reload(false)
         }, 1000);
       })
       .catch((e) => {
         setDisburseLoading(false)
-        enqueueSnackbar(e.message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: e?.message,
           variant: 'error',
-        });
+        })
       })
   }
   const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting, } = useFormik({
@@ -187,22 +112,16 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
           setAmount({ ...amount, isEdit: false, loading: false });
           callback()
           queryClient.invalidateQueries('new-request')
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: res,
             variant: 'success',
-          });
+          })
         })
         .catch(e => {
-          enqueueSnackbar(e, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
+          displayNotification({
+            message: e,
             variant: 'error',
-          });
+          })
         })
     }
     else
@@ -218,91 +137,46 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
     }
   };
   return (
-    <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant='h4'>
-        <div>Credit Reload Form</div>
-        <CloseIcon onClick={callback} />
-      </Typography>
-      <div className={classes.sidePanelFormContentWrapper}>
-        <div className={classes.stepperRoot}>
+    <Box>
+      <Box>
+        <Box>
           <Box>
+            <Divider mb={'md'} />
             <>
-              <Grid container spacing={3}>
-                <Grid item md={6}>
-                  <Box>
+              <Grid gutter={'md'} p={10}>
+                <Grid.Col span={6}>
+                  <Box mb={'sm'}>
                     <ViewData title="Dealership ID" value={rowData?.dealership_id} />
-                    {
-                      amount?.isEdit ? (
-                        <div style={{ marginTop: 10, marginBottom: 10 }}>
-                          <label>Amount</label>
-                          <TextInput
-                            money
-                            number
-                            name="description"
-                            value={amount?.value}
-                            error={amount?.error}
-                            helperText={amount?.error}
-                            onChange={(e) => setAmount({ ...amount, value: e?.target.value })}
-                            InputProps={{
-                              startAdornment: <InputAdornment position="start">₹</InputAdornment>,
-                              endAdornment:
-                                amount?.loading ? <CircularProgress size={11} style={{ marginRight: 7 }} /> : (
-                                  <div style={{ padding: 8, display: 'flex' }}>
-                                    <IconButton size='small' onClick={handleAmountChange}>
-                                      <Tooltip title="Save" >
-                                        <Check fontSize='small' style={{ color: '#4caf50' }} />
-                                      </Tooltip>
-                                    </IconButton>
-                                    <IconButton size='small' onClick={() => setAmount({ isEdit: false })}>
-                                      <Tooltip title="Cancel" >
-                                        <Close fontSize='small' color='error' />
-                                      </Tooltip>
-                                    </IconButton>
-                                  </div>
-                                )
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                          <ViewData title='Amount' value={rowData?.amount} />
-                          {/* <CheckAllowed currentUser={currentUser} resource={resources_id?.creditReload} action={action_id?.creditReload?.amount_edit}>
-                            {
-                              !rowData?.tranche_code ? (
-                                <IconButton size='small' onClick={() => setAmount({ isEdit: true })}>
-                                  <Tooltip title={'Click to Edit amount'}>
-                                    <EditIcon fontSize="small" style={{ color: 'rgb(0,0,0,0.4)' }} />
-                                  </Tooltip>
-                                </IconButton>
-                              ) : null
-                            }
-                          </CheckAllowed> */}
-                        </div>
-                      )
-                    }
+                  </Box>
+                  <Box mb={'sm'}>
+                    <ViewData title='Amount' value={<Currency value={rowData?.amount} />} />
+                  </Box>
+                  <Box mb={'sm'}>
                     <ViewData title='Remarks' value={rowData?.remarks} />
                   </Box>
-                </Grid>
-                <Grid item md={6}>
-                  <Box>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Box mb={'sm'}>
                     <ViewData title="Request ID" value={rowData?.request_id} />
+                  </Box>
+                  <Box mb={'sm'}>
                     <ViewData title="Status" value={rowData?.status} />
+                  </Box>
+                  <Box mb={'sm'}>
                     <ViewData title='Bank details' value={`${rowData?.account_no} - ${rowData?.bank_name}`} />
                   </Box>
-                </Grid>
-              </Grid>
-              <Grid container spacing={3}>
-                <Grid item md={12}>
-                  <Typography variant="h6">Payment Reference</Typography>
-                </Grid>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Title order={5}>Payment Reference</Title>
+                </Grid.Col>
                 {
                   !rowData?.payment_proof_attachment?.proof_1_url ? (
-                    <div style={{ display: 'flex', width: '100%', justifyContent: 'center', marginTop: 5 }}>
-                      <Typography variant='h7'>No Attachments Found</Typography>
-                    </div>
+                    <Grid.Col span={12}>
+                      <Text c={'gray'} ta={'center'} size={'xs'} mt={10}>No Attachments Found</Text>
+                    </Grid.Col>
                   ) : (
                     <div style={{ display: 'flex', width: '80%', marginLeft: 30 }}>
-                      <Grid item md={4}>
+                      <Grid.Col span={4}>
                         <div style={{ width: 125 }}>
                           {
                             !rowData?.payment_proof_attachment.proof_1_url?.endsWith('.pdf') ? (
@@ -324,8 +198,8 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                             ) : null
                           }
                         </div>
-                      </Grid>
-                      <Grid item md={4}>
+                      </Grid.Col>
+                      <Grid.Col span={4}>
                         <div style={{ width: 125 }}>
                           {
                             !rowData?.payment_proof_attachment.proof_2_url?.endsWith('.pdf') ? (
@@ -348,8 +222,8 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                             ) : null
                           }
                         </div>
-                      </Grid>
-                      <Grid item md={4}>
+                      </Grid.Col>
+                      <Grid.Col span={4}>
                         <div style={{ width: 125 }}>
                           {
                             !rowData?.payment_proof_attachment.proof_3_url?.endsWith('.pdf') ? (
@@ -372,7 +246,7 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                             ) : null
                           }
                         </div>
-                      </Grid>
+                      </Grid.Col>
                     </div>
                   )
                 }
@@ -382,8 +256,8 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
               isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && (
                 rowData.status == 'Disbursed' || rowData.status == 'Declined' ? null : (
                   <>
-                    <Grid container spacing={2}>
-                      <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Grid p={10}>
+                      <Grid.Col span={12}>
                         <label style={{ marginBottom: 8, marginTop: 25 }}>Remarks</label>
                         <CreatableSelect
                           name='remarks'
@@ -391,12 +265,12 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                           onChange={handleRemarkChange}
                           options={remarks}
                         />
-                        <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!newRemarks && status === 'decline' ? 'Need a Remark to Proceed!' : null}</FormHelperText>
-                      </Grid>
+                        <Text style={{ color: '#FF5C58', marginLeft: 5, fontSize: '10px' }}>{!newRemarks && status === 'decline' ? 'Need a Remark to Proceed!' : null}</Text>
+                      </Grid.Col>
                       {
                         // show only for loans except vivriti
                         !rowData?.product_name?.includes('Vivriti') && (
-                          <Grid item md={8} style={{ display: 'flex', flexDirection: 'column' }}>
+                          <Grid.Col span={12}>
                             <TextInput
                               direction='column'
                               alignTop={true}
@@ -404,8 +278,8 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
                               value={utrNumber}
                               onChange={e => setUtrNumber((e.target.value).toUpperCase())}
                             />
-                            <FormHelperText style={{ color: '#FF5C58', marginLeft: 5 }}>{!utrNumber && status === 'disburse' ? 'Need UTR to Proceed!' : null}</FormHelperText>
-                          </Grid>
+                            <Text style={{ color: '#FF5C58', marginLeft: 5, fontSize: '10px' }}>{!utrNumber && status === 'disburse' ? 'Need UTR to Proceed!' : null}</Text>
+                          </Grid.Col>
                         )
                       }
                     </Grid>
@@ -414,58 +288,56 @@ const CreditReloadRemarks = ({ callback, rowData, currentUser, view }) => {
               )
             }
           </Box>
-        </div >
-      </div >
-      <div className={classes.actionFooter}>
-        <Divider />
-        <div className={classes.actionButtonsWrapper}>
-          <div>
+        </Box>
+      </Box>
+      <Box mt={'xl'}>
+        <Box px={10}>
+          <Group justify='flex-end' gap={'md'}>
             <Button
-              variant='outlined'
+              variant='outline'
               onClick={callback}
               startIcon={<NavigateBeforeRoundedIcon />}
             >
               Back
             </Button>
-          </div>
-          {
-            rowData.status != 'Disbursed' && rowData.status != 'Declined' &&
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                {
-                // Credit Reload decline permission check for vivriti loans which doesn't have tranche_code and for other petromoney loans 
-                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.decline) && (!rowData?.tranche_code)) ?
-                    <Button
-                      variant='contained'
-                      type='submit'
-                      onClick={declineSubmit}
-                      className={clsx(classes.btn, classes.declineButton)}
-                    >
-                      Decline
-                    </Button> : null
-                }
-                {
-                // Credit Reload disburse permission check, don't allow user to disburse the vivirit loans
-                  (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && !rowData?.product_name?.includes('Vivriti')) ?
-                    <Button
-                      variant='contained'
-                      type='submit'
-                      color='primary'
-                      onClick={disburseSubmit}
-                      className={clsx(classes.btn, classes.editButton)}
-                    >
-                      Disburse
-                    </Button> : null
-                }
-              </div>
-          }
+            {
+              rowData.status != 'Disbursed' && rowData.status != 'Declined' &&
+                <Group gap={'md'}>
+                  {
+                  // Credit Reload decline permission check for vivriti loans which doesn't have tranche_code and for other petromoney loans 
+                    (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.decline) && (!rowData?.tranche_code)) ?
+                      <Button
+                        type='submit'
+                        // variant='light'
+                        color='red'
+                        onClick={declineSubmit}
+                      >
+                        Decline
+                      </Button> : null
+                  }
+                  {
+                  // Credit Reload disburse permission check, don't allow user to disburse the vivirit loans
+                    (isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.disburse) && !rowData?.product_name?.includes('Vivriti')) ?
+                      <Button
+                      // variant='light'
+                        color='green'
+                        type='submit'
+                        onClick={disburseSubmit}
+                      >
+                        Disburse
+                      </Button> : null
+                  }
+                </Group>
+            }
+          </Group>
           {
             <FormDialog className={classes.dialogBox} title='Payment Reference' onDownload={imageModal.image} open={imageModal.open} onClose={() => setImageModal({ open: false })}>
               <FilePreview data={imageModal} />
             </FormDialog>
           }
-        </div>
-      </div>
-    </div >
+        </Box>
+      </Box>
+    </Box >
   );
 };
 

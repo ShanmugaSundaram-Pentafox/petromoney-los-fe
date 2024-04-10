@@ -1,18 +1,16 @@
-import { Typography } from '@material-ui/core';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
+import { Grid, Paper, Title } from '@mantine/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useMount } from 'react-use';
 import DashboardFilter from './components/DashboardFilter';
 import LoansTable from './components/LoansTable';
-import LoanStats from './components/LoanStats';
 import Currency from '../../../src/components/Number/Currency';
 import DashCard from '../../components/CommonComponents/Cards/DashCard';
 import { action_id, resources_id } from '../../config/accessControl';
-import usePageTitle from '../../hooks/usePageTitle';
+// import usePageTitle from '../../hooks/usePageTitle';
 import { getDealerDetails } from '../../services/dealers.service';
 import { isAllowed } from '../../utils/cerbos';
+import LoanStats from './components/LoanStats';
 
 const currencyFormat = (value) => {
   const money = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumSignificantDigits: 8 }).format(value)
@@ -55,11 +53,11 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Dashboard = ({ currentUser }) => {
-  usePageTitle('Dashboard');
+  // usePageTitle('Dashboard');
   const classes = useStyles();
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
   const [totalLoans, setTotalLoans] = useState()
-  const [selectedStatsCard, setSelectedStatsCard] = useState('Submitted');
+  const [selectedStatsCard, setSelectedStatsCard] = useState('Approved');
   const [selectedReportStatsCard, setSelectedReportStatsCard] = useState('Due');
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
@@ -93,50 +91,67 @@ const Dashboard = ({ currentUser }) => {
 
   return (
     <div style={{ flexGrow: 1 }}>
-      {
-        currentUser.role_name === 'DEALER' ? (
-          <>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Box p={2} borderRadius={4} bgcolor="background.paper">
-                  <Typography variant="h5">Sanctioned Loan : <Currency value={dealerDetail.sanctioned_loan_amount} /></Typography>
-                  <Box className={classes.card} borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row" flexWrap="nowrap">
-                    {
-                      dealerChartData.map((item, i) => (
-                        <DashCard key={i} noBorder={i === dealerChartData.length - 1} value={item.name != 'Active Loans' ? (<Currency value={item.count} />) : item.count} text={item.name} action={() => handleClick(item.name)} />
-                      ))
-                    }
-                  </Box>
-                </Box>
-              </Grid>
-            </Grid>
-            <LoansTable currentUser={currentUser} value={selectedReportStatsCard} />
-          </>
-        ) : (
-          <>
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <DashboardFilter
-                  filterQry={setFilterQry}
-                  setChartData={setChartData}
-                  setTotalLoans={setTotalLoans}
-                  filterType='Dashboard'
-                  filters={['zone', 'region', 'product', 'period']}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <LoanStats
-                  selectedStatsCard={selectedStatsCard}
-                  handleClick={handleClick}
-                  chartData={chartData}
-                  totalLoans={totalLoans}
-                />
-              </Grid>
-            </Grid>
-            <LoansTable currentUser={currentUser} value={selectedStatsCard} filterQry={filterQry} />
-          </>
-        )
-      }
+      {currentUser.role_name === 'DEALER' ? (
+        <>
+          <Paper shadow="xs" p="lg" radius="lg" mb="lg">
+            <Title order={3} mb="sm" className="text-gray-700">
+              Sanctioned Loan : <Currency value={dealerDetail.sanctioned_loan_amount} />
+            </Title>
+
+            {dealerChartData?.length ? (
+              <dl className="grid grid-cols-3 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-4 lg:grid-cols-8">
+                {dealerChartData?.map((item, i) => {
+                  return (
+                    <>
+                      {item.name || item.count ? (
+                        <DashCard
+                          key={item.name + i}
+                          selected={item.name === selectedStatsCard}
+                          text={item.name}
+                          value={item.name != 'Active Loans' ? (<Currency value={item.count} />) : item.count}
+                          amount={item.amount}
+                          action={() => handleClick(item.name)}
+                        />
+                      ) : null}
+                    </>
+                  )
+                })}
+              </dl>
+            ) : null}
+          </Paper>
+
+          <LoansTable currentUser={currentUser} value={selectedReportStatsCard} />
+        </>
+      ) : (
+        <>
+          <Grid gutter={0}>
+            <Grid.Col>
+              <DashboardFilter
+                filterQry={setFilterQry}
+                setChartData={setChartData}
+                setTotalLoans={setTotalLoans}
+                filterType='Dashboard'
+                filters={['zone', 'region', 'product', 'period']}
+              />
+            </Grid.Col>
+            <Grid.Col mt={'xs'}>
+              <LoanStats
+                selectedStatsCard={selectedStatsCard}
+                handleClick={handleClick}
+                chartData={chartData}
+                totalLoans={totalLoans}
+              />
+            </Grid.Col>
+          </Grid>
+          <LoansTable
+            currentUser={currentUser}
+            value={selectedStatsCard}
+            handleClick={handleClick}
+            chartData={chartData || [{}, {}, {}, {}, {}, {}]}
+            filterQry={filterQry}
+          />
+        </>
+      )}
     </div>
   );
 }

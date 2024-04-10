@@ -259,7 +259,7 @@ export const filterStyles = makeStyles(theme => ({
       backgroundColor: 'hsl(0, 0%, 95%)',
     },
     '&.active': {
-      backgroundColor: '#3f51b5',
+      backgroundColor: '#4196f0',
       color: '#fff',
     },
     '&.disabled': {

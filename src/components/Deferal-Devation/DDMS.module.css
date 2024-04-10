@@ -1,0 +1,7 @@
+.trash {
+  visibility: hidden;
+  cursor: pointer;
+}
+.boxMain:hover .trash {
+  visibility: visible;
+}

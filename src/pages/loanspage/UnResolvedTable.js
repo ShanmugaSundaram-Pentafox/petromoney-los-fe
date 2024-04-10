@@ -1,14 +1,11 @@
-import { Grid, Drawer, Paper, Tooltip, Dialog, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { Grid, Drawer, Tooltip, Dialog, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { green } from '@material-ui/core/colors';
-import Typography from '@material-ui/core/Typography';
 import { DeleteOutlineRounded } from '@material-ui/icons';
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
-import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { useMount } from 'react-use';
 import AddBlackListForm from './AddBlackListForm';
@@ -18,6 +15,8 @@ import { action_id, resources_id } from '../../config/accessControl';
 import { getAllDealership } from '../../services/dealerships.service';
 import { deleteRemarks, getAllWithheldLoans, resolveRemarks } from '../../services/withheld.services';
 import CheckAllowed from '../rbac/CheckAllowed';
+import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Box, Group } from '@mantine/core';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -61,7 +60,6 @@ const UnresolvedTable = ({ currentUser }) => {
         queryClient.invalidateQueries('withheld-loans')
       })
       .catch(e => {
-        console.log(e);
         enqueueSnackbar(e, {
           anchorOrigin: {
             vertical: 'top',
@@ -88,7 +86,6 @@ const UnresolvedTable = ({ currentUser }) => {
         queryClient.invalidateQueries('withheld-loans')
       })
       .catch((e) => {
-        console.log(e);
         enqueueSnackbar(e, {
           anchorOrigin: {
             vertical: 'top',
@@ -110,76 +107,54 @@ const UnresolvedTable = ({ currentUser }) => {
     }
   }
 
-  const columns = useMemo(() => {
-    return [
-      {
-        label: 'Dealership ID',
-        name: 'id',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => {
-            return <div>{value}</div>
-          },
-        },
-      },
-      {
-        label: 'Name',
-        name: 'name',
-        options: {
-          filter: true,
-          sort: true,
-          customBodyRender: (value) => {
-            return <>{value?.toUpperCase()}</>
-          },
-        },
-      },
-      {
-        label: 'Region',
-        name: 'region',
-        options: {
-          filter: true,
-          sort: true,
-        },
-      },
-      {
-        label: 'Reason',
-        name: 'comments',
-        options: {
-          filter: false,
-          sort: true,
-          setCellProps: () => ({
-            align: 'left',
-          }),
-          customBodyRender: (value, tableMeta) => {
+  const column = [
+    {
+      key: 'id',
+      header: 'Dealership Id'
+    }, {
+      key: 'name',
+      header: 'Name',
+      cell: (value) => <span>{value?.getValue()}</span>
+    }, {
+      key: 'region',
+      header: 'Region',
+    }, {
+      key: 'with_held_by',
+      header: 'Withheld By',
+    }, {
+      key: 'action',
+      header: 'Reason',
+      isHeaderDownload: false,
+      cell: ({ row }) => {
+        return (
+          row?.original?.comments?.map((remark, i) => {
             return (
-              value?.map((remark, i) => {
-                return (
-                  <div style={{ marginBottom: 12, display: 'flex' }} key={i}>
-                    <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.comment && remark.comment}</div>
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.resolve}>
-                      <div onClick={() => { setWithheldModal({ modal: true, type: 'resolve', id: remark.id }) }} style={{ marginLeft: 12 }}>
-                        <Tooltip title="Click to resolve">
-                          <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
-                        </Tooltip>
-                      </div>
-                    </CheckAllowed>
-                    <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.delete}>
-                      <div onClick={() => { setWithheldModal({ modal: true, type: 'delete', id: remark.id }) }} style={{ marginLeft: 12 }}>
-                        <Tooltip title='Click to delete'>
-                          <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
-                        </Tooltip>
-                      </div>
-                    </CheckAllowed>
-                  </div>
-                )
-              })
+              <Group key={i}>
+                <div style={{ width: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remark.comment && remark.comment}</div>
+                <Box>
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.resolve}>
+                    <div onClick={() => { setWithheldModal({ modal: true, type: 'resolve', id: remark.id }) }} style={{ marginLeft: 12 }}>
+                      <Tooltip title="Click to resolve">
+                        <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
+                      </Tooltip>
+                    </div>
+                  </CheckAllowed>
+                  <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.delete}>
+                    <div onClick={() => { setWithheldModal({ modal: true, type: 'delete', id: remark.id }) }} style={{ marginLeft: 12 }}>
+                      <Tooltip title='Click to delete'>
+                        <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
+                      </Tooltip>
+                    </div>
+                  </CheckAllowed>
+                </Box>
+              </Group>
             )
-          },
-        },
+          })
+        )
       },
-    ]
-  }, [])
+    },
+  ]
+
   const options = {
     selectableRowsHeader: false,
     selectableRows: 'none',
@@ -227,22 +202,24 @@ const UnresolvedTable = ({ currentUser }) => {
   return (
     <>
       <Grid item md={12}>
-        {Array.isArray(data) ? (
-          <MUIDataTable
-            title={
-              <Typography className={classes.title} variant="h5" component="h5">
-                Unresolved withheld loans
-              </Typography>
-            }
-            data={data}
-            columns={columns}
-            options={options}
-          />
-        ) : (!isLoading && <Paper style={{ padding: 10 }}>No unresolved withheld loans found</Paper>)
-        }
-        {
-          isLoading && <div style={{ textAlign: 'center' }}> <CircularProgress /></div>
-        }
+        <DataTableViewer
+          rowData={data}
+          filter={false}
+          column={column}
+          loading={isLoading}
+          showAction={<CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.create}>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => setOpenModal(true)}
+            >
+              Add
+            </Button>
+          </CheckAllowed>
+          }
+          title={'Unresolved withheld loans'}
+          noDataText='No un-resolved loans found'
+        />
       </Grid>
       <Drawer
         anchor="right"

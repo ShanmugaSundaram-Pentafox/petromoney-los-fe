@@ -1,4 +1,5 @@
-import { Button, Dialog, Paper, DialogContent, Grid, Avatar, DialogContentText, makeStyles, Typography, InputAdornment, IconButton, Input, InputLabel, FormHelperText, } from '@material-ui/core'
+import { Avatar, Center, Container, Paper, SimpleGrid, Stack, Title, TextInput, Flex } from '@mantine/core';
+import { Button, Dialog, DialogContent, DialogContentText, Typography, InputAdornment, IconButton, InputLabel, FormHelperText, Input } from '@material-ui/core'
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import VisibilityOffOutlinedIcon from '@material-ui/icons/VisibilityOffOutlined';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
@@ -9,56 +10,11 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import * as Yup from 'yup';
-import TextInput from '../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../config/accessControl';
 import { deleteUserAccount, verifyPasswordByLogin, } from '../../services/users.service';
 import { resetCurrentUser } from '../../store/user/user.actions';
 import { selectCurrentUser } from '../../store/user/user.selector';
 import CheckAllowed from '../rbac/CheckAllowed';
-
-
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    marginTop: theme.spacing(4),
-    display: 'flex',
-    justifyContent: 'center',
-    '& > *': {
-      margin: theme.spacing(1),
-    },
-  },
-  avatar: {
-    width: 60,
-    height: 60
-  },
-  paper: {
-    maxWidth: '40vw',
-    minHeight: '88vh',
-    margin: 'auto',
-    padding: 12,
-    // textAlign: 'center'
-  },
-  profile: {
-    marginBottom: 40,
-    textAlign: 'center'
-
-  },
-  row: {
-    paddingRight: 12,
-    paddingBottom: 14
-  },
-  grid: {
-    display: 'flex',
-    justifyContent: 'space-between'
-
-  },
-  button: {
-    float: 'right',
-    margin: 12,
-
-  },
-
-}));
 
 const Profile = (props) => {
   const { currentUser, logout } = props;
@@ -66,16 +22,12 @@ const Profile = (props) => {
   const [confirmDelete, setConfirmDelete] = useState();
   const [password, setPassword] = useState({});
   const [showPassword, setShowPassword] = useState();
-  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
-  let readOnly = true;
 
-  const gridItem = {
-    item: true,
-    className: classes.row
-  };
-  const { values, errors, handleChange, handleSubmit, isSubmitting, setSubmitting } = useFormik({
+  let disabledInput = true;
+
+  const { errors, handleChange } = useFormik({
     initialValues: {},
     validateOnChange: false,
     validateOnBlur: true,
@@ -87,9 +39,7 @@ const Profile = (props) => {
       email: Yup.string().nullable('Enter valid email').email('Enter valid email'),
       password: Yup.string(),
     }),
-    onSubmit: formData => {
-
-    }
+    onSubmit: formData => {}
   });
   const OnAccountDelete = () => {
     if (password?.value) {
@@ -128,89 +78,123 @@ const Profile = (props) => {
     setShowPassword(!showPassword);
   };
 
+  function capitalizeFirstLetter(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
+
   return (
     <>
-      <Paper className={classes.paper} >
-        <div className={classes.root}>
-          <Avatar className={classes.avatar}>{currentUser?.first_name?.charAt(0)}</Avatar>
-        </div>
-        <Typography variant={'h4'} className={classes.profile}>{currentUser?.first_name?.toUpperCase()}</Typography>
-        <Grid container className={classes.grid}>
-          <Grid {...gridItem} md={6}>
-            <TextInput
-              label="First Name"
-              name="first_name"
-              error={errors.first_name}
-              readOnly={readOnly}
-              value={currentUser.first_name?.toUpperCase()}
-              helperText={errors.first_name}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid {...gridItem} md={6}>
-            <TextInput
-              label="Last Name"
-              name="last_name"
-              error={errors.last_name}
-              readOnly={readOnly}
-              value={currentUser.last_name?.toUpperCase()}
-              helperText={errors.last_name}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid {...gridItem} md={6}>
-            <TextInput
-              label="Email"
-              name="mail"
-              error={errors.mail}
-              readOnly={readOnly}
-              defaultValue={currentUser.email}
-              helperText={errors.mail}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid {...gridItem} md={6}>
-            <TextInput
-              label="Mobile Number"
-              name="mobile"
-              error={errors.mobile}
-              readOnly={readOnly}
-              defaultValue={currentUser.mobile}
-              helperText={errors.mobile}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid {...gridItem} md={6}>
-            <TextInput
-              label="City"
-              name="city"
-              error={errors.city}
-              readOnly={readOnly}
-              defaultValue={currentUser.region_name}
-              helperText={errors.city}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid {...gridItem} md={6}>
-            <TextInput
-              label="Country"
-              name="country"
-              error={errors.country}
-              readOnly={readOnly}
-              defaultValue={'INDIA'}
-              helperText={errors.country}
-              onChange={handleChange}
-            />
-          </Grid>
-          <CheckAllowed currentUser={currentUser} resource={resources_id?.users} action={action_id?.users.user_delete}>
-            <Grid {...gridItem} md={12} style={{ display: 'flex', justifyContent: 'center' }}>
-              <div style={{ color:'rgb(255,59,48)', marginTop: 20,cursor:'pointer',textDecoration:'underline' }} onClick={() => { setOpenDialog(true) }}>
-                Delete My Account
-              </div>
-            </Grid>
-          </CheckAllowed>
-        </Grid>
-      </Paper>
+      <Container 
+        size="sm"
+        style={{
+          height: 'calc(100vh - 88px)'
+        }}
+      >
+        <Paper p="xl" h="100%">
+          <Center mb="lg">
+            <Stack align="center" gap="6">
+              <Avatar src={null} color="blue" size="lg" radius="xl">
+                {currentUser?.first_name?.substring(0, 2)}
+              </Avatar>
+
+              <Title order={4}>
+                {capitalizeFirstLetter(currentUser?.first_name)}
+              </Title>
+            </Stack>
+          </Center>   
+
+          <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="lg">
+            <div>
+              <TextInput
+                label="First Name"
+                name="first_name"
+                error={errors.first_name}
+                disabled={disabledInput}
+                value={capitalizeFirstLetter(currentUser.first_name)}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <TextInput
+                label="Last Name"
+                name="last_name"
+                error={errors.last_name}
+                disabled={disabledInput}
+                value={capitalizeFirstLetter(currentUser.last_name)}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div>
+              <TextInput
+                label="Email"
+                name="mail"
+                error={errors.mail}
+                disabled={disabledInput}
+                value={currentUser.email}
+                helperText={errors.mail}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <TextInput
+                label="Mobile Number"
+                name="mobile"
+                error={errors.mobile}
+                disabled={disabledInput}
+                value={currentUser.mobile}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <TextInput
+                label="City"
+                name="city"
+                error={errors.city}
+                disabled={disabledInput}
+                value={capitalizeFirstLetter(currentUser.region_name)}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <TextInput
+                label="Country"
+                name="country"
+                error={errors.country}
+                disabled={disabledInput}
+                value={capitalizeFirstLetter('INDIA')}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <Flex
+                gap="sm"
+                justify="flex-start"
+                align="flex-start"
+                direction="row"
+                wrap="wrap"
+              >
+                <CheckAllowed currentUser={currentUser} resource={resources_id?.users} action={action_id?.users?.user_delete}>
+                  <Button 
+                    variant="filled" 
+                    color="red" 
+                    size="xs"
+                    onClick={() => { setOpenDialog(true) }}
+                  >
+                    Delete My Account
+                  </Button>
+                </CheckAllowed>
+              </Flex>
+            </div>
+          </SimpleGrid>
+        </Paper>
+      </Container>
+
       <Dialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}

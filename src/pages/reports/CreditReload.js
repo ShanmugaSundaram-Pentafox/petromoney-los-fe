@@ -1,4 +1,4 @@
-import { Box } from '@material-ui/core';
+import { Paper } from '@mantine/core';
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@material-ui/icons/ChevronRightRounded';
 import React, { useState } from 'react';
@@ -70,13 +70,23 @@ const CreditReload = ({ currentUser, filterQry, filterList, handleDownload, filt
       {
         (filterType !== 'processed') && (
           <CheckAllowed currentUser={currentUser} resource={resources_id.creditReload} action={action_id.creditReload.dealer_search}>
-            <Box p={2} borderRadius={4} bgcolor="background.paper" style={{ marginBottom: 10, marginTop: 10 }}>
-              <Box borderRadius={4} bgcolor="background.paper" display="flex" flexDirection="row">
-                <DashCard text="Zone" value={chartData?.count?.length === 1 ? chartData?.count[0]?.label : `${chartData?.count[0]?.label} & ${chartData?.count?.length - 1} more` || '-'} />
-                <DashCard text={'No.of. New Request'} value={stats?.count || '-'} />
-                <DashCard noBorder text={'Total.Req. Amount'} value={<Currency value={stats?.amount} /> || '-'} amount={stats?.amount} />
-              </Box>
-            </Box>
+            <Paper shadow="xs" p="lg" radius="lg" my="lg">
+              <dl className="grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-3">
+                <DashCard 
+                  text="Zone" 
+                  value={chartData?.count?.length === 1 ? chartData?.count[0]?.label : `${chartData?.count[0]?.label} & ${chartData?.count?.length - 1} more` || '-'} 
+                />
+                <DashCard 
+                  text={'No.of. New Request'} 
+                  value={stats?.count || '-'} 
+                />
+                <DashCard  
+                  text={'Total.Req. Amount'} 
+                  value={<Currency value={stats?.amount} /> || '-'} 
+                  amount={stats?.amount} 
+                />
+              </dl>
+            </Paper>
           </CheckAllowed>
         )
       }

@@ -1,0 +1,48 @@
+
+.mainComp {
+  padding: 16px;
+  position: relative;
+}
+.stats1 {
+  cursor: pointer;
+  padding: 16px;
+}
+.stats1:hover {
+  background-color: rgba(25, 169, 191, 0.1);
+  border-radius: 8px;
+}
+.stats2 {
+  cursor: pointer;
+  padding: 16px;
+}
+.stats2:hover {
+  background-color: rgba(38, 213, 123, 0.1);
+  border-radius: 8px;
+}
+.stats3 {
+  cursor: pointer;
+  padding: 16px;
+}
+.stats3:hover {
+  background-color: rgba(0, 127, 128, 0.1);
+  border-radius: 8px;
+}
+.stats4 {
+  cursor: pointer;
+  padding: 16px;
+}
+.stats4:hover {
+  background-color: rgba(254, 168, 2, 0.1);
+  border-radius: 8px;
+}
+.statsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+.legend { 
+  width: 4px; 
+  height: 50px; 
+  position: absolute; 
+  border-radius: 8px;
+}

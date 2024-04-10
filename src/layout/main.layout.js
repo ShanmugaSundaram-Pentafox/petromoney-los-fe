@@ -1,13 +1,13 @@
-import Box from '@material-ui/core/Box';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { makeStyles, useTheme } from '@material-ui/styles';
-import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import Sidebar from '../components/Sidebar/Sidebar';
 import Topbar from '../components/Topbar/Topbar';
 import { resetCurrentUser } from '../store/user/user.actions';
+import { AppShell, Box } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 // import EnquiryPage from '../pages/enquiryPage/EnquiryPage';
 // import AddDealerForm from '../pages/hpcl/AddDealerForm';
 // import HPCL from '../pages/hpcl/HPCL';
@@ -30,6 +30,8 @@ const useStyles = makeStyles(theme => ({
 
 const MainLayout = props => {
   const { children, currentUser, logout } = props;
+  const [opened, { toggle }] = useDisclosure();
+
   const classes = useStyles();
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'), {
@@ -45,38 +47,76 @@ const MainLayout = props => {
   const handleSidebarClose = () => {
     setOpenSidebar(false);
   };
+
   const shouldOpenSidebar = isDesktop ? true : openSidebar;
   return (
-    <div
-      className={clsx({
-        [classes.root]: true,
-        [classes.shiftContent]: isDesktop
-      })}
-    >
-      <Sidebar
-        user={currentUser}
-        currentUser={currentUser}
-        onOpen={handleSidebarOpen}
-        onClose={handleSidebarClose}
-        open={shouldOpenSidebar}
-        variant={isDesktop ? 'persistent' : 'temporary'}
-      />
-      <main className={classes.content}>
-        <Topbar user={currentUser} logout={logout} appBarProps={{
-          position: 'sticky',
-        }}  
-        onSidebarOpen= {handleSidebarOpen}
+    <>
+      {/* <div
+        className={clsx({
+          [classes.root]: true,
+          [classes.shiftContent]: isDesktop
+        })}
+      >
+        <Sidebar
+          user={currentUser}
+          currentUser={currentUser}
+          onOpen={handleSidebarOpen}
+          onClose={handleSidebarClose}
+          open={shouldOpenSidebar}
+          variant={isDesktop ? 'persistent' : 'temporary'}
         />
-        <Box p={2}>
-          {children}
-        </Box>
-        {/* <Footer /> */}
 
-        {/* <HPCL /> */}
-        {/* <AddDealerForm /> */}
-        {/* <EnquiryPage /> */}
-      </main>
-    </div>
+        <main className={classes.content}>
+          <Topbar user={currentUser} logout={logout} appBarProps={{
+            position: 'sticky',
+          }}  
+          onSidebarOpen= {handleSidebarOpen}
+          />
+          <Box p={2}>
+            {children}
+          </Box>
+          {/* <Footer /> *
+
+          {/* <HPCL /> *
+          {/* <AddDealerForm /> *
+          {/* <EnquiryPage /> *
+        </main>
+      </div> */}
+
+      <AppShell
+        header={{ height: 60 }}
+        navbar={{
+          width: 249,
+          breakpoint: 'md',
+          collapsed: { mobile: !opened },
+        }}
+      >
+        <AppShell.Navbar style={{ zIndex: 98 }}>
+          <Sidebar
+            user={currentUser}
+            currentUser={currentUser}
+            onOpen={handleSidebarOpen}
+            onClose={handleSidebarClose}
+            open={shouldOpenSidebar}
+            variant={isDesktop ? 'persistent' : 'temporary'}
+          />
+        </AppShell.Navbar>
+
+        <AppShell.Header>
+          <Topbar
+            user={currentUser}
+            logout={logout}
+            onSidebarOpen={toggle}
+          />
+        </AppShell.Header>
+
+        <AppShell.Main>
+          <Box p="md">
+            {children}
+          </Box>
+        </AppShell.Main>
+      </AppShell>
+    </>
   );
 };
 

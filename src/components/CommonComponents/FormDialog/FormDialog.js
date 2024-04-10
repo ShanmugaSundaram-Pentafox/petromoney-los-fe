@@ -9,6 +9,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import CloudDownloadOutlinedIcon from '@material-ui/icons/CloudDownloadOutlined';
 import React from 'react';
 import { getSignedUrl } from '../../../services/common.service';
+import { Box, Modal } from '@mantine/core';
 
 const styles = (theme) => ({
   root: {
@@ -73,33 +74,35 @@ const DialogActions = withStyles((theme) => ({
   },
 }))(MuiDialogActions);
 
-const FormDialog = (props) => {
-  const {
-    title,
-    children,
-    actions,
-    open,
-    onClose,
-    onDownload,
-    maxWidth,
-  } = props;
+const FormDialog = ({
+  title,
+  children,
+  actions,
+  open,
+  onClose,
+  onDownload,
+  maxWidth = '60%'
+}) => {
 
   return (
-    <Dialog onClose={onClose} aria-labelledby="form-dialog-title" open={open} maxWidth={maxWidth}>
-      <DialogTitle id="form-dialog-title" onDownload={onDownload} onClose={onClose}>
-        {title}
-      </DialogTitle>
-      <DialogContent dividers>
-        {children}
-      </DialogContent>
+    <Modal
+      onClose={onClose}
+      opened={open}
+      maw={maxWidth}
+      size={'auto'}
+      title={title}
+      zIndex={99999}
+      onDownload={onDownload}
+    >
+      {children}
       {
         actions && (
-          <DialogActions>
+          <Box>
             {actions}
-          </DialogActions>
+          </Box>
         )
       }
-    </Dialog>
+    </Modal>
   );
 }
 

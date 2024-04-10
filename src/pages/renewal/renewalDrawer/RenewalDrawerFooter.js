@@ -1,14 +1,14 @@
-import { Button, Drawer } from '@material-ui/core';
 import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded'
 import ThumbDownAltIcon from '@material-ui/icons/ThumbDownAlt';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import { makeStyles } from '@material-ui/styles';
-import clsx from 'clsx';
 import React, { useState } from 'react';
 import { resources_id } from '../../../config/accessControl';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
 import ViewRemarks from '../renewalTable/ViewRemarks';
+import { Button, Group } from '@mantine/core';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 const useStyles = makeStyles(theme => ({
   actionButtonsWrapper: {
@@ -88,10 +88,10 @@ const RenewalDrawerFooter = ({
   return (
     <div>
       <div className={classes.actionButtonsWrapper}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>          
+        <Group>
           {
             ['review', 'approval', 'approved', 'rejected'].includes(status) && (
-              <Button variant='outlined' size='small' color='primary'
+              <Button variant='outline' size='xs'
                 onClick={() => setOpenDrawer(true)}
               >
                 View Remarks
@@ -102,8 +102,8 @@ const RenewalDrawerFooter = ({
             ['draft'].includes(status.toLowerCase()) && (
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
                 <Button
-                  variant="outlined"
-                  className={clsx(classes.btn, classes.btnSuccess)}
+                  variant="outline"
+                  size='xs'
                   onClick={handleEnhancement}
                 >
                   Send for Enhancement
@@ -111,15 +111,15 @@ const RenewalDrawerFooter = ({
               </CheckAllowed>
             )
           }
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        </Group>
+        <Group>
           {
             status && ['draft', 'submit'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
                 <Button
-                  variant="contained"
-                  className={clsx(classes.btn, classes.btnSuccess)}
-                  startIcon={<ThumbUpAltIcon />}
+                  size='xs'
+                  color='green'
+                  leftSection={<ThumbUpAltIcon />}
                   onClick={handleReviewModal}
                 >
                   Send for Review
@@ -130,9 +130,8 @@ const RenewalDrawerFooter = ({
             status && ['review', 'approval'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
                 <Button
-                  variant="contained"
-                  className={clsx(classes.btn, classes.btnWarn)}
-                  startIcon={<ChevronLeftRoundedIcon />}
+                  size='xs'
+                  leftSection={<ChevronLeftRoundedIcon />}
                   onClick={handlePushBack}
                 >
                   Pushback
@@ -143,9 +142,9 @@ const RenewalDrawerFooter = ({
             status && ['approval', 'review'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
                 <Button
-                  variant="contained"
-                  className={clsx(classes.btn, classes.btnError)}
-                  startIcon={<ThumbDownAltIcon />}
+                  size='xs'
+                  color='red'
+                  leftSection={<ThumbDownAltIcon />}
                   onClick={handleReject}
                 >
                   Reject
@@ -155,9 +154,9 @@ const RenewalDrawerFooter = ({
           {
             status && status.toLowerCase() === 'approval' && (isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_approve')) &&
               <Button
-                variant="contained"
-                className={clsx(classes.btn, classes.btnSuccess)}
-                startIcon={<ThumbUpAltIcon />}
+                size='xs'
+                color='green'
+                leftSection={<ThumbUpAltIcon />}
                 onClick={handleReviewModal}
               >
                 Approve
@@ -167,25 +166,24 @@ const RenewalDrawerFooter = ({
             status && ['review'].includes(status.toLowerCase()) && (isAllowed(currentUser?.permissions, resources_id.dashboard, 'send_for_approval')) &&
               <div>
                 <Button
-                  variant="contained"
-                  className={clsx(classes.btn, classes.btnSuccess)}
-                  startIcon={<ThumbUpAltIcon />}
+                  size='xs'
+                  color='green'
+                  leftSection={<ThumbUpAltIcon />}
                   onClick={handleReviewModal}
                 >
                   Send for Approval
                 </Button>
               </div>
           }
-        </div>
+        </Group>
       </div>
-      <Drawer
-        anchor="right"
-        open={openDrawer}
+      <RightSideDrawer
+        opened={openDrawer}
         onClose={() => setOpenDrawer(false)}
-        variant="temporary"
+        title={'Remarks'}
       >
         <ViewRemarks filterType={filterType} handleClose={() => setOpenDrawer(false)} loanId={filterType == 'enhancement' ? selectedLoanData?.id : selectedLoanData?.loan_id} />
-      </Drawer>
+      </RightSideDrawer>
     </div >
   )
 }

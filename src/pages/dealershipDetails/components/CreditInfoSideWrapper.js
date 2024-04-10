@@ -189,14 +189,14 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
             </Grid>
 
             <Grid gutter="sm">
-              <Grid span={{ base: 12, sm: 6 }}>
+              <Grid span={{ base: 12, sm: 6 }} my={20} ml={12}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <Typography variant='h6'>CIBIL Extract</Typography>
                   <UserCan
                     role={currentUser.role_name}
                     perform={rulesList.credit_refresh}
                     yes={() => (
-                      <Button variant='text' color='primary' startIcon={<RotateLeftOutlinedIcon />} style={{ marginLeft: 8 }} onClick={CIBILReport}>Refresh CIBIL Report</Button>
+                      <Button variant='text' color='primary' mr={10} size={'xs'} startIcon={<RotateLeftOutlinedIcon />} style={{ marginLeft: 8 }} onClick={CIBILReport}>Refresh CIBIL Report</Button>
                     )}
                     no={() => (
                       <Alert severity='info'>
@@ -208,10 +208,10 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
 
                 {apiData?.cibil_file_url && (
                   <div>
-                    <Button 
-                      size='small' 
-                      variant='outlined' 
-                      color='primary' 
+                    <Button
+                      size={'xs'}
+                      variant='outlined'
+                      color='primary'
                       onClick={handleDownload}
                       startIcon={<DownloadOutlined />}
                     >
@@ -265,15 +265,15 @@ const CreditInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => 
             </Grid>
           </>
         ) : (
-          <DealerCreditInfoForm 
-            values={values} 
-            errors={errors} 
-            onChange={handleChange} 
-            dealerData={data} 
-            cibilEditMode={cibilEditMode} 
-            currentUser={currentUser} 
-            setFieldValue={setFieldValue} 
-            editable={editable} 
+          <DealerCreditInfoForm
+            values={values}
+            errors={errors}
+            onChange={handleChange}
+            dealerData={data}
+            cibilEditMode={cibilEditMode}
+            currentUser={currentUser}
+            setFieldValue={setFieldValue}
+            editable={editable}
           />
         )}
 

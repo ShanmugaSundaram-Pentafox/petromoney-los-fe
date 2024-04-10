@@ -59,6 +59,12 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
         });
       })
   }
+  // used to null the selected data after modal state changes
+  useEffect(() => {
+    setSelectedDealers([])
+    setSelectedCoAppicants([])
+    setSelectedGuarantors([])
+  }, [opened])
 
   useEffect(() => {
     if (loanId) {

@@ -112,6 +112,7 @@ const RejectedListTable = ({ loans, loading, fetchData }) => {
         filter={false}
         loading={loading}
         title={'Rejected'}
+        excelDownload
       />
       <Dialog
         open={modalObj?.open}

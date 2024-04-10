@@ -52,7 +52,6 @@ const useStyles = makeStyles((theme) => ({
 
 const NOCertificateRequestTable = ({ currentUser }) => {
   const classes = useStyles();
-  const [loading, setLoading] = useState(false);
   const [rowData, setRowData] = useState();
   const [refresh, setRefresh] = useState(false);
   const [openModal, setOpenModal] = useState();
@@ -181,31 +180,6 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     },
   ];
 
-  // const options = {
-  //   selectableRowsHeader: false,
-  //   selectableRows: 'none',
-  //   isRowSelectable: () => false,
-  //   customToolbar: () => {
-  //     return (
-  //       // noc request raise permissions
-  //       isAllowed(currentUser?.permissions, resources_id?.nocLetter, action_id?.nocLetter?.raiseRequest) ?
-  //         <Button
-  //           color="primary"
-  //           variant="contained"
-  //           onClick={() => setOpenModal(true)}
-  //         >
-  //           Raise Request
-  //         </Button> : null
-  //     );
-  //   },
-  //   onCellClick: (colData, cellMeta) => {
-  //     if (cellMeta.colIndex !== 6) {
-  //       isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) &&
-  //         onRowClick(list[cellMeta.dataIndex], list[cellMeta.dataIndex]);
-  //     }
-  //   },
-  // };
-
   return (
     <div className={classes.root}>
       <DataTableViewer
@@ -225,6 +199,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
             : null
         }
         title={'NOC Application'}
+        excelDownload
       />
       <RightSideDrawer
         opened={openModal}

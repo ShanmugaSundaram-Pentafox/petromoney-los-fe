@@ -60,6 +60,7 @@ const SettledListTable = ({ loans, loading }) => {
         column={column}
         loading={loading}
         title={'Settled'}
+        excelDownload
       />
     </Paper>
   )

@@ -6,7 +6,6 @@ import ColumnsFilter from '../Filter/ColumnFilter';
 import { useDisclosure } from '@mantine/hooks';
 import { useJsonToCsv } from 'react-json-csv';
 import { generateCSVHeader, generateTableHeader } from '../../utils/tableHeader.util';
-import LoanStats from '../../pages/dashboard/components/LoanStats';
 import StatusViewer from '../../pages/dashboard/components/StatusViewer';
 
 const Filter = ({
@@ -238,7 +237,7 @@ const DataTableViewer = ({
                             : saveAsCsv({
                               data: rowData,
                               fields: getCSVColumns,
-                              fileName: title,
+                              filename: title,
                             })
                         }}
                       >

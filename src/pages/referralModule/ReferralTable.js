@@ -136,6 +136,7 @@ const ReferralTable = ({ currentUser, loans, loading, fetchData }) => {
           (currentUser.role_id == 1 || currentUser.role_id == 9) &&
             onRowClick(i?.dealership_id, i);
         }}
+        excelDownload
       />
       <Drawer
         anchor="right"

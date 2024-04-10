@@ -22,7 +22,7 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
     rulesList.external_view
   );
   const queryClient = useQueryClient();
-  
+
   const { data: crimeData } = useQuery('crime', () => getCrimeInfo(data?.id, data?.category?.toLowerCase()), {
     onSuccess: (data) => {
       if (data?.length) {
@@ -105,17 +105,17 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
               style={{ marginBottom: 0 }}
             />
           </Grid.Col>
-          
+
           {editMode ? (
             <Grid.Col mt="sm">
               <Button
-                variant="light" 
+                variant="light"
                 leftSection={<IconRefresh size={18} />}
                 onClick={refreshCrimeReport}
               >
                 Refresh Crime Report
               </Button>
-            </Grid.Col>  
+            </Grid.Col>
           ) : (
             <Grid.Col mt="sm">
               <Button
@@ -127,8 +127,8 @@ const CrimeInfoSideWrapper = ({ dealershipId, data, currentUser, onClose }) => {
               </Button>
             </Grid.Col>
           )}
-        </Grid>  
-        
+        </Grid>
+
         <Divider my="lg" />
 
         <Title order={4} mb="xs">Crime Reports</Title>

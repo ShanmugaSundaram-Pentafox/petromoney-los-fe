@@ -84,7 +84,7 @@ const CreditProcessedTable = ({ currentUser }) => {
       key: 'name',
       header: 'Name',
       enableColumnFilter: false,
-      cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.dealership_id} />
+      cell: ({ row }) => <DisplayValue row={row?.original} value={row?.original?.name} />
     }, {
       key: 'request_id',
       header: 'Request Id',

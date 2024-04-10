@@ -255,7 +255,7 @@ const DocListPreview = ({ docName, upload, file, id, docId, dealershipId, editab
         </Flex>
       )}
 
-      <Collapse in={!collapse}>
+      <Collapse in={docName ? !collapse : collapse}>
         <Grid gutter="md" p={showPaperStyle ? 'sm' : '0'}>
           {file?.map((data, i) => {
             return (

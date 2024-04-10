@@ -40,7 +40,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
   const getTrancheStatus = useQuery({
     queryKey: ['getTrancheStatus', dealershipId],
     queryFn: () => getTrancheStatusById(dealershipId),
-    enabled: Boolean(getStatus),
+    enabled: Boolean(getStatus && opened && dealershipId),
   })
 
   const handleResign = () => {

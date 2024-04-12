@@ -75,6 +75,8 @@ export const action_id = {
     submitted_documents: 'submitted_documents',
     pushback: 'pushback',
     reactivate: 'reactivate',
+    dashboardSwitch:'dashboardSwitch',
+    pdcChecklist:'pdcChecklist'
   },
   creditReload: {
     create: 'request:create',
@@ -91,12 +93,13 @@ export const action_id = {
   renewal: {
     sanctionLetter: 'sanction_letter',
     loanAgreement: 'loan_agreement',
-    esignApplication: 'esign_application'
+    esignApplication: 'esign_application',
+    pdcChecklist:'pdcChecklist'
   },
   transportPassbook: {
     upload: 'upload_statement',
     download: 'download_statement',
-    share: 'share_statement'
+    share: 'share_statement',
   },
   nocLetter: {
     raiseRequest: 'noc:request',
@@ -112,7 +115,9 @@ export const action_id = {
     personalDiscussion: 'personal_discussion',
     docChecklist: 'document_checklist',
     transporters: 'transporters',
-    fleetOperator: 'fleet_operator'
+    fleetOperator: 'fleet_operator',
+    deferral:'deferral',
+    deviation:'deviation',
   },
   dealership: {
     edit: 'dealership:edit',

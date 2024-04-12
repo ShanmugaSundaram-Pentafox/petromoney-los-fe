@@ -86,13 +86,13 @@ const DealershipDetails = ({ currentUser, match }) => {
       icon: IconVariable
     },
     {
-      id: action_id?.dealershipNavigation?.fleetOperator,
+      id: action_id?.dealershipNavigation?.deferral,
       name: 'Deferral',
       value: 'deferral',
       icon: IconPinEnd
     },
     {
-      id: action_id?.dealershipNavigation?.fleetOperator,
+      id: action_id?.dealershipNavigation?.deviation,
       name: 'Deviation',
       value: 'deviation',
       icon: IconPinInvoke

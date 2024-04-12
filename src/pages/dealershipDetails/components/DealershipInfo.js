@@ -776,6 +776,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
               action={true}
               imgUrl={values?.pan_file_url}
               docName='PAN Card'
+              tooltip='PAN Card'
               onUpload={() => docUpload('PAN')}
               onDelete={() => onDocDelete({ pan_file_url: '' })}
               disabled={!values?.pan_file_url}
@@ -786,6 +787,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
               action={true}
               imgUrl={values?.gst_file_url}
               docName='GST'
+              tooltip='GST'
               onUpload={() => docUpload('GST')}
               onDelete={() => onDocDelete({ gst_file_url: '' })}
               disabled={!values?.gst_file_url}
@@ -796,6 +798,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
               action={true}
               imgUrl={values?.udyam_file_url}
               docName='UDYAM'
+              tooltip='UDYAM'
               onUpload={() => docUpload('UDYAM')}
               onDelete={() => onDocDelete({ udyam_file_url: '' })}
               disabled={!values?.udyam_file_url}
@@ -836,13 +839,15 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
         </Flex>
       ) : (
         <Flex gap="sm" mt="xl">
-          <Button
-            variant="outline"
-            color="gray"
-            onClick={() => { setReadOnly(false); setViewOnly(false); }}
-          >
-            Edit Details
-          </Button>
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.edit}>
+            <Button
+              variant="outline"
+              color="gray"
+              onClick={() => { setReadOnly(false); setViewOnly(false); }}
+            >
+              Edit Details
+            </Button>
+          </CheckAllowed>
 
           <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.crimeCheck}>
             <Button onClick={() => setCrimeData({ ...crimeData, category: 'dealership', id: data?.id, first_name: data?.name })}>

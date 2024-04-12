@@ -36,7 +36,7 @@ export const getStatusWiseRecordCount = (filterType, filterQry) => {
     if (zone && zone !== '0') qry.push(`zone=${zone}`)
     if (month && month !== '0') qry.push(`renewal_month=${month}`)
     if (region && region !== '0') qry.push(`region=${region}`)
-    if (products && products !== '0') qry.push(filterType == 'enhancement' ? `old_product_id=${products}` : `product=${products}`)
+    if (products && products !== '0') qry.push(`product=${products}`)
     if (from && to) qry.push(`from=${from}&to=${to}`)
     if (qry.length) apiUrl += '?' + qry.join('&')
 
@@ -188,7 +188,7 @@ export const sendRenewalReminder = (status) => {
   });
 }
 
-export const syncRenewalData = ({renewal_application_id}) => {
+export const syncRenewalData = ({ renewal_application_id }) => {
   return new Promise((resolve, reject) => {
     let apiUrl = `renewal/${renewal_application_id}/sync`
     apiCall(apiUrl)
@@ -205,7 +205,7 @@ export const syncRenewalData = ({renewal_application_id}) => {
   });
 }
 
-export const getRenewalFeeStatus = ({dealership_id}) => {
+export const getRenewalFeeStatus = ({ dealership_id }) => {
   return new Promise((resolve, reject) => {
     let apiUrl = `renewal/${dealership_id}/fee-status`
     apiCall(apiUrl)

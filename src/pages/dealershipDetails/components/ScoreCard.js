@@ -195,7 +195,6 @@ const ScoreCard = ({ currentUser, dealership_id }) => {
           },
           variant: 'error',
         })
-        console.log(e);
       })
   };
 

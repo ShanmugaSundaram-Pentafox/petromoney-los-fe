@@ -251,7 +251,6 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
       .then((res) => {
         apiCall(`dealership/${dealershipId}/document/${loansData?.document_id}`)
           .then((res) => {
-            console.log(res);
             if (res.status === 'SUCCESS') {
               if (res.data?.status) {
                 setActiveState(res?.data?.data);

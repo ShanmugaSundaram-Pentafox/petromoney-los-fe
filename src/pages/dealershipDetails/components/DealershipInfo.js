@@ -88,8 +88,6 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
       setReadOnly(viewOnly);
     }
   }, [viewOnly])
-  console.log(readOnly);
-  console.log(viewOnly);
   useEffect(() => {
     setValues(data)
     setDataJSON({ gst: data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {}, udyam: data?.udyam_verified ? JSON.parse(data?.udyam_details) || {} : {} })

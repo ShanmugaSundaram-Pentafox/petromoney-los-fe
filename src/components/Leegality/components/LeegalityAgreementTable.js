@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import React, { useState } from 'react';
+import React from 'react';
 import { useQuery } from 'react-query';
 import {
   getOmcList,
@@ -11,14 +11,15 @@ import Currency from '../../Number/Currency';
 import { Box, Grid, Group, Table } from '@mantine/core';
 
 const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, guarantor, productId, type }) => {
-  const [product, setProduct] = useState()
-  const { data: products = [] } = useQuery(['products', productId], () => getProductsMaster(),
+  const { data: product = {} } = useQuery(['products', productId], () => getProductsMaster(),
     {
       refetchOnWindowFocus: false,
-      onSuccess: (data) => {
-        setProduct(data.find(item => item.product_id === productId))
-      }
+      select: (data) => {
+        return data.find(item => item.product_id === productId);
+      },
+      enabled: Boolean(productId)
     })
+
   const { data: omcs = [] } = useQuery('omcs', () => getOmcList(), { refetchOnWindowFocus: false })
   return (
     <Box style={{ width: '60%' }}>

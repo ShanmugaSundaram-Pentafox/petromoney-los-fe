@@ -128,7 +128,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
                     </div>
                     <Text>eSign Application</Text>
                   </div>
-                  <div className={classes.listItem} onClick={() => { setloanId(row?.original?.['loan_id']); setType('loc'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); setLoanAmount(row?.original?.['current_loan_amount']); }}>
+                  <div className={classes.listItem} onClick={() => { setloanId(row?.original?.['loan_id']); setType('loc'); setDealershipId(row?.original?.dealership_id); setModalVisible(true); setLoanAmount(row?.original?.['current_loan_amount']); setProductTypeId(row?.original?.['new_product_id']) }}>
                     <div style={{ width: '20px', display: 'flex', justifyContent: 'center' }}>
                       <AssignmentIcon style={{ width: 19, color: 'blue' }} />
                     </div>

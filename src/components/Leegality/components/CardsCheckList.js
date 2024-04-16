@@ -87,9 +87,9 @@ const CardItem = ({ onChange, data, tooltip = false }) => {
                 {tooltip ?
                   <Tooltip
                     zIndex={9999}
-                    // w={250}
+                    w={250}
                     multiline={true}
-                    // color='gray'
+                    color='gray'
                     withArrow
                     label={
                       <React.Fragment>

@@ -6,29 +6,29 @@ import FormDialog from '../CommonComponents/FormDialog/FormDialog';
 import { Button } from '../Mantine/Button/Button';
 import { Tooltip } from '../Mantine/Tooltip/Tooltip';
 
-export const DocAttachment = ({ 
-  imgUrl, 
-  onUpload, 
-  onDelete, 
-  docName, 
+export const DocAttachment = ({
+  imgUrl,
+  onUpload,
+  onDelete,
+  docName,
   action = false,
-  disabled = false, 
-  tooltip = 'View' 
+  disabled = false,
+  tooltip = 'View'
 }) => {
   const [imageModal, setImageModal] = useState({})
 
   return (
     <>
       <Flex direction="column" gap="xs">
-        <Tooltip label={tooltip} disabled={disabled}>
-          <Box 
+        <Tooltip label={tooltip} withArrow>
+          <Box
             className="group relative w-28 h-28 bg-white flex justify-center items-center rounded-lg border border-dashed border-gray-300 hover:border-gray-400 overflow-hidden"
             onClick={() => typeof (imgUrl) == 'string' ? setImageModal({ open: true, image: imgUrl, type: imgUrl?.endsWith('.pdf') }) : null}
           >
             {typeof (imgUrl) === 'string' || imgUrl === null || imgUrl === undefined ? (
               <>
                 {imgUrl?.endsWith('.pdf') ? (
-                  <IconFileTypePdf size={28} className="text-gray-500" /> 
+                  <IconFileTypePdf size={28} className="text-gray-500" />
                 ) : (
                   <IconPhoto size={32} stroke={1.5} className="text-gray-500" />
                 )}
@@ -40,7 +40,7 @@ export const DocAttachment = ({
             <div className="absolute inset-x-0 bottom-0 h-4/5 bg-gradient-to-b from-gray-100/5 group-hover:from-gray-100/15 to-gray-900/20 group-hover:to-gray-900/30" />
 
             {action && (
-              <ActionIcon 
+              <ActionIcon
                 variant="filled"
                 color="red"
                 className="!absolute top-0.5 right-0.5"
@@ -53,15 +53,15 @@ export const DocAttachment = ({
               >
                 <IconTrash size={16} />
               </ActionIcon>
-            )}  
+            )}
           </Box>
         </Tooltip>
-        
+
         {action && (
           <Flex justify="center">
-            <Button   
+            <Button
               variant="outline"
-              size="xs" 
+              size="xs"
               radius="lg"
               leftSection={<IconUpload size={16} />}
               onClick={onUpload}
@@ -71,12 +71,12 @@ export const DocAttachment = ({
           </Flex>
         )}
       </Flex>
-      
+
       {imgUrl && (
-        <FormDialog 
-          title={docName} 
-          onDownload={imageModal.image} 
-          open={imageModal.open} 
+        <FormDialog
+          title={docName}
+          onDownload={imageModal.image}
+          open={imageModal.open}
           onClose={() => setImageModal({ open: false })}
         >
           <FilePreview data={imageModal} />

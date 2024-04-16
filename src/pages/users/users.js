@@ -1,40 +1,22 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { useMount } from 'react-use';
 import UsersTable from './components/UsersTable';
-import { resources_id } from '../../config/accessControl';
 import { getAllUsers, getUsersByPincode, getUsersByRole } from '../../services/users.service';
-import { isAllowed } from '../../utils/cerbos';
 import { Box, Grid, Paper, Skeleton, Table, Text, TextInput } from '@mantine/core';
 import PieChartUsers from './components/PieChartUsers';
 
 const Users = ({ currentUser }) => {
-  const [allUsers,setAllUsersData]=useState();
-  const [loading, setLoading] = useState(false)
   const [selectedRole, setSelectedRole] = useState(null);
-  const [tableData, setTableData] = React.useState([]);
-  useMount(() => {
-    // allow only if current user has permission to access users module
-    if (isAllowed(currentUser?.permissions, resources_id?.navigation, 'users')) {
-      setLoading(true);
-      getAllUsers()
-        .then(data => {
-          setAllUsersData(data);
-          setTableData(data)
-        })
-        .catch(e => {
-          console.log(e);
-        })
-        .finally(() => {
-          setLoading(false)
-        })
-    }
+  const [tableData, setTableData] = useState();
+  const allUsersDataQuery = useQuery({
+    queryKey: ['users'],
+    queryFn: () => getAllUsers(),
   })
-  const fo = getUsersByRole(allUsers, 'FIELD_OFFICER');
-  const trans = getUsersByRole(allUsers, 'TRANSPORTER');
-  const dealers = getUsersByRole(allUsers, 'DEALER');
-  const others = allUsers?.filter(user => !(['FIELD_OFFICER', 'TRANSPORTER', 'DEALER'].includes(user.role_name)));
-  const [currency, setCurrency] = React.useState();
+
+  const fo = getUsersByRole(allUsersDataQuery?.data, 'FIELD_OFFICER');
+  const trans = getUsersByRole(allUsersDataQuery?.data, 'TRANSPORTER');
+  const dealers = getUsersByRole(allUsersDataQuery?.data, 'DEALER');
+  const others = allUsersDataQuery?.data?.filter(user => !(['FIELD_OFFICER', 'TRANSPORTER', 'DEALER'].includes(user.role_name)));
   const [pincode, setPincode] = React.useState('');
 
   const getPincodeDetails = useQuery({
@@ -43,7 +25,7 @@ const Users = ({ currentUser }) => {
     enabled: Boolean(pincode?.length === 6),
   })
   const getUserById = id => {
-    return allUsers?.find(item => item.id === id) || {};
+    return allUsersDataQuery?.data?.find(item => item.id === id) || {};
   };
 
   const handleRoleSelect = (role) => {
@@ -54,7 +36,7 @@ const Users = ({ currentUser }) => {
       if (role === 'Transporter') setTableData(trans)
       if (role === 'Others') setTableData(others)
     } else {
-      setTableData(allUsers);
+      setTableData(allUsersDataQuery?.data);
     }
   }
 
@@ -65,7 +47,7 @@ const Users = ({ currentUser }) => {
           <PieChartUsers
             selectedRole={selectedRole}
             setSelectedRole={handleRoleSelect}
-            loading={loading}
+            loading={allUsersDataQuery?.isLoading}
             data={{
               field_officer: fo?.length,
               dealer: dealers?.length,
@@ -129,7 +111,7 @@ const Users = ({ currentUser }) => {
           </Paper>
         </Grid.Col>
         <Grid.Col>
-          <UsersTable loading={loading} currentUser={currentUser} title="Users" data={tableData} />
+          <UsersTable loading={allUsersDataQuery?.isLoading} refetchQuery={allUsersDataQuery?.refetch} currentUser={currentUser} title="Users" data={tableData || allUsersDataQuery?.data} />
         </Grid.Col>
       </Grid>
     </Box>

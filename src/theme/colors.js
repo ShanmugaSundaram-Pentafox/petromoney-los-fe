@@ -14,7 +14,8 @@ const COLORS = {
   success: 'rgba(52, 146, 95, 1)',
   warning: {
     main: 'rgba(250, 166, 25, 1)',
-    dark: 'rgba(198, 143, 37, 1)'
+    dark: 'rgba(198, 143, 37, 1)',
+    tableWarn: '#fff50036',
   },
   error: {
     main: 'rgba(255, 33, 22, 1)',

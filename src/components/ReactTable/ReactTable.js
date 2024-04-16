@@ -211,7 +211,7 @@ const ReactTable = ({
                     cursor:
                       typeof onRowClick === 'function' ? 'pointer' : 'default',
                     position: 'relative',
-                    background: row?.original?.reload_type === 'express' && COLORS.red(10),
+                    background: (row?.original?.reload_type === 'express' ? COLORS.red(10) : row?.original?.is_withheld == 1 ? COLORS.warning.tableWarn : null),
                   }}
                   key={row.id}
                 >

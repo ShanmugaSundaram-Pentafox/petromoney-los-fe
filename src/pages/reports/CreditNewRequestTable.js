@@ -86,60 +86,23 @@ const CreditNewRequestTable = ({ currentUser }) => {
       key: 'status',
       header: 'Status',
       enableColumnFilter: false,
-      cell: (value) => {
-        if (value?.getValue() === 'Declined') {
+      cell: ({ row }) => {
+        if (row?.original?.status === 'Declined') {
           return (
-            <div><CustomToken label={value?.getValue()} variant='error' icon='cross' /></div>
+            <div><CustomToken label={row?.original?.status} variant='error' icon='cross' /></div>
           )
         }
-        else if (value?.getValue() === 'Disbursed') {
+        else if (row?.original?.status === 'Disbursed') {
           return (
-            <div><CustomToken label={value?.getValue()} variant='success' icon='tick' /></div>
+            <div><CustomToken label={row?.original?.status} variant='success' icon='tick' /></div>
           )
         }
-        else return <CustomToken label={value?.getValue()} variant='success' />
+        else if (row?.original?.is_withheld == 1)
+          return <CustomToken label="Withheld" variant='warn' />
+        else return <CustomToken label={row?.original?.status} variant='success' />
       }
     },
   ]
-
-  const options = {
-    print: false,
-    selectableRowsHeader: false,
-    viewColumns: false,
-    selectableRows: 'none',
-    rowsPerPage: 10,
-    rowsPerPageOptions: [10, 15, 20, 25, 30],
-    setRowProps: (row, dataIndex) => {
-      if (row[12]) {
-        return { style: { backgroundColor: '#ffec9bba' } }
-      }
-      if (tableData?.data?.[dataIndex]?.reload_type === 'express') {
-        return { style: { backgroundColor: '#ff21161a' } }
-      }
-    },
-    customToolbar: () => {
-      return (
-        // Credit Reload create action
-        isAllowed(currentUser?.permissions, resources_id?.creditReload, action_id?.creditReload?.create) ?
-          <Button
-            onClick={() => setOpenModal(true)}
-          >
-            Add
-          </Button> : null
-      )
-    },
-    onCellClick: (colData, cellMeta) => {
-      if (cellMeta.colIndex === 0 || cellMeta.colIndex === 1) {
-        let d = [];
-        d.push({
-          ...tableData?.data[cellMeta.dataIndex],
-          payment_proof_attachment: typeof (tableData?.data[cellMeta.dataIndex]?.payment_proof_attachment) === 'string' ? JSON.parse(tableData?.data[cellMeta.dataIndex]?.payment_proof_attachment) : (tableData?.data[cellMeta.dataIndex]?.payment_proof_attachment || [])
-        })
-        setRowData(d[0])
-        setStatusModal(true)
-      }
-    },
-  };
 
   return (
     <div>

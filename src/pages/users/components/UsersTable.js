@@ -7,7 +7,7 @@ import { Paper, Tooltip } from '@mantine/core';
 import { IconCheck, IconEdit, IconX } from '@tabler/icons-react';
 import AddNewUserAction from '../../../components/AddNewUser/AddNewUserAction';
 
-const UsersTable = ({ title, data, withRole, currentUser, loading }) => {
+const UsersTable = ({ title, data, withRole, currentUser, loading, refetchQuery }) => {
 
   const column = [
     {
@@ -89,7 +89,7 @@ const UsersTable = ({ title, data, withRole, currentUser, loading }) => {
               column
         }
         action={
-          <AddNewUserAction currentUser={currentUser} />
+          <AddNewUserAction currentUser={currentUser} refetchQuery={refetchQuery} />
         }
         title={title}
       />

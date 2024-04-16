@@ -1081,12 +1081,12 @@ export const getSignedUrl = (data) => {
   });
 };
 
-export const getUdyamVerified = ({ udyam_no }) => {
+export const getUdyamVerified = ({ body }) => {
   return new Promise((resolve, reject) => {
-    apiCall(`udyam/${udyam_no}`, {
+    apiCall(`udyam/${body?.udyam_no}`, {
       method: 'POST',
       body: {
-        udyam_no
+        body
       },
     })
       .then(({ status, data, message }) => {

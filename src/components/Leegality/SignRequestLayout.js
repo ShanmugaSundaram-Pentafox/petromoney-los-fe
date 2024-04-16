@@ -283,7 +283,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
     <>
       <Modal
         opened={opened || false}
-        onClose={onClose}
+        onClose={() => { onClose(); setPdfUrl(); setLoansData(); }}
         title={
           <Group gap={10}>
             {

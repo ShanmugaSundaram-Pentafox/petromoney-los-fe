@@ -797,6 +797,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
                 action={true}
                 imgUrl={item?.file_data?.[0]?.file_url}
                 docName={item?.doc_name}
+                tooltip={item?.doc_name}
                 onUpload={() => docUpload(item?.doc_id)}
                 onDelete={() => onDocDelete({ docId: item?.doc_id, fileId: item?.file_data?.[0]?.file_id })}
                 disabled={!item?.file_data?.[0]?.file_url}
@@ -838,13 +839,15 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
         </Flex>
       ) : (
         <Flex gap="sm" mt="xl">
-          <Button
-            variant="outline"
-            color="gray"
-            onClick={() => { setReadOnly(false); setViewOnly(false); }}
-          >
-            Edit Details
-          </Button>
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.edit}>
+            <Button
+              variant="outline"
+              color="gray"
+              onClick={() => { setReadOnly(false); setViewOnly(false); }}
+            >
+              Edit Details
+            </Button>
+          </CheckAllowed>
 
           <CheckAllowed currentUser={currentUser} resource={resources_id?.dealership} action={action_id?.dealership?.crimeCheck}>
             <Button onClick={() => setCrimeData({ ...crimeData, category: 'dealership', id: data?.id, first_name: data?.name })}>

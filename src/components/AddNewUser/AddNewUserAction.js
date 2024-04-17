@@ -3,29 +3,14 @@ import React, { useState } from 'react';
 import AddNewUserForm from './AddNewUserForm';
 import { action_id, resources_id } from '../../config/accessControl';
 import CheckAllowed from '../../pages/rbac/CheckAllowed';
-import { getAllUsers } from '../../services/users.service';
 import { RightSideDrawer } from '../Mantine/RightSideDrawer/RightSideDrawer';
 
 
-const AddNewUserAction = ({ currentUser }) => {
+const AddNewUserAction = ({ currentUser, refetchQuery }) => {
   const [openModal, setOpenModal] = useState(false);
-  const [allusers,setAllUsers] = useState();
 
-  const saveUserCallback = () => {
-    getAllUsers()
-      .then(data => {
-        setAllUsers(data);
-      })
-      .catch(e => {
-        // eslint-disable-next-line no-console
-        console.log(e);
-      });
-
-    setOpenModal(false);
-  }
   const handleClose = () => {
     setOpenModal(false)
-
   }
 
   return (
@@ -47,7 +32,7 @@ const AddNewUserAction = ({ currentUser }) => {
         title="Add New User Form"
       >
         <AddNewUserForm
-          callback={saveUserCallback}
+          callback={refetchQuery}
           action={() => handleClose()}
         />
       </RightSideDrawer>

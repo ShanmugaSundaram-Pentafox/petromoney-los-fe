@@ -127,18 +127,20 @@ const CreditProcessedTable = ({ currentUser }) => {
       key: 'status',
       header: 'Status',
       enableColumnFilter: false,
-      cell: (value) => {
-        if (value?.getValue() === 'Declined') {
+      cell: ({ row }) => {
+        if (row?.original?.status === 'Declined') {
           return (
-            <div><CustomToken label={value?.getValue()} variant='error' icon='cross' /></div>
+            <div><CustomToken label={row?.original?.status} variant='error' icon='cross' /></div>
           )
         }
-        else if (value?.getValue() === 'Disbursed') {
+        else if (row?.original?.status === 'Disbursed') {
           return (
-            <div><CustomToken label={value?.getValue()} variant='success' icon='tick' /></div>
+            <div><CustomToken label={row?.original?.status} variant='success' icon='tick' /></div>
           )
         }
-        else return <CustomToken label={value?.getValue()} variant='success' />
+        else if (row?.original?.is_withheld == 1)
+          return <CustomToken label="Withheld" variant='warn' />
+        else return <CustomToken label={row?.original?.status} variant='success' />
       }
     }, {
       key: 'disbursed_declined_date',
@@ -147,46 +149,6 @@ const CreditProcessedTable = ({ currentUser }) => {
     },
   ]
 
-  // const options = {
-  //   print: false,
-  //   selectableRowsHeader: false,
-  //   selectableRows: 'none',
-  //   rowsPerPage: 25,
-  //   filter: false,
-  //   download: false,
-  //   search: false,
-  //   viewColumns: false,
-  //   setRowProps: (row, dataIndex) => {
-  //     if (row[12]) {
-  //       return { style: { backgroundColor: '#ffb99b69' } }
-  //     }
-  //     if (data?.data?.[dataIndex]?.reload_type === 'express') {
-  //       return { style: { backgroundColor: '#ff21161a' } }
-  //     }
-  //   },
-  //   customToolbar: () => {
-  //     return (
-  //       <Button
-  //         color='primary'
-  //         variant='contained'
-  //         onClick={() => setOpenModal(true)}
-  //       >
-  //         Add
-  //       </Button>
-  //     );
-  //   },
-  //   onCellClick: (colData, cellMeta) => {
-  //     if (cellMeta.colIndex === 0 || cellMeta.colIndex === 1) {
-  //       let d = [];
-  //       d.push({
-  //         ...data?.data[cellMeta.dataIndex],
-  //         payment_proof_attachment: typeof (data?.data[cellMeta.dataIndex]?.payment_proof_attachment) === 'string' ? JSON.parse(data?.data[cellMeta.dataIndex]?.payment_proof_attachment) : (data?.data[cellMeta.dataIndex]?.payment_proof_attachment || [])
-  //       })
-  //       setRowData(d[0])
-  //       setStatusModal(true)
-  //     }
-  //   },
-  // };
   return (
     <div>
       <CreditReload

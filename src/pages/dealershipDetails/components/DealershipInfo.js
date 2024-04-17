@@ -59,12 +59,13 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
     {
       refetchOnWindowFocus: false,
       select: (data) => {
-        const allowedFile = {
-          gst: data?.find(i => (i?.kyc_file_name === 'gst_file_url' && i?.document_category === 'dealership_kyc')),
-          udyam: data?.find(i => (i?.kyc_file_name === 'udyam_file_url' && i?.document_category === 'dealership_kyc')),
-          pan: data?.find(i => (i?.kyc_file_name === 'dealership_pan_file_url' && i?.document_category === 'dealership_kyc')),
-        }
-        return allowedFile;
+        // const allowedFile = {
+        //   gst: data?.find(i => (i?.kyc_file_name === 'gst_file_url' && i?.document_category === 'dealership_kyc')),
+        //   udyam: data?.find(i => (i?.kyc_file_name === 'udyam_file_url' && i?.document_category === 'dealership_kyc')),
+        //   pan: data?.find(i => (i?.kyc_file_name === 'dealership_pan_file_url' && i?.document_category === 'dealership_kyc')),
+        // }
+        // return allowedFile;
+        return data?.filter(i => i?.document_category === 'dealership_kyc');
       }
     }
   )
@@ -541,33 +542,18 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
               </Grid.Col>
             ) : null}
           </Grid>
-
-          {(checkListData?.udyam?.file_data?.[0]?.file_url || checkListData?.gst?.file_data?.[0]?.file_url || checkListData?.pan?.file_data?.[0]?.file_url) ? (
+          {(checkListData?.filter((i) => i?.file_data?.[0]?.file_url)?.length) ? (
             <Box mt="sm">
               <Title order={3} mb="md">Attachments</Title>
-
               <Flex gap="xs">
-                {checkListData?.pan?.file_data?.[0]?.file_url && (
+                {checkListData?.filter((i) => i?.file_data?.[0]?.file_url)?.map((item, index) => (
                   <DocAttachment
-                    tooltip='View PAN'
-                    imgUrl={checkListData?.pan?.file_data?.[0]?.file_url}
-                    docName='PAN Card'
+                    key={`${item?.doc_name}-${index}`}
+                    tooltip={`View ${item?.description?.replace(/_/g, ' ')}`}
+                    imgUrl={item?.file_data?.[0]?.file_url}
+                    docName={item?.description?.replace(/_/g, ' ')}
                   />
-                )}
-                {checkListData?.gst?.file_data?.[0]?.file_url && (
-                  <DocAttachment
-                    tooltip='View GST'
-                    imgUrl={checkListData?.gst?.file_data?.[0]?.file_url}
-                    docName='GST'
-                  />
-                )}
-                {checkListData?.udyam?.file_data?.[0]?.file_url && (
-                  <DocAttachment
-                    tooltip='View UDYAM'
-                    imgUrl={checkListData?.udyam?.file_data?.[0]?.file_url}
-                    docName='UDYAM'
-                  />
-                )}
+                ))}
               </Flex>
             </Box>
           ) : (
@@ -805,35 +791,18 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
 
           <Title order={3} mb="md">Attachments</Title>
           <Flex gap="sm">
-            <DocAttachment
-              action={true}
-              imgUrl={checkListData?.pan?.file_data?.[0]?.file_url}
-              docName='PAN Card'
-              onUpload={() => docUpload(checkListData?.pan?.doc_id, 'PAN')}
-              onDelete={() => onDocDelete({ docId: checkListData?.pan?.doc_id, fileId: checkListData?.pan?.file_data?.[0]?.file_id })}
-              disabled={!checkListData?.pan?.file_data?.[0]?.file_url}
-              style={{ marginRight: 15 }}
-            />
-
-            <DocAttachment
-              action={true}
-              imgUrl={checkListData?.gst?.file_data?.[0]?.file_url}
-              docName='GST'
-              onUpload={() => docUpload(checkListData?.gst?.doc_id, 'GST')}
-              onDelete={() => onDocDelete({ docId: checkListData?.gst?.doc_id, fileId: checkListData?.gst?.file_data?.[0]?.file_id })}
-              disabled={!checkListData?.gst?.file_data?.[0]?.file_url}
-              style={{ marginRight: 15 }}
-            />
-
-            <DocAttachment
-              action={true}
-              imgUrl={checkListData?.udyam?.file_data?.[0]?.file_url}
-              docName='UDYAM'
-              onUpload={() => docUpload(checkListData?.udyam?.doc_id, 'UDYAM')}
-              onDelete={() => onDocDelete({ docId: checkListData?.udyam?.doc_id, fileId: checkListData?.udyam?.file_data?.[0]?.file_id })}
-              disabled={!checkListData?.udyam?.file_data?.[0]?.file_url}
-              style={{ marginRight: 15 }}
-            />
+            {checkListData?.map((item, index) => (
+              <DocAttachment
+                key={`${item?.doc_name}-${index}`}
+                action={true}
+                imgUrl={item?.file_data?.[0]?.file_url}
+                docName={item?.doc_name}
+                onUpload={() => docUpload(item?.doc_id)}
+                onDelete={() => onDocDelete({ docId: item?.doc_id, fileId: item?.file_data?.[0]?.file_id })}
+                disabled={!item?.file_data?.[0]?.file_url}
+                style={{ marginRight: 15 }}
+              />
+            ))}
           </Flex>
         </>
       )}

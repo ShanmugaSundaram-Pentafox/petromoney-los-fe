@@ -500,7 +500,6 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
   };
 
   const submitAdd = () => {
-    console.log('adding...');
     if (AddData) {
       if (status === 'OMCs') {
         addOmcs(AddData)

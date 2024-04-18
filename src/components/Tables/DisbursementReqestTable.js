@@ -12,6 +12,8 @@ import moment from 'moment';
 import CustomToken from '../CommonComponents/CustomToken';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { IconLink } from '@tabler/icons-react';
+import { action_id, resources_id } from '../../config/accessControl';
+import { isAllowed } from '../../utils/cerbos';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const DisbursementReqestTable = ({ title, onRowClick, filterQry }) => {
+const DisbursementReqestTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const classes = useStyles();
   const [docModal, setDocModal] = useState({ modal: false });
 
@@ -86,16 +88,19 @@ const DisbursementReqestTable = ({ title, onRowClick, filterQry }) => {
       header: 'Action',
       enableColumnFilter: false,
       cell: (value) => {
-        if (value?.row?.original?.is_pdc_completed) {
-          return (
-            <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
-          )
-        } else {
-          return (
-            <Tooltip label={'Click to view checklist'} color='gray' withArrow>
-              <ActionIcon size="xs" variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed })}><IconLink /></ActionIcon>
-            </Tooltip>
-          )
+        if (isAllowed(currentUser.permissions, resources_id?.dashboard, action_id?.dashboard?.pdcChecklist)) {
+          if (value?.row?.original?.is_pdc_completed) {
+            return (
+              <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
+            )
+          } else {
+            return (
+              <Tooltip label={'Click to view checklist'} color='gray' withArrow>
+                <ActionIcon size="xs" variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed })}><IconLink /></ActionIcon>
+              </Tooltip>
+            )
+          }
+
         }
       }
     },

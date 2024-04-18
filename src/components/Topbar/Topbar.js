@@ -13,6 +13,8 @@ import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import { permissionCheck } from '../UserCan/UserCan';
 import { format } from 'date-fns';
 import { IconExternalLink, IconSelector } from '@tabler/icons-react';
+import CheckAllowed from '../../pages/rbac/CheckAllowed';
+import { action_id, resources_id } from '../../config/accessControl';
 
 // const useStyles = makeStyles(theme => {
 //   return ({
@@ -158,30 +160,32 @@ const Topbar = (props) => {
         )} */}
 
         <Flex gap='sm' align='center' ml='auto'>
-          <Menu
-            width={150}
-            withArrow
-            styles={{
-              item: {
-                padding: '4px 10px'
-              }
-            }}
-            position="bottom-end"
-          >
-            <Menu.Target>
-              <Box style={{ background: '#f6f6f6', padding: 6, borderRadius: 6, cursor: 'pointer' }}>
-                <Group gap={6}>
-                  <Badge variant='light' color='orange'>LOS</Badge>
-                  <IconSelector size={16} />
-                </Group>
-              </Box>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>Our Other Services</Menu.Label>
-              <Menu.Item onClick={() => window.open('https://lms.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='blue'>LMS</Badge></Menu.Item>
-              <Menu.Item onClick={() => window.open('https://ddms.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='green'>DDMS</Badge></Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+          <CheckAllowed currentUser={user} resource={resources_id?.dashboard} action={action_id?.dashboard.dashboardSwitch}>
+            <Menu
+              width={150}
+              withArrow
+              styles={{
+                item: {
+                  padding: '4px 10px'
+                }
+              }}
+              position="bottom-end"
+            >
+              <Menu.Target>
+                <Box style={{ background: '#f6f6f6', padding: 6, borderRadius: 6, cursor: 'pointer' }}>
+                  <Group gap={6}>
+                    <Badge variant='light' color='orange'>LOS</Badge>
+                    <IconSelector size={16} />
+                  </Group>
+                </Box>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Label>Our Other Services</Menu.Label>
+                <Menu.Item onClick={() => window.open('https://lms.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='blue'>LMS</Badge></Menu.Item>
+                <Menu.Item onClick={() => window.open('https://ddms.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='green'>DDMS</Badge></Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          </CheckAllowed>
           <Box
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', columnGap: '5px', width: 260 }}
           >

@@ -13,8 +13,10 @@ import { ActionIcon, Group, Modal, Text, Tooltip, Button } from '@mantine/core';
 import { IconCircleCheck, IconLink, IconRefresh } from '@tabler/icons-react';
 import DDMSModal from '../../components/Deferal-Devation/DDMSModal';
 import classes from './Enhancement.module.css'
+import { isAllowed } from '../../utils/cerbos';
+import { action_id, resources_id } from '../../config/accessControl';
 
-const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
+const DisbursementApprovalTable = ({ title, onRowClick, filterQry,currentUser }) => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const [enhancementId, setEnhancementId] = useState();
@@ -128,16 +130,18 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry }) => {
       header: 'Action',
       enableColumnFilter: false,
       cell: (value) => {
-        if (value?.row?.original?.is_pdc_completed) {
-          return (
-            <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
-          )
-        } else {
-          return (
-            <Tooltip label={'Click to view checklist'} color='gray' withArrow>
-              <ActionIcon size="xs" variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed })}><IconLink /></ActionIcon>
-            </Tooltip>
-          )
+        if (isAllowed(currentUser.permissions, resources_id?.dashboard, action_id?.dashboard?.pdcChecklist)) {
+          if (value?.row?.original?.is_pdc_completed) {
+            return (
+              <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
+            )
+          } else {
+            return (
+              <Tooltip label={'Click to view checklist'} color='gray' withArrow>
+                <ActionIcon size="xs" variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed })}><IconLink /></ActionIcon>
+              </Tooltip>
+            )
+          }
         }
       }
     },

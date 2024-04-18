@@ -44,6 +44,7 @@ const DocList = ({ id, currentUser }) => {
     files.map(file => {
       const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
       formData.append(rowData?.kyc_file_name ? rowData?.kyc_file_name : 'file', file);
+      // formData.append('file', file);
       formData.append('fileName', fileName);
       formData.append('id', rowData.doc_id);
     });

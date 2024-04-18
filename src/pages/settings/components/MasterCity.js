@@ -113,7 +113,6 @@ const MasterCity = ({ callback, title, currentUser }) => {
       });
     },
     onError: (message) => {
-      console.log(message);
       enqueueSnackbar(message, {
         anchorOrigin: {
           vertical: 'top',

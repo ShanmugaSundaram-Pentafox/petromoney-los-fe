@@ -105,7 +105,7 @@ const FilePreview = ({ data, title }) => {
         .then((res) => {
           setSignedUrl(res?.url)
         })
-        .catch((err) => console.log('err >>>>>', err))
+        .catch((err) => console.log(err))
         .finally(() => setLoading(false));
     }
 

@@ -317,7 +317,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   label="Aadhaar"
                   name="aadhar"
                   value={values.aadhar}
-                  disabled={aadharValidateData?.loading || values?.aadhar_verified}
+                  disabled={(currentUser.role_id !== 1) && (aadharValidateData?.loading || values?.aadhar_verified)}
                   readOnly={readOnly}
                   error={errors.aadhar}
                   onChange={onChange}

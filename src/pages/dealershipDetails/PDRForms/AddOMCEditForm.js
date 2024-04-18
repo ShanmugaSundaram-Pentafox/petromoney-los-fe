@@ -95,7 +95,6 @@ const AddOMCEditForm = ({ data: init_data, dealer_id, isEdit, callback, currentU
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
-      console.log('values -->', values)
       let obj = {};
       if (!isEdit) {
         obj = compareObject(init_data, values)

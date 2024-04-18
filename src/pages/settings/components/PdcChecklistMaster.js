@@ -203,7 +203,6 @@ const PDCChecklistMaster = ({
     result?.splice(i, 1)
     setOthersObj(result)
   }
-  console.log('called',deferralDetailsQuery?.data);
 
   return (
     <>

@@ -5,9 +5,8 @@ import { Sync } from '@material-ui/icons';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import { useFormik } from 'formik';
-import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useMount } from 'react-use';
 import * as Yup from 'yup';
 import CrimeInfoSideWrapper from './CrimeInfoSideWrapper';
@@ -24,20 +23,21 @@ import { logger } from '../../../config/logger';
 import { URL } from '../../../config/serverUrls';
 import { getBusinessTypes, getRegionById, getActiveStates, getOmcList, getUdyamVerified } from '../../../services/common.service';
 import { cryptoEncrypt } from '../../../services/crypto.service';
-import { deleteDealershipDocument, getDealershipLoansById, validateId } from '../../../services/dealerships.service';
+import { deleteDocsImage, getDealershipCheckList, getDealershipLoansById, validateId } from '../../../services/dealerships.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, currentUser, isLoading }) => {
+  const queryClient = useQueryClient()
   const [readOnly, setReadOnly] = useState(viewOnly);
   const [loading, setLoading] = useState();
-  const [showUpload, setShowUpload] = useState(false);
+  const [showUpload, setShowUpload] = useState({ modal: false });
   const [udyamQuery, setUdyamQuery] = useState({ isLoading: false, data: {} });
   const [panValidateData, setPanValidateData] = useState({ icon: false })
   const [gstValidateData, setGstValidateData] = useState({ icon: false })
   const [dataJSON, setDataJSON] = useState({ gst: {}, udyam: {} })
   const [omcs, setOmcs] = useState([])
-  const [fileType, setFileType] = useState('');
   const [crimeData, setCrimeData] = useState();
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
   const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
@@ -52,7 +52,23 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
       }
     }
   );
-  const { enqueueSnackbar } = useSnackbar();
+
+  const { data: checkListData = [], isLoading: checklistLoading } = useQuery(
+    ['doc-checklist-kyc', data?.id],
+    () => getDealershipCheckList(data?.id),
+    {
+      refetchOnWindowFocus: false,
+      select: (data) => {
+        // const allowedFile = {
+        //   gst: data?.find(i => (i?.kyc_file_name === 'gst_file_url' && i?.document_category === 'dealership_kyc')),
+        //   udyam: data?.find(i => (i?.kyc_file_name === 'udyam_file_url' && i?.document_category === 'dealership_kyc')),
+        //   pan: data?.find(i => (i?.kyc_file_name === 'dealership_pan_file_url' && i?.document_category === 'dealership_kyc')),
+        // }
+        // return allowedFile;
+        return data?.filter(i => i?.document_category === 'dealership_kyc');
+      }
+    }
+  )
 
   const handleValidate = (action, id) => {
     if (id) {
@@ -88,6 +104,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
       setReadOnly(viewOnly);
     }
   }, [viewOnly])
+
   useEffect(() => {
     setValues(data)
     setDataJSON({ gst: data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {}, udyam: data?.udyam_verified ? JSON.parse(data?.udyam_details) || {} : {} })
@@ -152,14 +169,10 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
         })
         .then(({ status, message, data }) => {
           if (status == 'SUCCESS') {
-            enqueueSnackbar(message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'success',
-            }
-            )
+            displayNotification({
+              message: message,
+              variant: 'success'
+            })
             setTimeout(() => {
               window.location.reload()
             }, 1500);
@@ -168,28 +181,20 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
             setLoading(false);
           }
           else {
-            enqueueSnackbar(message, {
-              anchorOrigin: {
-                vertical: 'top',
-                horizontal: 'right',
-              },
-              variant: 'error',
-            }
-            )
+            displayNotification({
+              message: message,
+              variant: 'error'
+            })
             setLoading(false);
             setReadOnly(true);
             setViewOnly(true);
           }
         })
         .catch(e => {
-          enqueueSnackbar(e.message, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          }
-          )
+          displayNotification({
+            message: e.message,
+            variant: 'error'
+          })
           setLoading(false);
           setReadOnly(true);
           setViewOnly(true);
@@ -202,56 +207,88 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
   const getUDYAMDetails = () => {
     if (values?.udyam_no) {
       setUdyamQuery({ isLoading: true, data: {}, icon: true });
-      getUdyamVerified({ udyam_no: values?.udyam_no })
+      getUdyamVerified({ body: { udyam_no: values?.udyam_no, dealership_id: data?.id } })
         .then((res) => {
           setUdyamQuery({ isLoading: false, data: res?.[0]?.details, isVerified: res?.[0]?.is_verified });
         })
         .catch((err) => {
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
+          displayNotification({
+            message: err,
+            variant: 'error'
           })
           setUdyamQuery({ isLoading: false, data: {} });
         });
     }
   }
 
-  const docUpload = (val) => {
-    setShowUpload(true);
-    setFileType(val);
+  const docUpload = (data) => {
+    setShowUpload({ modal: true, value: data });
   };
   const onCloseUploader = () => {
-    setShowUpload(false);
+    setShowUpload({ modal: false });
   };
   const handleSave = (value) => {
-    setFieldValue(fileType === 'PAN' ? 'pan_file_url' : fileType === 'GST' ? 'gst_file_url' : 'udyam_file_url', value[0])
+    const formData = new FormData();
+    const dealerShipId = data?.id;
+    const docID = showUpload?.value;
+    value.map(file => {
+      const fileName = file.name.replace(/[()%.,+\-&]/g, '').toLowerCase().replace(/\s/g, '_');
+      formData.append('file', file);
+      formData.append('fileName', fileName);
+      formData.append('id', docID);
+    });
+
+    fetch(`${URL.base}${URL.checklist}/${dealerShipId}/doc/${docID}`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${currentUser.token}`,
+      },
+    }).then(res => res?.json())
+      .then(data => {
+        if (data?.status?.toLowerCase() === 'error') {
+          displayNotification({
+            message: data?.message,
+            variant: 'error'
+          })
+        } else {
+          displayNotification({
+            message: 'Document Uploaded Successfully',
+            variant: 'success'
+          })
+        }
+        onCloseUploader();
+      })
+      .catch(() => {
+        displayNotification({
+          message: 'File Upload Failed',
+          variant: 'error'
+        })
+      })
+      .finally(() => {
+        queryClient.invalidateQueries(['doc-checklist-kyc', data?.id])
+        queryClient.invalidateQueries(['doc-checklist', data?.id])
+      })
+
     onCloseUploader();
   };
-  const onDocDelete = (value) => {
-    deleteDealershipDocument(value, data.id)
-      .then(res => {
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        });
-        setTimeout(() => {
-          window.location.reload()
-        }, 1500);
+  const onDocDelete = ({ docId, fileId }) => {
+    deleteDocsImage({ id: [fileId], doc_id: docId }, data?.id)
+      .then(() => {
+        displayNotification({
+          message: 'Document Deleted Successfully',
+          variant: 'success'
+        })
       })
-      .catch(err => {
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
+      .catch((E) => {
+        displayNotification({
+          message: E,
+          variant: 'error'
+        })
+      })
+      .finally(() => {
+        queryClient.invalidateQueries(['doc-checklist-kyc', data?.id])
+        queryClient.invalidateQueries(['doc-checklist', data?.id])
       })
   }
 
@@ -505,33 +542,18 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
               </Grid.Col>
             ) : null}
           </Grid>
-
-          {values?.pan_file_url || values?.gst_file_url ? (
+          {(checkListData?.filter((i) => i?.file_data?.[0]?.file_url)?.length) ? (
             <Box mt="sm">
               <Title order={3} mb="md">Attachments</Title>
-
               <Flex gap="xs">
-                {values.pan_file_url && (
+                {checkListData?.filter((i) => i?.file_data?.[0]?.file_url)?.map((item, index) => (
                   <DocAttachment
-                    tooltip='View PAN'
-                    imgUrl={values?.pan_file_url}
-                    docName='PAN Card'
+                    key={`${item?.doc_name}-${index}`}
+                    tooltip={`View ${item?.description?.replace(/_/g, ' ')}`}
+                    imgUrl={item?.file_data?.[0]?.file_url}
+                    docName={item?.description?.replace(/_/g, ' ')}
                   />
-                )}
-                {values.gst_file_url && (
-                  <DocAttachment
-                    tooltip='View GST'
-                    imgUrl={values?.gst_file_url}
-                    docName='GST'
-                  />
-                )}
-                {values.udyam_file_url && (
-                  <DocAttachment
-                    tooltip='View UDYAM'
-                    imgUrl={values?.udyam_file_url}
-                    docName='UDYAM'
-                  />
-                )}
+                ))}
               </Flex>
             </Box>
           ) : (
@@ -767,52 +789,32 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
             </Card>
           ) : null}
 
-
           <Title order={3} mb="md">Attachments</Title>
           <Flex gap="sm">
-            <DocAttachment
-              action={true}
-              imgUrl={values?.pan_file_url}
-              docName='PAN Card'
-              tooltip='PAN Card'
-              onUpload={() => docUpload('PAN')}
-              onDelete={() => onDocDelete({ pan_file_url: '' })}
-              disabled={!values?.pan_file_url}
-              style={{ marginRight: 15 }}
-            />
-
-            <DocAttachment
-              action={true}
-              imgUrl={values?.gst_file_url}
-              docName='GST'
-              tooltip='GST'
-              onUpload={() => docUpload('GST')}
-              onDelete={() => onDocDelete({ gst_file_url: '' })}
-              disabled={!values?.gst_file_url}
-              style={{ marginRight: 15 }}
-            />
-
-            <DocAttachment
-              action={true}
-              imgUrl={values?.udyam_file_url}
-              docName='UDYAM'
-              tooltip='UDYAM'
-              onUpload={() => docUpload('UDYAM')}
-              onDelete={() => onDocDelete({ udyam_file_url: '' })}
-              disabled={!values?.udyam_file_url}
-              style={{ marginRight: 15 }}
-            />
+            {checkListData?.map((item, index) => (
+              <DocAttachment
+                key={`${item?.doc_name}-${index}`}
+                action={true}
+                imgUrl={item?.file_data?.[0]?.file_url}
+                docName={item?.doc_name}
+                tooltip={item?.doc_name}
+                onUpload={() => docUpload(item?.doc_id)}
+                onDelete={() => onDocDelete({ docId: item?.doc_id, fileId: item?.file_data?.[0]?.file_id })}
+                disabled={!item?.file_data?.[0]?.file_url}
+                style={{ marginRight: 15 }}
+              />
+            ))}
           </Flex>
         </>
       )}
 
 
-      {showUpload && (
+      {showUpload?.modal && (
         <FileUpload
           handleSave={(value) => handleSave(value)}
           id={values.id}
           title='Upload Dealership Documents'
-          open={showUpload}
+          open={showUpload?.modal}
           onCloseUploader={onCloseUploader}
         />
       )}

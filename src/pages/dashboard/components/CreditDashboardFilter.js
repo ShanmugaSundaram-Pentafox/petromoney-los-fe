@@ -67,12 +67,10 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
       break;
     }
   }
-  useEffect(() => {
-    setChartData({ name: 'Zone', count: selectedZones })
-  }, [])
 
   useEffect(() => {
     let zoneId = []
+    setChartData({ name: 'Zone', count: selectedZones })
     selectedZones.forEach(item => zoneId.push(item.value))
     getAllRegions(zoneId.toString())
       .then(data => {

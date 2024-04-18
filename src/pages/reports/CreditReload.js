@@ -72,18 +72,18 @@ const CreditReload = ({ currentUser, filterQry, filterList, handleDownload, filt
           <CheckAllowed currentUser={currentUser} resource={resources_id.creditReload} action={action_id.creditReload.dealer_search}>
             <Paper shadow="xs" p="lg" radius="lg" my="lg">
               <dl className="grid grid-cols-1 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-3">
-                <DashCard 
-                  text="Zone" 
-                  value={chartData?.count?.length === 1 ? chartData?.count[0]?.label : `${chartData?.count[0]?.label} & ${chartData?.count?.length - 1} more` || '-'} 
+                <DashCard
+                  text="Zone"
+                  value={(chartData?.count?.length === 1 || !chartData?.count?.length) ? (chartData?.count[0]?.label || 'ALL') : `${chartData?.count[0]?.label} & ${chartData?.count?.length - 1} more` || '-'}
                 />
-                <DashCard 
-                  text={'No.of. New Request'} 
-                  value={stats?.count || '-'} 
+                <DashCard
+                  text={'No.of. New Request'}
+                  value={stats?.count || '-'}
                 />
-                <DashCard  
-                  text={'Total.Req. Amount'} 
-                  value={<Currency value={stats?.amount} /> || '-'} 
-                  amount={stats?.amount} 
+                <DashCard
+                  text={'Total.Req. Amount'}
+                  value={<Currency value={stats?.amount} /> || '-'}
+                  amount={stats?.amount}
                 />
               </dl>
             </Paper>

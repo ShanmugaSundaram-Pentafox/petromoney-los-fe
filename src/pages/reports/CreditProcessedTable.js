@@ -16,7 +16,6 @@ import {
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { Paper } from '@mantine/core';
 
-
 const CreditProcessedTable = ({ currentUser }) => {
   const [rowData, setRowData] = useState();
   const [openModal, setOpenModal] = useState(false);
@@ -29,7 +28,7 @@ const CreditProcessedTable = ({ currentUser }) => {
   // usePageTitle('Credit Reload');
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
-  const { data = [], refetch, error, isLoading: searchLoading } = useQuery(['processed-request', offset], () => getCreditReload({ processed: 1, filterQry: filterQry, dealershipId: currentUser?.dealership_id, offset: offset, category: (filterQry?.dealership_id || currentUser?.dealership_id) ? undefined : 'today' }), { refetchOnWindowFocus: false, enabled: true })
+  const { data = [], refetch, error, isLoading: searchLoading } = useQuery(['processed-request', filterQry, offset], () => getCreditReload({ processed: 1, filterQry: filterQry, dealershipId: currentUser?.dealership_id, offset: offset, category: (filterQry?.dealership_id || currentUser?.dealership_id) ? undefined : 'today' }), { refetchOnWindowFocus: false, enabled: true })
   const { data: fileData } = useQuery(['view-credit-report'], () => getCreditReportById(filterQry, 'view=1'), { refetchOnWindowFocus: false })
 
 

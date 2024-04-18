@@ -23,7 +23,7 @@ const CreditNewRequestTable = ({ currentUser }) => {
   const [filterQry, setFilterQry] = useState();
   const [offset, setOffset] = useState(0);
   // usePageTitle('Credit Reload');
-  const { data: tableData = [], refetch, isLoading } = useQuery(['new-request', offset], () => getCreditReload({ processed: 0, filterQry: filterQry, currentUser: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false })
+  const { data: tableData = [], refetch, isLoading } = useQuery(['new-request', filterQry, offset], () => getCreditReload({ processed: 0, filterQry: filterQry, currentUser: currentUser?.dealership_id, offset: offset }), { refetchOnWindowFocus: false })
   const view = permissionCheck(currentUser.role_name, rulesList.dealer_view)
 
   const DisplayValue = ({ value, row }) => {

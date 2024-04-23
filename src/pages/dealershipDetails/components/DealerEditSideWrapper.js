@@ -57,7 +57,7 @@ const DealerEditSideWrapper = ({
       getKycStatus(modelType.toLowerCase(), values.dealership_id, values.id)
         .then((data) => {
           if (data?.is_initiated === 1)
-            setKycStatus(true);
+            setKycStatus({ is_initiated: true, expired: data?.expired == 1 ? true : false });
         })
         .catch((e) => {
           console.log(e)
@@ -263,7 +263,7 @@ const DealerEditSideWrapper = ({
     if (agentId?.value) {
       initiateKYC(modelType.toLowerCase(), values.dealership_id, values.id, agentId?.value)
         .then((message) => {
-          setKycStatus(true);
+          setKycStatus({ is_initiated: true });
           handleClose();
           enqueueSnackbar(message, {
             anchorOrigin: {
@@ -363,7 +363,7 @@ const DealerEditSideWrapper = ({
               Go back
             </Button>
             <Group>
-              {kycStatus ? (
+              {(kycStatus?.is_initiated && !kycStatus?.expired) ? (
                 <div style={{ display: 'flex', alignItems: 'center', marginRight: 12, backgroundColor: green[100], padding: 4, paddingRight: 12, borderRadius: 14 }}>
                   <CheckRoundedIcon style={{ color: green[400], marginRight: 8 }} />
                   <Typography style={{ color: green[800] }}>VKYC already initiated</Typography>
@@ -377,7 +377,7 @@ const DealerEditSideWrapper = ({
                     disabled={loading}
                     onClick={handleClose}
                   >
-                    Initiate VKYC
+                    {kycStatus?.expired ? 'Re-Initiate VKYC' : 'Initiate VKYC'}
                   </Button>
                 </CheckAllowed>
               )}
@@ -401,7 +401,7 @@ const DealerEditSideWrapper = ({
       <Modal
         open={open}
         close={handleClose}
-        title="Initiate VKYC"
+        title={kycStatus?.expired ? 'Re-Initiate VKYC' : 'Initiate VKYC'}
         centered
       >
         <Stack mih="120" gap="md">
@@ -449,7 +449,7 @@ const DealerEditSideWrapper = ({
               variant="filled"
               onClick={kycStatus ? () => null : handleInitiateKYC}
             >
-              Initiate Video KYC
+              {kycStatus?.expired ? 'Re-Initiate Video KYC' : 'Initiate Video KYC'}
             </Button>
           </Flex>
         </Stack>

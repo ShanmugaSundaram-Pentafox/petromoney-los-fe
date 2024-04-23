@@ -259,9 +259,9 @@ export const getPincodeDetails = (pincode) => {
 export const getKycStatus = (type, dealershipId, applicantId) => {
   return new Promise((resolve, reject) => {
     apiCall(`vkyc/${dealershipId}/${applicantId}/initiation?type=${type}`)
-      .then(({ status, is_initiated, message }) => {
+      .then(({ status, is_initiated, expired, message }) => {
         if (status === 'SUCCESS') {
-          resolve({ status, is_initiated, message });
+          resolve({ status, is_initiated, expired, message });
         } else {
           reject(message);
         }

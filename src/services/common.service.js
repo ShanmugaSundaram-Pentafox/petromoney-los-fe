@@ -68,21 +68,23 @@ export const getAllRegions = (id) => {
 export const getAllRegionByStateId = (id) => {
   return new Promise((resolve, reject) => {
     let apiUrl = `regions/${id}`;
-    apiCall(apiUrl, {}, 'GET')
-      .then((response) => {
-        if (response?.status === 'SUCCESS') {
-          const result = response?.data.map((item) => ({
-            label: item.name,
-            value: item.id,
-          }));
-          resolve(result || []);
-        } else {
-          reject(new Error(response.message || 'Unable to get regions'));
-        }
-      })
-      .catch((err) => {
-        reject(err);
-      });
+    if (id) {
+      apiCall(apiUrl, {}, 'GET')
+        .then((response) => {
+          if (response?.status === 'SUCCESS') {
+            const result = response?.data.map((item) => ({
+              label: item.name,
+              value: item.id?.toString(),
+            }));
+            resolve(result || []);
+          } else {
+            reject(new Error(response.message || 'Unable to get regions'));
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }
   });
 };
 
@@ -180,7 +182,7 @@ export const getAllRegionByState = (state) => {
   });
 };
 
-export const getAllCityByRegionId = (filterQry) => {
+export const getAllCityByRegionId = (filterQry = {}) => {
   return new Promise((resolve, reject) => {
     const { region } = filterQry
     let apiUrl = `master/pincode?region=${region}`;
@@ -190,7 +192,7 @@ export const getAllCityByRegionId = (filterQry) => {
           if (response?.status === 'SUCCESS') {
             const result = response?.data.map((item) => ({
               label: item.name,
-              value: item.id,
+              value: item.id?.toString(),
             }));
             resolve(result || []);
           } else {
@@ -204,7 +206,7 @@ export const getAllCityByRegionId = (filterQry) => {
   });
 };
 
-export const getAllUnmappedPincodeByCity = (filterQry) => {
+export const getAllUnmappedPincodeByCity = (filterQry = {}) => {
   return new Promise((resolve, reject) => {
     const { city } = filterQry
     let apiUrl = `unmapped/pincode?city=${city}`;

@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import { useSnackbar } from 'notistack';
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { mapPincode } from '../../../services/users.service';
 
 const useStyles = makeStyles((theme) => ({
@@ -102,7 +102,7 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
       }));
       let reqBody = {
         user_id: userId,
-        regions:selectedRegion?.map(item => item?.value),
+        regions: selectedRegion?.map(item => item?.value),
         mapping: resultArray,
         method: 'POST'
       }
@@ -122,10 +122,10 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
   };
 
   const handleSave = (reqBody) => {
-    mapPincode(reqBody)
+    mapPincode({ body: reqBody, userId })
       .then((res) => {
         callBack();
-        if(reqBody?.method == 'DELETE') {
+        if (reqBody?.method == 'DELETE') {
           window.location.reload();
         }
         enqueueSnackbar(res, {

@@ -214,9 +214,9 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
                     <FormGroup>
                       <FormControlLabel
                         key={item.label}
-                        control={<Checkbox key={item.region} checked={pincode.includes(item.label)} color="primary" value={item.label} onChange={(e) => getValue(e, unmappedPincode)} />}
+                        control={<Checkbox key={item.label} checked={pincode.includes(parseInt(item.value))} color="primary" value={item.value} onChange={(e) => getValue(e, unmappedPincode)} />}
                         label={item.label}
-                        value={item.label}
+                        value={item.value}
                       />
                     </FormGroup>
                   </Paper>

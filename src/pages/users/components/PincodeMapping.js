@@ -1,7 +1,6 @@
 import { Divider, Grid, Typography, makeStyles } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop';
 import Modal from '@material-ui/core/Modal';
-import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import MapPincode from './MapPincode';
@@ -109,7 +108,6 @@ const PincodeMapping = ({ userId }) => {
   const [regionfilterQry, setRegionFilterQry] = useState();
   const [cityfilterQry, setCityFilterQry] = useState();
   const [openModal, setOpenModal] = useState();
-  const { enqueueSnackbar } = useSnackbar();
 
   const { data: state = [] } = useQuery(['state'], () => { return getStates() }, {
     refetchOnWindowFocus: false,
@@ -264,23 +262,17 @@ const PincodeMapping = ({ userId }) => {
       // once the difference is found then delete api will call
       mapPincode({ body: { id: [], method: 'DELETE' }, userId, [name]: diff?.toString() })
         .then((res) => {
-          enqueueSnackbar(res, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'success',
-          });
+          displayNotification({
+            message: res,
+            variant: 'success'
+          })
           refetch();
           refetchUnmappedPincode();
         })
         .catch((err) => {
-          enqueueSnackbar(err, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'red',
+          displayNotification({
+            message: err,
+            variant: 'error'
           })
         })
     }

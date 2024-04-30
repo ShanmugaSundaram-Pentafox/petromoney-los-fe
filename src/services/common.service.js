@@ -1085,7 +1085,7 @@ export const getSignedUrl = (data) => {
 
 export const getUdyamVerified = ({ body }) => {
   return new Promise((resolve, reject) => {
-    apiCall(`udyam/${body?.udyam_no}`, {
+    apiCall(`udyam/${body?.udyam_no}?dealership_id=${body?.dealership_id}`, {
       method: 'POST',
       body: {
         body

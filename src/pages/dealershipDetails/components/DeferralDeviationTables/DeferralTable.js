@@ -2,16 +2,17 @@ import { useQuery } from 'react-query';
 import React, { useState, useEffect } from 'react';
 import DataTableViewer from '../../../../components/ReactTable/DataTableViewer';
 import { getDeferralDataList, getStatsData } from '../../../../services/deferralDeviation.service';
-import { Badge, Box, Button, Flex, Modal, Skeleton, Tabs, Text, Tooltip } from '@mantine/core';
-import { IconFileTypePdf, IconPhoto, IconPlus } from '@tabler/icons-react';
+import { Badge, Box, Button, Flex, Group, Modal, Skeleton, Tabs, Text, Title, Tooltip } from '@mantine/core';
+import { IconDownload, IconFileTypePdf, IconPhoto, IconPlus } from '@tabler/icons-react';
 import DeferralForm from './DeferralForm';
 import { AttachmentOutlined } from '@material-ui/icons';
 import { useDisclosure } from '@mantine/hooks';
 import FilePreview from '../../../../components/CommonComponents/FilePreview';
+import { getSignedUrl } from '../../../../services/common.service';
+import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 
 
 export const FileListPreview = ({ onOpen, docUrl }) => {
-  console.log('docurl -->', docUrl)
   return (
     docUrl[0]?.map((file, index) => {
       return (
@@ -70,6 +71,19 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
     setActiveTab(value);
   };
 
+  const getFileURL = () => {
+    getSignedUrl(activeDoc)
+      .then((res) => {
+        window.open(res?.url)
+      })
+      .catch((e) => {
+        displayNotification({
+          message: e?.message || e,
+          variant: 'error'
+        })
+      })
+  }
+
   useEffect(() => {
     if (statusList && statusList.length > 0) {
       setActiveTab(statusList[0].current_status);
@@ -108,7 +122,7 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
       isHeaderDownload: false,
       enableColumnFilter: false,
       cell: (value) => value?.getValue()?.length ? (
-        <Box onClick={() => { open(); setDocUrl(value?.getValue()) }}>
+        <Box onClick={() => { open(); setDocUrl(value?.getValue()); setActiveDoc(value?.getValue()?.[0]?.[0]) }}>
           <AttachmentOutlined color='gray' size={16} />
         </Box>
       ) : null
@@ -161,6 +175,7 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
       </Tabs>
     )
   )
+
   return (
     <>
       <DataTableViewer
@@ -185,7 +200,24 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
         excelDownload
         filter={false}
       />
-      <Modal size={'xl'} opened={opened} onClose={() => { close(); setActiveDoc('') }} title="Preview Attachment">
+      <Modal
+        size={'40%'}
+        opened={opened}
+        onClose={() => { close(); setActiveDoc('') }}
+        title={
+          <Group>
+            <Title order={3}>Preview Attachment</Title>
+            {activeDoc ? (
+              <IconDownload
+                style={{ cursor: 'pointer' }}
+                size={20}
+                color='green'
+                onClick={getFileURL}
+              />
+            ) : null}
+          </Group>
+        }
+      >
         <Flex gap={20}>
           <Flex direction={'column'} gap={2} rowGap={12}>
             {Array.isArray(docUrl) ? <FileListPreview docUrl={docUrl} onOpen={(f) => setActiveDoc(f)} /> : null}

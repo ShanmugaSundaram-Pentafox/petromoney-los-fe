@@ -2,13 +2,15 @@ import { useQuery } from 'react-query';
 import React, { useState, useEffect } from 'react';
 import DataTableViewer from '../../../../components/ReactTable/DataTableViewer';
 import { getDeferralDataList, getStatsData } from '../../../../services/deferralDeviation.service';
-import { Badge, Box, Button, Flex, Modal, Skeleton, Tabs, Text } from '@mantine/core';
+import { Badge, Box, Button, Flex, Group, Modal, Skeleton, Tabs, Text, Title } from '@mantine/core';
 import DeviationForm from './DeviationForm';
-import { IconPlus } from '@tabler/icons-react';
+import { IconDownload, IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { AttachmentOutlined } from '@material-ui/icons';
 import FilePreview from '../../../../components/CommonComponents/FilePreview';
 import { FileListPreview } from './DeferralTable';
+import { getSignedUrl } from '../../../../services/common.service';
+import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 
 const DeviationTable = ({ id, dealershipName, currentUser }) => {
   const [activeTab, setActiveTab] = useState('draft');
@@ -41,6 +43,19 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
     setActiveTab(value);
   };
 
+  const getFileURL = () => {
+    getSignedUrl(activeDoc)
+      .then((res) => {
+        window.open(res?.url, '_blank')
+      })
+      .catch((e) => {
+        displayNotification({
+          message: e?.message || e,
+          variant: 'error'
+        })
+      })
+  }
+
   const column = [
     {
       key: 'code',
@@ -69,7 +84,7 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
       isHeaderDownload: false,
       enableColumnFilter: false,
       cell: (value) => value?.getValue()?.length ? (
-        <Box onClick={() => { open(); setDocUrl(value?.getValue()) }}>
+        <Box onClick={() => { open(); setDocUrl(value?.getValue()); setActiveDoc(value?.getValue()?.[0]?.[0]) }}>
           <AttachmentOutlined color='gray' size={16} />
         </Box>
       ) : null
@@ -148,7 +163,23 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
         excelDownload
         filter={false}
       />
-      <Modal size={'xl'} opened={opened} onClose={close} title="Preview Attachment">
+      <Modal
+        size={'40%'}
+        opened={opened}
+        onClose={close}
+        title={
+          <Group>
+            <Title order={3}>Preview Attachment</Title>
+            {activeDoc ? (
+              <IconDownload
+                style={{ cursor: 'pointer' }}
+                size={20}
+                color='green'
+                onClick={getFileURL}
+              />
+            ) : null}
+          </Group>
+        }>
         <Flex gap={20}>
           <Flex direction={'column'} gap={2} rowGap={12}>
             {Array.isArray(docUrl) ? <FileListPreview docUrl={docUrl} onOpen={(f) => setActiveDoc(f)} /> : null}

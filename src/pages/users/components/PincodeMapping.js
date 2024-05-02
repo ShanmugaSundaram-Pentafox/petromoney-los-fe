@@ -254,8 +254,6 @@ const PincodeMapping = ({ userId }) => {
   // used to handle the delete api call from mapping
   const handleSelectedValueChange = (selectedValue = [], value, name) => {
     var diff = []
-    console.log(selectedValue);
-    console.log(value);
     // finding the difference from selected value to current value
     differenceBy(selectedValue?.length ? [...selectedValue] : [], value?.length ? [...value] : [], 'value').forEach(item => diff.push(item?.value))
     if (diff?.length) {

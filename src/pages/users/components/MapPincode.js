@@ -48,7 +48,6 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
     setUnmappedPincode(masterData?.map((item) => ({ ...item, value: parseInt(item?.value) })))
   }, [masterData])
 
-  console.log(pincode);
   useEffect(() => {
     setMappedPincode(mappedData)
   }, [mappedData])
@@ -243,7 +242,6 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
                 mappedPincode.map((item) => {
                   return (
                     <FormGroup key={item.label}>
-                      {console.log(item?.value)}
                       <FormControlLabel
                         key={item.label}
                         control={<Checkbox color="primary" key={item.label} checked={pincode.includes(item.value)} value={item.value} onChange={(e) => getValue(e, mappedPincode)} />}

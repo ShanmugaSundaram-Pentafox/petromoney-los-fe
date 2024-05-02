@@ -10,9 +10,9 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
-import { useSnackbar } from 'notistack';
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { mapPincode } from '../../../services/users.service';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,18 +37,16 @@ const useStyles = makeStyles((theme) => ({
 const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }) => {
   const classes = useStyles();
   const [mappedPincode, setMappedPincode] = useState(mappedData);
-  const [unmappedPincode, setUnmappedPincode] = useState(masterData)
+  const [unmappedPincode, setUnmappedPincode] = useState(masterData?.map((item) => ({ ...item, value: parseInt(item?.value) })))
   const [pincode, setPincode] = useState([]);
   const [loading, setLoading] = useState(false);
   const [allReg, setAllReg] = useState(false);
   const [mapReg, setMapReg] = useState(false)
-  const { enqueueSnackbar } = useSnackbar();
   const [search, setSearch] = useState()
 
   useEffect(() => {
-    setUnmappedPincode(masterData)
+    setUnmappedPincode(masterData?.map((item) => ({ ...item, value: parseInt(item?.value) })))
   }, [masterData])
-
 
   useEffect(() => {
     setMappedPincode(mappedData)
@@ -57,7 +55,7 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
   const handleSelectAllRegion = (list, action, func) => {
     if (func) {
       if (action === 'allPincode') {
-        setPincode(list.map(r => r?.label))
+        setPincode(list.map(r => r?.value))
         setAllReg(true)
       } else {
         setPincode(list.map(r => r.value))
@@ -93,7 +91,7 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
     }
   };
   const updateValue = async () => {
-    let filteredObjects = unmappedPincode.filter(item => pincode.includes(item.label));
+    let filteredObjects = unmappedPincode.filter(item => pincode.includes(item.value));
     if (pincode.length !== 0) {
       setLoading(true);
       let resultArray = filteredObjects?.map((item) => ({
@@ -102,7 +100,7 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
       }));
       let reqBody = {
         user_id: userId,
-        regions:selectedRegion?.map(item => item?.value),
+        regions: selectedRegion?.map(item => item?.value),
         mapping: resultArray,
         method: 'POST'
       }
@@ -122,30 +120,24 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
   };
 
   const handleSave = (reqBody) => {
-    mapPincode(reqBody)
+    mapPincode({ body: reqBody, userId })
       .then((res) => {
         callBack();
-        if(reqBody?.method == 'DELETE') {
+        if (reqBody?.method == 'DELETE') {
           window.location.reload();
         }
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
+        displayNotification({
+          message: res,
+          variant: 'success'
         })
         setLoading(false)
       })
       .catch((err) => {
         window.location.reload();
         setLoading(false)
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'red',
+        displayNotification({
+          message: err,
+          variant: 'error'
         })
       })
   }
@@ -214,9 +206,9 @@ const MapPincode = ({ mappedData, masterData, callBack, userId, selectedRegion }
                     <FormGroup>
                       <FormControlLabel
                         key={item.label}
-                        control={<Checkbox key={item.region} checked={pincode.includes(item.label)} color="primary" value={item.label} onChange={(e) => getValue(e, unmappedPincode)} />}
+                        control={<Checkbox key={item.label} checked={pincode.includes(item.value)} color="primary" value={item.value} onChange={(e) => getValue(e, unmappedPincode)} />}
                         label={item.label}
-                        value={item.label}
+                        value={item.value}
                       />
                     </FormGroup>
                   </Paper>

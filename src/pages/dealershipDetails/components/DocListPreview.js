@@ -3,7 +3,6 @@ import { Typography, Dialog, DialogContent, DialogContentText, DialogTitle, Dial
 import InfoCircleOutlined from '@material-ui/icons/InfoOutlined';
 import { IconEdit, IconFileMusic, IconFileTypePdf, IconFiles, IconPhoto, IconTrash, IconUpload } from '@tabler/icons-react';
 import { format } from 'date-fns';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import FilePreview from '../../../components/CommonComponents/FilePreview';
@@ -15,6 +14,7 @@ import { action_id, resources_id } from '../../../config/accessControl';
 import { getSignedUrl } from '../../../services/common.service';
 import { deleteDocsImage, editDocsImage } from '../../../services/dealerships.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const imgFileTypes = ['jfif', 'pjpeg', 'jpeg', 'pjp', 'jpg', 'png'];
 const csvFileTypes = ['csv', 'xls', 'xlsx'];
@@ -25,7 +25,6 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
   const [imageModal, setImageModal] = useState({});
   const [deleteModal, setDeleteModal] = useState({ open: false, loading: false })
   const [editModal, setEditModal] = useState({ open: false })
-  const { enqueueSnackbar } = useSnackbar();
 
   const handleDocDelete = (fileId) => {
     setDeleteModal({ ...deleteModal, loading: true })
@@ -35,7 +34,11 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         setDeleteModal({ ...deleteModal, open: false, loading: false })
       })
       .catch((err) => {
-        console.log(err);
+        displayNotification({
+          message: err?.message || err,
+          variant: 'error',
+        })
+        setDeleteModal({ ...deleteModal, open: false, loading: false })
       });
   }
 
@@ -45,22 +48,16 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
       .then((res) => {
         queryClient.invalidateQueries(['doc-checklist', dealershipId])
         setEditModal({ open: false })
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: res,
           variant: 'success',
-        });
+        })
       })
       .catch((err) => {
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        });
+        displayNotification({
+          message: err,
+          variant: 'error',
+        })
       });
   }
   const handleDownload = (fileUrl) => {
@@ -69,13 +66,10 @@ const DocPreview = ({ fileType, url, DocName, docId, updatedDateTime, file_name,
         window.open(res?.url, '_blank');
       })
       .catch(e => {
-        enqueueSnackbar(e, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
+        displayNotification({
+          message: e,
           variant: 'error',
-        });
+        })
       })
   }
 

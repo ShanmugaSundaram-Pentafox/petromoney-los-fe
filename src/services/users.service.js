@@ -152,13 +152,16 @@ export const regionMapUser = (s) => {
   });
 }
 
-export const mapPincode = (data) => {
+export const mapPincode = ({ body, userId, city, region, state }) => {
   let apiUrl = 'user/pincode';
-
+  if (userId && body?.method === 'DELETE') apiUrl += `/${userId}?`;
+  if (city && body?.method === 'DELETE') apiUrl += `&city=${city}`;
+  if (region && body?.method === 'DELETE') apiUrl += `&region=${region}`;
+  if (state && body?.method === 'DELETE') apiUrl += `&state=${state}`;
   return new Promise((resolve, reject) => {
     apiCall(apiUrl, {
-      method: data?.method,
-      body: data
+      method: body?.method,
+      body: body
     })
       .then(({ status, message }) => {
         if (status === 'SUCCESS') {

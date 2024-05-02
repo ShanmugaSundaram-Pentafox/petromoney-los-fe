@@ -1,14 +1,16 @@
 import { Divider, Grid, Typography, makeStyles } from '@material-ui/core';
 import Backdrop from '@material-ui/core/Backdrop';
 import Modal from '@material-ui/core/Modal';
-import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import MapPincode from './MapPincode';
 import Button from '../../../components/CommonComponents/Button/Button';
-import { PinSelector } from '../../../components/CommonComponents/FilterCard';
 import TextInput from '../../../components/TextInput/TextInput';
+import { differenceBy } from 'lodash'
 import { getAllCityByRegionId, getAllMappedPincode, getAllRegionByStateId, getAllUnmappedPincodeByCity, getStates } from '../../../services/common.service';
+import { mapPincode } from '../../../services/users.service';
+import { MultiSelect, Select } from '@mantine/core';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles(theme => ({
   passwordWrapper: {
@@ -106,7 +108,7 @@ const PincodeMapping = ({ userId }) => {
   const [regionfilterQry, setRegionFilterQry] = useState();
   const [cityfilterQry, setCityFilterQry] = useState();
   const [openModal, setOpenModal] = useState();
-  const { enqueueSnackbar } = useSnackbar();
+
   const { data: state = [] } = useQuery(['state'], () => { return getStates() }, {
     refetchOnWindowFocus: false,
     retry: false,
@@ -114,29 +116,88 @@ const PincodeMapping = ({ userId }) => {
       const activeState = d?.filter(d => d?.is_active == 1)
       const result = activeState?.map((item) => ({
         label: item.name,
-        value: item.id,
+        value: item.id?.toString(),
       }));
       return result;
     }
   })
-  const { data: region = [], refetch: refetchRegion } = useQuery(['region', selectedState], () => getAllRegionByStateId(selectedState?.value), {
-    refetchOnWindowFocus: false,
-    enabled: selectedState ? true : false,
-    retry: false
-  })
-  const { data: city = [], refetch: refetchCity } = useQuery(['city', regionfilterQry], () => { return getAllCityByRegionId(regionfilterQry) },
+
+  const { data: region = [], refetch: refetchRegion } = useQuery(
+    ['region', selectedState, isEdit],
+    () => getAllRegionByStateId(selectedState?.value),
     {
+      onSuccess: (data) => {
+        if (!selectedState?.value) {
+          setSelectedRegion([])
+          setSelectedCity([])
+        } else {
+          let region = [];
+          selectedRegion?.map((i) => {
+            if (data.find((item) => item?.value == i?.value)) {
+              region.push({
+                label: i?.label,
+                value: parseInt(i?.value)
+              });
+            }
+          })
+          setSelectedRegion(region?.filter((i) => i != undefined));
+        }
+      },
+      onError: e => {
+        setSelectedRegion([])
+        setSelectedCity([])
+      },
+      refetchOnWindowFocus: false,
+      enabled: selectedState ? true : false,
+      retry: false,
+      cacheTime: 0,
+    }
+  )
+
+  const { data: city = [], refetch: refetchCity } = useQuery(
+    ['city', regionfilterQry, isEdit],
+    () => { return getAllCityByRegionId(regionfilterQry) },
+    {
+      onSuccess: (data) => {
+        if (!selectedRegion?.length) {
+          setSelectedCity([])
+        } else {
+          let city = [];
+          selectedCity?.map((i) => {
+            if (data.find((item) => item?.value == i?.value)) {
+              city.push({
+                label: i?.label,
+                value: parseInt(i?.value)
+              });
+            }
+          })
+          setSelectedCity(city?.filter((i) => i != undefined));
+        }
+      },
+      onError: e => {
+        setSelectedCity([])
+      },
       refetchOnWindowFocus: false,
       enabled: regionfilterQry ? true : false,
-      retry: false
-    })
-  const { data: pincode = [], refetch: refetchUnmappedPincode } = useQuery(['pincode', cityfilterQry], () => { return getAllUnmappedPincodeByCity(cityfilterQry) },
+      retry: false,
+      cacheTime: 0,
+    }
+  )
+
+  const { data: pincode = [], refetch: refetchUnmappedPincode } = useQuery(
+    ['pincode', cityfilterQry, isEdit],
+    () => getAllUnmappedPincodeByCity(cityfilterQry, userId),
     {
       refetchOnWindowFocus: false,
       enabled: cityfilterQry ? true : false,
       retry: false,
-    })
-  const { data = [], refetch } = useQuery(['mapped-pincode'], () => { return getAllMappedPincode(userId) },
+      cacheTime: 0,
+    }
+  )
+
+  const { data = [], refetch } = useQuery(
+    ['mapped-pincode', isEdit],
+    () => { return getAllMappedPincode(userId) },
     {
       refetchOnWindowFocus: false,
       retry: false,
@@ -155,16 +216,29 @@ const PincodeMapping = ({ userId }) => {
             label: item?.city_name,
             value: item?.city_id
           })))
+        } else {
+          setMappedPincode([])
         }
       },
-    })
-
+      onError: (e) => {
+        displayNotification({
+          message: e?.message || e,
+          variant: 'error',
+        })
+        setMappedPincode([])
+        refetchRegion()
+        refetchCity()
+      },
+      cacheTime: 0,
+    }
+  )
 
   useEffect(() => {
     let qry = {}
     let regionId = []
     selectedRegion.forEach(item => regionId.push(item.value))
     qry.region = regionId.toString()
+    !regionId?.length && setSelectedCity([])
     setRegionFilterQry(qry)
   }, [selectedRegion])
 
@@ -176,14 +250,32 @@ const PincodeMapping = ({ userId }) => {
     setCityFilterQry(qry)
   }, [selectedCity])
 
-  const handleChange = (selectedItem) => {
-    /** 
-     * let array1 = ['pentafox','madhu','shidiq','sudharsanan','mohan']
-     * let array2= ['pentafox','madhu','sudharsanan']
-     * store the element of array1 in new array named array3 if the elements of array1 is not present in array2
-     * 
-     */
+
+  // used to handle the delete api call from mapping
+  const handleSelectedValueChange = (selectedValue = [], value, name) => {
+    var diff = []
+    // finding the difference from selected value to current value
+    differenceBy(selectedValue?.length ? [...selectedValue] : [], value?.length ? [...value] : [], 'value').forEach(item => diff.push(item?.value))
+    if (diff?.length) {
+      // once the difference is found then delete api will call
+      mapPincode({ body: { id: [], method: 'DELETE' }, userId, [name]: diff?.toString() })
+        .then((res) => {
+          displayNotification({
+            message: res,
+            variant: 'success'
+          })
+          refetch();
+          refetchUnmappedPincode();
+        })
+        .catch((err) => {
+          displayNotification({
+            message: err,
+            variant: 'error'
+          })
+        })
+    }
   }
+
   return (
     <>
       {
@@ -274,30 +366,79 @@ const PincodeMapping = ({ userId }) => {
               <Grid item style={{ marginBottom: 20, marginRight: 20 }} mb={20} md={8}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>State</Typography>
-                  <PinSelector width={'100%'} options={state} value={selectedState} setValue={setSelectedState} isMulti={false} />
+                  {/* <PinSelector isSearchable={true} width={'100%'} options={state} value={selectedState} setValue={(e) => { handleSelectedValueChange(selectedState ? [selectedState] : [], [e], 'state'); setSelectedState(e) }} isMulti={false} /> */}
+                  <Select
+                    w={'100%'}
+                    placeholder='Select...'
+                    searchable
+                    data={state}
+                    allowDeselect={false}
+                    value={selectedState?.value?.toString()}
+                    onChange={(e, option) => {
+                      handleSelectedValueChange(selectedState ? [selectedState] : [], option?.value ? [{ ...option, value: parseInt(option?.value) }] : [], 'state');
+                      setSelectedState({ ...option, value: parseInt(option?.value) });
+                    }}
+                    size='xs'
+                  />
                 </div>
               </Grid>
               <Grid item style={{ marginBottom: 20, marginRight: 20 }} md={8}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>Region</Typography>
-                  <PinSelector width={'100%'} options={region} value={selectedRegion} setValue={setSelectedRegion} />
+                  {/* <PinSelector width={'100%'} isSearchable={true} options={region} value={selectedRegion} setValue={(e) => { handleSelectedValueChange(selectedRegion, e, 'region'); setSelectedRegion(e) }} /> */}
+                  <MultiSelect
+                    w={'100%'}
+                    placeholder='Select...'
+                    searchable
+                    clearable
+                    data={region}
+                    value={selectedRegion?.map((item) => item?.value?.toString())}
+                    onChange={(option) => {
+                      let values = option?.map((i) => region?.find(item => item?.value === i));
+                      values = values?.map((item) => ({ label: item?.label, value: parseInt(item?.value) }));
+                      handleSelectedValueChange(selectedRegion, values, 'region');
+                      setSelectedRegion(values);
+                    }}
+                    size='xs'
+                  />
                 </div>
               </Grid>
               <Grid item style={{ marginBottom: 20, marginRight: 20 }} md={8}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>City</Typography>
-                  <PinSelector width={'100%'} options={city} value={selectedCity} setValue={setSelectedCity} />
+                  {/* <PinSelector width={'100%'} isSearchable={true} options={city} value={selectedCity} setValue={(e) => { handleSelectedValueChange(selectedCity, e, 'city'); setSelectedCity(e); }} /> */}
+                  <MultiSelect
+                    w={'100%'}
+                    placeholder='Select...'
+                    searchable
+                    clearable
+                    data={city}
+                    value={selectedCity?.map((item) => item?.value?.toString())}
+                    onChange={(option) => {
+                      let values = option?.map((i) => city?.find(item => item?.value === i));
+                      values = values?.map((item) => ({ label: item?.label, value: parseInt(item?.value) }));
+                      handleSelectedValueChange(selectedCity, values, 'city');
+                      setSelectedCity(values);
+                    }}
+                    size='xs'
+                  />
                 </div>
               </Grid>
               <Grid item style={{ marginBottom: 20, marginRight: 20 }} md={8}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>Map Pincode</Typography>
                   <div style={{ minWidth: '90%' }}>
-                    <MapPincode mappedData={mappedPincode} masterData={pincode} selectedRegion={selectedRegion} userId={userId} callBack={() => {
-                      setIsEdit(false)
-                      refetch();
-                      refetchUnmappedPincode();
-                    }} />
+                    <MapPincode
+                      mappedData={mappedPincode || []}
+                      masterData={pincode || []}
+                      selectedRegion={selectedRegion}
+                      userId={userId}
+                      callBack={() => {
+                        setIsEdit(false)
+                        refetch();
+                        refetchUnmappedPincode();
+                      }}
+                    />
                   </div>
                 </div>
               </Grid>

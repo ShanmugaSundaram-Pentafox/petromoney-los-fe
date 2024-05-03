@@ -6,6 +6,8 @@ import DDMSTable from './DDMSTable';
 import { displayNotification } from '../CommonComponents/Notification/displayNotification';
 import { IconPlus } from '@tabler/icons-react';
 import classes from './DDMS.module.css'
+import { isAllowed } from '../../utils/cerbos';
+import { action_id, resources_id } from '../../config/accessControl';
 
 const convertHtmltoString = (remark) => {
   /**
@@ -23,7 +25,8 @@ const DDMSModal = ({
   opened = false,
   onClose = () => { },
   modalObj = {},
-  queryKey = ''
+  queryKey = '',
+  currentUser,
 }) => {
   const [othersText, setOthersText] = useState();
   const [othersObj, setOthersObj] = useState();
@@ -129,14 +132,12 @@ const DDMSModal = ({
   const reInitiateDeferralDetailsQuery = useMutation({
     mutationFn: ({ body }) => reInitiateDeferralDetails({ id: modalObj?.id, body }),
     onSuccess: (res) => {
-      if (res?.[0]?.pdc_completed) {
-        displayNotification({
-          message: 'Deferral/Deviation Completed',
-          variant: 'success',
-        });
-        queryKey && queryClient.invalidateQueries([queryKey]);
-        onClose();
-      }
+      displayNotification({
+        message: res,
+        variant: 'success',
+      });
+      queryKey && queryClient.invalidateQueries([queryKey]);
+      onClose();
     },
     onError: e => {
       displayNotification({
@@ -409,7 +410,7 @@ const DDMSModal = ({
             >
               Cancel
             </Button>
-            {checkDeferralDetailsQuery?.data?.[0]?.is_eligible_for_complete === 1 ? (
+            {(checkDeferralDetailsQuery?.data?.[0]?.is_eligible_for_complete === 1 && isAllowed(currentUser?.permissions, resources_id.dashboard, action_id?.dashboard?.pdcComplete)) ? (
               <Button
                 size='xs'
                 color='teal'

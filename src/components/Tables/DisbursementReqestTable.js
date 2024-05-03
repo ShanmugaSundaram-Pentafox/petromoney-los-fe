@@ -93,11 +93,13 @@ const DisbursementReqestTable = ({ title, onRowClick, filterQry, currentUser }) 
             return (
               <Group>
                 <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
-                <Tooltip label={'Click to re-initiate PDC'} withArrow>
-                  <ActionIcon size={'xs'} variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed, type: 're-initiate' })}>
-                    <IconReload size={16} />
-                  </ActionIcon>
-                </Tooltip>
+                {isAllowed(currentUser?.permissions, resources_id?.dashboard, action_id?.dashboard?.pdcComplete) ?
+                  <Tooltip label={'Click to re-initiate PDC'} withArrow>
+                    <ActionIcon size={'xs'} variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed, type: 're-initiate' })}>
+                      <IconReload size={16} />
+                    </ActionIcon>
+                  </Tooltip>
+                  : null}
               </Group>
             )
           } else {
@@ -127,7 +129,7 @@ const DisbursementReqestTable = ({ title, onRowClick, filterQry, currentUser }) 
         />
       </div>
 
-      <DDMSModal opened={Boolean(docModal?.modal)} onClose={() => setDocModal({})} modalObj={docModal} queryKey='loan-details-disb-approval' />
+      <DDMSModal opened={Boolean(docModal?.modal)} currentUser={currentUser} onClose={() => setDocModal({})} modalObj={docModal} queryKey='loan-details-disb-approval' />
     </>
   )
 }

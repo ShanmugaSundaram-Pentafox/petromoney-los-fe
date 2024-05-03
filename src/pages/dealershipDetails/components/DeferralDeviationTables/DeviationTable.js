@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import React, { useState, useEffect } from 'react';
 import DataTableViewer from '../../../../components/ReactTable/DataTableViewer';
 import { getDeferralDataList, getStatsData } from '../../../../services/deferralDeviation.service';
-import { Badge, Box, Button, Flex, Modal, Skeleton, Tabs, Text } from '@mantine/core';
+import { Badge, Box, Button, Flex, Modal, ScrollArea, Skeleton, Tabs, Text } from '@mantine/core';
 import DeviationForm from './DeviationForm';
 import { IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
@@ -32,7 +32,7 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
   });
 
   useEffect(() => {
-    if (statusList && statusList.length > 0) {
+    if (statusList && statusList.length > 0 && !statusList?.find((i) => i.current_status === activeTab)) {
       setActiveTab(statusList[0].current_status);
     }
   }, [statusList]);
@@ -54,6 +54,7 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
       key: 'applicant_name',
       header: 'Applicant Name',
       enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue() || dealershipName}</span>
     }, {
       key: 'checklist_name',
       header: 'Document type',
@@ -124,30 +125,35 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
 
   return (
     <>
-      <DataTableViewer
-        column={column}
-        rowData={deviationData}
-        title={'Deviations'}
-        useAPIPagination
-        page={page}
-        setPage={setPage}
-        totalNoOfPages={Math.ceil(parseInt(statusList?.find(i => i?.current_status)?.number_of_records) / 5)}
-        onRowClick={false}
-        styles={null}
-        loading={deviationDataIsLoading}
-        showAction={
-          <Button
-            onClick={() => setOpenModal(true)}
-            leftSection={<IconPlus size={18} />}
-            size='xs'
-          >
-            Add Deviation
-          </Button>
-        }
-        statusTab={{ show: true, custom: statusListView }}
-        excelDownload
-        filter={false}
-      />
+      <ScrollArea.Autosize>
+        <DataTableViewer
+          column={column}
+          rowData={deviationData}
+          title={'Deviations'}
+          useAPIPagination
+          page={page}
+          setPage={setPage}
+          styles={{
+            overflowX: 'scroll',
+            whiteSpace: 'wrap',
+          }}
+          totalNoOfPages={Math.ceil(parseInt(statusList?.find(i => i?.current_status)?.number_of_records) / 5)}
+          onRowClick={false}
+          loading={deviationDataIsLoading}
+          showAction={
+            <Button
+              onClick={() => setOpenModal(true)}
+              leftSection={<IconPlus size={18} />}
+              size='xs'
+            >
+              Add Deviation
+            </Button>
+          }
+          statusTab={{ show: true, custom: statusListView }}
+          excelDownload
+          filter={false}
+        />
+      </ScrollArea.Autosize>
       <Modal size={'xl'} opened={opened} onClose={close} title="Preview Attachment">
         <Flex gap={20}>
           <Flex direction={'column'} gap={2} rowGap={12}>

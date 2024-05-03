@@ -11,7 +11,6 @@ import FilePreview from '../../../../components/CommonComponents/FilePreview';
 
 
 export const FileListPreview = ({ onOpen, docUrl }) => {
-  console.log('docurl -->', docUrl)
   return (
     docUrl[0]?.map((file, index) => {
       return (
@@ -71,7 +70,7 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
   };
 
   useEffect(() => {
-    if (statusList && statusList.length > 0) {
+    if (statusList && statusList.length > 0 && !statusList?.find((i) => i.current_status === activeTab)) {
       setActiveTab(statusList[0].current_status);
     }
   }, [statusList]);
@@ -89,6 +88,7 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
       key: 'applicant_name',
       header: 'Applicant Name',
       enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue() || dealershipName}</span>
     }, {
       key: 'checklist_name',
       header: 'Document type',
@@ -170,6 +170,10 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
         useAPIPagination
         page={page}
         setPage={setPage}
+        styles={{
+          overflowX: 'scroll',
+          whiteSpace: 'wrap',
+        }}
         totalNoOfPages={Math.ceil(parseInt(statusList?.find(i => i?.current_status)?.number_of_records) / 5)}
         showAction={<Button
           onClick={() => setOpenModal(true)}
@@ -193,7 +197,6 @@ const DeferralTable = ({ id, dealershipName, currentUser }) => {
           {
             activeDoc ? <FilePreview data={{ image: activeDoc, type: activeDoc?.endsWith('.pdf') ? 'pdf' : null }} /> : <Text align='center' c={'gray'}>Click the documents to view</Text>
           }
-
         </Flex>
       </Modal>
       <Modal size={'lg'} opened={openModal} onClose={() => { setOpenModal(false) }} title="Create Deferral Data" centered>

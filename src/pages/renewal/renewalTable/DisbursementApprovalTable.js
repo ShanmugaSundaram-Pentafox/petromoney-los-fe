@@ -11,13 +11,13 @@ import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus, syncRenewa
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 import { ActionIcon, Button, Group, Modal, Text, Tooltip } from '@mantine/core';
-import { IconCircleCheck, IconLink, IconRefresh } from '@tabler/icons-react';
+import { IconCircleCheck, IconLink, IconRefresh, IconReload } from '@tabler/icons-react';
 import DDMSModal from '../../../components/Deferal-Devation/DDMSModal';
 import classes from './Renewal.module.css';
 import { isAllowed } from '../../../utils/cerbos';
 import { action_id, resources_id } from '../../../config/accessControl';
 
-const DisbursementApprovalTable = ({ title, onRowClick, filterQry,currentUser }) => {
+const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState();
   const [openDialog, setOpenDialog] = useState(false);
@@ -132,7 +132,14 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry,currentUser })
         if (isAllowed(currentUser.permissions, resources_id?.dashboard, action_id?.dashboard?.pdcChecklist)) {
           if (value?.row?.original?.is_pdc_completed) {
             return (
-              <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
+              <Group>
+                <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
+                <Tooltip label={'Click to re-initiate PDC'} withArrow>
+                  <ActionIcon size={'xs'} variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed, type: 're-initiate' })}>
+                    <IconReload size={16} />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
             )
           } else {
             return (

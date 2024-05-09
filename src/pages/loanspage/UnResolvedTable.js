@@ -16,7 +16,8 @@ import { getAllDealership } from '../../services/dealerships.service';
 import { deleteRemarks, getAllWithheldLoans, resolveRemarks } from '../../services/withheld.services';
 import CheckAllowed from '../rbac/CheckAllowed';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
-import { Box, Group } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
+import moment from 'moment';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -32,7 +33,7 @@ const UnresolvedTable = ({ currentUser }) => {
   const [withheldModal, setWithheldModal] = useState(false);
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
-  const { data = [], isLoading } = useQuery('withheld-loans', () => getAllWithheldLoans(0), { refetchOnWindowFocus: false })
+  const { data = [], isLoading } = useQuery('withheld-loans-unresolved', () => getAllWithheldLoans(0), { refetchOnWindowFocus: false })
 
   useMount(() => {
     getAllDealership()
@@ -121,6 +122,27 @@ const UnresolvedTable = ({ currentUser }) => {
     }, {
       key: 'with_held_by',
       header: 'Withheld By',
+      cell: ({ row }) => {
+        return (
+          row?.original?.comments?.map((remark, i) => {
+            return (
+              <div>{remark?.withheld_by}</div>
+            )
+          })
+        )
+      },
+    }, {
+      key: 'with_held_date',
+      header: 'Withheld Date',
+      cell: ({ row }) => {
+        return (
+          row?.original?.comments?.map((remark, i) => {
+            return (
+              <div>{remark?.withheld_date ? moment(remark?.withheld_date, 'YYYY-MM-DD').format('DD-MM-YYYY') : null}</div>
+            )
+          })
+        )
+      },
     }, {
       key: 'action',
       header: 'Reason',
@@ -131,22 +153,22 @@ const UnresolvedTable = ({ currentUser }) => {
             return (
               <Group key={i}>
                 <div style={{ width: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remark.comment && remark.comment}</div>
-                <Box>
+                <Group gap={6}>
                   <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.resolve}>
-                    <div onClick={() => { setWithheldModal({ modal: true, type: 'resolve', id: remark.id }) }} style={{ marginLeft: 12 }}>
+                    <div onClick={() => { setWithheldModal({ modal: true, type: 'resolve', id: remark.id, comment: remark.comment }) }} style={{ marginLeft: 12 }}>
                       <Tooltip title="Click to resolve">
                         <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
                       </Tooltip>
                     </div>
                   </CheckAllowed>
                   <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.delete}>
-                    <div onClick={() => { setWithheldModal({ modal: true, type: 'delete', id: remark.id }) }} style={{ marginLeft: 12 }}>
+                    <div onClick={() => { setWithheldModal({ modal: true, type: 'delete', id: remark.id, comment: remark.comment }) }} style={{ marginLeft: 12 }}>
                       <Tooltip title='Click to delete'>
                         <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
                       </Tooltip>
                     </div>
                   </CheckAllowed>
-                </Box>
+                </Group>
               </Group>
             )
           })
@@ -241,6 +263,10 @@ const UnresolvedTable = ({ currentUser }) => {
       >
         <DialogContent>
           <div className={classes.dialog}>
+            {withheldModal?.comment ? <>
+              <Text c={'#546e7a'}>Comment</Text>
+              <Text mb={'md'} fw={500} >{withheldModal?.comment}</Text>
+            </> : null}
             <DialogContentText id="approval-remarks-desc">
               Please enter remarks to {withheldModal?.type === 'resolve' ? 'resolve' : 'delete'} this withheld.
             </DialogContentText>

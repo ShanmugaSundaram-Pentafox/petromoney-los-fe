@@ -9,7 +9,7 @@ export const getAllWithheldLoans = (id) => {
           data.forEach((item, i) => {
             res.push({
               ...item,
-              comments: typeof (item.comments) === 'string' ? JSON.parse(item.comments) : (item.comments || [])
+              comments: typeof (item?.comments || item?.resolved_comments) === 'string' ? JSON.parse(item?.comments || item?.resolved_comments) : (item?.comments || item?.resolved_comment || [])
             })
           })
           resolve(res)

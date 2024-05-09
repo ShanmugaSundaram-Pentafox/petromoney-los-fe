@@ -447,7 +447,7 @@ const DealerEditSideWrapper = ({
 
             <Button
               variant="filled"
-              onClick={kycStatus ? () => null : handleInitiateKYC}
+              onClick={handleInitiateKYC}
             >
               {kycStatus?.expired ? 'Re-Initiate Video KYC' : 'Initiate Video KYC'}
             </Button>

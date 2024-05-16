@@ -44,6 +44,18 @@ const ResolvedTable = () => {
       },
     }, {
       key: 'resolved_date',
+      header: 'WithHeld Date',
+      cell: ({ row }) => {
+        return (
+          row?.original?.comments?.map((remark, i) => {
+            return (
+              <div>{remark?.withheld_date ? moment(remark?.withheld_date, 'YYYY-MM-DD').format('DD-MM-YYYY') : '-'}</div>
+            )
+          })
+        )
+      },
+    }, {
+      key: 'resolved_date',
       header: 'Resolved Date',
       cell: ({ row }) => {
         return (
@@ -56,13 +68,39 @@ const ResolvedTable = () => {
       },
     }, {
       key: 'comments',
-      header: 'Reason',
+      header: 'Resolution',
       cell: (value) => {
         return (
           value?.getValue()?.map((remark, i) => {
             return (
-              <div style={{ width: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} key={i}>
-                <div style={{ minWidth: 250, maxWidth: 250 }}>{remark.comment && remark.comment}</div>
+              <div style={{ width: 250 }} key={i}>
+                <div style={{
+                  minWidth: 250, maxWidth: 250,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}>{remark.comment && remark.comment}</div>
+              </div>
+            )
+          })
+        )
+      },
+    }, {
+      key: 'remarks',
+      header: 'Remarks',
+      cell: ({ row }) => {
+        return (
+          row?.original?.comments?.map((remark, i) => {
+            return (
+              <div style={{ width: 250 }} key={i}>
+                <div
+                  dangerouslySetInnerHTML={{ __html: remark?.remarks }}
+                  style={{
+                    minWidth: 250, maxWidth: 250,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }} />
               </div>
             )
           })

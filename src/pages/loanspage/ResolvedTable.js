@@ -5,8 +5,8 @@ import { getAllWithheldLoans } from '../../services/withheld.services';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 
 const ResolvedTable = () => {
-  const { data = [], isLoading } = useQuery('withheld-loans', () => getAllWithheldLoans(1), { refetchOnWindowFocus: false });
-
+  const { data = [], isLoading } = useQuery('withheld-loans-resolved', () => getAllWithheldLoans(1), { refetchOnWindowFocus: false });
+  console.log(data);
   const column = [
     {
       key: 'id',

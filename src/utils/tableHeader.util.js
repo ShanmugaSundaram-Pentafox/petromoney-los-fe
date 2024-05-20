@@ -16,6 +16,7 @@ export const generateTableHeader = ({ data }) => {
   return data?.filter((i) => i?.isHeaderDisplay != false)?.map((item, index) => {
     return columnHelper.accessor(item?.key, {
       header: item?.header,
+      id: `${index}-${item?.key}`,
       cell: item?.cell ? item?.cell : Cell,
       enableColumnFilter: item?.enableColumnFilter || item?.key !== 'action' ? true : false,
       key: `${index}-${item?.header}`,

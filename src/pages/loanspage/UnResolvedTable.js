@@ -33,7 +33,7 @@ const UnresolvedTable = ({ currentUser }) => {
   const [withheldModal, setWithheldModal] = useState(false);
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
-  const { data = [], isLoading } = useQuery('withheld-loans-unresolved', () => getAllWithheldLoans(0), { refetchOnWindowFocus: false })
+  const { data = [], isLoading, refetch } = useQuery('withheld-loans-unresolved', () => getAllWithheldLoans(0), { refetchOnWindowFocus: false })
 
   useMount(() => {
     getAllDealership()
@@ -58,7 +58,7 @@ const UnresolvedTable = ({ currentUser }) => {
           },
           variant: 'success',
         })
-        queryClient.invalidateQueries('withheld-loans')
+        queryClient.invalidateQueries('withheld-loans-unresolved')
       })
       .catch(e => {
         enqueueSnackbar(e, {
@@ -84,7 +84,7 @@ const UnresolvedTable = ({ currentUser }) => {
           },
           variant: 'success',
         })
-        queryClient.invalidateQueries('withheld-loans')
+        queryClient.invalidateQueries('withheld-loans-unresolved')
       })
       .catch((e) => {
         enqueueSnackbar(e, {
@@ -126,7 +126,7 @@ const UnresolvedTable = ({ currentUser }) => {
         return (
           row?.original?.comments?.map((remark, i) => {
             return (
-              <div>{remark?.withheld_by}</div>
+              <div>{remark?.withheld_by || '-'}</div>
             )
           })
         )
@@ -138,7 +138,7 @@ const UnresolvedTable = ({ currentUser }) => {
         return (
           row?.original?.comments?.map((remark, i) => {
             return (
-              <div>{remark?.withheld_date ? moment(remark?.withheld_date, 'YYYY-MM-DD').format('DD-MM-YYYY') : null}</div>
+              <div>{remark?.withheld_date ? moment(remark?.withheld_date, 'YYYY-MM-DD').format('DD-MM-YYYY') : '-'}</div>
             )
           })
         )
@@ -155,14 +155,14 @@ const UnresolvedTable = ({ currentUser }) => {
                 <div style={{ width: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{remark.comment && remark.comment}</div>
                 <Group gap={6}>
                   <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.resolve}>
-                    <div onClick={() => { setWithheldModal({ modal: true, type: 'resolve', id: remark.id, comment: remark.comment }) }} style={{ marginLeft: 12 }}>
+                    <div onClick={() => { setWithheldModal({ modal: true, type: 'resolve', id: remark.id, comment: remark.comment }) }} style={{ marginLeft: 12, width: 'fit-content' }}>
                       <Tooltip title="Click to resolve">
                         <CheckOutlinedIcon style={{ color: green[200] }} fontSize={'small'} />
                       </Tooltip>
                     </div>
                   </CheckAllowed>
                   <CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.delete}>
-                    <div onClick={() => { setWithheldModal({ modal: true, type: 'delete', id: remark.id, comment: remark.comment }) }} style={{ marginLeft: 12 }}>
+                    <div onClick={() => { setWithheldModal({ modal: true, type: 'delete', id: remark.id, comment: remark.comment }) }} style={{ marginLeft: 12, width: 'fit-content' }}>
                       <Tooltip title='Click to delete'>
                         <DeleteOutlineRounded style={{ color: '#ff6666' }} fontSize={'small'} />
                       </Tooltip>

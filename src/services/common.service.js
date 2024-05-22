@@ -65,10 +65,11 @@ export const getAllRegions = (id) => {
   });
 };
 
-export const getAllRegionByStateId = (id) => {
+export const getAllRegionByStateId = (filterQry = {}) => {
   return new Promise((resolve, reject) => {
-    let apiUrl = `regions/${id}`;
-    if (id) {
+    const { state } = filterQry;
+    let apiUrl = `regions?states=${state}`;
+    if (state && state != '') {
       apiCall(apiUrl, {}, 'GET')
         .then((response) => {
           if (response?.status === 'SUCCESS') {

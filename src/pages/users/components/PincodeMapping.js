@@ -9,7 +9,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import { differenceBy } from 'lodash'
 import { getAllCityByRegionId, getAllMappedPincode, getAllRegionByStateId, getAllUnmappedPincodeByCity, getStates } from '../../../services/common.service';
 import { mapPincode } from '../../../services/users.service';
-import { MultiSelect, Select } from '@mantine/core';
+import { MultiSelect } from '@mantine/core';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles(theme => ({
@@ -101,10 +101,11 @@ const PincodeMapping = ({ userId }) => {
   const classes = useStyles();
   const queryClient = useQueryClient();
   const [isEdit, setIsEdit] = useState(false);
-  const [selectedState, setSelectedState] = useState();
+  const [selectedState, setSelectedState] = useState([]);
   const [mappedPincode, setMappedPincode] = useState([])
   const [selectedRegion, setSelectedRegion] = useState([]);
   const [selectedCity, setSelectedCity] = useState([]);
+  const [statefilterQry, setStateFilterQry] = useState();
   const [regionfilterQry, setRegionFilterQry] = useState();
   const [cityfilterQry, setCityFilterQry] = useState();
   const [openModal, setOpenModal] = useState();
@@ -123,11 +124,11 @@ const PincodeMapping = ({ userId }) => {
   })
 
   const { data: region = [], refetch: refetchRegion } = useQuery(
-    ['region', selectedState, isEdit],
-    () => getAllRegionByStateId(selectedState?.value),
+    ['region', statefilterQry, isEdit],
+    () => getAllRegionByStateId(statefilterQry),
     {
       onSuccess: (data) => {
-        if (!selectedState?.value) {
+        if (!selectedState?.length) {
           setSelectedRegion([])
           setSelectedCity([])
         } else {
@@ -203,7 +204,10 @@ const PincodeMapping = ({ userId }) => {
       retry: false,
       onSuccess: d => {
         if (d?.state) {
-          setSelectedState({ label: d?.state[0]?.state_name, value: d?.state[0]?.state_id })
+          setSelectedState(d?.state?.map((item) => ({
+            label: item?.state_name,
+            value: item?.state_id,
+          })))
           setMappedPincode(d?.pincode?.map((item) => ({
             label: item?.pincode_value,
             value: item?.pincode_id,
@@ -236,7 +240,7 @@ const PincodeMapping = ({ userId }) => {
   useEffect(() => {
     let qry = {}
     let regionId = []
-    selectedRegion.forEach(item => regionId.push(item.value))
+    selectedRegion?.forEach(item => regionId.push(item.value))
     qry.region = regionId.toString()
     !regionId?.length && setSelectedCity([])
     setRegionFilterQry(qry)
@@ -244,8 +248,17 @@ const PincodeMapping = ({ userId }) => {
 
   useEffect(() => {
     let qry = {}
+    let stateId = []
+    selectedState?.forEach(item => stateId.push(item.value))
+    qry.state = stateId.toString()
+    !stateId?.length && setSelectedRegion([]) && setSelectedCity([])
+    setStateFilterQry(qry)
+  }, [selectedState])
+
+  useEffect(() => {
+    let qry = {}
     let cityId = []
-    selectedCity.forEach(item => cityId.push(item.value))
+    selectedCity?.forEach(item => cityId.push(item.value))
     qry.city = cityId.toString()
     setCityFilterQry(qry)
   }, [selectedCity])
@@ -367,16 +380,17 @@ const PincodeMapping = ({ userId }) => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography variant='h6' component='h5' style={{ minWidth: '20%', color: 'rgb(0,0,0,0.5)' }}>State</Typography>
                   {/* <PinSelector isSearchable={true} width={'100%'} options={state} value={selectedState} setValue={(e) => { handleSelectedValueChange(selectedState ? [selectedState] : [], [e], 'state'); setSelectedState(e) }} isMulti={false} /> */}
-                  <Select
+                  <MultiSelect
                     w={'100%'}
                     placeholder='Select...'
                     searchable
                     data={state}
-                    allowDeselect={false}
-                    value={selectedState?.value?.toString()}
-                    onChange={(e, option) => {
-                      handleSelectedValueChange(selectedState ? [selectedState] : [], option?.value ? [{ ...option, value: parseInt(option?.value) }] : [], 'state');
-                      setSelectedState({ ...option, value: parseInt(option?.value) });
+                    value={selectedState?.map((item) => item?.value?.toString())}
+                    onChange={(option) => {
+                      let values = option?.map((i) => state?.find(item => item?.value === i));
+                      values = values?.map((item) => ({ label: item?.label, value: parseInt(item?.value) }));
+                      handleSelectedValueChange(selectedState, values, 'state');
+                      setSelectedState(values);
                     }}
                     size='xs'
                   />

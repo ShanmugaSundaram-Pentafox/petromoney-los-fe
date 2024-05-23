@@ -220,7 +220,7 @@ const ReactTable = ({
                       key={cell.id}
                       onClick={event => {
                         typeof onRowClick === 'function' &&
-                          cell?.column?.id != 'action' &&
+                          cell?.column?.id?.split('-')?.[1] != 'action' &&
                           (onRowClick(row?.original), event.stopPropagation());
                       }}
                     >

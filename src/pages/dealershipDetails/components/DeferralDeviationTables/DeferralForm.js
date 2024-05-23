@@ -39,7 +39,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
     initialData: [],
     refetchOnWindowFocus: false,
     select: (data) => {
-      return [...data, { label: dealershipName, value: dealershipId?.toString() }]
+      return [...data, { label: dealershipName, value: `${dealershipId?.toString()}D` }]
     }
   })
   const { data: checklist } = useQuery(['dealership-checklist-list'], () => getDocumentChecklistMaster(), {
@@ -90,7 +90,7 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
   };
 
   const { handleSubmit, setFieldError, errors, values, setFieldValue } = useFormik({
-    initialValues: {},
+    initialValues: { applicantData: { label: dealershipName, value: `${dealershipId?.toString()}D` } },
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
@@ -111,9 +111,9 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
           remarks: plainString,
           due_date: moment(values?.validDate)?.format('YYYY-MM-DD'),
           party_id: dealershipId,
-          applicant_id: values?.applicantData?.value === dealershipId ? null : values?.applicantData?.value,
-          applicant_type: values?.applicantData?.value === dealershipId ? null : values?.applicantData?.category,
-          applicant_name: values?.applicantData?.value === dealershipId ? null : values?.applicantData?.label,
+          applicant_id: values?.applicantData?.value === `${dealershipId}D` ? null : values?.applicantData?.value,
+          applicant_type: values?.applicantData?.value === `${dealershipId}D` ? null : values?.applicantData?.category,
+          applicant_name: values?.applicantData?.value === `${dealershipId}D` ? null : values?.applicantData?.label,
           checklist_id: values?.checkListData?.value,
           checklist_name: values?.checkListData?.label,
           document_urls: fileUploadObj?.files,
@@ -146,10 +146,10 @@ const DeferralForm = ({ dealershipId, dealershipName, close, refetch, currentUse
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select  data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} size='xs' label={'Applicant'} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
+          <Select data={applicantsData || [{ label: dealershipName, value: `${dealershipId}D` }]} defaultValue={`${dealershipId}D`} size='xs' label={'Applicant'} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
-          <Select  data={checklist} size='xs' label={'Document Type'} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue('checkListData', option)} />
+          <Select data={checklist} size='xs' label={'Document Type'} value={values?.checkListData?.value || null} onChange={(_value, option) => setFieldValue('checkListData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <DateInput value={values?.validDate} onChange={(e) => setFieldValue('validDate', e)} minDate={new Date()} size='xs' label={'Submission date'} />

@@ -2,13 +2,15 @@ import { useQuery } from 'react-query';
 import React, { useState, useEffect } from 'react';
 import DataTableViewer from '../../../../components/ReactTable/DataTableViewer';
 import { getDeferralDataList, getStatsData } from '../../../../services/deferralDeviation.service';
-import { Badge, Box, Button, Flex, Modal, Skeleton, Tabs, Text } from '@mantine/core';
+import { Badge, Box, Button, Flex, Group, Modal, ScrollArea, Skeleton, Tabs, Text, Title } from '@mantine/core';
 import DeviationForm from './DeviationForm';
-import { IconPlus } from '@tabler/icons-react';
+import { IconDownload, IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { AttachmentOutlined } from '@material-ui/icons';
 import FilePreview from '../../../../components/CommonComponents/FilePreview';
 import { FileListPreview } from './DeferralTable';
+import { getSignedUrl } from '../../../../services/common.service';
+import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 
 const DeviationTable = ({ id, dealershipName, currentUser }) => {
   const [activeTab, setActiveTab] = useState('draft');
@@ -32,7 +34,7 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
   });
 
   useEffect(() => {
-    if (statusList && statusList.length > 0) {
+    if (statusList && statusList.length > 0 && !statusList?.find((i) => i.current_status === activeTab)) {
       setActiveTab(statusList[0].current_status);
     }
   }, [statusList]);
@@ -40,6 +42,19 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
   const handleTabChange = (value) => {
     setActiveTab(value);
   };
+
+  const getFileURL = () => {
+    getSignedUrl(activeDoc)
+      .then((res) => {
+        window.open(res?.url, '_blank')
+      })
+      .catch((e) => {
+        displayNotification({
+          message: e?.message || e,
+          variant: 'error'
+        })
+      })
+  }
 
   const column = [
     {
@@ -54,6 +69,7 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
       key: 'applicant_name',
       header: 'Applicant Name',
       enableColumnFilter: false,
+      cell: (value) => <span>{value?.getValue() || dealershipName}</span>
     }, {
       key: 'checklist_name',
       header: 'Document type',
@@ -69,7 +85,7 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
       isHeaderDownload: false,
       enableColumnFilter: false,
       cell: (value) => value?.getValue()?.length ? (
-        <Box onClick={() => { open(); setDocUrl(value?.getValue()) }}>
+        <Box onClick={() => { open(); setDocUrl(value?.getValue()); setActiveDoc(value?.getValue()?.[0]?.[0]) }}>
           <AttachmentOutlined color='gray' size={16} />
         </Box>
       ) : null
@@ -124,31 +140,52 @@ const DeviationTable = ({ id, dealershipName, currentUser }) => {
 
   return (
     <>
-      <DataTableViewer
-        column={column}
-        rowData={deviationData}
-        title={'Deviations'}
-        useAPIPagination
-        page={page}
-        setPage={setPage}
-        totalNoOfPages={Math.ceil(parseInt(statusList?.find(i => i?.current_status)?.number_of_records) / 5)}
-        onRowClick={false}
-        styles={null}
-        loading={deviationDataIsLoading}
-        showAction={
-          <Button
-            onClick={() => setOpenModal(true)}
-            leftSection={<IconPlus size={18} />}
-            size='xs'
-          >
-            Add Deviation
-          </Button>
-        }
-        statusTab={{ show: true, custom: statusListView }}
-        excelDownload
-        filter={false}
-      />
-      <Modal size={'xl'} opened={opened} onClose={close} title="Preview Attachment">
+      <ScrollArea.Autosize>
+        <DataTableViewer
+          column={column}
+          rowData={deviationData}
+          title={'Deviations'}
+          useAPIPagination
+          page={page}
+          setPage={setPage}
+          styles={{
+            overflowX: 'scroll',
+            whiteSpace: 'wrap',
+          }}
+          totalNoOfPages={Math.ceil(parseInt(statusList?.find(i => i?.current_status)?.number_of_records) / 5)}
+          onRowClick={false}
+          loading={deviationDataIsLoading}
+          showAction={
+            <Button
+              onClick={() => setOpenModal(true)}
+              leftSection={<IconPlus size={18} />}
+              size='xs'
+            >
+              Add Deviation
+            </Button>
+          }
+          statusTab={{ show: true, custom: statusListView }}
+          excelDownload
+          filter={false}
+        />
+      </ScrollArea.Autosize>
+      <Modal
+        size={'40%'}
+        opened={opened}
+        onClose={close}
+        title={
+          <Group>
+            <Title order={3}>Preview Attachment</Title>
+            {activeDoc ? (
+              <IconDownload
+                style={{ cursor: 'pointer' }}
+                size={20}
+                color='green'
+                onClick={getFileURL}
+              />
+            ) : null}
+          </Group>
+        }>
         <Flex gap={20}>
           <Flex direction={'column'} gap={2} rowGap={12}>
             {Array.isArray(docUrl) ? <FileListPreview docUrl={docUrl} onOpen={(f) => setActiveDoc(f)} /> : null}

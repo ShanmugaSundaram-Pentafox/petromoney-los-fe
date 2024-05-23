@@ -10,8 +10,8 @@ import Currency from '../Number/Currency';
 import { NavLink as RouterLink } from 'react-router-dom';
 import moment from 'moment';
 import CustomToken from '../CommonComponents/CustomToken';
-import { ActionIcon, Tooltip } from '@mantine/core';
-import { IconLink } from '@tabler/icons-react';
+import { ActionIcon, Group, Tooltip } from '@mantine/core';
+import { IconLink, IconReload } from '@tabler/icons-react';
 import { action_id, resources_id } from '../../config/accessControl';
 import { isAllowed } from '../../utils/cerbos';
 
@@ -91,7 +91,16 @@ const DisbursementReqestTable = ({ title, onRowClick, filterQry, currentUser }) 
         if (isAllowed(currentUser.permissions, resources_id?.dashboard, action_id?.dashboard?.pdcChecklist)) {
           if (value?.row?.original?.is_pdc_completed) {
             return (
-              <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
+              <Group>
+                <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
+                {isAllowed(currentUser?.permissions, resources_id?.dashboard, action_id?.dashboard?.pdcComplete) ?
+                  <Tooltip label={'Click to re-initiate PDC'} withArrow>
+                    <ActionIcon size={'xs'} variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed, type: 're-initiate' })}>
+                      <IconReload size={16} />
+                    </ActionIcon>
+                  </Tooltip>
+                  : null}
+              </Group>
             )
           } else {
             return (
@@ -120,7 +129,7 @@ const DisbursementReqestTable = ({ title, onRowClick, filterQry, currentUser }) 
         />
       </div>
 
-      <DDMSModal opened={Boolean(docModal?.modal)} onClose={() => setDocModal({})} modalObj={docModal} queryKey='disbursement-approval-query' />
+      <DDMSModal opened={Boolean(docModal?.modal)} currentUser={currentUser} onClose={() => setDocModal({})} modalObj={docModal} queryKey='loan-details-disb-approval' />
     </>
   )
 }

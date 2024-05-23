@@ -1,8 +1,8 @@
-import apiCall from "../utils/api.util";
+import apiCall from '../utils/api.util';
 
 export const getDDMSChecklist = () => {
   return new Promise((resolve, reject) => {
-    apiCall(`pre_disbursal_document_checklist`)
+    apiCall('pre_disbursal_document_checklist')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
@@ -57,6 +57,44 @@ export const getDeferralDetails = ({ id }) => {
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e?.message || e);
+      })
+  })
+}
+
+export const checkEligibleDeferralDetails = ({ id, body, event = '' }) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`pre_disbursal_document_checklist/${id}?event=${event}`, {
+      method: 'POST',
+      body: body?.data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          event === 'mark_as_completed' ? resolve([{ pdc_completed: true }]) : resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e?.message || e);
+      })
+  })
+}
+
+export const reInitiateDeferralDetails = ({ id, body }) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`pre_disbursal_document_checklist/${id}/reinitiate`, {
+      method: 'POST',
+      body: body?.data,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
         } else {
           reject(message);
         }

@@ -13,7 +13,7 @@ import { useQueryClient } from 'react-query';
 import AsyncSelect from 'react-select/async';
 import Button from '../../components/CommonComponents/Button/Button';
 import { getDealershipForSearch } from '../../services/common.service';
-import {  updateRemarks } from '../../services/withheld.services';
+import { updateRemarks } from '../../services/withheld.services';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -110,7 +110,7 @@ const AddBlackListForm = ({ data, callback }) => {
             },
             variant: 'success',
           })
-          queryClient.invalidateQueries('withheld-loans')
+          queryClient.invalidateQueries('withheld-loans-unresolved')
           callback()
           setError()
         })

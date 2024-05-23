@@ -22,7 +22,7 @@ export const resources_id = {
   docChecklist: 'doc_checklist',
   transporters: 'transporters',
   fleetOperator: 'fleet_operator',
-  PdcModule: 'pdc_moudule'
+  PdcModule: 'pdc_moudule',
 }
 
 export const action_id = {
@@ -75,8 +75,10 @@ export const action_id = {
     submitted_documents: 'submitted_documents',
     pushback: 'pushback',
     reactivate: 'reactivate',
-    dashboardSwitch:'dashboardSwitch',
-    pdcChecklist:'pdcChecklist'
+    dashboardSwitch: 'dashboardSwitch',
+    pdcChecklist: 'pdcChecklist',
+    pdcComplete: 'pdc_complete',
+    pdc_re_initiate: 'pdc_re_initiate',
   },
   creditReload: {
     create: 'request:create',
@@ -94,7 +96,7 @@ export const action_id = {
     sanctionLetter: 'sanction_letter',
     loanAgreement: 'loan_agreement',
     esignApplication: 'esign_application',
-    pdcChecklist:'pdcChecklist'
+    pdcChecklist: 'pdcChecklist'
   },
   transportPassbook: {
     upload: 'upload_statement',
@@ -116,8 +118,8 @@ export const action_id = {
     docChecklist: 'document_checklist',
     transporters: 'transporters',
     fleetOperator: 'fleet_operator',
-    deferral:'deferral',
-    deviation:'deviation',
+    deferral: 'deferral',
+    deviation: 'deviation',
   },
   dealership: {
     edit: 'dealership:edit',

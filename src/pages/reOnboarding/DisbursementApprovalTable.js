@@ -9,7 +9,7 @@ import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 import { ActionIcon, Button, Group, Modal, Text, Tooltip } from '@mantine/core';
-import { IconCircleCheck, IconLink, IconRefresh } from '@tabler/icons-react';
+import { IconCircleCheck, IconLink, IconRefresh, IconReload } from '@tabler/icons-react';
 import DDMSModal from '../../components/Deferal-Devation/DDMSModal';
 import classes from './ReOnboarding.module.css';
 import { action_id, resources_id } from '../../config/accessControl';
@@ -124,7 +124,16 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }
         if (isAllowed(currentUser.permissions, resources_id?.dashboard, action_id?.dashboard?.pdcChecklist)) {
           if (value?.row?.original?.is_pdc_completed) {
             return (
-              <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
+              <Group>
+                <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
+                {isAllowed(currentUser?.permissions, resources_id?.dashboard, action_id?.dashboard?.pdcComplete) ?
+                  <Tooltip label={'Click to re-initiate PDC'} withArrow>
+                    <ActionIcon size={'xs'} variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed, type: 're-initiate' })}>
+                      <IconReload size={16} />
+                    </ActionIcon>
+                  </Tooltip>
+                  : null}
+              </Group>
             )
           } else {
             return (
@@ -202,7 +211,7 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }
         excelDownload
       />
 
-      <DDMSModal opened={Boolean(docModal?.modal)} onClose={() => setDocModal({})} modalObj={docModal} queryKey='re-onboarding-data-disbursement_approval' />
+      <DDMSModal opened={Boolean(docModal?.modal)} currentUser={currentUser} onClose={() => setDocModal({})} modalObj={docModal} queryKey='re-onboarding-data-disbursement_approval' />
 
       <Modal opened={openDialog} onClose={() => setOpenDialog(true)} size={'lg'}>
         <Text>Ready to sync data with LMS?</Text>

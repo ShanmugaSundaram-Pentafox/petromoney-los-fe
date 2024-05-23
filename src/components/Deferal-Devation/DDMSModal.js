@@ -1,11 +1,13 @@
 import { ActionIcon, Button, Group, Loader, Modal, Popover, ScrollArea, Skeleton, Table, Text, TextInput } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { getDDMSChecklist, getDeferralDetails, updateDeferralDetails } from '../../services/ddms.service';
+import { checkEligibleDeferralDetails, getDDMSChecklist, getDeferralDetails, reInitiateDeferralDetails, updateDeferralDetails } from '../../services/ddms.service';
 import DDMSTable from './DDMSTable';
 import { displayNotification } from '../CommonComponents/Notification/displayNotification';
 import { IconPlus } from '@tabler/icons-react';
 import classes from './DDMS.module.css'
+import { isAllowed } from '../../utils/cerbos';
+import { action_id, resources_id } from '../../config/accessControl';
 
 const convertHtmltoString = (remark) => {
   /**
@@ -23,7 +25,8 @@ const DDMSModal = ({
   opened = false,
   onClose = () => { },
   modalObj = {},
-  queryKey = ''
+  queryKey = '',
+  currentUser,
 }) => {
   const [othersText, setOthersText] = useState();
   const [othersObj, setOthersObj] = useState();
@@ -106,6 +109,44 @@ const DDMSModal = ({
     }
   })
 
+  const checkDeferralDetailsQuery = useMutation({
+    mutationFn: ({ body, event }) => checkEligibleDeferralDetails({ id: modalObj?.id, body, event }),
+    onSuccess: (res) => {
+      if (res?.[0]?.pdc_completed) {
+        displayNotification({
+          message: 'Deferral/Deviation Completed',
+          variant: 'success',
+        });
+        queryKey && queryClient.invalidateQueries([queryKey]);
+        onClose();
+      }
+    },
+    onError: e => {
+      displayNotification({
+        message: e?.message || e,
+        variant: 'error',
+      })
+    }
+  })
+
+  const reInitiateDeferralDetailsQuery = useMutation({
+    mutationFn: ({ body }) => reInitiateDeferralDetails({ id: modalObj?.id, body }),
+    onSuccess: (res) => {
+      displayNotification({
+        message: res,
+        variant: 'success',
+      });
+      queryKey && queryClient.invalidateQueries([queryKey]);
+      onClose();
+    },
+    onError: e => {
+      displayNotification({
+        message: e?.message || e,
+        variant: 'error',
+      })
+    }
+  })
+
   useEffect(() => {
     setDeferral([])
   }, [opened])
@@ -114,12 +155,13 @@ const DDMSModal = ({
     if (ddmsChecklistQuery?.data?.result) {
       setDeferral(ddmsChecklistQuery?.data?.result)
       setOthersObj(ddmsChecklistQuery?.data?.othersObj)
+      handleDocChecklistUpdate({ deferralData: ddmsChecklistQuery?.data?.result, othersObjData: ddmsChecklistQuery?.data?.othersObj, isCheck: true })
     }
   }, [ddmsChecklistQuery?.data])
 
-  const handleDocChecklistUpdate = () => {
+  const handleDocChecklistUpdate = ({ event, deferralData, othersObjData, isCheck }) => {
 
-    const result = deferral?.map((i) => ({
+    const result = deferralData?.map((i) => ({
       checklist_id: i?.id,
       category: i?.category,
       checklist_name: i?.name,
@@ -127,7 +169,7 @@ const DDMSModal = ({
       deferral_deviation_mapping: i?.status === 'deferral/deviation' ? i?.deferral_deviation_mapping : [],
       status: i?.status,
     }));
-    const resultOthers = othersObj?.map((i) => ({
+    const resultOthers = othersObjData?.map((i) => ({
       checklist_id: i?.id,
       category: i?.category,
       remarks: convertHtmltoString(i?.remarks) || null,
@@ -183,7 +225,19 @@ const DDMSModal = ({
       },
       id: modalObj?.id
     }
-    updateDeferralDetailsQuery?.mutate(body)
+    if (isCheck) {
+      checkDeferralDetailsQuery?.mutate({ body, event })
+      return
+    } else {
+      if (modalObj?.type === 're-initiate') {
+        reInitiateDeferralDetailsQuery?.mutate({ body })
+        return
+      }
+      else {
+        updateDeferralDetailsQuery?.mutate(body)
+        return
+      }
+    }
   }
 
   const handleDataChange = (arr, val, type, remarks = null) => {
@@ -196,6 +250,7 @@ const DDMSModal = ({
         'deferral_deviation_mapping': val === 'deferral/deviation' ? arr?.deferral_deviation_mapping : []
       })
       setOthersObj(result)
+      handleDocChecklistUpdate({ deferralData: deferral, othersObjData: result, isCheck: true })
     } else {
       let result = [...deferral];
       result?.splice(deferral?.indexOf(deferral?.find(i => i?.id === arr?.id)), 1, {
@@ -205,6 +260,7 @@ const DDMSModal = ({
         'deferral_deviation_mapping': val === 'deferral/deviation' ? arr?.deferral_deviation_mapping : []
       })
       setDeferral(result)
+      handleDocChecklistUpdate({ deferralData: result, othersObjData: othersObj, isCheck: true })
     }
     // let oldMapping = [...checklistCategory?.[arr?.category]?.deferral_deviation_mapping]?.filter((i) => i);
     // let newMapping = [...arr?.deferral_deviation_mapping]?.filter(i => i);
@@ -218,6 +274,7 @@ const DDMSModal = ({
         1,
         { ...othersObj?.find(i => i?.id === arr?.id), 'deferral_deviation_mapping': val })
       setOthersObj(result)
+      handleDocChecklistUpdate({ deferralData: deferral, othersObjData: result, isCheck: true })
     } else {
       let result = [...deferral];
       result?.splice(
@@ -225,6 +282,7 @@ const DDMSModal = ({
         1,
         { ...deferral?.find(i => i?.id === arr?.id), 'deferral_deviation_mapping': val })
       setDeferral(result)
+      handleDocChecklistUpdate({ deferralData: result, othersObjData: othersObj, isCheck: true })
     }
     // setCheckListCategory(old => ({ ...old, [arr?.category]: [...val, ...old?.[arr?.category]] }))
   }
@@ -352,13 +410,22 @@ const DDMSModal = ({
             >
               Cancel
             </Button>
+            {(checkDeferralDetailsQuery?.data?.[0]?.is_eligible_for_complete === 1 && isAllowed(currentUser?.permissions, resources_id.dashboard, action_id?.dashboard?.pdcComplete)) ? (
+              <Button
+                size='xs'
+                color='teal'
+                onClick={() => handleDocChecklistUpdate({ deferralData: deferral, othersObjData: othersObj, event: 'mark_as_completed', isCheck: true })}
+              >
+                Complete
+              </Button>
+            ) : null}
             <Button
               size='xs'
               color='green'
               loading={updateDeferralDetailsQuery?.isLoading}
-              onClick={() => handleDocChecklistUpdate()}
+              onClick={() => handleDocChecklistUpdate({ deferralData: deferral, othersObjData: othersObj })}
             >
-              Save
+              {modalObj?.type === 're-initiate' ? 'Re-initiate' : 'Save'}
             </Button>
           </Group>
         ) : null

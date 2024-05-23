@@ -37,7 +37,7 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
     initialData: [],
     refetchOnWindowFocus: false,
     select: (data) => {
-      return [...data, { label: dealershipName, value: dealershipId?.toString() }]
+      return [...data, { label: dealershipName, value: `${dealershipId}D` }]
     }
   })
 
@@ -89,7 +89,7 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
   };
 
   const { handleSubmit, setFieldValue, values } = useFormik({
-    initialValues: {},
+    initialValues: { applicantData: { label: dealershipName, value: `${dealershipId?.toString()}D` } },
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: values => {
@@ -109,9 +109,9 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
           type: 'deviation',
           party_name: dealershipName,
           party_id: dealershipId,
-          applicant_id: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.value,
-          applicant_type: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.category,
-          applicant_name: values?.applicantData?.value == dealershipId ? null : values?.applicantData?.label,
+          applicant_id: values?.applicantData?.value === `${dealershipId}D` ? null : values?.applicantData?.value,
+          applicant_type: values?.applicantData?.value === `${dealershipId}D` ? null : values?.applicantData?.category,
+          applicant_name: values?.applicantData?.value === `${dealershipId}D` ? null : values?.applicantData?.label,
           checklist_id: values?.checkListData?.value,
           checklist_name: values?.checkListData?.label,
           document_urls: fileUploadObj?.files,
@@ -145,7 +145,7 @@ const DeviationForm = ({ dealershipId, dealershipName, refetch, close, currentUs
     <form onSubmit={handleSubmit}>
       <Grid gutter="sm">
         <Grid.Col span={{ base: 12, sm: 5 }}>
-          <Select size='xs' label="Applicant" data={applicantsData || [{ label: dealershipName, value: dealershipId?.toString() }]} defaultValue={dealershipId?.toString()} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
+          <Select size='xs' label="Applicant" data={applicantsData || [{ label: dealershipName, value: `${dealershipId}D` }]} defaultValue={`${dealershipId}D`} value={values?.applicantData?.value} onChange={(_value, option) => setFieldValue('applicantData', option)} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 6 }}>
           <Select size='xs' label="Document Type" data={checklist} value={values?.checkListData?.value} onChange={(_value, option) => setFieldValue('checkListData', option)} />

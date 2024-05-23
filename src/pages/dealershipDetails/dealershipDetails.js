@@ -99,6 +99,8 @@ const DealershipDetails = ({ currentUser, match }) => {
     },
   ]
 
+
+
   let tabs = [];
 
   // Allowed navigations inside dealership 
@@ -138,6 +140,48 @@ const DealershipDetails = ({ currentUser, match }) => {
     { label: 'Mobile', value: mainApplicant?.data?.mobile },
     { label: 'Email', value: mainApplicant?.data?.email }
   ]
+  // used to check access and render
+  let tabPanel = [{
+    id: action_id?.dealershipNavigation?.dealership,
+    value: 'dealership',
+    comp: <DealershipInfo viewOnly={dealershipReadOnly} setViewOnly={setDealershipReadOnly} data={dealershipData.data} isLoading={dealershipData?.isLoading} currentUser={currentUser} />,
+  }, {
+    id: action_id?.dealershipNavigation?.dealers,
+    value: 'dealer',
+    comp: <DealersList id={id} titleAlign="left" currentUser={currentUser} />,
+  }, {
+    id: action_id?.dealershipNavigation?.scoreCard,
+    value: 'score_card',
+    comp: <ScoreCard currentUser={currentUser} dealership_id={id} />
+  }, {
+    id: action_id?.dealershipNavigation?.loansList,
+    value: 'loans_list',
+    comp: <LoansList id={id} titleAlign="left" currentUser={currentUser} />
+  }, {
+    id: action_id?.dealershipNavigation?.personalDiscussion,
+    value: 'personal_discussion',
+    comp: <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
+  }, {
+    id: action_id?.dealershipNavigation?.docChecklist,
+    value: 'documents',
+    comp: <DealershipDoc id={id} currentUser={currentUser} />
+  }, {
+    id: action_id?.dealershipNavigation?.transporters,
+    value: 'transporter',
+    comp: <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
+  }, {
+    id: action_id?.dealershipNavigation?.fleetOperator,
+    value: 'fleet_operators',
+    comp: <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
+  }, {
+    id: action_id?.dealershipNavigation?.deferral,
+    value: 'deferral',
+    comp: <DeferralTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
+  }, {
+    id: action_id?.dealershipNavigation?.deviation,
+    value: 'deviation',
+    comp: <DeviationTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
+  },]
   // usePageTitle(`${id} - ${dealershipData && (dealershipData.name || '')} `, true, cardData)
 
   return (
@@ -201,36 +245,13 @@ const DealershipDetails = ({ currentUser, match }) => {
           }
         </Tabs.List>
 
-        <Tabs.Panel value={'dealership'}>
-          <DealershipInfo viewOnly={dealershipReadOnly} setViewOnly={setDealershipReadOnly} data={dealershipData.data} isLoading={dealershipData?.isLoading} currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'dealer'}>
-          <DealersList id={id} titleAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'score_card'}>
-          <ScoreCard currentUser={currentUser} dealership_id={id} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'loans_list'}>
-          <LoansList id={id} titleAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'personal_discussion'}>
-          <PersonalDiscussionReport id={id} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'documents'}>
-          <DealershipDoc id={id} currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'transporter'}>
-          <DealershipTransport id={id} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'fleet_operators'}>
-          <FleetOperatorsDetails id={id} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'deferral'}>
-          <DeferralTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
-        <Tabs.Panel value={'deviation'}>
-          <DeviationTable id={id} dealershipName={dealershipData?.data?.name} textAlign="left" currentUser={currentUser} />
-        </Tabs.Panel>
+        {tabPanel?.map((item) => (
+          isAllowed(currentUser?.permissions, resources_id?.dealershipNavigation, item?.id) ? (
+            <Tabs.Panel value={item?.value} key={item?.value}>
+              {item.comp}
+            </Tabs.Panel>
+          ) : null
+        ))}
       </Tabs>
 
       <SolarEnquiryForm

@@ -18,7 +18,7 @@ export const generateTableHeader = ({ data }) => {
       header: item?.header,
       id: `${index}-${item?.key}`,
       cell: item?.cell ? item?.cell : Cell,
-      enableColumnFilter: item?.enableColumnFilter || item?.key !== 'action' ? true : false,
+      enableColumnFilter: item?.enableColumnFilter != false && item?.key !== 'action' ? true : false,
       key: `${index}-${item?.header}`,
     });
   });

@@ -20,7 +20,7 @@ const Filter = ({
     () =>
       typeof firstValue === 'number'
         ? []
-        : Array.from(column.getFacetedUniqueValues().keys()).sort()?.map((i) => (i?.replace(/_/g, ' '))),
+        : Array.from(column.getFacetedUniqueValues().keys()).sort()?.map((i) => ({ label: i?.replace(/_/g, ' '), value: i })),
     [column.getFacetedUniqueValues()]
   );
 
@@ -38,11 +38,12 @@ const Filter = ({
           }
         }}
         placeholder='All'
+        searchable
         comboboxProps={{ offset: 2 }}
         value={columnFilterValue}
         onChange={(e) => { column.setFilterValue(e) }}
         clearable
-        data={sortedUniqueValues?.filter(i => i !== undefined) || []}
+        data={sortedUniqueValues?.filter(i => i?.value !== undefined) || []}
         maxDropdownHeight={200}
       />
     </>
@@ -180,6 +181,7 @@ const DataTableViewer = ({
                     <Popover
                       opened={opened}
                       onChange={setOpened}
+                      clickOutsideEvents={['mouseup']}
                       position="left-start"
                       withArrow
                       shadow="md"
@@ -252,64 +254,67 @@ const DataTableViewer = ({
             )}
           {(!loading && Array.isArray(rowData) && !rowData?.length && showAction) ? showAction : null}
         </Group>
-      </Box>
-      {statusTab?.show ? <Box my={'md'}>
-        {
-          statusTab?.custom
-            ? statusTab?.custom
-            : (
-              <StatusViewer
-                selectedStatsCard={statusChange?.status}
-                handleClick={statusChange?.handleChange}
-                chartData={statusTab?.list}
-              />
-            )
-        }
-      </Box> : null}
-      {!loading && Array.isArray(rowData) && !rowData.length ? (
-        <Box
-          mt="md"
-          p="xl"
-          style={{
-            textAlign: 'center',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            gap: 10,
-            height: '60vh',
-          }}
-        >
-          <Image
-            src="https://i.imgur.com/A6KRQAV.png"
-            w={150}
-            h={100}
-            radius="md"
-          />
-          <Box>
-            <Text>{noDataText}</Text>
-            <Text size="sm" sx={{ color: 'rgb(0,0,0,0.4)' }}>
-              {noDataSubText}
-            </Text>
+      </Box >
+      {
+        statusTab?.show ? <Box my={'md'}>
+          {
+            statusTab?.custom
+              ? statusTab?.custom
+              : (
+                <StatusViewer
+                  selectedStatsCard={statusChange?.status}
+                  handleClick={statusChange?.handleChange}
+                  chartData={statusTab?.list}
+                />
+              )
+          }
+        </Box> : null}
+      {
+        !loading && Array.isArray(rowData) && !rowData.length ? (
+          <Box
+            mt="md"
+            p="xl"
+            style={{
+              textAlign: 'center',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              gap: 10,
+              height: '60vh',
+            }}
+          >
+            <Image
+              src="https://i.imgur.com/A6KRQAV.png"
+              w={150}
+              h={100}
+              radius="md"
+            />
+            <Box>
+              <Text>{noDataText}</Text>
+              <Text size="sm" sx={{ color: 'rgb(0,0,0,0.4)' }}>
+                {noDataSubText}
+              </Text>
+            </Box>
           </Box>
-        </Box>
-      ) : (
-        <ReactTable
-          columnData={filteredColumnData}
-          rowData={rowData || []}
-          useApiPagination={useAPIPagination}
-          search={apiSearch ? null : search}
-          setSearch={setSearch}
-          setFilterHeader={setFilterHeader}
-          filterHeader={filterHeader}
-          onRowClick={onRowClick}
-          styles={styles}
-          page={page}
-          setPage={setPage}
-          totalNoOfPages={totalNoOfPages}
-          loading={loading}
-        />
-      )}
+        ) : (
+          <ReactTable
+            columnData={filteredColumnData}
+            rowData={rowData || []}
+            useApiPagination={useAPIPagination}
+            search={apiSearch ? null : search}
+            setSearch={setSearch}
+            setFilterHeader={setFilterHeader}
+            filterHeader={filterHeader}
+            onRowClick={onRowClick}
+            styles={styles}
+            page={page}
+            setPage={setPage}
+            totalNoOfPages={totalNoOfPages}
+            loading={loading}
+          />
+        )
+      }
       <ColumnsFilter
         title={title}
         columnData={column}
@@ -318,7 +323,7 @@ const DataTableViewer = ({
         onClose={close}
         updateFilter={onUpdateFilter}
       />
-    </Box>
+    </Box >
   )
 };
 

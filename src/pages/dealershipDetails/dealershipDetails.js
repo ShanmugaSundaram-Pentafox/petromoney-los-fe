@@ -24,6 +24,7 @@ import { IconBriefcase, IconListDetails, IconPinEnd, IconPinInvoke, IconRouteSca
 import DeviationTable from './components/DeferralDeviationTables/DeviationTable';
 import DealershipTransport from './components/DealershipTransport';
 import FleetOperatorsDetails from './components/FleetOperatorsDetails';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 
 const DealershipDetails = ({ currentUser, match }) => {
@@ -114,7 +115,19 @@ const DealershipDetails = ({ currentUser, match }) => {
     url,
     params: { id },
   } = match;
-  const dealershipData = useQuery(['dealership-info', id], () => getDealershipById(id), { refetchOnWindowFocus: false })
+  const dealershipData = useQuery(
+    ['dealership-info', id],
+    () => getDealershipById(id),
+    {
+      onError: (e) => {
+        displayNotification({
+          message: e?.message || e,
+          variant: 'error',
+        })
+      },
+      refetchOnWindowFocus: false
+    }
+  )
   const mainApplicant = useQuery(['main-applicant-data', id], () => getDealersByDealershipId(id), {
     select: (data) => {
       const ap = data.find(item => item.is_main_applicant);

@@ -180,6 +180,8 @@ const DataTableViewer = ({
                   {filter ?
                     <Popover
                       opened={opened}
+                      onChange={setOpened}
+                      clickOutsideEvents={['mouseup']}
                       position="left-start"
                       withArrow
                       shadow="md"

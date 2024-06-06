@@ -126,7 +126,7 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }
             return (
               <Group>
                 <CustomToken label={'PDC Completed'} variant="success" icon="tick" />
-                {isAllowed(currentUser?.permissions, resources_id?.dashboard, action_id?.dashboard?.pdcComplete) ?
+                {isAllowed(currentUser?.permissions, resources_id?.dashboard, action_id?.dashboard?.pdc_re_initiate) ?
                   <Tooltip label={'Click to re-initiate PDC'} withArrow>
                     <ActionIcon size={'xs'} variant='transparent' onClick={() => setDocModal({ modal: true, id: value?.row?.original?.dealership_id, is_pdc_completed: value?.row?.original?.is_pdc_completed, type: 're-initiate' })}>
                       <IconReload size={16} />

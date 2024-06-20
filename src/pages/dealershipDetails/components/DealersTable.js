@@ -69,20 +69,20 @@ const DealersTable = ({ id, data, currentUser, dealersClickRow }) => {
       })
   }
   const handleUpdate = (data) => {
-    if (data?.is_main_applicant) {
-      enqueueSnackbar('Do not change the main applicant. Instead, select someone else to be the main applicant for the dealership.', {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'error',
-      })
+    // if (data?.is_main_applicant) {
+    //   enqueueSnackbar('Do not change the main applicant. Instead, select someone else to be the main applicant for the dealership.', {
+    //     anchorOrigin: {
+    //       vertical: 'top',
+    //       horizontal: 'right',
+    //     },
+    //     variant: 'error',
+    //   })
 
-    }
-    else {
-      setRowData(data)
-      setOpenChangeTypeDialog(true)
-    }
+    // }
+    // else {
+    setRowData(data)
+    setOpenChangeTypeDialog(true)
+    // }
   }
   const saveApplicantTypeUpdate = () => {
     updateApplicantType(rowData?.id, { applicant_type: updatedApplicantType.toUpperCase() })

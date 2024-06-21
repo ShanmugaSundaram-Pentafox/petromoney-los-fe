@@ -854,7 +854,7 @@ export const getProductsMaster = () => {
     apiCall('business/products')
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
-          resolve(data || []);
+          resolve(data?.filter(i => i?.is_show) || []);
         } else {
           reject(message);
         }

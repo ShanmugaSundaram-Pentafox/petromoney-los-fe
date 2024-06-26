@@ -26,7 +26,7 @@ const LoanInfo = ({
   useEffect(() => {
     getProductsMaster()
       .then((data) => {
-        setProducts(data)
+        setProducts(data?.filter(i => i?.is_show))
         if (row.product_id) {
           const re = data.find(d => d.product_id == row.product_id)
           setSelectedProduct({

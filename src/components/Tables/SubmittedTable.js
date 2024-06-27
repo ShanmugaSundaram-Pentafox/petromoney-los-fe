@@ -79,12 +79,14 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
       header: 'Dealership Id',
       key: 'dealership_id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      sorting: true,
     }, {
       header: 'Name',
       enableColumnFilter: false,
       key: 'name',
-      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>,
+      sorting: true,
     }, {
       header: 'Type',
       key: 'type',
@@ -105,7 +107,8 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
       header: 'Req. Date',
       key: 'created_date',
       enableColumnFilter: false,
-      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>,
+      sorting: true,
     }, {
       header: 'Application State',
       key: 'application_state',
@@ -151,6 +154,7 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
         title={'Dashboard'}
         // count={loans?.length}
         // showStatusTab={chartData}
+        allowSorting={true}
         excelDownload
         loading={getLoanDetailsQuery?.isLoading}
         onRowClick={(i) => onRowClick(i?.dealership_id, i, 'submitted')}

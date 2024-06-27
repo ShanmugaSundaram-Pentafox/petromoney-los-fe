@@ -17,11 +17,13 @@ const DealershipsTable = () => {
       key: 'id',
       header: 'ID',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      sorting: true,
     }, {
       key: 'name',
       header: 'Name',
       enableColumnFilter: false,
+      sorting: true,
       // }, {
       //   key: 'sales_area',
       //   header: 'Sales Area',
@@ -30,7 +32,8 @@ const DealershipsTable = () => {
       key: 'loan_application_submitted_date',
       header: 'Submitted Date',
       enableColumnFilter: false,
-      cell: (value) => <span>{value?.getValue() ? format(new Date(value?.getValue()), 'dd-MMM-yyyy') : '-'}</span>
+      cell: (value) => <span>{value?.getValue() ? format(new Date(value?.getValue()), 'dd-MMM-yyyy') : '-'}</span>,
+      sorting: true,
     }, {
       key: 'region',
       header: 'Region',
@@ -51,6 +54,7 @@ const DealershipsTable = () => {
   return (
     <div>
       <DataTableViewer
+        allowSorting={true}
         rowData={delaershipDetailsQuery?.data}
         column={column}
         title={'Dealership List'}

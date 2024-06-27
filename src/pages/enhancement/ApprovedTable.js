@@ -60,11 +60,13 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      sorting: true,
     }, {
       key: 'dealership_name',
       header: 'Name',
-      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>,
+      sorting: true,
     }, {
       key: 'old_product_name',
       header: 'Old Product Type',
@@ -142,6 +144,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
   return (
     <div className={classes.root}>
       <DataTableViewer
+        allowSorting={true}
         title={title}
         rowData={getEnhancementDataQuery?.data}
         column={column}

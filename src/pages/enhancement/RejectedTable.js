@@ -46,11 +46,13 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      sorting: true,
     }, {
       key: 'dealership_name',
       header: 'Name',
-      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>,
+      sorting: true,
     }, {
       key: 'old_product_name',
       header: 'Old Product Type',
@@ -77,6 +79,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
   return (
     <div className={classes.root}>
       <DataTableViewer
+        allowSorting={true}
         rowData={getEnhancementDataQuery?.data}
         column={column}
         title={title}

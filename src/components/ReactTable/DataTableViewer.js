@@ -43,7 +43,7 @@ const Filter = ({
         value={columnFilterValue}
         onChange={(e) => { column.setFilterValue(e) }}
         clearable
-        data={sortedUniqueValues?.filter(i => i?.value !== undefined) || []}
+        data={sortedUniqueValues?.filter(i => ![null,undefined]?.includes(i?.value)) || []}
         maxDropdownHeight={200}
       />
     </>
@@ -51,6 +51,10 @@ const Filter = ({
 }
 
 const DataTableViewer = ({
+  sorting,
+  setSorting,
+  allowSorting = false,
+  apiSorting = false,
   column = [],
   rowData = [],
   useAPIPagination = false,
@@ -81,6 +85,7 @@ const DataTableViewer = ({
   const [search, setSearch] = useState();
   const [filterHeader, setFilterHeader] = useState();
   const [opened, setOpened] = useState();
+  const [sortingIn, setSortingIn] = useState();
   const [openFilterModal, { open, close }] = useDisclosure(false);
   const { saveAsCsv } = useJsonToCsv()
   // const { tableData, setTableData } = useTableInfo();
@@ -312,6 +317,9 @@ const DataTableViewer = ({
             setPage={setPage}
             totalNoOfPages={totalNoOfPages}
             loading={loading}
+            setSortingValue={apiSorting ? setSorting : setSortingIn}
+            allowSorting={allowSorting}
+            sorting={apiSorting ? sorting : sortingIn}
           />
         )
       }

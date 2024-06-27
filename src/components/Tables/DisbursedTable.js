@@ -57,6 +57,7 @@ const DisbursedTable = ({ title, onRowClick, filterQry }) => {
       header: 'Dealership Id',
       cell: (value) => <RouterLink to={`/dealership/${value.getValue()}`}>{value.getValue()}</RouterLink>,
       enableColumnFilter: false,
+      sorting: true,
     }, {
       key: 'applicant_code',
       header: 'Customer Code',
@@ -66,6 +67,7 @@ const DisbursedTable = ({ title, onRowClick, filterQry }) => {
       header: 'Name',
       cell: (value) => <span>{value.getValue()?.toUpperCase()}</span>,
       enableColumnFilter: false,
+      sorting: true,
     }, {
       key: 'type',
       header: 'Type',
@@ -87,6 +89,7 @@ const DisbursedTable = ({ title, onRowClick, filterQry }) => {
       header: 'Sanction Date',
       cell: (value) => <div>{value.getValue() ? moment(new Date(value.getValue())).format('DD-MM-YYYY') : '-'}</div>,
       enableColumnFilter: false,
+      sorting: true,
     }, {
       key: 'amount_disbursed',
       header: 'Disbursed Amount',
@@ -97,12 +100,14 @@ const DisbursedTable = ({ title, onRowClick, filterQry }) => {
       header: 'Disbursed Date',
       cell: (value) => <div>{value.getValue() ? moment(new Date(value.getValue())).format('DD-MM-YYYY') : '-'}</div>,
       enableColumnFilter: false,
+      sorting: true,
     },
   ];
 
   return (
     <div className={classes.root}>
       <DataTableViewer
+        allowSorting={true}
         column={column}
         rowData={getLoanDetailsQuery?.data || []}
         title={title}

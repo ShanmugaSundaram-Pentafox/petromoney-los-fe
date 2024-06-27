@@ -63,12 +63,14 @@ const ReviewerTable = ({ title, onRowClick, filterQry }) => {
       key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      sorting: true,
     }, {
       key: 'name',
       header: 'Name',
       enableColumnFilter: false,
-      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>,
+      sorting: true,
     }, {
       key: 'type',
       header: 'Type',
@@ -89,7 +91,8 @@ const ReviewerTable = ({ title, onRowClick, filterQry }) => {
       key: 'modified_date',
       header: 'Req. Date',
       enableColumnFilter: false,
-      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>,
+      sorting: true,
     }, {
       key: 'reviewer',
       header: 'Reviewer',
@@ -115,6 +118,7 @@ const ReviewerTable = ({ title, onRowClick, filterQry }) => {
   return (
     <div className={classes.root}>
       <DataTableViewer
+        allowSorting={true}
         rowData={getLoanDetailsQuery?.data}
         column={column}
         title={title}

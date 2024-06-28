@@ -103,12 +103,14 @@ const PresubmitLoansTable = ({ currentUser }) => {
       key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      sorting: true,
     }, {
       key: 'name',
       header: 'Name',
       enableColumnFilter: false,
-      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>,
+      sorting: true,
     }, {
       key: 'type',
       header: 'Type',
@@ -126,7 +128,8 @@ const PresubmitLoansTable = ({ currentUser }) => {
       key: 'created_date',
       header: 'Req. Date',
       enableColumnFilter: false,
-      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>,
+      sorting: true,
     }, {
       key: 'application_state',
       header: 'Application State',
@@ -216,6 +219,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
   return (
     <div className={classes.root}>
       <DataTableViewer
+        allowSorting={true}
         column={column}
         rowData={getPreSubmitLoansQuery?.data}
         title={'Pre Submit queue'}

@@ -45,11 +45,13 @@ const SubmittedTable = ({ title, onRowClick, filterQry }) => {
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      sorting: true,
     }, {
       key: 'dealership_name',
       header: 'Name',
-      cell: (value) => <span>{value?.getValue()}</span>
+      cell: (value) => <span>{value?.getValue()}</span>,
+      sorting: true,     
     }, {
       key: 'new_product_name',
       header: 'Product Type',
@@ -68,6 +70,7 @@ const SubmittedTable = ({ title, onRowClick, filterQry }) => {
   return (
     <div className={classes.root}>
       <DataTableViewer
+        allowSorting={true}
         rowData={getEnhancementDataQuery?.data}
         column={column}
         title={title}

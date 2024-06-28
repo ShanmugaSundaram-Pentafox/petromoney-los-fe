@@ -77,11 +77,13 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      sorting: true,
     }, {
       key: 'dealership_name',
       header: 'Name',
-      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>
+      cell: (value) => <span>{value?.getValue()?.toUpperCase()}</span>,
+      sorting: true,
     }, {
       key: 'new_product_name',
       header: 'Scheme',
@@ -97,7 +99,8 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
     }, {
       key: 'renewal_month',
       header: 'Month Of Renewal',
-      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>
+      cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue()), 'YYYY-MM-DD').format('MMM, YY') : '-'}</span>,
+      sorting: true
     }, {
       key: 'renewal_fee_payment_status',
       header: 'Renewal Fee Status',
@@ -108,6 +111,7 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
   return (
     <div className={classes.root}>
       <DataTableViewer
+        allowSorting={true}
         rowData={getRenewalDataQuery?.data}
         column={column}
         title={title}

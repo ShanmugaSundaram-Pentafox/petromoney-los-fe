@@ -200,34 +200,11 @@ const LoanInfo = ({
                 }
               </Table.Td>
 
-              {status === 'disbursement_approval' ? (
+              {['disbursement_approval', 'disbursed']?.includes(status) ? (
                 <Table.Td>
-                  <UserCan
-                    role={currentUser.role_name}
-                    perform={rulesList.loan_approval}
-                    yes={() => (
-                      <TextInput
-                        money
-                        number
-                        fullWidth={false}
-                        defaultValue={row?.amount_approved}
-                        onChange={e => {
-                          updateNewLoanInfo({
-                            ...newInfo,
-                            amount_disbursed: e.target.value || row?.amount_approved
-                          })
-                        }}
-                      />
-                    )}
-                    no={() => <Currency value={row?.amount_disbursed} />}
-                  />
-                </Table.Td>
-              ) : (status == 'disbursed' ? (
-                <Table.Td align="right">
                   <Currency value={row?.amount_disbursed} />
                 </Table.Td>
-              ) : null)
-              }
+              ): null}
             </Table.Tr>
           </Table.Tbody>
         </Table>

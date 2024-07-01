@@ -18,7 +18,6 @@ import EnhancementList from '../pages/enhancement/EnhancementList';
 import PresubmitLoansTable from '../pages/loans/PresubmitLoansTable';
 import BlacklistTable from '../pages/loanspage/BlacklistTable';
 import Loans from '../pages/loanspage/loans'
-import Login from '../pages/login/login';
 import NOCertificateRequestTable from '../pages/noc/NOCertificateRequestTable';
 import NotFound from '../pages/NotFound/NotFound';
 import RevokedAccess from '../pages/NotFound/RevokedAccess';
@@ -31,7 +30,6 @@ import CollectionRemarks from '../pages/reports/CollectionRemarks';
 import CreditNewRequestTable from '../pages/reports/CreditNewRequestTable';
 import CreditProcessedTable from '../pages/reports/CreditProcessedTable';
 import DealersDueReport from '../pages/reports/DealersDueReport';
-import DpdReport from '../pages/reports/DPD/DpdReport';
 import PDCReport from '../pages/reports/PDC Report/PDCReport';
 import Settings from '../pages/settings/settings';
 import Survey from '../pages/survey/survey';
@@ -75,7 +73,6 @@ const Routes = ({ currentUser }) => {
       <ProtectedRoute allow exact path="/enhancement" component={EnhancementList} />
       <ProtectedRoute allow exact path="/re-onboarding" component={ReOnboardingList} />
       <ProtectedRoute allow exact path="/reports" component={DealersDueReport} />
-      <ProtectedRoute allow exact path="/report/dpd" component={DpdReport} />
       <ProtectedRoute allow exact path="/report/pdc" component={PDCReport} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.collection_remarks)} exact path="/reports/remarks" component={CollectionRemarks} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.noc)} exact path="/noc" component={NOCertificateRequestTable} />

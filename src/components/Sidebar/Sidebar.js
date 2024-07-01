@@ -1,4 +1,4 @@
-import { IconAlignBoxBottomCenter, IconArrowAutofitRight, IconArrowCapsule, IconArrowIteration, IconArrowLoopRight, IconBooks, IconCertificateOff, IconChecklist, IconClipboardText, IconCoins, IconDashboard, IconFileAnalytics, IconFileDescription, IconFileLambda, IconFileStack, IconGasStation, IconLayersSubtract, IconList, IconPhone, IconReorder, IconRepeat, IconReport, IconScooterElectric, IconSettings, IconTir, IconUserCircle, IconUsers } from '@tabler/icons-react';
+import { IconAlignBoxBottomCenter, IconArrowAutofitRight, IconArrowCapsule, IconArrowIteration, IconArrowLoopRight, IconBooks, IconCertificateOff, IconChecklist, IconClipboardText, IconCoins, IconDashboard, IconFileAnalytics, IconFileLambda, IconFileStack, IconGasStation, IconLayersSubtract, IconList, IconPhone, IconReorder, IconRepeat, IconReport, IconScooterElectric, IconSettings, IconTir, IconUserCircle, IconUsers } from '@tabler/icons-react';
 import { ScrollArea, Text } from '@mantine/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -247,11 +247,11 @@ const Sidebar = props => {
           href: '/reports/opportunities',
           icon: <IconFileAnalytics strokeWidth="2px" size={18} />
         },
-        {
-          name: 'DPD Report',
-          href: '/report/dpd',
-          icon: <IconFileDescription strokeWidth="2px" size={18} />
-        },
+        // {
+        //   name: 'DPD Report',
+        //   href: '/report/dpd',
+        //   icon: <IconFileDescription strokeWidth="2px" size={18} />
+        // },
         {
           name: 'PDC Report',
           href: '/report/pdc',

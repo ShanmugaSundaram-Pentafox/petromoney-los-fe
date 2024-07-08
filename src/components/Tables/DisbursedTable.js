@@ -96,6 +96,11 @@ const DisbursedTable = ({ title, onRowClick, filterQry }) => {
       cell: (value) => <Currency value={value.getValue()} />,
       enableColumnFilter: false,
     }, {
+      key: 'actual_amount_disbursed',
+      header: 'Actual Amount Disbursed',
+      cell: (value) => <Currency value={value.getValue()} />,
+      enableColumnFilter: false,
+    }, {
       key: 'loan_disbursed_date',
       header: 'Disbursed Date',
       cell: (value) => <div>{value.getValue() ? moment(new Date(value.getValue())).format('DD-MM-YYYY') : '-'}</div>,

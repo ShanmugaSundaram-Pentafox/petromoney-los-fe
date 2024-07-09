@@ -97,7 +97,7 @@ const DisbursedTable = ({ title, onRowClick, filterQry }) => {
       enableColumnFilter: false,
     }, {
       key: 'actual_amount_disbursed',
-      header: 'Actual Amount Disbursed',
+      header: 'Actual Disbursed',
       cell: (value) => <Currency value={value.getValue()} />,
       enableColumnFilter: false,
     }, {

@@ -74,24 +74,24 @@ const CollectionRemarks = () => {
       enableColumnFilter: false,
       cell: (value) => <Currency value={value.getValue()} />
     }, {
-      key: 'loan_data',
-      header: 'Details',
-      enableColumnFilter: false,
-    }, {
       key: 'tot_prin_due',
       header: 'Total Principle Due',
+      isHeaderDisplay: false,
       enableColumnFilter: false,
     }, {
       key: 'tot_prin_overdue',
       header: 'Total Principle Overdue',
+      isHeaderDisplay: false,
       enableColumnFilter: false,
     }, {
       key: 'tot_int_overdue',
       header: 'Total Interest Overdue',
+      isHeaderDisplay: false,
       enableColumnFilter: false,
     }, {
       key: 'tot_penal_overdue',
       header: 'Total Penal Overdue',
+      isHeaderDisplay: false,
       enableColumnFilter: false,
     },
   ]

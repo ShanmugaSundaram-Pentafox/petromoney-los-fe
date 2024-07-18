@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { URL } from '../config/serverUrls'
 import apiCall from '../utils/api.util'
 
@@ -340,11 +341,13 @@ export const getCollectionRemark = () => {
   })
 }
 
-export const getCollectionRemarkData = (data) => {
+export const getCollectionRemarkData = ({ search, dateObj, download = false, page = 1 }) => {
   let qry = []
   let apiUrl = 'loan/collection/remarks';
-  if (data?.type == 'id') qry.push(`dealership_id=${data?.value}`)
-  if (data?.type === 'name') qry.push(`dealership_name=${data?.value}`)
+  if (page) qry.push(`page=${page}`)
+  if (search) qry.push(`search=${search}`)
+  if (download) qry.push('download_csv=yes')
+  if (dateObj?.from) qry.push(`from_date=${moment(dateObj?.from).format('YYYY-MM-DD')}&to_date=${moment(dateObj?.to).format('YYYY-MM-DD')}`)
   if (qry.length) apiUrl += '?' + qry.join('&')
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)

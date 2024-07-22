@@ -83,7 +83,7 @@ const CollectionRemarks = () => {
       },
     }
   ]
-  console.log(selectedCollectionRemarks);
+
   return (
     <div>
       <DataTableViewer

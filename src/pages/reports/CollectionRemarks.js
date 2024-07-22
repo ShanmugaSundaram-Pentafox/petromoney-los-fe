@@ -75,7 +75,7 @@ const CollectionRemarks = () => {
                     whiteSpace: 'nowrap',
                     color: '#228be6',
                     cursor: 'pointer',
-                  }} onClick={() => setSelectedCollectionRemarks({ modal: true, data: remark, totalData: row?.original })}>{remark.prospectcode + '-' + remark.loan_status}</div>
+                  }} onClick={() => setSelectedCollectionRemarks({ modal: true, data: remark, totalData: row?.original })}>{remark.prospectcode + '-' + remark.loan_status + '-' + remark.dpd}</div>
                 </div>
               )
             })
@@ -121,7 +121,7 @@ const CollectionRemarks = () => {
                 <Text>Customer Name:</Text>
                 <Text fw={600}>{selectedCollectionRemarks?.totalData?.applicant_name}</Text>
               </Group>
-              <Group>
+              <Group mt={'sm'}>
                 <Text>DPD Days</Text>
                 <Text fw={600}>{selectedCollectionRemarks?.data?.dpd}</Text>
               </Group>

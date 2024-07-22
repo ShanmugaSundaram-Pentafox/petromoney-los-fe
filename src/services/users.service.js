@@ -346,16 +346,16 @@ export const getCollectionRemarkData = ({ search, dateObj, download = false, pag
   let apiUrl = 'loan/collection/remarks';
   if (page) qry.push(`page=${page}`)
   if (search) qry.push(`search=${search}`)
-  if (download) qry.push('download_csv=yes')
+  if (download) qry.push('download=yes')
   if (dateObj?.from) qry.push(`from_date=${moment(dateObj?.from).format('YYYY-MM-DD')}&to_date=${moment(dateObj?.to).format('YYYY-MM-DD')}`)
   if (qry.length) apiUrl += '?' + qry.join('&')
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data)
+      .then((res) => {
+        if (res?.status === 'SUCCESS') {
+          resolve(res)
         } else {
-          reject(message)
+          reject(res?.message)
         }
       })
       .catch((e) => {

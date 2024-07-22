@@ -2,7 +2,6 @@ import { Drawer } from '@material-ui/core';
 import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query';
 import { CollectionRemarksDrawer } from './CollectionRemarksDrawer';
-import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getCollectionRemarkData } from '../../services/users.service';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
@@ -62,9 +61,6 @@ const CollectionRemarks = () => {
       key: 'cust_region',
       header: 'Region',
     }, {
-      key: 'omc',
-      header: 'OMC',
-    }, {
       key: 'action',
       header: 'Loan Details',
       cell: ({ row }) => {
@@ -79,54 +75,19 @@ const CollectionRemarks = () => {
                     whiteSpace: 'nowrap',
                     color: '#228be6',
                     cursor: 'pointer',
-                  }} onClick={() => setSelectedCollectionRemarks({ modal: true, data: remark })}>{remark.prospectcode + '-' + remark.dpd}</div>
+                  }} onClick={() => setSelectedCollectionRemarks({ modal: true, data: remark, totalData: row?.original })}>{remark.prospectcode + '-' + remark.loan_status}</div>
                 </div>
               )
             })
           )
       },
-    }, {
-      key: 'tot_disb_amt',
-      header: 'Total Disbursed Amount',
-      enableColumnFilter: false,
-      cell: (value) => <Currency value={value.getValue()} />
-    }, {
-      key: 'tot_due',
-      header: 'Total Due',
-      enableColumnFilter: false,
-      cell: (value) => <Currency value={value.getValue()} />
-    }, {
-      key: 'tot_overdue',
-      header: 'Total Overdue',
-      enableColumnFilter: false,
-      cell: (value) => <Currency value={value.getValue()} />
-    }, {
-      key: 'tot_prin_due',
-      header: 'Total Principle Due',
-      isHeaderDisplay: false,
-      enableColumnFilter: false,
-    }, {
-      key: 'tot_prin_overdue',
-      header: 'Total Principle Overdue',
-      isHeaderDisplay: false,
-      enableColumnFilter: false,
-    }, {
-      key: 'tot_int_overdue',
-      header: 'Total Interest Overdue',
-      isHeaderDisplay: false,
-      enableColumnFilter: false,
-    }, {
-      key: 'tot_penal_overdue',
-      header: 'Total Penal Overdue',
-      isHeaderDisplay: false,
-      enableColumnFilter: false,
-    },
+    }
   ]
-
+  console.log(selectedCollectionRemarks);
   return (
     <div>
       <DataTableViewer
-        rowData={testData}
+        rowData={testData?.data}
         title={'Remarks'}
         downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
         excelDownload
@@ -134,6 +95,7 @@ const CollectionRemarks = () => {
         loading={isFetching}
         page={page}
         setPage={setPage}
+        totalNoOfPages={testData?.total_pages}
         filter={false}
         onRowClick={i => { setRowData(i); setOpenModal(true) }}
         apiSearch={setSearch}
@@ -157,25 +119,13 @@ const CollectionRemarks = () => {
             <Grid.Col span={6}>
               <Group>
                 <Text>Customer Name:</Text>
-                <Text fw={600}>{selectedCollectionRemarks?.data?.collection_remarks?.[0]?.name}</Text>
-              </Group>
-              <Group mt={'sm'}>
-                <Text>Disbursed Date:</Text>
-                <Text fw={600}>{selectedCollectionRemarks?.data?.disb_date}</Text>
-              </Group>
-              <Group mt={'sm'}>
-                <Text>Due Date:</Text>
-                <Text fw={600}>{selectedCollectionRemarks?.data?.duedate}</Text>
+                <Text fw={600}>{selectedCollectionRemarks?.totalData?.applicant_name}</Text>
               </Group>
             </Grid.Col>
             <Grid.Col span={6}>
               <Group>
                 <Text>Prospect Code:</Text>
                 <Text fw={600}>{selectedCollectionRemarks?.data?.prospectcode}</Text>
-              </Group>
-              <Group mt={'sm'}>
-                <Text>Disbursed Amount:</Text>
-                <Text fw={600}>{selectedCollectionRemarks?.data?.disb_amt}</Text>
               </Group>
             </Grid.Col>
           </Grid>

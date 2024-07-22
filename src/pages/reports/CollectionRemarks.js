@@ -148,7 +148,7 @@ const CollectionRemarks = () => {
                   <Table.Td>{item?.last_modified_by_value}</Table.Td>
                   <Table.Td>{item?.created_date}</Table.Td>
                   <Table.Td>{item?.remarks_value}</Table.Td>
-                  <Table.Td>{moment(item?.ptp_date, 'DD-MM-YYYY').format('DD MMM YYYY')}</Table.Td>
+                  <Table.Td>{item?.ptp_date ? moment(item?.ptp_date, 'DD-MM-YYYY').format('DD MMM YYYY') : '-'}</Table.Td>
                 </Table.Tr>
               ))
               }

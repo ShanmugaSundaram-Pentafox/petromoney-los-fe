@@ -121,6 +121,10 @@ const CollectionRemarks = () => {
                 <Text>Customer Name:</Text>
                 <Text fw={600}>{selectedCollectionRemarks?.totalData?.applicant_name}</Text>
               </Group>
+              <Group>
+                <Text>DPD Days</Text>
+                <Text fw={600}>{selectedCollectionRemarks?.data?.dpd}</Text>
+              </Group>
             </Grid.Col>
             <Grid.Col span={6}>
               <Group>

@@ -43,7 +43,7 @@ const Filter = ({
         value={columnFilterValue}
         onChange={(e) => { column.setFilterValue(e) }}
         clearable
-        data={sortedUniqueValues?.filter(i => ![null,undefined]?.includes(i?.value)) || []}
+        data={sortedUniqueValues?.filter(i => ![null, undefined]?.includes(i?.value)) || []}
         maxDropdownHeight={200}
       />
     </>
@@ -150,113 +150,113 @@ const DataTableViewer = ({
               }
             </Group>
           </Text>
-          {(!loading && Array.isArray(rowData) && !rowData?.length && !search)
+          {/* {(!loading && Array.isArray(rowData) && !rowData?.length && !search)
             ? null
-            : (
-              <Box mr={'sm'}>
-                <Box style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
-                  <TextInput
-                    placeholder="Search"
-                    onChange={(e) => {
-                      setSearch(e.target.value);
-                      apiSearch && apiSearch(e.target.value)
-                      useAPIPagination && setPage(1)
-                    }}
-                    value={search}
-                    mx={0}
-                    size='xs'
-                    icon={<IconSearch size={16} />}
-                    rightSection={<IconX size={12} color={'#ccc'} style={{ cursor: 'pointer' }} onClick={() => { setSearch(''); apiSearch && apiSearch() }} />}
-                  />
-                  {columnsFilter
-                    ? <Tooltip
-                      label={<Text size={'xs'}>Manage Columns</Text>}
+            : ( */}
+          <Box mr={'sm'}>
+            <Box style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
+              <TextInput
+                placeholder="Search"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  apiSearch && apiSearch(e.target.value)
+                  useAPIPagination && setPage(1)
+                }}
+                value={search}
+                mx={0}
+                size='xs'
+                icon={<IconSearch size={16} />}
+                rightSection={<IconX size={12} color={'#ccc'} style={{ cursor: 'pointer' }} onClick={() => { setSearch(''); apiSearch && apiSearch() }} />}
+              />
+              {columnsFilter
+                ? <Tooltip
+                  label={<Text size={'xs'}>Manage Columns</Text>}
+                  color={'dark'}
+                  transitionProps={{ transition: 'pop', duration: 300 }}
+                  withArrow
+                  position='bottom'
+                >
+                  <ActionIcon size={'md'} variant='outline' onClick={open} color='gray.4'>
+                    <IconTableRow size={20} style={{ cursor: 'pointer' }} color='#4196f0' />
+                  </ActionIcon>
+                </Tooltip>
+                : null
+              }
+              {filter ?
+                <Popover
+                  opened={opened}
+                  onChange={setOpened}
+                  clickOutsideEvents={['mouseup']}
+                  position="left-start"
+                  withArrow
+                  shadow="md"
+                  styles={{
+                    dropdown: {
+                      boxShadow: 'rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px'
+                    }
+                  }}
+                >
+                  <Popover.Target>
+                    <Tooltip
+                      label={<Text size={'xs'}>Filter Rows</Text>}
                       color={'dark'}
                       transitionProps={{ transition: 'pop', duration: 300 }}
                       withArrow
                       position='bottom'
                     >
-                      <ActionIcon size={'md'} variant='outline' onClick={open} color='gray.4'>
-                        <IconTableRow size={20} style={{ cursor: 'pointer' }} color='#4196f0' />
+                      <ActionIcon size={'md'} variant='outline' color='gray.4'>
+                        <IconFilter size={20} onClick={() => setOpened(!opened)} color='#4196f0' />
                       </ActionIcon>
                     </Tooltip>
-                    : null
-                  }
-                  {filter ?
-                    <Popover
-                      opened={opened}
-                      onChange={setOpened}
-                      clickOutsideEvents={['mouseup']}
-                      position="left-start"
-                      withArrow
-                      shadow="md"
-                      styles={{
-                        dropdown: {
-                          boxShadow: 'rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px'
-                        }
-                      }}
-                    >
-                      <Popover.Target>
-                        <Tooltip
-                          label={<Text size={'xs'}>Filter Rows</Text>}
-                          color={'dark'}
-                          transitionProps={{ transition: 'pop', duration: 300 }}
-                          withArrow
-                          position='bottom'
-                        >
-                          <ActionIcon size={'md'} variant='outline' color='gray.4'>
-                            <IconFilter size={20} onClick={() => setOpened(!opened)} color='#4196f0' />
-                          </ActionIcon>
-                        </Tooltip>
-                      </Popover.Target>
-                      <Popover.Dropdown mr={'md'}>
-                        <Grid w={300} gutter={'sm'}>
-                          {filterHeader?.getHeaderGroups().map((headerGroup) => (headerGroup?.headers?.map((header) =>
-                            header.column.getCanFilter()
-                              ? (
-                                <Grid.Col span={6} key={header.id}>
-                                  <Filter column={header.column} table={filterHeader} />
-                                </Grid.Col>
-                              )
-                              : null
-                          )))}
-                        </Grid>
-                      </Popover.Dropdown>
-                    </Popover>
-                    : null
-                  }
-                  {excelDownload
-                    ? (<Tooltip
-                      label={<Text size={'xs'}>Download</Text>}
-                      color={'dark'}
-                      transitionProps={{ transition: 'pop', duration: 300 }}
-                      withArrow
-                      position='bottom'
-                    >
-                      <ActionIcon
-                        size={'md'}
-                        variant='outline'
-                        color='gray.4'
-                        loading={downloadQuery?.isLoading}
-                        onClick={() => {
-                          downloadQuery
-                            ? downloadQuery?.query()
-                            : saveAsCsv({
-                              data: rowData,
-                              fields: getCSVColumns,
-                              filename: title,
-                            })
-                        }}
-                      >
-                        <IconDownload size={20} color='#4196f0' />
-                      </ActionIcon>
-                    </Tooltip>)
-                    : null}
-                  {action ? action : null}
-                  {showAction ? showAction : null}
-                </Box>
-              </Box>
-            )}
+                  </Popover.Target>
+                  <Popover.Dropdown mr={'md'}>
+                    <Grid w={300} gutter={'sm'}>
+                      {filterHeader?.getHeaderGroups().map((headerGroup) => (headerGroup?.headers?.map((header) =>
+                        header.column.getCanFilter()
+                          ? (
+                            <Grid.Col span={6} key={header.id}>
+                              <Filter column={header.column} table={filterHeader} />
+                            </Grid.Col>
+                          )
+                          : null
+                      )))}
+                    </Grid>
+                  </Popover.Dropdown>
+                </Popover>
+                : null
+              }
+              {excelDownload
+                ? (<Tooltip
+                  label={<Text size={'xs'}>Download</Text>}
+                  color={'dark'}
+                  transitionProps={{ transition: 'pop', duration: 300 }}
+                  withArrow
+                  position='bottom'
+                >
+                  <ActionIcon
+                    size={'md'}
+                    variant='outline'
+                    color='gray.4'
+                    loading={downloadQuery?.isLoading}
+                    onClick={() => {
+                      downloadQuery
+                        ? downloadQuery?.query()
+                        : saveAsCsv({
+                          data: rowData,
+                          fields: getCSVColumns,
+                          filename: title,
+                        })
+                    }}
+                  >
+                    <IconDownload size={20} color='#4196f0' />
+                  </ActionIcon>
+                </Tooltip>)
+                : null}
+              {action ? action : null}
+              {showAction ? showAction : null}
+            </Box>
+          </Box>
+          {/* )} */}
           {(!loading && Array.isArray(rowData) && !rowData?.length && showAction) ? showAction : null}
         </Group>
       </Box >

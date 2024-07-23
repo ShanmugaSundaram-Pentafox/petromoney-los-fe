@@ -1,4 +1,4 @@
-import { subDays, format } from 'date-fns'
+import { subDays, format, differenceInDays } from 'date-fns'
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-date-range';
 import { useQuery } from 'react-query';
@@ -7,6 +7,8 @@ import { filterStyles, Selector } from '../../../components/CommonComponents/Fil
 import { getAllRegions, getFilteredProducts, getZones } from '../../../services/common.service';
 import { getLoanStats } from '../../../services/loans.service';
 import { Box, Button, Popover, Tooltip } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import SupportContactModal from '../../../components/CommonComponents/SupportContactModal/SupportContactModal';
 
 
 
@@ -17,9 +19,13 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
   const [selectedRegion, setSelectedRegion] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
-  const [selectedPeriodType, setSelectedPeriodType] = useState(type == 'credit' ? 'W' : 'UTD');
-  const [selectedPeriod, setSelectedPeriod] = useState({});
+  const [selectedPeriodType, setSelectedPeriodType] = useState(type == 'credit' ? 'M' : 'M');
+  const [selectedPeriod, setSelectedPeriod] = useState({
+    from: new Date(new Date().getFullYear(), new Date().getMonth()),
+    to: new Date(),
+  });
   const [showPicker, setShowPicker] = useState();
+  const [opened, { open, close }] = useDisclosure(false);
   const [dateRange, setDateRange] = useState({
     startDate: subDays(new Date(), 8),
     endDate: new Date(),
@@ -38,42 +44,42 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
     let month = today.getMonth(); // to get the current month if it is with January being 0 and December being 11. 
     setSelectedPeriodType(type)
     switch (type) {
-      case 'D':
-        setSelectedPeriod({
-          from: today,
+    case 'D':
+      setSelectedPeriod({
+        from: today,
 
 
 
-          to: today,
-        })
-        break;
-      case 'W':
-        setSelectedPeriod({
-          from: subDays(today, 8),
-          to: today,
-        })
-        break;
-      case 'M':
-        setSelectedPeriod({
-          from: new Date(year, month),
-          to: new Date(),
-        })
-        break;
-      case 'Y':
-        year = month < 3 ? year - 1 : year // if the user choose YTD from the month between JAN to March the period is set from the previous year APR month.
-        setSelectedPeriod({
-          from: new Date(year, 3),
-          to: new Date(),
-        })
-        break;
-      case 'UTD':
-        setSelectedPeriod({})
-        break;
-      case 'Custom':
-        setShowPicker(true)
-        break;
-      default:
-        break;
+        to: today,
+      })
+      break;
+    case 'W':
+      setSelectedPeriod({
+        from: subDays(today, 8),
+        to: today,
+      })
+      break;
+    case 'M':
+      setSelectedPeriod({
+        from: new Date(year, month),
+        to: new Date(),
+      })
+      break;
+    case 'Y':
+      year = month < 3 ? year - 1 : year // if the user choose YTD from the month between JAN to March the period is set from the previous year APR month.
+      setSelectedPeriod({
+        from: new Date(year, 3),
+        to: new Date(),
+      })
+      break;
+    case 'UTD':
+      setSelectedPeriod({})
+      break;
+    case 'Custom':
+      setShowPicker(true)
+      break;
+    default:
+      break;
     }
   }
 
@@ -148,10 +154,15 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
   }
 
   const onDateRangeClose = () => {
-    setSelectedPeriod({
-      from: dateRange.startDate,
-      to: dateRange.endDate,
-    });
+    if (differenceInDays(new Date(), dateRange.startDate) <= 90) {
+      setSelectedPeriod({
+        from: dateRange.startDate,
+        to: dateRange.endDate,
+      });
+    }
+    else {
+      open();
+    }
     setShowPicker(false);
   }
 
@@ -161,66 +172,66 @@ const DashboardFilter = ({ filterQry, setChartData, type, setTotalLoans, filterT
         <Box style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
           {
             filters.includes('zone') &&
-            <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
+              <Selector title="Zone" options={zones} value={selectedZones} setValue={setSelectedZones} />
           }
           {
             filters.includes('region') &&
-            <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
+              <Selector title="Region" options={regions} value={selectedRegion} setValue={setSelectedRegion} />
           }
           {
             filters.includes('product') &&
-            <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
+              <Selector title="Product" options={products} value={selectedProducts} setValue={setSelectedProducts} />
           }
         </Box>
         {
           filters.includes('period') &&
-          <Box>
-            <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
-            <div className={classes.filterWrapper}>
-              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
-              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-              <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
-              <Tooltip label='Up to Date' withArrow color='gray'>
-                <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
-              </Tooltip>
-              <Popover
-                opened={showPicker}
-                onClose={onDateRangeClose}
-                position='bottom-end'
-                withArrow
-              >
-                <Popover.Target>
-                  <Tooltip withArrow color='gray' label='Choose custom dates'>
-                    <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
-                      {
-                        selectedPeriodType === 'Custom' ? (
-                          `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
-                        ) : 'Custom'
-                      }
-                    </div>
-                  </Tooltip>
-                </Popover.Target>
-                <Popover.Dropdown>
-                  <DateRange
-                    ranges={[dateRange]}
-                    onChange={onDatePickerChange}
-                    maxDate={new Date()}
-                    months={2}
-                    direction="horizontal"
-                    minDate={subDays(new Date(), 1095)}
-                  />
-                  <Box >
-                    <Button onClick={onDateRangeClose}>
-                      Apply
-                    </Button>
-                  </Box>
-                </Popover.Dropdown>
-              </Popover>
-            </div>
-          </Box>
+            <Box>
+              <label style={{ color: 'hsl(0,0%,75%)' }}>Period</label>
+              <div className={classes.filterWrapper}>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
+                <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
+                <Tooltip label='Up to Date' withArrow color='gray'>
+                  <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
+                </Tooltip>
+                <Popover
+                  opened={showPicker}
+                  onClose={onDateRangeClose}
+                  position='bottom-end'
+                  withArrow
+                >
+                  <Popover.Target>
+                    <Tooltip withArrow color='gray' label='Choose custom dates'>
+                      <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
+                        {
+                          selectedPeriodType === 'Custom' ? (
+                            `${format(dateRange?.startDate, 'dd-MM-yyyy')} to ${format(dateRange?.endDate || new Date(), 'dd-MM-yyyy')}`
+                          ) : 'Custom'
+                        }
+                      </div>
+                    </Tooltip>
+                  </Popover.Target>
+                  <Popover.Dropdown>
+                    <DateRange
+                      ranges={[dateRange]}
+                      onChange={onDatePickerChange}
+                      maxDate={new Date()}
+                      months={2}
+                      direction="horizontal"
+                    />
+                    <Box >
+                      <Button onClick={onDateRangeClose}>
+                        Apply
+                      </Button>
+                    </Box>
+                  </Popover.Dropdown>
+                </Popover>
+              </div>
+            </Box>
         }
       </Box>
+      <SupportContactModal opened={opened} onClose={close} />
     </Box>
   )
 }

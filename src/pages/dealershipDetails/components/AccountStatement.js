@@ -2,7 +2,7 @@ import { Popover, Tooltip, Typography } from '@material-ui/core';
 import DialogContent from '@material-ui/core/DialogContent';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
-import { format, subDays } from 'date-fns';
+import { differenceInDays, format, subDays } from 'date-fns';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { DateRange } from 'react-date-range';
@@ -13,6 +13,8 @@ import FormDialog from '../../../components/CommonComponents/FormDialog/FormDial
 import usePageTitle from '../../../hooks/usePageTitle';
 import { getSignedUrl } from '../../../services/common.service';
 import { downloadAccountStatement } from '../../../services/dealerships.service';
+import SupportContactModal from '../../../components/CommonComponents/SupportContactModal/SupportContactModal';
+import { useDisclosure } from '@mantine/hooks';
 
 
 const useStyles = makeStyles(theme => ({
@@ -106,8 +108,12 @@ const AccountStatement = ({ id, currentUser }) => {
   const [loading, setLoading] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const [selectedPeriodType, setSelectedPeriodType] = useState();
-  const [selectedPeriod, setSelectedPeriod] = useState({});
+  const [selectedPeriod, setSelectedPeriod] = useState({
+    from: new Date(new Date().getFullYear(), new Date().getMonth()),
+    to: new Date(),
+  });
   const [showPicker, setShowPicker] = useState();
+  const [opened, { open, close }] = useDisclosure(false);
   const [dateRange, setDateRange] = useState({
     startDate: subDays(new Date(), 8),
     endDate: new Date(),
@@ -120,40 +126,45 @@ const AccountStatement = ({ id, currentUser }) => {
   }
 
   const onDateRangeClose = () => {
-    setSelectedPeriod({
-      from: format(dateRange.startDate, 'dd-MM-yyyy'),
-      to: format(dateRange.endDate, 'dd-MM-yyyy'),
-    });
-    setShowPicker();
+    if (differenceInDays(new Date(), dateRange.startDate) <= 90) {
+      setSelectedPeriod({
+        from: format(dateRange.startDate, 'dd-MM-yyyy'),
+        to: format(dateRange.endDate, 'dd-MM-yyyy'),
+      });
+    }
+    else {
+      open();
+    }
+    setShowPicker(false);
   }
 
   const onDateChange = type => (event) => {
     setSelectedPeriodType(type)
     switch (type) {
     case 'PFY':
-      if(new Date().getMonth() + 1 <= 3){
+      if (new Date().getMonth() + 1 <= 3) {
         setSelectedPeriod({
-          from: `01-04-${new Date().getFullYear()-2}`,
-          to: `31-03-${new Date().getFullYear()-1}`,
+          from: `01-04-${new Date().getFullYear() - 2}`,
+          to: `31-03-${new Date().getFullYear() - 1}`,
         })
       } else {
         setSelectedPeriod({
-          from: `01-04-${new Date().getFullYear()-1}`,
+          from: `01-04-${new Date().getFullYear() - 1}`,
           to: `31-03-${new Date().getFullYear()}`,
-        }) 
+        })
       }
       break;
     case 'CFY':
-      if(new Date().getMonth() + 1 <= 3){
+      if (new Date().getMonth() + 1 <= 3) {
         setSelectedPeriod({
-          from: `01-04-${new Date().getFullYear()-1}`,
+          from: `01-04-${new Date().getFullYear() - 1}`,
           to: format(new Date(), 'dd-MM-yyyy'),
         })
       } else {
         setSelectedPeriod({
           from: `01-04-${new Date().getFullYear()}`,
           to: format(new Date(), 'dd-MM-yyyy'),
-        }) 
+        })
       }
       break;
     case 'Custom':
@@ -213,19 +224,17 @@ const AccountStatement = ({ id, currentUser }) => {
   return (
     <>
       <Typography variant='h4' style={{ marginTop: 4, marginBottom: 12 }}>Account statement</Typography>
-      <Grid container spacing={2} style={{marginLeft: 1, marginTop: 8, marginBottom: 8}}>
+      <Grid container spacing={2} style={{ marginLeft: 1, marginTop: 8, marginBottom: 8 }}>
         <div className={classes.filterWrapper}>
           <div
-            className={`${classes.filterItem} ${
-              selectedPeriodType === 'PFY' && 'active'
+            className={`${classes.filterItem} ${selectedPeriodType === 'PFY' && 'active'
             }`}
             onClick={onDateChange('PFY')}
           >
             Previous Financial Year
           </div>
           <div
-            className={`${classes.filterItem} ${
-              selectedPeriodType === 'CFY' && 'active'
+            className={`${classes.filterItem} ${selectedPeriodType === 'CFY' && 'active'
             }`}
             onClick={onDateChange('CFY')}
           >
@@ -261,10 +270,9 @@ const AccountStatement = ({ id, currentUser }) => {
             maxDate={new Date()}
             months={2}
             direction="horizontal"
-            minDate={subDays(new Date(), 1095)}
           />
           <Box p={1} textAlign='right'>
-            <Button variant="contained" color="primary" 
+            <Button variant="contained" color="primary"
               onClick={onDateRangeClose}
             >
               Apply
@@ -273,7 +281,7 @@ const AccountStatement = ({ id, currentUser }) => {
         </Popover>
       </Grid>
       <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 8 }}>
-        <LoaderButton 
+        <LoaderButton
           variant='contained'
           color='primary'
           size='small'
@@ -281,7 +289,7 @@ const AccountStatement = ({ id, currentUser }) => {
           isLoading={loading}
           loadingText='Loading...'
           onClick={handleDownload}
-          style={{marginTop: 8}}
+          style={{ marginTop: 8 }}
         >Get statement</LoaderButton>
       </div>
       <FormDialog
@@ -295,6 +303,7 @@ const AccountStatement = ({ id, currentUser }) => {
           </DialogContent>
         </div>
       </FormDialog>
+      <SupportContactModal opened={opened} onClose={close} />
     </>
   )
 }

@@ -3,7 +3,7 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import PublishIcon from '@material-ui/icons/Publish';
 import ShareIcon from '@material-ui/icons/Share';
 import { makeStyles } from '@material-ui/styles';
-import { subDays, format } from 'date-fns';
+import { subDays, format, differenceInDays } from 'date-fns';
 import MUIDataTable from 'mui-datatables';
 import { useSnackbar } from 'notistack';
 import React, { useMemo, useState, useEffect } from 'react';
@@ -18,6 +18,8 @@ import { rulesList } from '../../../config/userRules';
 // import usePageTitle from '../../../hooks/usePageTitle';
 import apiCall from '../../../utils/api.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import SupportContactModal from '../../../components/CommonComponents/SupportContactModal/SupportContactModal';
+import { useDisclosure } from '@mantine/hooks';
 
 
 const useStyles = makeStyles({
@@ -135,6 +137,7 @@ function FastTagPassbook({ currentUser }) {
   const [amount, setAmount] = useState();
   const [shareModal, setShareModal] = useState(false);
   const [shareLoading, setShareLoading] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
   const [selectedPeriod, setSelectedPeriod] = useState({
     from: new Date(),
     to: new Date(),
@@ -482,11 +485,16 @@ function FastTagPassbook({ currentUser }) {
   };
 
   const onDateRangeClose = () => {
-    setSelectedPeriod({
-      from: dateRange.startDate,
-      to: dateRange.endDate,
-    });
-    setShowPicker();
+    if (differenceInDays(new Date(), dateRange.startDate) <= 90) {
+      setSelectedPeriod({
+        from: dateRange.startDate,
+        to: dateRange.endDate,
+      });
+    }
+    else {
+      open();
+    }
+    setShowPicker(false);
   }
 
   const onDatePickerChange = ({ range }) => {
@@ -581,7 +589,6 @@ function FastTagPassbook({ currentUser }) {
               maxDate={new Date()}
               months={2}
               direction="horizontal"
-              minDate={subDays(new Date(), 1095)}
             />
             <Box p={1} textAlign='right'>
               <Button variant="contained" color="primary" onClick={onDateRangeClose}>
@@ -727,6 +734,7 @@ function FastTagPassbook({ currentUser }) {
         </DialogActions>
 
       </Dialog>
+      <SupportContactModal opened={opened} onClose={close}/>
     </>
   );
 }

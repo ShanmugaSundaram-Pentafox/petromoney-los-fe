@@ -1,47 +1,52 @@
-import { Drawer, TextField, IconButton, Tooltip, Box, Typography, makeStyles } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import SearchIcon from '@material-ui/icons/Search';
-import React, { useState } from 'react'
+import { Drawer } from '@material-ui/core';
+import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query';
-import Select from 'react-select'
 import { CollectionRemarksDrawer } from './CollectionRemarksDrawer';
-import Currency from '../../components/Number/Currency';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getCollectionRemarkData } from '../../services/users.service';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
-
-
-const useStyles = makeStyles((theme) => ({
-  number: {
-    backgroundColor: 'white',
-    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0,
-    }
-  },
-  input: {
-    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
-      '-webkit-appearance': 'none',
-      margin: 0,
-    }
-  },
-}))
-
-
+import { Grid, Group, Modal, Table, Text } from '@mantine/core';
+import moment from 'moment';
+import DateFilter from '../../components/CommonComponents/DateFilter/DateFilter';
+import { useDebouncedState } from '@mantine/hooks';
+import { getSignedUrl } from '../../services/common.service';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const CollectionRemarks = () => {
   usePageTitle('Collection Remarks');
   const [rowData, setRowData] = useState()
   const [openModal, setOpenModal] = useState(false)
-  const [searchValue, setSearchValue] = useState({
-    value: '',
-    type: 'name'
+  const [search, setSearch] = useDebouncedState('', 500);
+  const [dateObj, setDateObj] = useState({ from: new Date(), to: new Date() });
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [page, setPage] = useState(1)
+  const [selectedCollectionRemarks, setSelectedCollectionRemarks] = useState({ modal: false, data: [] })
+  const { data: testData = [], isFetching } = useQuery(['remark-Data', search, dateObj, page], () => getCollectionRemarkData({ search, dateObj, page }), {
+    refetchOnWindowFocus: false
   });
-  const [searchData, setSearchData] = useState();
-  const [error, setError] = useState()
-  const classes = useStyles();
-  const filterOption = [{ value: 'name', label: 'Dealership Name' }, { value: 'id', label: 'Dealership ID' }];
-  const { data: testData = [], isFetching } = useQuery(['remark-Data', searchData], () => getCollectionRemarkData(searchData), { refetchOnWindowFocus: false, enabled: searchData ? true : false });
+  useEffect(() => {
+    page != 1 && setPage(1)
+  }, [search])
+
+  const downloadReport = () => {
+    setDownloadLoading(true)
+    getCollectionRemarkData({ search, dateObj, download: true })
+      .then((res) => {
+        getSignedUrl(res?.data)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e => {
+            displayNotification({
+              message: e?.message || e,
+              variant: 'error',
+            })
+          })
+          .finally(() => {
+            setDownloadLoading(false);
+          })
+      })
+  }
 
   const column = [
     {
@@ -56,118 +61,49 @@ const CollectionRemarks = () => {
       key: 'cust_region',
       header: 'Region',
     }, {
-      key: 'omc',
-      header: 'OMC',
-    }, {
-      key: 'tot_disb_amt',
-      header: 'Total Disbursed Amount',
-      enableColumnFilter: false,
-      cell: (value) => <Currency value={value.getValue()} />
-    }, {
-      key: 'tot_due',
-      header: 'Total Due',
-      enableColumnFilter: false,
-      cell: (value) => <Currency value={value.getValue()} />
-    }, {
-      key: 'tot_overdue',
-      header: 'Total Overdue',
-      enableColumnFilter: false,
-      cell: (value) => <Currency value={value.getValue()} />
-    }, {
-      key: 'tot_prin_due',
-      header: 'Total Principle Due',
-      isHeaderDisplay: false,
-      enableColumnFilter: false,
-    }, {
-      key: 'tot_prin_overdue',
-      header: 'Total Principle Overdue',
-      isHeaderDisplay: false,
-      enableColumnFilter: false,
-    }, {
-      key: 'tot_int_overdue',
-      header: 'Total Interest Overdue',
-      isHeaderDisplay: false,
-      enableColumnFilter: false,
-    }, {
-      key: 'tot_penal_overdue',
-      header: 'Total Penal Overdue',
-      isHeaderDisplay: false,
-      enableColumnFilter: false,
-    },
+      key: 'action',
+      header: 'Loan Details',
+      cell: ({ row }) => {
+        if (row?.original?.loan_data)
+          return (
+            row?.original?.loan_data?.map((remark, i) => {
+              return (
+                <div style={{
+                  marginTop: 4
+                }} key={i}>
+                  <div style={{
+                    whiteSpace: 'nowrap',
+                    color: '#228be6',
+                    cursor: 'pointer',
+                  }} onClick={() => setSelectedCollectionRemarks({ modal: true, data: remark, totalData: row?.original })}>{remark.prospectcode + '-' + remark.loan_status + '-' + remark.dpd}</div>
+                </div>
+              )
+            })
+          )
+      },
+    }
   ]
 
-  const onChangeSearch = () => {
-    if (searchValue?.value) {
-      setSearchData({ ...searchValue })
-    } else {
-      setError('Enter dealership ID/Name to search')
-    }
-
-  }
-  const options = {
-    selectableRowsHeader: false,
-    selectableRows: 'none',
-    rowsPerPage: 15,
-    filter: false,
-    download: false,
-    search: false,
-    viewColumns: false,
-    print: false,
-    rowsPerPageOptions: [15, 20, 30],
-    onRowClick: (value) => {
-      setRowData(value)
-      setOpenModal(true)
-    },
-  };
   return (
     <div>
-      <Box p={3} borderRadius={4} bgcolor="background.paper" style={{ padding: 10, marginBottom: 20 }}>
-        <Typography variant='h6'>Search by</Typography>
-        <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', maxWidth: '50vw' }}>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ flex: 1, marginRight: 10 }}>
-              <Select
-                className="basic-single"
-                classNamePrefix="select"
-                defaultValue={filterOption[0]}
-                onChange={(e) => setSearchValue({ ...searchValue, type: e?.value })}
-                options={filterOption}
-              />
-            </div>
-            {
-              searchValue?.type && (
-                <TextField
-                  label={(searchValue?.type == 'id') ? 'Enter dealership ID' : 'Enter dealership name'}
-                  type={(searchValue?.type == 'id') ? 'number' : 'string'}
-                  value={searchValue?.value}
-                  error={error}
-                  helperText={error}
-                  onChange={(e) => setSearchValue({ ...searchValue, value: e?.target?.value })}
-                  style={{ width: '60%' }}
-                  className={classes.number}
-                />
-              )
-            }
-          </div>
-          <div style={{ marginTop: 10 }}>
-            <Tooltip title='Search'>
-              <IconButton onClick={onChangeSearch} size='small'>
-                <SearchIcon />
-              </IconButton>
-            </Tooltip>
-            <IconButton onClick={() => { setSearchValue({ type: 'name', value: '' }); setSearchData(); setError('') }} style={{ marginLeft: 10 }} size='small'>
-              <CloseIcon />
-            </IconButton>
-          </div>
-        </div >
-
-      </Box>
       <DataTableViewer
-        rowData={testData}
+        rowData={testData?.data}
         title={'Remarks'}
+        downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
+        excelDownload
         column={column}
         loading={isFetching}
+        page={page}
+        setPage={setPage}
+        totalNoOfPages={testData?.total_pages}
+        filter={false}
         onRowClick={i => { setRowData(i); setOpenModal(true) }}
+        apiSearch={setSearch}
+        useAPIPagination
+        action={
+          <Group justify='flex-end'>
+            <DateFilter filterObj={setDateObj} />
+          </Group>}
       />
       <Drawer
         anchor="right"
@@ -177,6 +113,49 @@ const CollectionRemarks = () => {
       >
         <CollectionRemarksDrawer callback={() => setOpenModal(false)} rowData={rowData} />
       </Drawer>
+      <Modal size={'lg'} opened={selectedCollectionRemarks?.modal} title='Collection Remarks' onClose={() => setSelectedCollectionRemarks({ modal: false, data: [] })}>
+        <>
+          <Grid>
+            <Grid.Col span={6}>
+              <Group>
+                <Text>Customer Name:</Text>
+                <Text fw={600}>{selectedCollectionRemarks?.totalData?.applicant_name}</Text>
+              </Group>
+              <Group mt={'sm'}>
+                <Text>DPD Days</Text>
+                <Text fw={600}>{selectedCollectionRemarks?.data?.dpd}</Text>
+              </Group>
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Group>
+                <Text>Prospect Code:</Text>
+                <Text fw={600}>{selectedCollectionRemarks?.data?.prospectcode}</Text>
+              </Group>
+            </Grid.Col>
+          </Grid>
+          <Table mt={'md'} striped highlightOnHover style={{ fontSize: 12 }}>
+            <Table.Thead>
+              <Table.Tr>
+                <Table.Th>Created By</Table.Th>
+                <Table.Th>Created Date</Table.Th>
+                <Table.Th>Remarks</Table.Th>
+                <Table.Th>PTP Date</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {selectedCollectionRemarks?.data?.collection_remarks?.map((item, index) => (
+                <Table.Tr key={index}>
+                  <Table.Td>{item?.last_modified_by_value}</Table.Td>
+                  <Table.Td>{item?.created_date}</Table.Td>
+                  <Table.Td>{item?.remarks_value}</Table.Td>
+                  <Table.Td>{item?.ptp_date ? moment(item?.ptp_date, 'DD-MM-YYYY').format('DD MMM YYYY') : '-'}</Table.Td>
+                </Table.Tr>
+              ))
+              }
+            </Table.Tbody>
+          </Table>
+        </>
+      </Modal>
     </div>
   )
 }

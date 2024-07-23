@@ -77,16 +77,6 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
         to: new Date(),
       })
       break;
-    case 'Y':
-      year = month < 3 ? year - 1 : year // if the user choose YTD from the month between JAN to March the period is set from the previous year APR month.
-      setSelectedPeriod({
-        from: new Date(year, 3),
-        to: new Date(),
-      })
-      break;
-    case 'UTD':
-      setSelectedPeriod({})
-      break;
     case 'Custom':
       setShowPicker(event.currentTarget)
       break;
@@ -225,10 +215,6 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'Y' && 'active'}`} onClick={onDateChange('Y')} onKeyDown>YTD</div>
-                  <Tooltip title='Up to Date'>
-                    <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
-                  </Tooltip>
                   <Tooltip title='Choose custom dates'>
                     <div className={`${classes.filterItem} ${selectedPeriodType === 'Custom' && 'active'}`} onClick={onDateChange('Custom')} onKeyDown>
                       {

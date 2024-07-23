@@ -57,15 +57,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
         to: new Date(),
       })
       break;
-    case 'M':
-      setSelectedPeriod({
-        from: new Date(new Date().getFullYear(), new Date().getMonth()),
-        to: new Date(),
-      })
-      break;
-    case 'UTD':
-      setSelectedPeriod({})
-      break;
     case 'Custom':
       setShowPicker(event.currentTarget)
       break;
@@ -210,10 +201,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                 <div className={classes.filterWrapper}>
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'D' && 'active'}`} onClick={onDateChange('D')} onKeyDown>Today</div>
                   <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'W' && 'active'}`} onClick={onDateChange('W')} onKeyDown>1W</div>
-                  <div role="button" className={`${classes.filterItem} ${selectedPeriodType === 'M' && 'active'}`} onClick={onDateChange('M')} onKeyDown>MTD</div>
-                  <Tooltip label='Up to Date' withArrow color='gray'>
-                    <div className={`${classes.filterItem} ${selectedPeriodType === 'UTD' && 'active'}`} onClick={onDateChange('UTD')} onKeyDown>UTD</div>
-                  </Tooltip>
                   <Popover
                     opened={Boolean(showPicker)}
                     onClose={onDateRangeClose}

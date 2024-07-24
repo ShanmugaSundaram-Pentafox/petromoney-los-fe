@@ -1,4 +1,4 @@
-import { subDays, format, isValid } from 'date-fns'
+import { subDays, format, isValid, differenceInDays } from 'date-fns'
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { DateRange } from 'react-date-range';
@@ -10,6 +10,8 @@ import { getAllRegions, getFilteredProducts, getSignedUrl, getZones } from '../.
 import CheckAllowed from '../../rbac/CheckAllowed';
 import { ActionIcon, Box, Button, Popover, TextInput, Tooltip } from '@mantine/core';
 import { IconDownload, IconSearch } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import SupportContactModal from '../../../components/CommonComponents/SupportContactModal/SupportContactModal';
 
 const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, filters, currentUser, handleDownload, fileData, downloadLoading, searchLoading }) => {
   const classes = filterStyles();
@@ -19,11 +21,15 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   const [selectedProducts, setSelectedProducts] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedZones, setSelectedZones] = useState([{ label: 'ALL', value: 0 }]);
   const [selectedType, setSelectedType] = useState(null)
-  const [selectedPeriodType, setSelectedPeriodType] = useState(filterType == 'processed' ? 'D' : 'UTD');
-  const [selectedPeriod, setSelectedPeriod] = useState(filterType == 'processed' ? { from: new Date(), to: new Date() } : null);
+  const [selectedPeriodType, setSelectedPeriodType] = useState(filterType == 'processed' ? 'D' : 'M');
+  const [selectedPeriod, setSelectedPeriod] = useState(filterType == 'processed' ? { from: new Date(), to: new Date() } : {
+    from: new Date(new Date().getFullYear(), new Date().getMonth()),
+    to: new Date(),
+  });
   const [showPicker, setShowPicker] = useState();
   const [selectedDealership, setSelectedDealership] = useState({});
   const { enqueueSnackbar } = useSnackbar();
+  const [opened, { open, close }] = useDisclosure(false);
   const [dateRange, setDateRange] = useState({
     startDate: subDays(new Date(), 8),
     endDate: new Date(),
@@ -118,11 +124,16 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedType, selectedDealership?.id])
 
   const onDateRangeClose = () => {
-    setSelectedPeriod({
-      from: dateRange.startDate,
-      to: dateRange.endDate,
-    });
-    setShowPicker();
+    if (differenceInDays(new Date(), dateRange.startDate) <= 90) {
+      setSelectedPeriod({
+        from: dateRange.startDate,
+        to: dateRange.endDate,
+      });
+    }
+    else {
+      open();
+    }
+    setShowPicker(false);
   }
   const handleSearch = () => {
     if (filterType == 'processed') {
@@ -223,7 +234,6 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
                         maxDate={new Date()}
                         months={2}
                         direction="horizontal"
-                        minDate={subDays(new Date(), 1095)}
                       />
                       <Box p={1} textAlign='right'>
                         <Button onClick={onDateRangeClose} fullWidth>
@@ -288,6 +298,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
           </Box>
           {/* </Group> */}
         </Box>
+        <SupportContactModal opened={opened} onClose={close} />
       </Box>
     </CheckAllowed >
   )

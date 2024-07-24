@@ -62,6 +62,7 @@ const Dashboard = ({ currentUser }) => {
   const [dealerDetail, setDealerDetail] = useState({});
   const [dealerChartData, setDealerChartData] = useState([]);
   const [filterQry, setFilterQry] = useState();
+  const [loading, setLoading] = useState(false);
 
   const handleClick = (name) => {
     setSelectedStatsCard(name)
@@ -132,6 +133,7 @@ const Dashboard = ({ currentUser }) => {
                 setTotalLoans={setTotalLoans}
                 filterType='Dashboard'
                 filters={['zone', 'region', 'product', 'period']}
+                setLoading = {setLoading}
               />
             </Grid.Col>
             <Grid.Col mt={'xs'}>
@@ -140,6 +142,7 @@ const Dashboard = ({ currentUser }) => {
                 handleClick={handleClick}
                 chartData={chartData}
                 totalLoans={totalLoans}
+                loading={loading}
               />
             </Grid.Col>
           </Grid>

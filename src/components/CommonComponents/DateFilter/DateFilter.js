@@ -108,7 +108,7 @@ const DateFilter = ({ filterObj }) => {
             />
             <Box >
               <Button onClick={onDateRangeClose}>
-                Apply
+                Appl
               </Button>
             </Box>
           </Popover.Dropdown>

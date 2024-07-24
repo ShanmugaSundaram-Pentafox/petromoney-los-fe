@@ -103,7 +103,7 @@ const DateFilter = ({ filterObj }) => {
               ranges={[dateRange]}
               onChange={onDatePickerChange}
               months={2}
-              direction="horizontal"
+              direction="horizontal" 
               minDate={subDays(new Date(), 1095)}
             />
             <Box >

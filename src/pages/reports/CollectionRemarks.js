@@ -1,7 +1,5 @@
-import { Drawer } from '@material-ui/core';
 import React, { useEffect, useState } from 'react'
 import { useQuery } from 'react-query';
-import { CollectionRemarksDrawer } from './CollectionRemarksDrawer';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getCollectionRemarkData } from '../../services/users.service';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
@@ -13,8 +11,6 @@ import { displayNotification } from '../../components/CommonComponents/Notificat
 
 const CollectionRemarks = () => {
   usePageTitle('Collection Remarks');
-  const [rowData, setRowData] = useState()
-  const [openModal, setOpenModal] = useState(false)
   const [search, setSearch] = useDebouncedState('', 500);
   const [dateObj, setDateObj] = useState({ from: new Date(), to: new Date() });
   const [downloadLoading, setDownloadLoading] = useState(false);
@@ -95,7 +91,7 @@ const CollectionRemarks = () => {
     <div>
       <DataTableViewer
         rowData={testData?.data}
-        title={'Remarks'}
+        title={'Collection Remarks'}
         downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
         excelDownload
         column={column}
@@ -104,7 +100,6 @@ const CollectionRemarks = () => {
         setPage={setPage}
         totalNoOfPages={testData?.total_pages}
         filter={false}
-        onRowClick={i => { setRowData(i); setOpenModal(true) }}
         apiSearch={setSearch}
         useAPIPagination
         action={
@@ -112,14 +107,6 @@ const CollectionRemarks = () => {
             <DateFilter filterObj={setDateObj} />
           </Group>}
       />
-      <Drawer
-        anchor="right"
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        variant="temporary"
-      >
-        <CollectionRemarksDrawer callback={() => setOpenModal(false)} rowData={rowData} />
-      </Drawer>
     </div>
   )
 }

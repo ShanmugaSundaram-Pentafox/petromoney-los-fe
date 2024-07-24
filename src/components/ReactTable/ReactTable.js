@@ -223,13 +223,11 @@ const ReactTable = ({
                           cell?.column?.id?.split('-')?.[1] != 'action' &&
                           (onRowClick(row?.original), event.stopPropagation());
                       }}
-                      style={{
-                        textAlign: cell.column.columnDef.header === 'DPD' ? 'right' : 'left',
-                      }}
                     >
-                      {cell.getValue() !== null
-                        ? flexRender(cell.column.columnDef.cell, cell.getContext())
-                        : '-'}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </Table.Td>
                   ))}
                   {row?.original?.reload_type === 'express' ? <><div style={{ ...classes.expressContainer }}></div><div style={{ ...classes.expressInner }}>EXP CRR</div></> : null}

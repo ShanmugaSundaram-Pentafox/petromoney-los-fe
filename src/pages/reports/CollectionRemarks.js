@@ -8,6 +8,7 @@ import DateFilter from '../../components/CommonComponents/DateFilter/DateFilter'
 import { useDebouncedState } from '@mantine/hooks';
 import { getSignedUrl } from '../../services/common.service';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
+import Currency from '../../components/Number/Currency';
 
 const CollectionRemarks = () => {
   usePageTitle('Collection Remarks');
@@ -63,6 +64,7 @@ const CollectionRemarks = () => {
     }, {
       key: 'dpd',
       header: 'DPD',
+      cell: (value) => <div style={{ textAlign: 'right' }}>{value?.getValue()}</div>
     }, {
       key: 'last_modified_by_value',
       header: 'Created By',
@@ -78,13 +80,15 @@ const CollectionRemarks = () => {
     }, {
       key: 'tranche_amount',
       header: 'Tranche Amount',
+      cell: (value) => <span><Currency value={value?.getValue()} /></span>
     }, {
       key: 'outstanding',
       header: 'Outstanding',
+      cell: (value) => <span><Currency value={value?.getValue()} /></span>
     }, {
       key: 'receipt_date',
       header: 'Receipt Date',
-    },    
+    },
   ]
 
   return (

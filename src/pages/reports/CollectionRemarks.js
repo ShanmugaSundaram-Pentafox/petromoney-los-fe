@@ -77,6 +77,7 @@ const CollectionRemarks = () => {
     }, {
       key: 'ptp_date',
       header: 'PTP Date',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
     }, {
       key: 'tranche_amount',
       header: 'Tranche Amount',
@@ -88,6 +89,8 @@ const CollectionRemarks = () => {
     }, {
       key: 'receipt_date',
       header: 'Receipt Date',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
+
     },
   ]
 

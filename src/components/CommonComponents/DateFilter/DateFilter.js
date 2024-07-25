@@ -102,7 +102,6 @@ const DateFilter = ({ filterObj }) => {
             <DateRange
               ranges={[dateRange]}
               onChange={onDatePickerChange}
-              maxDate={new Date()}
               months={2}
               direction="horizontal"
               minDate={subDays(new Date(), 1095)}

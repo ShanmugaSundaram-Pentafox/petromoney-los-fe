@@ -105,6 +105,9 @@ const NOCertificateRequestTable = ({ currentUser }) => {
       header: 'Applicant Code',
       enableColumnFilter: false,
     }, {
+      key: 'region',
+      header: 'Region',
+    }, {
       key: 'noc_type',
       header: 'Type'
     }, {

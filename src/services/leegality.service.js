@@ -43,9 +43,10 @@ export const getAllGuarantor = (dealerId) => {
 //         })
 //     });
 //   }
-export const getPdfContent = (loanId, dealerId, type) => {
+export const getPdfContent = (loanId, dealerId, type, date) => {
+  console.log(`date : ${date}`)
   return new Promise((resolve, reject) => {
-    apiCall(`loans/dealership/${dealerId}/loans/${loanId}/${type}`)
+    apiCall(`loans/dealership/${dealerId}/loans/${loanId}/${type}?date=${date}`)
       .then(({ status, file, message }) => {
         if (status === 'SUCCESS') {
           resolve(file);

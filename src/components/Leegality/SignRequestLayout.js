@@ -233,6 +233,8 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
         })
         .catch(err => {
           console.log(err)
+        }).finally(() => {
+          setDateValue(new Date())
         });
     }
     else {

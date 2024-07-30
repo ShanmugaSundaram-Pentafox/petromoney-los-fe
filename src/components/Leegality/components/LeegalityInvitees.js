@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import CardsCheckList from './CardsCheckList';
-import { Box, Grid, Text, Title } from '@mantine/core';
+import { Box, Grid, rem, Text, Title } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
+import { IconCalendar } from '@tabler/icons-react';
 
 const LeegalityInvitees = ({ dealers, applicants, guarantor, updateSelectedDealers, updateSelectedCoAppicants, updateSelectedGuarantors, dateValue, setDateValue }) => {
   const [localDateValue, setLocalDateValue] = useState(dateValue);
@@ -26,14 +27,16 @@ const LeegalityInvitees = ({ dealers, applicants, guarantor, updateSelectedDeale
     <Box style={{ width: '40%' }}>
       <Grid ml={'md'}>
         <Grid.Col>
-          <Text>Change Date</Text>
-        </Grid.Col>
-        <Grid.Col>
+          <Title order={4}>Date</Title>
           <DatePickerInput
+            style={{
+              width: 280, margin: 10, 
+            }}
             valueFormat="DD-MM-YYYY"
             value={dateValue}
             onChange={setDateValue}
-            placeholder="Date input"
+            placeholder="Pick Date"
+            rightSection={<IconCalendar style={{ width: rem(18), height: rem(18) }} stroke={1.5} />}
             popoverProps={{ zIndex: 10000 }}
 
           />

@@ -199,7 +199,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
       let apiUrl = `document/sign?date=${format(dateValue, 'yyyy-MM-dd')}`
       let qry = []
       if (reinitiate) { qry.push('reinitiate') }
-      if (qry?.length) apiUrl += '?' + qry.join('&')
+      if (qry?.length) apiUrl += '&' + qry.join('&')
 
       apiCall(apiUrl, {
         body: {

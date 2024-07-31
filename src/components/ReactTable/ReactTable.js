@@ -67,6 +67,7 @@ const ReactTable = ({
   apiSorting = false,
   isSortingRemoval = true,
   styles,
+  setFilteredData,
 }) => {
   const [data, setData] = useState([]);
   const [columnFilter, setColumnFilter] = useState([]);
@@ -108,6 +109,10 @@ const ReactTable = ({
     getPaginationRowModel: getPaginationRowModel(),
     enableSortingRemoval: isSortingRemoval,
   });
+
+  useEffect(() => {
+    setFilteredData(table.getFilteredRowModel().rows.map(row => row.original));
+  }, [table.getFilteredRowModel()]);
 
   useEffect(() => {
     if (rowData?.length) {

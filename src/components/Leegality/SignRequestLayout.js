@@ -338,6 +338,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
                                 guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')}
                                 productId={productId}
                                 type={type}
+                                dateValue={dateValue}
                               />
                             )
                           }

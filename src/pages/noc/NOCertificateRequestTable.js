@@ -71,7 +71,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         const parsedDate = parse(item?.issued_date || undefined, 'dd-MM-yyyy', new Date());
         return {
           ...item,
-          formated_date: format(parsedDate, 'dd MMM, yyyy'),
+          formated_date: format(parsedDate, 'dd MMM yyyy'),
         }
       });
       return d;
@@ -104,6 +104,9 @@ const NOCertificateRequestTable = ({ currentUser }) => {
       key: 'applicant_code',
       header: 'Applicant Code',
       enableColumnFilter: false,
+    }, {
+      key: 'region',
+      header: 'Region',
     }, {
       key: 'noc_type',
       header: 'Type'

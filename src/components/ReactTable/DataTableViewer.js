@@ -94,6 +94,7 @@ const DataTableViewer = ({
   //   saveTableData: store?.saveTableData,
   // }))
   const [filteredColumnData, setFilteredColumnData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
   const addCellKey = (filteredColumn, actualColumn) => {
     /** It searches for an element in the actualColumn array that has a header property equal to the current element in the filteredColumn array. */
@@ -242,7 +243,7 @@ const DataTableViewer = ({
                       downloadQuery
                         ? downloadQuery?.query()
                         : saveAsCsv({
-                          data: rowData,
+                          data: filteredData,
                           fields: getCSVColumns,
                           filename: title,
                         })
@@ -320,6 +321,7 @@ const DataTableViewer = ({
             setSortingValue={apiSorting ? setSorting : setSortingIn}
             allowSorting={allowSorting}
             sorting={apiSorting ? sorting : sortingIn}
+            setFilteredData={setFilteredData}
           />
         )
       }

@@ -124,7 +124,7 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
   }, [selectedRegion, selectedPeriod, filterQry, selectedProducts, selectedZones, selectedType, selectedDealership?.id])
 
   const onDateRangeClose = () => {
-    if (differenceInDays(new Date(), dateRange.startDate) <= 90) {
+    if (differenceInDays(dateRange.endDate, dateRange.startDate) <= 90) {
       setSelectedPeriod({
         from: dateRange.startDate,
         to: dateRange.endDate,

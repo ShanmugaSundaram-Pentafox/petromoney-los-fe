@@ -370,7 +370,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
           </div>
           {
             !loading && loansData?.document_id && !reinitiate ? null : hideSend ? null : (
-              <Button variant="contained" onClick={sendInvitees} color="primary">
+              <Button variant="contained" onClick={sendInvitees} color="primary" disabled={pdfLoading}>
                 Send
               </Button>
             )

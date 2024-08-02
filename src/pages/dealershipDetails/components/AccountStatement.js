@@ -126,7 +126,7 @@ const AccountStatement = ({ id, currentUser }) => {
   }
 
   const onDateRangeClose = () => {
-    if (differenceInDays(new Date(), dateRange.startDate) <= 90) {
+    if (differenceInDays(dateRange.endDate, dateRange.startDate) <= 90) {
       setSelectedPeriod({
         from: format(dateRange.startDate, 'dd-MM-yyyy'),
         to: format(dateRange.endDate, 'dd-MM-yyyy'),

@@ -69,20 +69,22 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
   }, [opened])
 
   useEffect(() => {
-    if (loanId) {
-      setLoading(true);
-      getLoanDocumentHistoryById(loanId, type, format(dateValue, 'yyyy-MM-dd'))
-        .then(res => {
-          setLoansData(res);
-          setSignedLetterUrl(res.sanction_url)
-          if (!res?.document_id || reinitiate) {
-            handleDataWithOutDocID()
-          }
-          setLoading(false);
-        })
-        .catch(err => {
-          setLoansData();
-        })
+    if (opened == true) {
+      if (loanId) {
+        setLoading(true);
+        getLoanDocumentHistoryById(loanId, type, format(dateValue, 'yyyy-MM-dd'))
+          .then(res => {
+            setLoansData(res);
+            setSignedLetterUrl(res.sanction_url)
+            if (!res?.document_id || reinitiate) {
+              handleDataWithOutDocID()
+            }
+            setLoading(false);
+          })
+          .catch(err => {
+            setLoansData();
+          })
+      }
     }
   }, [reinitiate, opened, dateValue]);
 

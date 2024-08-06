@@ -330,7 +330,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     className="cursor-pointer"
                     onClick={() => {
                       let temp_last_name = values?.last_name
-                      if (values?.last_name == null) {
+                      if (!values?.last_name) {
                         temp_last_name = ''
                       }
                       let full_name = (values?.first_name + ' ' + temp_last_name).trim();

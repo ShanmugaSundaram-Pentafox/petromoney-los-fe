@@ -329,15 +329,15 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                     component="span"
                     className="cursor-pointer"
                     onClick={() => {
-                      var temp_last_name
+                      let temp_last_name = null
                       if (values?.last_name == null) {
                         temp_last_name = ''
                       }
                       else {
                         temp_last_name = values?.last_name
                       }
-                      var full_name = values?.first_name+' '+ temp_last_name;
-                      var sum = full_name.trim().length
+                      let full_name = values?.first_name+' '+ temp_last_name;
+                      let sum = full_name?.trim().length
                       if (sum <= 2) {
                         displayNotification({ message: 'The name should be minimum 3 letters', variant: 'error' });
                       }

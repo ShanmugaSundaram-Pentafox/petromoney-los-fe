@@ -333,7 +333,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                       if (values?.last_name == null) {
                         temp_last_name = ''
                       }
-                      let full_name = values?.first_name + ' ' + temp_last_name.trim();
+                      let full_name = (values?.first_name + ' ' + temp_last_name).trim();
                       if (full_name.replace(/\s/g, '').length <= 2) {
                         displayNotification({ message: 'The name should be minimum 3 letters', variant: 'error' });
                         return;

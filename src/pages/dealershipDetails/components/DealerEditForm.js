@@ -23,6 +23,7 @@ import { deleteProfileDoc, getPincodeDetails } from '../../../services/dealers.s
 import { validateId } from '../../../services/dealerships.service';
 import { Box, Flex, Grid, Space, Switch, Text, Title } from '@mantine/core';
 import { TextInput as MantineTextInput } from '../../../components/Mantine/TextInput/TextInput';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 
 const useStyles = makeStyles({
@@ -327,7 +328,21 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   <Box
                     component="span"
                     className="cursor-pointer"
-                    onClick={() => handleValidate('aadhar', values?.aadhar, values?.first_name)}
+                    onClick={() => {
+                      if (values?.first_name.length <= 2) {
+                        var full_name = values?.first_name+' '+values?.last_name
+                        if (full_name.length <= 2) {
+                          displayNotification({ message: 'The name should be minimum 3 letters', variant: 'error' });
+                        }
+                        else {
+                          handleValidate('aadhar', values?.aadhar, full_name)
+                        }
+                      }
+                      else {
+                        handleValidate('aadhar', values?.aadhar, values?.first_name)
+                      }
+                    }
+                    }
                   >
                     <Text fz="xs" fw="600" c="indigo.5" span>Validate Aadhaar</Text>
                   </Box>

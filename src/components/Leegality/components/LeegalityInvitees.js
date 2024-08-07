@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CardsCheckList from './CardsCheckList';
 import { Box, Grid, rem, Text, Title } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { IconCalendar } from '@tabler/icons-react';
 
 const LeegalityInvitees = ({ dealers, applicants, guarantor, updateSelectedDealers, updateSelectedCoAppicants, updateSelectedGuarantors, dateValue, setDateValue }) => {
-  const [localDateValue, setLocalDateValue] = useState(dateValue);
 
   return (
     <Box style={{ width: '40%' }}>

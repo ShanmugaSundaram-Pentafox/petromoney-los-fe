@@ -6,22 +6,6 @@ import { IconCalendar } from '@tabler/icons-react';
 
 const LeegalityInvitees = ({ dealers, applicants, guarantor, updateSelectedDealers, updateSelectedCoAppicants, updateSelectedGuarantors, dateValue, setDateValue }) => {
   const [localDateValue, setLocalDateValue] = useState(dateValue);
-  // Handle date change in local state
-  const handleDateChange = (value) => {
-    setLocalDateValue(value);
-  };
-
-  // Handle blur event to update the actual date value
-  const handleDateBlur = () => {
-    setDateValue(localDateValue);
-  };
-
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      setDateValue(localDateValue);
-    }
-  };
-
 
   return (
     <Box style={{ width: '40%' }}>

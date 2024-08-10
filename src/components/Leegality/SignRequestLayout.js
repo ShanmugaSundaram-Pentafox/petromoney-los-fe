@@ -16,6 +16,7 @@ import apiCall from '../../utils/api.util';
 import { Box, Button, Grid, Group, Loader, Modal, NumberInput, Text } from '@mantine/core';
 import classes from './SignRequestLayout.module.css'
 import { displayNotification } from '../CommonComponents/Notification/displayNotification';
+import { format } from 'date-fns';
 
 const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId, loanId, callback, loanAmount, productId, currentUser, getStatus = false }) => {
   const [dealership, setDealership] = useState({})
@@ -36,6 +37,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
   const [resign, setResign] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const queryClient = useQueryClient();
+  const [dateValue, setDateValue] = useState(new Date());
 
   const getTrancheStatus = useQuery({
     queryKey: ['getTrancheStatus', dealershipId],
@@ -67,22 +69,24 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
   }, [opened])
 
   useEffect(() => {
-    if (loanId) {
-      setLoading(true);
-      getLoanDocumentHistoryById(loanId, type)
-        .then(res => {
-          setLoansData(res);
-          setSignedLetterUrl(res.sanction_url)
-          if (!res?.document_id || reinitiate) {
-            handleDataWithOutDocID()
-          }
-          setLoading(false);
-        })
-        .catch(err => {
-          setLoansData();
-        })
+    if (opened == true) {
+      if (loanId) {
+        setLoading(true);
+        getLoanDocumentHistoryById(loanId, type, format(dateValue, 'yyyy-MM-dd'))
+          .then(res => {
+            setLoansData(res);
+            setSignedLetterUrl(res.sanction_url)
+            if (!res?.document_id || reinitiate) {
+              handleDataWithOutDocID()
+            }
+            setLoading(false);
+          })
+          .catch(err => {
+            setLoansData();
+          })
+      }
     }
-  }, [reinitiate, opened]);
+  }, [reinitiate, opened, dateValue]);
 
   useEffect(() => {
     if (loansData?.document_id) {
@@ -102,7 +106,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
   const handleDataWithOutDocID = () => {
     if (['sanction', 'application'].includes(type)) {
       setPdfLoading(true)
-      getPdfContent(loanId, dealershipId, type)
+      getPdfContent(loanId, dealershipId, type ,format(dateValue, 'yyyy-MM-dd'))
         .then(res => {
           setPdfLoading(false)
           setPdfUrl(res);
@@ -194,10 +198,10 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
   const sendInvitees = () => {
     setHideSend(true);
     if (selectedDealers.length !== 0) {
-      let apiUrl = 'document/sign'
+      let apiUrl = `document/sign?date=${format(dateValue, 'yyyy-MM-dd')}`
       let qry = []
       if (reinitiate) { qry.push('reinitiate') }
-      if (qry?.length) apiUrl += '?' + qry.join('&')
+      if (qry?.length) apiUrl += '&' + qry.join('&')
 
       apiCall(apiUrl, {
         body: {
@@ -231,6 +235,8 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
         })
         .catch(err => {
           console.log(err)
+        }).finally(() => {
+          setDateValue(new Date())
         });
     }
     else {
@@ -282,7 +288,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
     <>
       <Modal
         opened={opened || false}
-        onClose={() => { onClose(); setPdfUrl(); setLoansData(); }}
+        onClose={() => { onClose(); setPdfUrl(); setLoansData(); setDateValue(new Date()) }}
         title={
           <Group gap={10}>
             {
@@ -334,10 +340,11 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
                                 guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')}
                                 productId={productId}
                                 type={type}
+                                dateValue={dateValue}
                               />
                             )
                           }
-                          <LeegalityInvitees dealers={applicants?.filter(item => item?.category === 'DEALER')} applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')} guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')} updateSelectedDealers={updateSelectedDealers} updateSelectedCoAppicants={updateSelectedCoAppicants} updateSelectedGuarantors={updateSelectedGuarantors} />
+                          <LeegalityInvitees dealers={applicants?.filter(item => item?.category === 'DEALER')} applicants={applicants?.filter(item => item?.category === 'COAPPLICANT')} guarantor={applicants?.filter(item => item?.category === 'GUARANTOR')} updateSelectedDealers={updateSelectedDealers} updateSelectedCoAppicants={updateSelectedCoAppicants} updateSelectedGuarantors={updateSelectedGuarantors} dateValue={dateValue} setDateValue={setDateValue}/>
                         </Grid>
                       ))
                 }
@@ -363,7 +370,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
           </div>
           {
             !loading && loansData?.document_id && !reinitiate ? null : hideSend ? null : (
-              <Button variant="contained" onClick={sendInvitees} color="primary">
+              <Button variant="contained" onClick={sendInvitees} color="primary" disabled={pdfLoading}>
                 Send
               </Button>
             )

@@ -10,7 +10,7 @@ import { ViewData } from '../../CommonComponents/FilePreview';
 import Currency from '../../Number/Currency';
 import { Box, Grid, Group, Table } from '@mantine/core';
 
-const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, guarantor, productId, type }) => {
+const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, guarantor, productId, type, dateValue }) => {
   const { data: product = {} } = useQuery(['products', productId], () => getProductsMaster(),
     {
       refetchOnWindowFocus: false,
@@ -30,7 +30,7 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
               <div style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
                 <ViewData
                   title="Date of Agreement"
-                  value={format(new Date(), 'dd-MM-yyyy')}
+                  value={format(dateValue, 'dd-MM-yyyy')}
                 />
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
@@ -232,7 +232,7 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
                 ) : <>
                   <Table.Tr>
                     <Table.Td>DPN Date</Table.Td>
-                    <Table.Td>{format(new Date(), 'dd-MM-yyyy') || '-NA-'}</Table.Td>
+                    <Table.Td>{format(dateValue, 'dd-MM-yyyy') || '-NA-'}</Table.Td>
                   </Table.Tr>
                   <Table.Tr>
                     <Table.Td>DPN Loan Amount</Table.Td>

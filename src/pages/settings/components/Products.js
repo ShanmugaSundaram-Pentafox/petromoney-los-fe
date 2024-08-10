@@ -29,8 +29,8 @@ const useStyles = makeStyles(() => ({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
-    width: '45vw'
+    height: '100%',
+    width: '100%'
   },
   sidePanelFormContentWrapper: {
     flex: 1,

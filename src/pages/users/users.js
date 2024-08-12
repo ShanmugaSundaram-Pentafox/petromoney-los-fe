@@ -49,10 +49,10 @@ const Users = ({ currentUser }) => {
             setSelectedRole={handleRoleSelect}
             loading={allUsersDataQuery?.isLoading}
             data={{
-              field_officer: fo?.length,
-              dealer: dealers?.length,
-              transporter: trans?.length,
-              others: others?.length,
+              field_officer: fo?.filter(fo => fo.status == 'Active').length,
+              dealer: dealers?.filter(dealer => dealer.status == 'Active').length,
+              transporter: trans?.filter(trans => trans.status == 'Active').length,
+              others: others?.filter(other => other.status == 'Active').length,
             }}
           />
         </Grid.Col>

@@ -117,8 +117,8 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser }) => {
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
     }, {
-      key: 'field_officer',
-      header: 'Field Officer',
+      key: 'loan_submitted_by',
+      header: 'Loggin By',
     }, {
       key: 'amount_approved',
       header: 'Approved Amount',

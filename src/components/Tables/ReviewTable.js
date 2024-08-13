@@ -82,6 +82,7 @@ const ReviewerTable = ({ title, onRowClick, filterQry }) => {
     }, {
       key: 'loan_submitted_by',
       header: 'Login By',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
     }, {
       key: 'amount_requested',
       header: 'Req. Amount',

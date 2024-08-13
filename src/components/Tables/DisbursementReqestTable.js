@@ -75,6 +75,7 @@ const DisbursementReqestTable = ({ title, onRowClick, filterQry, currentUser }) 
     }, {
       key: 'loan_submitted_by',
       header: 'Login By',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
     }, {
       key: 'amount_approved',
       header: 'Approved Amount',

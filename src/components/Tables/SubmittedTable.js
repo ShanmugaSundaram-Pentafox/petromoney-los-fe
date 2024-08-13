@@ -98,6 +98,7 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
     }, {
       header: 'Login By',
       key: 'loan_submitted_by',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
     }, {
       header: 'Req. Amount',
       key: 'amount_requested',

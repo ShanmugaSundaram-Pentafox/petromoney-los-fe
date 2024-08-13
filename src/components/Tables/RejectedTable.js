@@ -79,7 +79,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
       cell: (value) => <>{value.getValue() ? value.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>,
     }, {
       key: 'loan_submitted_by',
-      header: 'Loggin By',
+      header: 'Login By',
     }, {
       key: 'amount_approved',
       header: 'Approved Amount',

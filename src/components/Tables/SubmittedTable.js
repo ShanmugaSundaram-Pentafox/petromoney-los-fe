@@ -96,7 +96,7 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
       key: 'region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
     }, {
-      header: 'Loggin By',
+      header: 'Login By',
       key: 'loan_submitted_by',
     }, {
       header: 'Req. Amount',

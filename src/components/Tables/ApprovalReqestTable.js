@@ -89,7 +89,7 @@ const ApprovalReqestTable = ({ title, onRowClick, filterQry, currentUser, chartD
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
     }, {
       key: 'loan_submitted_by',
-      header: 'Loggin By',
+      header: 'Login By',
     }, {
       key: 'amount_requested',
       header: 'Req. Amount',

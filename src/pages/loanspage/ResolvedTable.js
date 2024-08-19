@@ -1,9 +1,11 @@
 import { Grid, } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { getAllWithheldLoans } from '../../services/withheld.services';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import moment from 'moment';
+import { getSignedUrl } from '../../services/common.service';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const ResolvedTable = () => {
   const { data = [], isLoading } = useQuery('withheld-loans-resolved', () => getAllWithheldLoans(1), { refetchOnWindowFocus: false });
@@ -37,7 +39,7 @@ const ResolvedTable = () => {
         return (
           row?.original?.comments?.map((remark, i) => {
             return (
-              <div>{remark?.withheld_by || '-'}</div>
+              <div>{remark?.resolved_by || '-'}</div>
             )
           })
         )
@@ -108,6 +110,26 @@ const ResolvedTable = () => {
       },
     },
   ];
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const downloadReport = () => {
+    setDownloadLoading(true)
+    getAllWithheldLoans(1,true)
+      .then((res) => {
+        getSignedUrl(res?.[0]?.url)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e => {
+            displayNotification({
+              message: e?.message || e,
+              variant: 'error',
+            })
+          })
+          .finally(() => {
+            setDownloadLoading(false);
+          })
+      })
+  }
 
   return (
     <>
@@ -118,6 +140,8 @@ const ResolvedTable = () => {
           column={column}
           title={'Resolved Withheld Loans'}
           loading={isLoading}
+          downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
+          excelDownload
         />
       </Grid>
     </>

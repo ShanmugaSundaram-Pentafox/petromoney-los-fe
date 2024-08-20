@@ -50,7 +50,7 @@ const DraftTable = ({ title, onRowClick, filterQry, currentUser }) => {
   });
 
   const handleReminder = () => {
-    sendRenewalReminder('draft')
+    sendRenewalReminder('draft', filterQry,search)
       .then(res => {
         setOpenModal(false);
         enqueueSnackbar(res, {

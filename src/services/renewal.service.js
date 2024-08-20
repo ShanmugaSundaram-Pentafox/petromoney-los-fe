@@ -171,9 +171,18 @@ export const downloadRenewalData = (status, qryStr = {}) => {
   });
 }
 
-export const sendRenewalReminder = (status) => {
+export const sendRenewalReminder = (status, filterQry, searchText) => {
   return new Promise((resolve, reject) => {
+    const { region, from, to, products, zone, month } = filterQry;
+    let qry = []
     let apiUrl = `renewal/send_reminder?status=${status}`
+    if (zone && zone !== '0') qry.push(`zone=${zone}`)
+    if (region && region !== '0') qry.push(`region=${region}`)
+    if (products && products !== '0') qry.push(`product=${products}`)
+    if (from && to) qry.push(`from=${from}&to=${to}`)
+    if (month && month !== '0') qry.push(`renewal_month=${month}`)
+    if (searchText) qry.push(`dealership_id_name=${searchText}`)
+    if (qry.length) apiUrl += '&' + qry.join('&')
     apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status.toUpperCase() === 'SUCCESS') {

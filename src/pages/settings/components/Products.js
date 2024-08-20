@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Tooltip } from '@material-ui/core'
+import {Grid, IconButton, makeStyles, Table, TableBody, TableCell, TableHead, TableRow, Tooltip } from '@material-ui/core'
 import CheckCircleTwoTone from '@material-ui/icons/CheckCircleTwoTone';
 import EditIcon from '@material-ui/icons/Edit';
 import PhoneAndroidIcon from '@material-ui/icons/PhoneAndroid';
@@ -13,6 +13,8 @@ import { action_id, resources_id } from '../../../config/accessControl';
 import { getProductsMaster, updateProductbyId, insertNewProduct, getEntities } from '../../../services/common.service';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { Flex } from '@mantine/core';
+import { Button } from '../../../components/Mantine/Button/Button';
 
 
 const useStyles = makeStyles(() => ({
@@ -29,8 +31,8 @@ const useStyles = makeStyles(() => ({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
-    width: '45vw'
+    height: '100%',
+    width: '100%'
   },
   sidePanelFormContentWrapper: {
     flex: 1,
@@ -364,6 +366,37 @@ const Products = ({ title, callback, currentUser }) => {
           </CheckAllowed>
         </div>
       </div> */}
+      <Flex
+        h="64"
+        style={{
+          flexShrink: 0,
+          alignItems: 'center',
+          justifyContent: 'end',
+          padding: '0 16px',
+          background: '#FFFFFF',
+          borderTop: '1px solid #eaeaea',
+          zIndex: 9
+        }}
+      >
+        <Flex gap="sm">
+          <Button
+            colorScheme="secondary"
+            variant="outline"
+            size="md"
+            onClick={() => callback(false)}
+          >
+            Go back
+          </Button>
+
+          <Button
+            variant="filled"
+            size="md"
+            onClick={() => { setAddNewProduct(true); }}
+          >
+            Add Product
+          </Button>
+        </Flex>
+      </Flex>
     </div >
   )
 }

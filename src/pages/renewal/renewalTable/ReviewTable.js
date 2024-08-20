@@ -49,7 +49,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
   });
 
   const handleReminder = () => {
-    sendRenewalReminder('review')
+    sendRenewalReminder('review',filterQry,search)
       .then(res => {
         setOpenModal(false);
         enqueueSnackbar(res, {

@@ -18,6 +18,8 @@ import CheckAllowed from '../rbac/CheckAllowed';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { Group, Text } from '@mantine/core';
 import moment from 'moment';
+import { getSignedUrl } from '../../services/common.service';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -34,6 +36,27 @@ const UnresolvedTable = ({ currentUser }) => {
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
   const { data = [], isLoading, refetch } = useQuery('withheld-loans-unresolved', () => getAllWithheldLoans(0), { refetchOnWindowFocus: false })
+  const [downloadLoading, setDownloadLoading] = useState(false);
+
+  const downloadReport = () => {
+    setDownloadLoading(true)
+    getAllWithheldLoans(0,true)
+      .then((res) => {
+        getSignedUrl(res?.[0]?.url)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e => {
+            displayNotification({
+              message: e?.message || e,
+              variant: 'error',
+            })
+          })
+          .finally(() => {
+            setDownloadLoading(false);
+          })
+      })
+  }
 
   useMount(() => {
     getAllDealership()
@@ -241,6 +264,8 @@ const UnresolvedTable = ({ currentUser }) => {
           }
           title={'Unresolved withheld loans'}
           noDataText='No un-resolved loans found'
+          downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
+          excelDownload
         />
       </Grid>
       <Drawer

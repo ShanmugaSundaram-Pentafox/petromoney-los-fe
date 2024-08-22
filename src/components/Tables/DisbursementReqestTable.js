@@ -14,6 +14,7 @@ import { ActionIcon, Group, Tooltip } from '@mantine/core';
 import { IconLink, IconReload } from '@tabler/icons-react';
 import { action_id, resources_id } from '../../config/accessControl';
 import { isAllowed } from '../../utils/cerbos';
+import COLORS from '../../theme/colors';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -56,7 +57,7 @@ const DisbursementReqestTable = ({ title, onRowClick, filterQry, currentUser }) 
       key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true,
     }, {
       key: 'name',

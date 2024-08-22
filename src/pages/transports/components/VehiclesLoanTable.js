@@ -5,6 +5,7 @@ import Currency from '../../../components/Number/Currency'
 import { getAllVehicleLoans } from '../../../services/transports.service'
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer'
 import { useQuery } from 'react-query'
+import COLORS from '../../../theme/colors'
 // import AddNewVehicleForm from "./AddNewVehicleForm"
 
 const VehiclesLoanTable = () => {
@@ -18,7 +19,7 @@ const VehiclesLoanTable = () => {
     {
       key: 'transporter_id',
       header: 'Code',
-      cell: (value) => <RouterLink to={`/transports/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/transports/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>
     }, {
       key: 'transporter_name',
       header: 'Name',

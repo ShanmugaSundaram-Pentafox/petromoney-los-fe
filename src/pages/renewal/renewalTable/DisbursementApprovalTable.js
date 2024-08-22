@@ -16,6 +16,7 @@ import DDMSModal from '../../../components/Deferal-Devation/DDMSModal';
 import classes from './Renewal.module.css';
 import { isAllowed } from '../../../utils/cerbos';
 import { action_id, resources_id } from '../../../config/accessControl';
+import COLORS from '../../../theme/colors';
 
 const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [page, setPage] = useState(1);
@@ -82,7 +83,7 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true,
     }, {
       key: 'dealership_name',

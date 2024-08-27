@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { NavLink as RouterLink } from 'react-router-dom';
 import Currency from '../../../components/Number/Currency';
-import { getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
+import { downloadRenewalData, getPageDetails, getRenewalLoanByStatus } from '../../../services/renewal.service';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 import classes from './Renewal.module.css';
+import { getSignedUrl } from '../../../services/common.service';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 import COLORS from '../../../theme/colors';
 
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
@@ -20,6 +22,25 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const getRenewalDataQuery = useQuery({
     queryKey: ['renewal_rejected', filterQry, page, search],
     queryFn: () => getRenewalLoanByStatus('rejected', filterQry, page, search),
+  });
+
+  const renewalDownloadQuery = useQuery({
+    queryKey: 'renewal-download-rejected',
+    queryFn: () => downloadRenewalData('rejected', filterQry),
+    onSuccess: (data) => {
+      getSignedUrl(data[0]?.url)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          displayNotification({ message: e, variant: 'error' });
+        })
+    },
+    onError: (e) => {
+      displayNotification({ message: e, variant: 'error' })
+    },
+    enabled: Boolean(false),
+    retry: Boolean(false),
   });
 
   const column = [
@@ -71,6 +92,8 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
         setPage={setPage}
         totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
         filter={false}
+        downloadQuery={{ query: renewalDownloadQuery?.refetch, isLoading: renewalDownloadQuery?.isFetching }}
+        excelDownload
       />
     </div>
   )

@@ -1,8 +1,12 @@
 import apiCall from '../utils/api.util';
 
-export const getAllWithheldLoans = (id) => {
+export const getAllWithheldLoans = (id, download=false) => {
+  let qry = []
+  let apiUrl = `withheld/loans?is_resolved=${id}`
+  if (download) qry.push('download_as_csv=yes')
+  if (qry.length) apiUrl += '&' + qry.join('&')
   return new Promise((resolve, reject) => {
-    apiCall(`withheld/loans?is_resolved=${id}`)
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           let res = []

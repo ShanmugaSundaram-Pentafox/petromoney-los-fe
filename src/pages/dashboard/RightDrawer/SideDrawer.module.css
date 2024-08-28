@@ -30,3 +30,8 @@
 dialog {
   /* min-width: 30vw; */
 }
+.wrap{
+  flex-grow: 1;
+  padding: 16px;
+  overflow-y: auto
+}

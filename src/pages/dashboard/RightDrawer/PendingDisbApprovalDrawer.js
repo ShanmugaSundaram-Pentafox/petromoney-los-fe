@@ -62,23 +62,19 @@ const PendingDisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, 
   }
   return (
     <>
-      <div className={classes.wrapper}>
-        <div className={classes.contentWrapper}>
-          <DealershipData data={data} readOnly={true} />
-          <WorkingSheetDrawer id={id} />
-          <LoanInfo viewable={true} status={status} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
-          <>
-            <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
-            <DrawerRemarks label={'Reviewer remarks'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
-            <DrawerRemarks label={'Approver remarks'} loanData={loanData?.remarks} readOnly={readOnly} />
-            <DrawerRemarks label={'Recommendation remarks'} loanData={loanData?.disbursement_recommendation_remarks} readOnly={readOnly} />
-            {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
-          </>
-        </div>
-        <div>
-          <DrawerFooter selectedLoanData={selectedLoanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} updateApprovalStatus={handleModal} />
-        </div>
-      </div >
+      <div className={classes.wrap}>
+        <DealershipData data={data} readOnly={true} />
+        <WorkingSheetDrawer id={id} />
+        <LoanInfo viewable={true} status={status} currentUser={currentUser} newInfo={loanData} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
+        <>
+          <DrawerRemarks label={'Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Reviewer remarks'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Approver remarks'} loanData={loanData?.remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Recommendation remarks'} loanData={loanData?.disbursement_recommendation_remarks} readOnly={readOnly} />
+          {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
+        </>
+      </div>
+      <DrawerFooter selectedLoanData={selectedLoanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} updateApprovalStatus={handleModal} />
       <Modal
         opened={openModal}
         onClose={handleModal}

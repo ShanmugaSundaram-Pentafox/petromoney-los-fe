@@ -74,21 +74,17 @@ const PendingApprovalDrawer = ({ id, selectedLoanData, status, currentUser, read
 
   return (
     <>
-      <div className={classes.wrapper}>
-        <div className={classes.contentWrapper}>
-          <DealershipData data={data} readOnly={true} />
-          <WorkingSheetDrawer id={id} />
-          <LoanInfo status={status} currentUser={currentUser} viewable={true} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
-          <>
-            <DrawerRemarks label={'Recommendation'} loanData={loanData?.review_remarks} readOnly={readOnly} />
-            <DrawerRemarks label={'Reviewer recommendation'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
-            {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
-          </>
-        </div>
-        <div>
-          <DrawerFooter onClose={onClose} id={id} editable={editable} selectedLoanData={selectedLoanData} currentUser={currentUser} status={status} handlePendingApprovalModal={handlePendingApprovalModal} />
-        </div>
+      <div className={classes.wrap}>
+        <DealershipData data={data} readOnly={true} />
+        <WorkingSheetDrawer id={id} />
+        <LoanInfo status={status} currentUser={currentUser} viewable={true} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
+        <>
+          <DrawerRemarks label={'Recommendation'} loanData={loanData?.review_remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Reviewer recommendation'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
+          {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
+        </>
       </div >
+      <DrawerFooter onClose={onClose} id={id} editable={editable} selectedLoanData={selectedLoanData} currentUser={currentUser} status={status} handlePendingApprovalModal={handlePendingApprovalModal} />
       <Modal
         opened={openModal}
         onClose={handlePendingApprovalModal}

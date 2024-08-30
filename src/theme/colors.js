@@ -25,7 +25,8 @@ const COLORS = {
   text: {
     main: 'rgba(55, 57, 63, 1)',
     light1: 'rgba(173, 174, 177, 1)',
-    light2: ' rgba(143, 143, 143, 1)'
+    light2: ' rgba(143, 143, 143, 1)',
+    blue: '#1976d2'
   },
   icon: {
     download: 'rgba(64, 192, 87)'

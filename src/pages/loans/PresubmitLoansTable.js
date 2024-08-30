@@ -16,6 +16,7 @@ import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { ActionIcon, Badge, Box, Button, Checkbox, Modal, TextInput, Tooltip } from '@mantine/core';
 import { IconLink, IconPlus } from '@tabler/icons-react';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
+import COLORS from '../../theme/colors';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -103,7 +104,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
       key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true,
     }, {
       key: 'name',

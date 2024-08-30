@@ -14,6 +14,7 @@ import DDMSModal from '../../components/Deferal-Devation/DDMSModal';
 import classes from './ReOnboarding.module.css';
 import { action_id, resources_id } from '../../config/accessControl';
 import { isAllowed } from '../../utils/cerbos';
+import COLORS from '../../theme/colors';
 
 const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [page, setPage] = useState(1);
@@ -74,7 +75,7 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>
     }, {
       key: 'dealership_name',
       header: 'Name',

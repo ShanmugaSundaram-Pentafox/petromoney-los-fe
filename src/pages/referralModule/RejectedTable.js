@@ -10,6 +10,7 @@ import { rejectDealerReferralById } from '../../services/dealerships.service';
 import { dateCustomSort } from '../../utils/commonFunctions.util';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { Button, Paper, Tooltip } from '@mantine/core';
+import COLORS from '../../theme/colors';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -50,7 +51,7 @@ const RejectedListTable = ({ loans, loading, fetchData }) => {
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>
     }, {
       key: 'name',
       header: 'Dealership Name',

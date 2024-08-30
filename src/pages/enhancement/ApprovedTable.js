@@ -16,6 +16,7 @@ import { displayNotification } from '../../components/CommonComponents/Notificat
 import { ActionIcon, Popover, Text, Tooltip } from '@mantine/core';
 import { IconList } from '@tabler/icons-react';
 import classes from './Enhancement.module.css'
+import COLORS from '../../theme/colors';
 
 const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }) => {
   const [page, setPage] = useState(1);
@@ -60,7 +61,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser, actionable }
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true,
     }, {
       key: 'dealership_name',

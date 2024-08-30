@@ -8,6 +8,7 @@ import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 import classes from './Renewal.module.css';
 import { getSignedUrl } from '../../../services/common.service';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
+import COLORS from '../../../theme/colors';
 
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [page, setPage] = useState(1);
@@ -46,7 +47,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true,
     }, {
       key: 'dealership_name',

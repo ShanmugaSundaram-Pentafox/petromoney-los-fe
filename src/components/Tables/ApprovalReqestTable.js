@@ -98,7 +98,7 @@ const ApprovalReqestTable = ({ title, onRowClick, filterQry, currentUser, chartD
       cell: (value) => <Currency value={value?.getValue()} />
     }, {
       key: 'modified_date',
-      header: 'Req. Amount',
+      header: 'Req. Date',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>,
       sorting: true

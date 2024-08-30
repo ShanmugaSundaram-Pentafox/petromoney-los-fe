@@ -97,29 +97,25 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   }
   return (
     <>
-      <Box className={classes.wrapper}>
-        <Box className={classes.contentWrapper}>
-          <DealershipData data={data} readOnly={true} />
-          <WorkingSheetDrawer id={id} />
-          <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
-          <>
-            <DrawerRemarks label={'Reviewer Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
-            {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
-          </>
-        </Box>
-        <Box>
-          <DrawerFooter
-            selectedLoanData={selectedLoanData}
-            handleApprovalModal={handleApprovalModal}
-            loanData={loanData}
-            onClose={onClose}
-            id={id}
-            editable={editable}
-            status={status}
-            currentUser={currentUser}
-          />
-        </Box>
-      </Box>
+      <div className={classes.wrap}>
+        <DealershipData data={data} readOnly={true} />
+        <WorkingSheetDrawer id={id} />
+        <LoanInfo status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} updateNewLoanInfo={updateNewLoanInfo} />
+        <>
+          <DrawerRemarks label={'Reviewer Remarks'} loanData={loanData?.review_remarks} readOnly={readOnly} />
+          {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
+        </>
+      </div>
+      <DrawerFooter
+        selectedLoanData={selectedLoanData}
+        handleApprovalModal={handleApprovalModal}
+        loanData={loanData}
+        onClose={onClose}
+        id={id}
+        editable={editable}
+        status={status}
+        currentUser={currentUser}
+      />
       <Modal
         opened={approvalModal}
         onClose={handleApprovalModal}

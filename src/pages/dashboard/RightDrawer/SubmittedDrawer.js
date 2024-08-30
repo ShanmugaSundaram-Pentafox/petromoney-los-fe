@@ -96,7 +96,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   return (
     <>
       {/* Drawer content */}
-      <div style={{ flexGrow: 1, padding: 16, overflowY: 'auto' }}>
+      <div className={classes.wrap}>
 
         <DealershipData
           data={data}

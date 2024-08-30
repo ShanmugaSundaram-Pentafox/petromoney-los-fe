@@ -17,6 +17,7 @@ import { IconList } from '@tabler/icons-react';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import DescriptionIcon from '@material-ui/icons/Description';
 import classes from './Renewal.module.css';
+import COLORS from '../../../theme/colors';
 
 
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
@@ -62,7 +63,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true,
     }, {
       key: 'dealership_name',

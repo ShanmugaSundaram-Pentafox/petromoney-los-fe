@@ -18,6 +18,7 @@ import { ReactComponent as LoanAgreementIcon } from '../../icons/loan_agreement.
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
 import { IconList } from '@tabler/icons-react';
 import { useQuery } from 'react-query';
+import COLORS from '../../theme/colors';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -99,7 +100,7 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser }) => {
       key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true
     }, {
       key: 'name',

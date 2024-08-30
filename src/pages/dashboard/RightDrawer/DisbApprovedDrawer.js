@@ -7,14 +7,13 @@ import LoanInfo from './LoanInfo';
 import { getLoanById } from '../../../services/loans.service';
 import WorkingSheetDrawer from '../../dealershipDetails/ScoreCardTables/WorkingsheetDrawer';
 import classes from './SideDrawer.module.css';
-import { Box } from '@mantine/core';
 
 const DisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, editable, data, onClose }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
 
   return (
-    <Box className={classes.wrapper}>
-      <Box className={classes.contentWrapper}>
+    <>
+      <div className={classes.wrap}>
         <DealershipData data={data} readOnly={true} />
         <WorkingSheetDrawer id={id} />
         <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
@@ -26,11 +25,9 @@ const DisbApprovedDrawer = ({ id, selectedLoanData, status, currentUser, readOnl
           <DrawerRemarks label={'Disbursement approved recommendation'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />
           {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
         </>
-      </Box>
-      <Box>
-        <DrawerFooter selectedLoanData={selectedLoanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} />
-      </Box>
-    </Box >
+      </div>
+      <DrawerFooter selectedLoanData={selectedLoanData} onClose={onClose} id={id} editable={editable} currentUser={currentUser} status={status} />
+    </>
   );
 }
 export default DisbApprovedDrawer;

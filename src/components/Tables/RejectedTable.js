@@ -8,6 +8,7 @@ import { getLoansByStatus } from '../../services/loans.service';
 import Currency from '../Number/Currency';
 import DataTableViewer from '../ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
+import COLORS from '../../theme/colors';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -61,7 +62,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
       key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true
     }, {
       key: 'name',

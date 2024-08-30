@@ -14,6 +14,7 @@ import { permissionCheck } from '../UserCan/UserCan';
 import DataTableViewer from '../ReactTable/DataTableViewer';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { useQuery } from 'react-query';
+import COLORS from '../../theme/colors';
 
 
 const useStyles = makeStyles(theme => ({
@@ -79,7 +80,7 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
       header: 'Dealership Id',
       key: 'dealership_id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true,
     }, {
       header: 'Name',

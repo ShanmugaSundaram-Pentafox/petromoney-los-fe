@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import React from 'react';
-import { NavLink as RouterLink } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { getAllDealership } from '../../../services/dealerships.service';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
@@ -12,12 +12,20 @@ const DealershipsTable = () => {
     queryFn: () => getAllDealership(),
   })
 
+  const history = useHistory();
+
+  const handleRowClick = (rowData) => {
+    const id = rowData?.id;
+    if (id) {
+      history.push(`/dealership/${id}`);
+    }
+  };
+
   const column = [
     {
       key: 'id',
       header: 'ID',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
       sorting: true,
     }, {
       key: 'name',
@@ -60,6 +68,7 @@ const DealershipsTable = () => {
         title={'Dealership List'}
         loading={delaershipDetailsQuery?.isLoading}
         excelDownload={true}
+        onRowClick={handleRowClick}
       />
     </div>
   )

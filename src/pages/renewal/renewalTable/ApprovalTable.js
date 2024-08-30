@@ -13,6 +13,7 @@ import { Button, Group, Modal, Text, } from '@mantine/core';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 import { IconInfoCircle, IconSend } from '@tabler/icons-react';
 import classes from './Renewal.module.css';
+import COLORS from '../../../theme/colors';
 
 const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
   const [page, setPage] = useState(1);
@@ -77,7 +78,7 @@ const ReviewTable = ({ title, onRowClick, filterQry, currentUser }) => {
     {
       key: 'dealership_id',
       header: 'Dealership Id',
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true,
     }, {
       key: 'dealership_name',

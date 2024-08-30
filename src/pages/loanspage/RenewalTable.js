@@ -2,7 +2,6 @@ import { Dialog, Popover } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DescriptionIcon from '@material-ui/icons/Description';
-import LinkIcon from '@material-ui/icons/Link';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import moment from 'moment';
@@ -19,6 +18,7 @@ import { getRenewalLoans } from '../../services/loans.service';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
 import { IconLink } from '@tabler/icons-react';
+import COLORS from '../../theme/colors';
 
 const useStyles = makeStyles(theme => ({
   title: {
@@ -76,7 +76,7 @@ const RenewalTable = ({ currentUser }) => {
       key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue}</RouterLink>
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>
     }, {
       key: 'name',
       header: 'Name',
@@ -162,7 +162,7 @@ const RenewalTable = ({ currentUser }) => {
   return (
     <div className={classes.root}>
       <DataTableViewer
-        title={`Renewal Application`}
+        title={'Renewal Application'}
         rowData={getRenewalApplicationQuery?.data}
         column={column}
         onRowClick={i => setRowData(i)}

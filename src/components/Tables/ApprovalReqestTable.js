@@ -12,6 +12,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { ActionIcon, Tooltip } from '@mantine/core';
 import { ReactComponent as ESignIcon } from '../../icons/e-sign.svg';
+import COLORS from '../../theme/colors';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,7 +72,7 @@ const ApprovalReqestTable = ({ title, onRowClick, filterQry, currentUser, chartD
       key: 'dealership_id',
       header: 'Dealership Id',
       enableColumnFilter: false,
-      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}>{value?.getValue()}</RouterLink>,
+      cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>,
       sorting: true
     }, {
       key: 'name',

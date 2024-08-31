@@ -81,8 +81,9 @@ const ReviewerTable = ({ title, onRowClick, filterQry }) => {
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
     }, {
-      key: 'field_officer',
-      header: 'Field Officer',
+      key: 'loan_submitted_by',
+      header: 'Login By',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
     }, {
       key: 'amount_requested',
       header: 'Req. Amount',

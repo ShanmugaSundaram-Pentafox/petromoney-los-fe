@@ -132,11 +132,7 @@ const EnhancementTable = ({ currentUser, value, filterQry, statusList, statsChan
         onClose={() => setShowPanel({ modal: false })}
         title={<Badge color="blue" size='lg' variant='light'>{showPanel?.id} - {loansData?.dealership_name}</Badge>}
       >
-        <div className={classes.sidePanelWrapper}>
-          {
-            showPanel.data && <EnhancementDrawer {...compProps} />
-          }
-        </div>
+        {showPanel.data && <EnhancementDrawer {...compProps} /> }
       </RightSideDrawer>
     </Box>
   )

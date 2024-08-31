@@ -111,11 +111,7 @@ const ReOnboardingTable = ({ currentUser, value, filterQry }) => {
         title={<Badge color="blue" size='lg' variant='light'>{showPanel?.id} - {loansData?.dealership_name}</Badge>}
         size={'70%'}
       >
-        <div className={classes.sidePanelWrapper}>
-          {
-            showPanel.data && <ReOnboardingDrawer {...compProps} />
-          }
-        </div>
+        {showPanel.data && <ReOnboardingDrawer {...compProps} />}
       </RightSideDrawer>
     </Box>
   )

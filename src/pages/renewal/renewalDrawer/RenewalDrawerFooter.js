@@ -7,7 +7,7 @@ import { resources_id } from '../../../config/accessControl';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
 import ViewRemarks from '../renewalTable/ViewRemarks';
-import { Button, Group } from '@mantine/core';
+import { Button, Flex } from '@mantine/core';
 import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -86,9 +86,20 @@ const RenewalDrawerFooter = ({
   const [openDrawer, setOpenDrawer] = useState(false)
 
   return (
-    <div>
-      <div className={classes.actionButtonsWrapper}>
-        <Group>
+    <>
+      {console.log(status)}
+      <Flex
+        h={status != 'disbursement_approval' && '64'}       
+        style={{
+          flexShrink: 0,
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 16px',
+          background: '#FFFFFF',
+          borderTop: '1px solid #eaeaea',
+          zIndex: 9
+        }}>
+        <Flex gap='xs'>
           {
             ['review', 'approval', 'approved', 'rejected'].includes(status) && (
               <Button variant='outline' size='xs'
@@ -111,8 +122,8 @@ const RenewalDrawerFooter = ({
               </CheckAllowed>
             )
           }
-        </Group>
-        <Group>
+        </Flex>
+        <Flex gap='xs'>
           {
             status && ['draft', 'submit'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
@@ -175,8 +186,8 @@ const RenewalDrawerFooter = ({
                 </Button>
               </div>
           }
-        </Group>
-      </div>
+        </Flex>
+      </Flex>
       <RightSideDrawer
         opened={openDrawer}
         onClose={() => setOpenDrawer(false)}
@@ -184,7 +195,7 @@ const RenewalDrawerFooter = ({
       >
         <ViewRemarks filterType={filterType} handleClose={() => setOpenDrawer(false)} loanId={filterType == 'enhancement' ? selectedLoanData?.id : selectedLoanData?.loan_id} />
       </RightSideDrawer>
-    </div >
+    </>
   )
 }
 

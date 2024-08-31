@@ -112,11 +112,7 @@ const RenewalTable = ({ currentUser, value, filterQry }) => {
         size={'70%'}
         title={<Badge color="blue" size='lg' variant='light'>{showPanel?.id} - {loansData?.dealership_name}</Badge>}
       >
-        <div className={classes.sidePanelWrapper}>
-          {
-            showPanel.data && <RenewalDrawer {...compProps} />
-          }
-        </div>
+        {showPanel.data && <RenewalDrawer {...compProps} />}
       </RightSideDrawer>
     </Box>
   )

@@ -239,7 +239,7 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
           </div>
         </div>
         <div>
-          <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleEnhancement={handleEnhancement} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
+          <RenewalDrawerFooter filterType={'renewal'} selectedLoanData={selectedLoanData} handleEnhancement={handleEnhancement} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
         </div>
       </div >
       <Modal

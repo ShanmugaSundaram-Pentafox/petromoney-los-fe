@@ -89,8 +89,9 @@ const ApprovalReqestTable = ({ title, onRowClick, filterQry, currentUser, chartD
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
     }, {
-      key: 'field_officer',
-      header: 'Field Officer',
+      key: 'loan_submitted_by',
+      header: 'Login By',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
     }, {
       key: 'amount_requested',
       header: 'Req. Amount',
@@ -98,7 +99,7 @@ const ApprovalReqestTable = ({ title, onRowClick, filterQry, currentUser, chartD
       cell: (value) => <Currency value={value?.getValue()} />
     }, {
       key: 'modified_date',
-      header: 'Req. Amount',
+      header: 'Req. Date',
       enableColumnFilter: false,
       cell: (value) => <span>{value?.getValue() ? moment(new Date(value?.getValue())).format('DD-MM-YYYY') : '-'}</span>,
       sorting: true

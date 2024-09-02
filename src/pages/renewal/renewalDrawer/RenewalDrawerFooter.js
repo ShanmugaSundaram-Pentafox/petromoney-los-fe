@@ -89,7 +89,7 @@ const RenewalDrawerFooter = ({
   const [reLoader, setReloader] = useState(false);
   const handleResubmit = () => {
     setReloader(true);
-    updateRenewalLoanStats(id, selectedLoanData?.id, filterType)
+    updateRenewalLoanStats(id, filterType == 'renewal' ? selectedLoanData?.load_id : selectedLoanData?.id, filterType)
       .then(res => {
         setReloader(false);
         displayNotification({

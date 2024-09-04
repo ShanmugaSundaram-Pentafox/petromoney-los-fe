@@ -87,9 +87,10 @@ const RenewalDrawerFooter = ({
   const classes = useStyles();
   const [openDrawer, setOpenDrawer] = useState(false)
   const [reLoader, setReloader] = useState(false);
+  console.log(selectedLoanData?.loan_id)
   const handleResubmit = () => {
     setReloader(true);
-    updateRenewalLoanStats(id, filterType == 'renewal' ? selectedLoanData?.load_id : selectedLoanData?.id, filterType)
+    updateRenewalLoanStats(id, filterType === 'renewal' ? selectedLoanData?.loan_id : selectedLoanData?.id, filterType)
       .then(res => {
         setReloader(false);
         displayNotification({

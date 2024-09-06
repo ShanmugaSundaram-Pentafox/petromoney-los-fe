@@ -9,7 +9,6 @@ import {
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconChevronsRight, IconChevronsLeft } from '@tabler/icons-react';
-import { rankItem } from '@tanstack/match-sorter-utils';
 import {
   flexRender,
   getCoreRowModel,
@@ -74,11 +73,12 @@ const ReactTable = ({
   const [debounce] = useDebouncedValue(search, 400);
 
   const fuzzyFilter = (row, columnId, value, addMeta) => {
-    const itemRank = rankItem(row.getValue(columnId), value);
+    const cellValue = String(row.getValue(columnId));
+    const passed = cellValue.trim().startsWith(value.trim());
     addMeta({
-      itemRank,
+      passed,
     });
-    return itemRank.passed;
+    return passed;
   };
 
   useEffect(() => {

@@ -95,7 +95,7 @@ const DataTableViewer = ({
   // }))
   const [filteredColumnData, setFilteredColumnData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-
+  
   const addCellKey = (filteredColumn, actualColumn) => {
     /** It searches for an element in the actualColumn array that has a header property equal to the current element in the filteredColumn array. */
     /** If a matching element is found, the function returns the array of objects. */
@@ -276,7 +276,7 @@ const DataTableViewer = ({
           }
         </Box> : null}
       {
-        !loading && Array.isArray(rowData) && !rowData.length ? (
+        !loading && (Array.isArray(rowData) && !rowData.length) || (!filteredData?.length && search?.length) ? (
           <Box
             mt="md"
             p="xl"

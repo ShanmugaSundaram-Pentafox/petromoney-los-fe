@@ -76,11 +76,19 @@ const ReactTable = ({
     const cellValue = String(row.getValue(columnId)).toLowerCase();
     const searchValue = value.trim().toLowerCase();
     const isUrl = cellValue.startsWith('http') || cellValue.startsWith('www');
+    const isNumber = !isNaN(cellValue);
     if (isUrl) {
       addMeta({
         passed: false,
       });
       return false;
+    }
+    if (isNumber) {
+      const passed = cellValue.startsWith(searchValue);
+      addMeta({
+        passed,
+      });
+      return passed;
     }
     const passed = cellValue.includes(searchValue);
     addMeta({

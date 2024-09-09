@@ -73,8 +73,16 @@ const ReactTable = ({
   const [debounce] = useDebouncedValue(search, 400);
 
   const fuzzyFilter = (row, columnId, value, addMeta) => {
-    const cellValue = String(row.getValue(columnId));
-    const passed = cellValue.trim().startsWith(value.trim());
+    const cellValue = String(row.getValue(columnId)).toLowerCase();
+    const searchValue = value.trim().toLowerCase();
+    const isUrl = cellValue.startsWith('http') || cellValue.startsWith('www');
+    if (isUrl) {
+      addMeta({
+        passed: false,
+      });
+      return false;
+    }
+    const passed = cellValue.includes(searchValue);
     addMeta({
       passed,
     });

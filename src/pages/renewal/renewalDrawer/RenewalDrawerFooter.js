@@ -89,6 +89,7 @@ const RenewalDrawerFooter = ({
   const [reLoader, setReloader] = useState(false);
   const handleResubmit = () => {
     setReloader(true);
+    // if it is Renewal module the loan_id needs to be sent in api. if Enhancement or Re-onboarding the id needs to be sent in api 
     updateRenewalLoanStats(id, filterType === 'renewal' ? selectedLoanData?.loan_id : selectedLoanData?.id, filterType)
       .then(res => {
         setReloader(false);

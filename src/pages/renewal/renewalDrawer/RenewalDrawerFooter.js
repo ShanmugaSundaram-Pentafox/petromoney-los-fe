@@ -9,6 +9,8 @@ import CheckAllowed from '../../rbac/CheckAllowed';
 import ViewRemarks from '../renewalTable/ViewRemarks';
 import { Button, Flex } from '@mantine/core';
 import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
+import { updateRenewalLoanStats } from '../../../services/renewal.service';
 
 const useStyles = makeStyles(theme => ({
   actionButtonsWrapper: {
@@ -84,6 +86,26 @@ const RenewalDrawerFooter = ({
 }) => {
   const classes = useStyles();
   const [openDrawer, setOpenDrawer] = useState(false)
+  const [reLoader, setReloader] = useState(false);
+  const handleResubmit = () => {
+    setReloader(true);
+    // if it is Renewal module the loan_id needs to be sent in api. if Enhancement or Re-onboarding the id needs to be sent in api 
+    updateRenewalLoanStats(id, filterType === 'renewal' ? selectedLoanData?.loan_id : selectedLoanData?.id, filterType)
+      .then(res => {
+        setReloader(false);
+        displayNotification({
+          message: res,
+          variant: 'success',
+        });
+        setTimeout(() => {
+          setReloader(false);
+          window.location.reload();
+        }, 2000)
+      })
+      .catch(() => {
+        setReloader(false);
+      })
+  }
 
   return (
     <>
@@ -107,6 +129,19 @@ const RenewalDrawerFooter = ({
               >
                 View Remarks
               </Button>
+            )
+          }
+          {
+            ['rejected'].includes(status) && (
+              <CheckAllowed currentUser={currentUser} resource={resources_id.renewal} action={'resubmit_reject'}>
+                <Button
+                  loading={reLoader}
+                  onClick={handleResubmit}
+                  size='xs'
+                >
+                  Re-Submit
+                </Button>
+              </CheckAllowed>
             )
           }
           {
@@ -140,6 +175,18 @@ const RenewalDrawerFooter = ({
           {
             status && ['review', 'approval'].includes(status.toLowerCase()) &&
               <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
+                <Button
+                  size='xs'
+                  leftSection={<ChevronLeftRoundedIcon />}
+                  onClick={handlePushBack}
+                >
+                  Pushback
+                </Button>
+              </CheckAllowed>
+          }
+          {
+            status && ['approved'].includes(status.toLowerCase()) &&
+              <CheckAllowed currentUser={currentUser} resource={resources_id.renewal} action={'pushback_approved'}>
                 <Button
                   size='xs'
                   leftSection={<ChevronLeftRoundedIcon />}

@@ -230,3 +230,21 @@ export const getRenewalFeeStatus = ({ dealership_id }) => {
       })
   });
 }
+
+export const updateRenewalLoanStats = (dealershipId, loanId, module) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`${module}/${loanId}/resubmit`, {
+      method: 'POST',
+    })
+      .then(async ({ status, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(message);
+        } else {
+          reject(message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

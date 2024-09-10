@@ -21,7 +21,7 @@ const CollectionRemarks = () => {
   });
   useEffect(() => {
     page != 1 && setPage(1)
-  }, [search])
+  }, [search,dateObj])
 
   const downloadReport = () => {
     setDownloadLoading(true)

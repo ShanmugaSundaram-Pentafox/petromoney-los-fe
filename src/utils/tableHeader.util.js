@@ -21,6 +21,8 @@ export const generateTableHeader = ({ data }) => {
       enableColumnFilter: item?.enableColumnFilter != false && item?.key !== 'action' ? true : false,
       key: `${index}-${item?.header}`,
       enableSorting: item?.sorting || false,
+      // auto is the default filter value of filterFn
+      filterFn: item?.header === 'Status' ? 'equalsString' : 'auto'
     });
   });
 };

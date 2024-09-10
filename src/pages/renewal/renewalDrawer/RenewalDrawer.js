@@ -85,6 +85,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 10
+  },
+  wrap: {
+    flexGrow: '1',
+    padding: '16px',
+    overflowY: 'auto',
   }
 }))
 
@@ -216,12 +221,11 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
 
   return (
     <>
-      <div className={classes.wrapper}>
-        <div className={classes.contentWrapper}>
-          <DealershipInfo data={{ ...dealershipData?.data, ...getRenewalFeeDetails?.data?.[0] }} currentUser={currentUser} />
-          <Divider />
-          <div>
-            {
+      <div className={classes.wrap}>
+        <DealershipInfo data={{ ...dealershipData?.data, ...getRenewalFeeDetails?.data?.[0] }} currentUser={currentUser} />
+        <Divider />
+        <div>
+          {
               collapseComponent?.map((item) => {
                 return (
                   <Paper withBorder key={item?.id} p={10} style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}>
@@ -235,13 +239,12 @@ const RenewalDrawer = ({ id, selectedLoanData, status, currentUser, data, onClos
                   </Paper>
                 )
               })
-            }
-          </div>
+          }
         </div>
-        <div>
-          <RenewalDrawerFooter filterType={'renewal'} selectedLoanData={selectedLoanData} handleEnhancement={handleEnhancement} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
-        </div>
-      </div >
+      </div>
+      <div>
+        <RenewalDrawerFooter selectedLoanData={selectedLoanData} handleEnhancement={handleEnhancement} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
+      </div>
       <Modal
         opened={reviewModal}
         onClose={closeReviewModal}

@@ -261,7 +261,7 @@ const LoansTable = ({ currentUser, value, filterQry }) => {
         )}
       />
       <RightSideDrawer
-        size="60%"
+        size="70%"
         opened={showPanel.status}
         onClose={() => setShowPanel({ status: false })}
         title={<Badge color="blue" size='lg' variant='light'>{compProps.data?.id} - {compProps.data?.name}</Badge>}

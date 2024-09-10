@@ -147,12 +147,11 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
 
   return (
     <>
-      <div className={classes.wrapper}>
-        <div className={classes.contentWrapper}>
-          <DealershipInfo viewOnly={true} data={dealershipData?.data} currentUser={currentUser} />
-          <Divider />
-          <div>
-            {
+      <div className={classes.wrap}>
+        <DealershipInfo viewOnly={true} data={dealershipData?.data} currentUser={currentUser} />
+        <Divider />
+        <div>
+          {
               collapseComponent?.map((item) => {
                 return (
                   <Paper variant='outlined' key={item?.id} style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}>
@@ -166,13 +165,10 @@ const EnhancementDrawer = ({ id, selectedLoanData, status, currentUser, data, on
                   </Paper>
                 )
               })
-            }
-          </div>
+          }
         </div>
-        <div>
-          <RenewalDrawerFooter filterType={'enhancement'} selectedLoanData={selectedLoanData} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
-        </div>
-      </div >
+      </div>
+      <RenewalDrawerFooter filterType={'enhancement'} selectedLoanData={selectedLoanData} handleReviewModal={openReviewModal} handlePushBack={handlePushBack} handleReject={handleReject} data={data} onClose={onClose} id={id} currentUser={currentUser} status={status} />
       <Modal
         opened={reviewModal}
         onClose={closeReviewModal}

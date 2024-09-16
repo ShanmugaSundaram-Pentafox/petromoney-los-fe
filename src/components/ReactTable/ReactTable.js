@@ -70,6 +70,7 @@ const ReactTable = ({
   setFilteredData,
   noDataText = 'No data yet!',
   noDataSubText = 'No data found in this section',
+  isApiSearch,
 }) => {
   const [data, setData] = useState([]);
   const [columnFilter, setColumnFilter] = useState([]);
@@ -182,7 +183,7 @@ const ReactTable = ({
 
   return (
     <>
-      {table.getRowModel().rows.length ? (
+      {!isApiSearch && table.getRowModel().rows.length ? (
         <>
           <Paper>
             <ScrollArea>

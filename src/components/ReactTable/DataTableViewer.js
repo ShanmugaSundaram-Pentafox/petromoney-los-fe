@@ -276,7 +276,7 @@ const DataTableViewer = ({
           }
         </Box> : null}
       {
-        !loading && (Array.isArray(rowData) && !rowData?.length) || (apiSearch ? !rowData?.length : !filteredData?.length && search?.length) ? (
+        apiSearch && !loading && Array.isArray(rowData) && !rowData?.length ? (
           <Box
             mt="md"
             p="xl"

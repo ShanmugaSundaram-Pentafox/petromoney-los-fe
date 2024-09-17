@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Box,
+  Image,
   Paper,
   ScrollArea,
   Skeleton,
@@ -67,6 +68,9 @@ const ReactTable = ({
   isSortingRemoval = true,
   styles,
   setFilteredData,
+  noDataText = 'No data yet!',
+  noDataSubText = 'No data found in this section',
+  isApiSearch,
 }) => {
   const [data, setData] = useState([]);
   const [columnFilter, setColumnFilter] = useState([]);
@@ -128,6 +132,9 @@ const ReactTable = ({
 
   useEffect(() => {
     setFilteredData(table.getFilteredRowModel().rows.map(row => row.original));
+    if(!table.getFilteredRowModel().rows.map(row => row.original).length){
+      setFilteredData(rowData);
+    }
   }, [table.getFilteredRowModel()]);
 
   useEffect(() => {
@@ -176,109 +183,111 @@ const ReactTable = ({
 
   return (
     <>
-      <Paper>
-        <ScrollArea>
-          <Table
-            highlightOnHover
-            mb={10}
-            verticalSpacing='6px'
-            style={{
-              ...styles,
-            }}
-          >
-            <Table.Thead
-              style={{
-                backgroundColor: 'rgba(228, 237, 253, 1)',
-                fontSize: '12px',
-              }}
-            >
-              {table.getHeaderGroups().map(headerGroup => (
-                <Table.Tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header, index) => (
-                    <Table.Th
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      style={{
-                        cursor: header.column?.getCanSort() && 'pointer',
-                      }}
-                    >
-                      {header.isPlaceholder ? null : (
-                        <div
-                          onClick={
-                            allowSorting
-                              ? header.column.getToggleSortingHandler()
-                              : undefined
-                          }
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {{
-                            asc: ' 🔼',
-                            desc: ' 🔽',
-                          }[header.column.getIsSorted()] ?? null}
-                        </div>
-                      )}
-                    </Table.Th>
-                  ))}
-                </Table.Tr>
-              ))}
-            </Table.Thead>
-            <Table.Tbody style={{ fontSize: '12px' }}>
-              {table.getRowModel().rows.map(row => (
-                <Table.Tr
+      {!isApiSearch && table.getRowModel().rows.length ? (
+        <>
+          <Paper>
+            <ScrollArea>
+              <Table
+                highlightOnHover
+                mb={10}
+                verticalSpacing='6px'
+                style={{
+                  ...styles,
+                }}
+              >
+                <Table.Thead
                   style={{
-                    cursor:
-                      typeof onRowClick === 'function' ? 'pointer' : 'default',
-                    position: 'relative',
-                    background: (row?.original?.reload_type === 'express' ? COLORS.red(10) : row?.original?.is_withheld == 1 ? COLORS.warning.tableWarn : null),
+                    backgroundColor: 'rgba(228, 237, 253, 1)',
+                    fontSize: '12px',
                   }}
-                  key={row.id}
                 >
-                  {row.getVisibleCells().map(cell => (
-                    <Table.Td
-                      key={cell.id}
-                      onClick={event => {
-                        typeof onRowClick === 'function' &&
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <Table.Tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header, index) => (
+                        <Table.Th
+                          key={header.id}
+                          colSpan={header.colSpan}
+                          style={{
+                            cursor: header.column?.getCanSort() && 'pointer',
+                          }}
+                        >
+                          {header.isPlaceholder ? null : (
+                            <div
+                              onClick={
+                                allowSorting
+                                  ? header.column.getToggleSortingHandler()
+                                  : undefined
+                              }
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                              {{
+                                asc: ' 🔼',
+                                desc: ' 🔽',
+                              }[header.column.getIsSorted()] ?? null}
+                            </div>
+                          )}
+                        </Table.Th>
+                      ))}
+                    </Table.Tr>
+                  ))}
+                </Table.Thead>
+                <Table.Tbody style={{ fontSize: '12px' }}>
+                  {table.getRowModel().rows.map(row => (
+                    <Table.Tr
+                      style={{
+                        cursor:
+                      typeof onRowClick === 'function' ? 'pointer' : 'default',
+                        position: 'relative',
+                        background: (row?.original?.reload_type === 'express' ? COLORS.red(10) : row?.original?.is_withheld == 1 ? COLORS.warning.tableWarn : null),
+                      }}
+                      key={row.id}
+                    >
+                      {row.getVisibleCells().map(cell => (
+                        <Table.Td
+                          key={cell.id}
+                          onClick={event => {
+                            typeof onRowClick === 'function' &&
                           cell?.column?.id?.split('-')?.[1] != 'action' &&
                           (onRowClick(row?.original), event.stopPropagation());
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </Table.Td>
+                          }}
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </Table.Td>
+                      ))}
+                      {row?.original?.reload_type === 'express' ? <><div style={{ ...classes.expressContainer }}></div><div style={{ ...classes.expressInner }}>EXP CRR</div></> : null}
+                    </Table.Tr>
                   ))}
-                  {row?.original?.reload_type === 'express' ? <><div style={{ ...classes.expressContainer }}></div><div style={{ ...classes.expressInner }}>EXP CRR</div></> : null}
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
-        </ScrollArea>
-      </Paper>
-      <Box
-        mt='md'
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          padding: '0 12px 12px 12px',
-        }}
-      >
-        {useApiPagination ? (
-          <>
-            {totalNoOfPages ? (
+                </Table.Tbody>
+              </Table>
+            </ScrollArea>
+          </Paper>
+          <Box
+            mt='md'
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '0 12px 12px 12px',
+            }}
+          >
+            {useApiPagination ? (
               <>
-                <Box>
-                  <Box
-                    style={{ display: 'flex', gap: 10, alignItems: 'center' }}
-                  >
-                    <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                      <strong>{`Showing Page ${page} - ${totalNoOfPages}`}</strong>
-                    </Text>
-                    {/* {totalNoOfRecords > 10 ?
+                {totalNoOfPages ? (
+                  <>
+                    <Box>
+                      <Box
+                        style={{ display: 'flex', gap: 10, alignItems: 'center' }}
+                      >
+                        <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
+                          <strong>{`Showing Page ${page} - ${totalNoOfPages}`}</strong>
+                        </Text>
+                        {/* {totalNoOfRecords > 10 ?
                                             <Select
                                                 menuPlacement="top"
                                                 options={no_of_records}
@@ -300,138 +309,165 @@ const ReactTable = ({
                                                 }}
                                             /> : null
                                         } */}
-                  </Box>
+                      </Box>
+                    </Box>
+                    <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                      {page != 1 && (
+                        <ActionIcon
+                          variant='light'
+                          color='blue.1'
+                          onClick={() => setPage(1)}
+                        >
+                          <IconChevronsLeft size={16} color={'gray'} />
+                        </ActionIcon>
+                      )}
+                      {page != 1 && (
+                        <ActionIcon
+                          variant='light'
+                          color='blue.1'
+                          onClick={() => setPage(page - 1)}
+                        >
+                          <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
+                            {page - 1}
+                          </Text>
+                        </ActionIcon>
+                      )}
+                      {page >= 1 && (
+                        <ActionIcon variant='light'>
+                          <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
+                            {page}
+                          </Text>
+                        </ActionIcon>
+                      )}
+                      {totalNoOfPages != 1 && totalNoOfPages != page && (
+                        <ActionIcon
+                          variant='light'
+                          color='blue.1'
+                          onClick={() => setPage(page + 1)}
+                        >
+                          <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
+                            {page + 1}
+                          </Text>
+                        </ActionIcon>
+                      )}
+                      {totalNoOfPages != 1 && totalNoOfPages != page && (
+                        <ActionIcon
+                          variant='light'
+                          color='blue.1'
+                          onClick={() => setPage(totalNoOfPages)}
+                        >
+                          <IconChevronsRight size={16} color='gray' />
+                        </ActionIcon>
+                      )}
+                      {totalNoOfRecords ? (
+                        <Box>
+                          <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
+                            {totalNoOfRecords} Records
+                          </Text>
+                        </Box>
+                      ) : null}
+                    </Box>
+                  </>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <Box>
+                  <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
+                    <strong>{`Showing Page ${table.getState().pagination.pageIndex + 1
+                    } - ${table.getPageCount()}`}</strong>
+                  </Text>
                 </Box>
                 <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  {page != 1 && (
+                  {table.getState().pagination.pageIndex != 0 && (
                     <ActionIcon
                       variant='light'
                       color='blue.1'
-                      onClick={() => setPage(1)}
+                      onClick={() => table.setPageIndex(0)}
                     >
-                      <IconChevronsLeft size={16} color={'gray'} />
+                      <IconChevronsLeft size={16} color='gray' />
                     </ActionIcon>
                   )}
-                  {page != 1 && (
+                  {table.getState().pagination.pageIndex != 0 && (
                     <ActionIcon
                       variant='light'
                       color='blue.1'
-                      onClick={() => setPage(page - 1)}
+                      onClick={() => table.previousPage()}
                     >
                       <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                        {page - 1}
+                        {table.getState().pagination.pageIndex}
                       </Text>
                     </ActionIcon>
                   )}
-                  {page >= 1 && (
-                    <ActionIcon variant='light'>
+                  {table.getState().pagination.pageIndex >= 0 && (
+                    <ActionIcon variant='light' color='blue'>
                       <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                        {page}
+                        {table.getState().pagination.pageIndex + 1}
                       </Text>
                     </ActionIcon>
                   )}
-                  {totalNoOfPages != 1 && totalNoOfPages != page && (
-                    <ActionIcon
+                  {table.getPageCount() != 0 &&
+                table.getPageCount() !=
+                table.getState().pagination.pageIndex + 1 && (
+                  <ActionIcon
                       variant='light'
                       color='blue.1'
-                      onClick={() => setPage(page + 1)}
+                      onClick={() => table.nextPage()}
                     >
                       <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                        {page + 1}
-                      </Text>
+                      {table.getState().pagination.pageIndex + 2}
+                    </Text>
                     </ActionIcon>
                   )}
-                  {totalNoOfPages != 1 && totalNoOfPages != page && (
-                    <ActionIcon
+                  {table.getPageCount() != 0 &&
+                table.getPageCount() !=
+                table.getState().pagination.pageIndex + 1 && (
+                  <ActionIcon
                       variant='light'
                       color='blue.1'
-                      onClick={() => setPage(totalNoOfPages)}
+                      onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                     >
                       <IconChevronsRight size={16} color='gray' />
                     </ActionIcon>
                   )}
-                  {totalNoOfRecords ? (
+                  {data?.length ? (
                     <Box>
                       <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                        {totalNoOfRecords} Records
+                        {table.getPrePaginationRowModel().rows.length} Records
                       </Text>
                     </Box>
                   ) : null}
                 </Box>
               </>
-            ) : null}
-          </>
-        ) : (
-          <>
-            <Box>
-              <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                <strong>{`Showing Page ${table.getState().pagination.pageIndex + 1
-                } - ${table.getPageCount()}`}</strong>
-              </Text>
-            </Box>
-            <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-              {table.getState().pagination.pageIndex != 0 && (
-                <ActionIcon
-                  variant='light'
-                  color='blue.1'
-                  onClick={() => table.setPageIndex(0)}
-                >
-                  <IconChevronsLeft size={16} color='gray' />
-                </ActionIcon>
-              )}
-              {table.getState().pagination.pageIndex != 0 && (
-                <ActionIcon
-                  variant='light'
-                  color='blue.1'
-                  onClick={() => table.previousPage()}
-                >
-                  <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                    {table.getState().pagination.pageIndex}
-                  </Text>
-                </ActionIcon>
-              )}
-              {table.getState().pagination.pageIndex >= 0 && (
-                <ActionIcon variant='light' color='blue'>
-                  <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                    {table.getState().pagination.pageIndex + 1}
-                  </Text>
-                </ActionIcon>
-              )}
-              {table.getPageCount() != 0 &&
-                table.getPageCount() !=
-                table.getState().pagination.pageIndex + 1 && (
-                  <ActionIcon
-                  variant='light'
-                  color='blue.1'
-                  onClick={() => table.nextPage()}
-                >
-                  <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                      {table.getState().pagination.pageIndex + 2}
-                    </Text>
-                </ActionIcon>
-              )}
-              {table.getPageCount() != 0 &&
-                table.getPageCount() !=
-                table.getState().pagination.pageIndex + 1 && (
-                  <ActionIcon
-                  variant='light'
-                  color='blue.1'
-                  onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                >
-                  <IconChevronsRight size={16} color='gray' />
-                </ActionIcon>
-              )}
-              {data?.length ? (
-                <Box>
-                  <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                    {table.getPrePaginationRowModel().rows.length} Records
-                  </Text>
-                </Box>
-              ) : null}
-            </Box>
-          </>
-        )}
-      </Box>
+            )}
+          </Box>
+        </>
+      ): <Box
+        mt="md"
+        p="xl"
+        style={{
+          textAlign: 'center',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          gap: 10,
+          height: '60vh',
+        }}
+      >
+        <Image
+          src="https://i.imgur.com/A6KRQAV.png"
+          w={150}
+          h={100}
+          radius="md"
+        />
+        <Box>
+          <Text>{noDataText}</Text>
+          <Text size="sm" sx={{ color: 'rgb(0,0,0,0.4)' }}>
+            {noDataSubText}
+          </Text>
+        </Box>
+      </Box>}
     </>
   );
 };

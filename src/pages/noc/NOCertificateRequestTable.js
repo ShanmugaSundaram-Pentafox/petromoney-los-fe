@@ -4,7 +4,7 @@ import {
 import Tooltip from '@material-ui/core/Tooltip';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/styles';
-import { format, parse } from 'date-fns';
+import { format, isValid, parse } from 'date-fns';
 import React, { useState } from 'react';
 import ApproveNocForm from './ApproveNocForm';
 import RequestNocForm from './RequestNocForm';
@@ -68,10 +68,11 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     queryFn: () => getAllNocRequest(),
     select: (data) => {
       let d = data.map((item) => {
-        const parsedDate = parse(item?.issued_date || undefined, 'dd-MM-yyyy', new Date());
+        const parsedDate = item?.issued_date ? parse(item?.issued_date, 'dd-MM-yyyy', new Date()) : null;
+        const formatedDate = isValid(parsedDate) ? format(parsedDate, 'dd MMM yyyy') : '-';
         return {
           ...item,
-          formated_date: format(parsedDate, 'dd MMM yyyy'),
+          formated_date: formatedDate,
         }
       });
       return d;

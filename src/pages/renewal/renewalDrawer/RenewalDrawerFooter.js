@@ -109,7 +109,6 @@ const RenewalDrawerFooter = ({
 
   return (
     <>
-      {console.log(status)}
       <Flex
         h={status != 'disbursement_approval' && '64'}       
         style={{

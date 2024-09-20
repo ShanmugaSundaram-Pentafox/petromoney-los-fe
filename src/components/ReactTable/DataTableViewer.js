@@ -160,7 +160,7 @@ const DataTableViewer = ({
                 placeholder="Search"
                 onChange={(e) => {
                   setSearch(e.target.value);
-                  apiSearch && apiSearch(e.target.value)
+                  apiSearch && e.target.value.length>=3 ? apiSearch(e.target.value) : apiSearch()
                   useAPIPagination && setPage(1)
                 }}
                 value={search}

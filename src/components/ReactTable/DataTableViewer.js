@@ -159,9 +159,15 @@ const DataTableViewer = ({
               <TextInput
                 placeholder="Search"
                 onChange={(e) => {
-                  setSearch(e.target.value);
-                  apiSearch && e.target.value.length>=3 ? apiSearch(e.target.value) : apiSearch()
-                  useAPIPagination && setPage(1)
+                  if(e.target.value.length>=3){
+                    setSearch(e.target.value);
+                    apiSearch && apiSearch(e.target.value)
+                    useAPIPagination && setPage(1)
+                  }
+                  else{
+                    apiSearch && apiSearch()
+                    setSearch()
+                  }
                 }}
                 value={search}
                 mx={0}

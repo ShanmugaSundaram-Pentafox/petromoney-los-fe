@@ -114,7 +114,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
     validateOnChange: false,
     validateOnBlur: true,
     validationSchema: Yup.object().shape({
-      name: Yup.string().nullable().required('Please enter dealership name'),
+      name: Yup.string().nullable('Please enter dealership name').required('Please enter dealership name').max(200),
       address: Yup.string()
         .nullable('Please enter address')
         .required('Please enter address')

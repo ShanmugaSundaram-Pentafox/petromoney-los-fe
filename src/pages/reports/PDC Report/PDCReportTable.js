@@ -105,6 +105,9 @@ const PDCReportTable = ({ filterQry }) => {
       header: 'Dealership Id',
       cell: (value) => <RouterLink to={`/dealership/${value?.getValue()}`}><span style={{color: COLORS.text.blue }}>{value?.getValue()}</span></RouterLink>
     }, {
+      key: 'dealership_name',
+      header: 'Dealership Name',
+    }, {
       key: 'applicant_type',
       header: 'Applicant Type',
     }, {

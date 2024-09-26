@@ -152,6 +152,7 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
         apiSearch={setSearch}
         page={page}
         setPage={setPage}
+        loading={getReOnboardingDataQuery?.isLoading}
         totalNoOfPages={getReOnboardingPaginationQuery?.data?.total_number_of_pages}
         filter={false}
         downloadQuery={{ query: reOnboardingDownloadQuery?.refetch, isLoading: reOnboardingDownloadQuery?.isFetching }}

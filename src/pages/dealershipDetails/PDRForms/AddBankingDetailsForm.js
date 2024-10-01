@@ -237,8 +237,8 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                       <option value="Savings">Savings</option>
                       <option value="SAP">SAP</option>
                       <option value="OD">OD</option>
-                      <option value="EDFS">eDFS</option>
-                      <option value="DT CARD">DT Plus</option>
+                      <option value="eDFS">eDFS</option>
+                      <option value="DT Plus">DT Plus</option>
                     </TextInput>
                   </Grid>
                   <Grid item md={6}>

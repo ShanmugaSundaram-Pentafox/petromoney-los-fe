@@ -78,6 +78,10 @@ const DisbursedTable = ({ title, onRowClick, filterQry }) => {
       header: 'Region',
       cell: (value) => <>{value.getValue() ? value.getValue().toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</>,
     }, {
+      key: 'city',
+      header: 'City',
+      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
+    }, {      
       key: 'loan_submitted_by',
       header: 'Login By',
       cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>

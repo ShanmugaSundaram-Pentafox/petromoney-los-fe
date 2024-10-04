@@ -81,7 +81,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
     }, {
       key: 'city',
       header: 'City',
-      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
+      cell: (value) => <span style={{textTransform: 'capitalize'}}>{value?.getValue() ? value?.getValue().toLowerCase() : '-'}</span>
     }, {     
       key: 'loan_submitted_by',
       header: 'Login By',

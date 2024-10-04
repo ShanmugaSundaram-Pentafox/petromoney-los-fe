@@ -99,7 +99,7 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
     }, {
       key: 'city',
       header: 'City',
-      cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>
+      cell: (value) => <span style={{textTransform: 'capitalize'}}>{value?.getValue() ? value?.getValue().toLowerCase() : '-'}</span>
     }, {
       header: 'Login By',
       key: 'loan_submitted_by',

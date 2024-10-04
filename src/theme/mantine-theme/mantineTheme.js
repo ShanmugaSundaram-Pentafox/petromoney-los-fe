@@ -1,4 +1,4 @@
-import { createTheme, Button, Text, Title, Checkbox, TextInput } from '@mantine/core';
+import { createTheme, Button, Text, Title, Checkbox, TextInput, Select } from '@mantine/core';
 
 const defaultTheme = createTheme({
   fontSize: 12,
@@ -30,6 +30,25 @@ const defaultTheme = createTheme({
       })
     }),
     TextInput: TextInput.extend({
+      styles: (theme) => ({
+        label: {
+          color: theme.colors.gray[7],
+          fontSize: 13,
+          fontWeight: 600,
+          marginBottom: 4
+        },
+        input: {
+          color: theme.colors.gray[9],
+        },
+        description: {
+          marginTop: 4
+        },
+        error: {
+          marginTop: 4
+        }
+      })
+    }),
+    Select: Select.extend({
       styles: (theme) => ({
         label: {
           color: theme.colors.gray[7],

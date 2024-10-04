@@ -1,10 +1,3 @@
-import { IconButton } from '@material-ui/core'
-import Divider from '@material-ui/core/Divider';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
-import CloseIcon from '@material-ui/icons/Close';
-import NavigateBeforeRoundedIcon from '@material-ui/icons/NavigateBeforeRounded';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import { useFormik } from 'formik';
@@ -13,13 +6,13 @@ import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import * as Yup from 'yup';
 import BankDetailsCard from './Components/BankDetailsCard';
-import Button from '../../../components/CommonComponents/Button/Button';
-import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
 import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { ActionIcon, Button, Divider, Grid, Select, Text, TextInput, Title } from '@mantine/core';
+import { IconX } from '@tabler/icons-react';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -29,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     zIndex: 0,
-    boxShadow: '0 1px 4px -3px #333'
   },
   sidePanelFormWrapper: {
     position: 'relative',
@@ -40,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
   },
   sidePanelFormContentWrapper: {
     flex: 1,
-    backgroundColor: '#f6f6f6',
     overflow: 'auto'
   },
   sidePanelWrapper: {
@@ -206,127 +197,119 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
   }
   return (
     <div className={classes.sidePanelFormWrapper}>
-      <Typography className={classes.sidePanelTitle} variant="h4">
+      <Title order={3} className={classes.sidePanelTitle}>
         <div>Add Banking Details</div>
-        <IconButton onClick={handleClose}  size='small'>
-          <CloseIcon />
-        </IconButton>
-      </Typography>
+        <ActionIcon variant="white" color="gray" onClick={handleClose}>
+          <IconX strokeWidth={1.5} size={20} color='black'/>
+        </ActionIcon>
+      </Title>
       <div className={classes.sidePanelFormContentWrapper}>
         <div className={classes.stepperRoot}>
           {
             bankData.length || addNewRow ? null :
-              <Typography className={classes.typography}>No bank found,Click &apos;Add Bank&apos; to add new bank.</Typography>
+              <Text className={classes.typography}>No bank found, Click &apos;Add Bank&apos; to add new bank.</Text>
           }
           {
             addNewRow || editRow?.editForm ? (
               <>
-                <Grid container spacing={2}>
-                  <Grid item md={6}>
-                    <TextInput
-                      select
-                      {...inputProps}
-                      labelText="Account Type"
-                      name="account_type"
+                <Grid gutter={'sm'}>
+                  <Grid.Col span={6}>
+                    <Select
+                      styles={{
+                        dropdown: { zIndex: 99999 }
+                      }}
+                      data={[
+                        { value: 'Current', label: 'Current' },
+                        { value: 'Savings', label: 'Savings' },
+                        { value: 'SAP', label: 'SAP' },
+                        { value: 'OD', label: 'OD' },
+                        { value: 'eDFS', label: 'eDFS' },
+                        { value: 'DT Plus', label: 'DT Plus' },]
+                      }
+                      label='Account Type'
+                      placeholder="Choose account type"
                       value={values.account_type}
                       error={errors.account_type}
-                      helperText={errors.account_type}
-                    >
-                      <option value="">Choose account type</option>
-                      <option value="Current">Current</option>
-                      <option value="Savings">Savings</option>
-                      <option value="SAP">SAP</option>
-                    </TextInput>
-                  </Grid>
-                  <Grid item md={6}>
+                      onChange={(e) => setFieldValue('account_type', e)} />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
                     <TextInput
-                      {...inputProps}
-                      labelText="Account Holder name"
-                      name="account_name"
+                      label="Account Holder name"
+                      placeholder='Enter account holder name'
                       value={values.account_name}
                       error={errors.account_name}
-                      helperText={errors.account_name}
+                      onChange={(e) => setFieldValue('account_name', e.target.value)}
                     />
-                  </Grid>
-                  <Grid item md={6}>
+                  </Grid.Col>
+                  <Grid.Col span={6}>
                     <TextInput
-                      {...inputProps}
-                      labelText="Account Number"
-                      name="account_no"
+                      label="Account Number"
+                      placeholder='Enter account number'
+
                       value={values.account_no?.toUpperCase()}
                       error={errors.account_no}
-                      helperText={errors.account_no}
+                      onChange={(e) => setFieldValue('account_no', e.target.value)}
                     />
-                  </Grid>
-                  <Grid item md={6}>
+                  </Grid.Col>
+                  <Grid.Col span={6}>
                     <TextInput
-                      {...inputProps}
-                      labelText="IFSC"
-                      name="ifsc"
+                      label="IFSC"
+                      placeholder='Enter IFSC number'
                       value={values.ifsc?.toUpperCase()}
                       error={errors.ifsc}
-                      helperText={errors.ifsc}
-                      onChange={(e) => { onChangeIFSC(e); handleChange(e) }}
+                      onChange={(e) => { onChangeIFSC(e) ,setFieldValue('ifsc',e.target.value)}}
                     />
-                  </Grid>
-                  <Grid item md={6}>
+                  </Grid.Col>
+                  <Grid.Col span={6}>
                     <TextInput
-                      {...inputProps}
-                      labelText="Name of the Bank"
-                      name="bank_name"
+                      label="Name of the Bank"
+                      placeholder='Enter bank name'
                       value={values.bank_name}
                       error={errors.bank_name}
-                      helperText={errors.bank_name}
+                      onChange={(e) => setFieldValue('bank_name', e.target.value)}
                     />
-                  </Grid>
-                  <Grid item md={6}>
+                  </Grid.Col>
+                  <Grid.Col span={6}>
                     <TextInput
-                      {...inputProps}
-                      labelText="Branch"
-                      name="bank_branch"
+                      label="Branch"
+                      placeholder='Enter branch name'
                       value={values.bank_branch}
                       error={errors.bank_branch}
-                      helperText={errors.bank_branch}
+                      onChange={(e) => setFieldValue('bank_branch', e.target.value)}
                     />
-                  </Grid>
-                  <Grid item md={6}>
+                  </Grid.Col>
+                  <Grid.Col span={6}>
                     <TextInput
-                      {...inputProps}
-                      labelText="City"
-                      name="bank_city"
+                      label="City"
+                      placeholder='Enter city name'
                       value={values.bank_city}
                       error={errors.bank_city}
-                      helperText={errors.bank_city}
+                      onChange={(e) => setFieldValue('bank_city', e.target.value)}
                     />
-                  </Grid>
-                  <Grid item md={6}>
-                    <TextInput
-                      {...inputProps}
-                      select
-                      labelText="Account since"
-                      name="account_since"
-                      value={values.account_since}
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <Select
+                      styles={{
+                        dropdown: { zIndex: 99999 }
+                      }}
+                      data={[...Array(currentYearDiff)].map((_, i) => ({
+                        value: String(currentYear - i),
+                        label: String(currentYear - i)
+                      }))}
+                      label='Account since'
+                      placeholder="Vintage with bank"
+                      value={String(values.account_since)}
+                      searchable
                       error={errors.account_since}
-                      helperText={errors.account_since}
-                    >
-                      {
-                        <>
-                          <option value="null">Vintage with bank</option>
-                          {[...Array(currentYearDiff)].map((_, i) => {
-                            return (
-                              <option value={currentYear - i} key={i}>{currentYear - i}</option>
-                            )
-                          })}
-                        </>
-                      }
-                    </TextInput>
-                  </Grid>
+                      onChange={(e) => setFieldValue('account_since', e)} />
+                  </Grid.Col>
                 </Grid>
                 <div className={classes.actionFoot}>
                   <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <div>
                       <Button
-                        variant="outlined"
+                        size='xs'
+                        variant="light"
                         className={classes.btn}
                         onClick={() => { setAddNewRow(false); setEditRow({ editForm: false }) }}
                       >
@@ -335,10 +318,10 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                     </div>
                     <div>
                       <Button
-                        variant="contained"
+                        size='xs'
                         type="submit"
+                        color='green'
                         className={clsx(classes.btn, classes.editButton)}
-                        startIcon={<CheckOutlinedIcon />}
                         onClick={handleSubmit}
                       >
                         Save
@@ -358,8 +341,8 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
         <div className={classes.actionButtonsWrapper}>
           <div>
             <Button
-              variant="outlined"
-              startIcon={<NavigateBeforeRoundedIcon />}
+              size='xs'
+              variant="light"
               onClick={handleClose}
             >
               Back
@@ -367,10 +350,8 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
           </div>
           <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion.bankAdd}>
             <Button
-              variant="contained"
-              color="primary"
+              size='xs'
               onClick={() => { setAddNewRow(true); setValues({}) }}
-              style={{ marginBottom: 12 }}
             >
               Add Bank
             </Button>

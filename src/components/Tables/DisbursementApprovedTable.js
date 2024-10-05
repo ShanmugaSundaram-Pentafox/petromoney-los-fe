@@ -82,6 +82,10 @@ const DisbursementApprovedTable = ({ title, onRowClick, filterQry }) => {
       header: 'Region',
       cell: (value) => <span>{value?.getValue() ? value?.getValue()?.toLowerCase().replace(/^(.)|\s+(.)/g, value => value.toUpperCase()) : '-'}</span>
     }, {
+      key: 'city',
+      header: 'City',
+      cell: (value) => <span style={{textTransform: 'capitalize'}}>{value?.getValue() ? value?.getValue().toLowerCase() : '-'}</span>
+    }, {      
       key: 'loan_submitted_by',
       header: 'Login By',
       cell: (value) => <span>{value?.getValue() ? value?.getValue() : '-'}</span>

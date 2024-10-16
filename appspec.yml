@@ -1,0 +1,7 @@
+version: 0.0
+os: linux
+
+files:
+  - source: /
+    destination: /var/www/petromoney-fe
+file_exists_behavior: OVERWRITE

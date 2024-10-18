@@ -6,30 +6,8 @@ import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 import { Paper, Tooltip } from '@mantine/core';
 import { IconCheck, IconEdit, IconX } from '@tabler/icons-react';
 import AddNewUserAction from '../../../components/AddNewUser/AddNewUserAction';
-import { downloadUserData } from '../../../services/users.service';
-import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
-import { getSignedUrl } from '../../../services/common.service';
-import { useQuery } from 'react-query';
 
 const UsersTable = ({ title, data, withRole, currentUser, loading, refetchQuery }) => {
-  const usersDownloadQuery = useQuery({
-    queryKey: 'user-download',
-    queryFn: () => downloadUserData(),
-    onSuccess: (res) => {
-      getSignedUrl(res?.data)
-        .then((res) => {
-          window.open(res?.url, '_blank');
-        })
-        .catch(e => {
-          displayNotification({ message: e, variant: 'error' });
-        })
-    },
-    onError: (e) => {
-      displayNotification({ message: e, variant: 'error' })
-    },
-    enabled: Boolean(false),
-    retry: Boolean(false),
-  });
 
   const column = [
     {
@@ -98,8 +76,6 @@ const UsersTable = ({ title, data, withRole, currentUser, loading, refetchQuery 
       <DataTableViewer
         rowData={data}
         loading={loading}
-        excelDownload
-        downloadQuery={{ query: usersDownloadQuery?.refetch, isLoading: usersDownloadQuery?.isFetching }}
         column={
           withRole ?
             [

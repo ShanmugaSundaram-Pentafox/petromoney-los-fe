@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import UsersTable from './components/UsersTable';
-import { getAllUsers, getUsersByPincode, getUsersByRole } from '../../services/users.service';
-import { Box, Grid, Paper, Skeleton, Table, Text, TextInput } from '@mantine/core';
+import { downloadUserData, getAllUsers, getUsersByPincode, getUsersByRole } from '../../services/users.service';
+import { ActionIcon, Box, Grid, Paper, Skeleton, Table, Text, TextInput, Tooltip } from '@mantine/core';
 import PieChartUsers from './components/PieChartUsers';
+import { IconDownload } from '@tabler/icons-react';
+import { getSignedUrl } from '../../services/common.service';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const Users = ({ currentUser }) => {
   const [selectedRole, setSelectedRole] = useState(null);
@@ -24,6 +27,26 @@ const Users = ({ currentUser }) => {
     queryFn: () => getUsersByPincode({ pincode }),
     enabled: Boolean(pincode?.length === 6),
   })
+
+  const usersDownloadQuery = useQuery({
+    queryKey: 'user-download',
+    queryFn: () => downloadUserData(),
+    onSuccess: (res) => {
+      getSignedUrl(res?.data)
+        .then((res) => {
+          window.open(res?.url, '_blank');
+        })
+        .catch(e => {
+          displayNotification({ message: e, variant: 'error' });
+        })
+    },
+    onError: (e) => {
+      displayNotification({ message: e, variant: 'error' })
+    },
+    enabled: Boolean(false),
+    retry: Boolean(false),
+  });
+
   const getUserById = id => {
     return allUsersDataQuery?.data?.find(item => item.id === id) || {};
   };
@@ -60,15 +83,39 @@ const Users = ({ currentUser }) => {
           <Paper h={344}>
             <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', padding: '0 20px 10px', alignItems: 'center' }}>
               <Text style={{ color: 'gray', fontSize: '14px' }} mt={'md'}>Field Officer's by Pincode</Text>
-              <TextInput
-                placeholder={'Pincode'}
-                value={pincode}
-                size='xs'
-                mt={'md'}
-                type='number'
-                onChange={e => setPincode(e.target.value)}
-              />
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                <Tooltip
+                  label={<Text size={'xs'}>Download</Text>}
+                  color={'dark'}
+                  transitionProps={{ transition: 'pop', duration: 300 }}
+                  withArrow
+                  position='bottom'
+                >
+                  <ActionIcon
+                    mt={'md'}
+                    mr={'xs'}
+                    size={'md'}
+                    variant='outline'
+                    color='gray.4'
+                    loading={usersDownloadQuery?.isFetching}
+                    onClick={() => {
+                    usersDownloadQuery?.refetch()
+                    }}
+                  >
+                    <IconDownload size={20} color='#4196f0' />
+                  </ActionIcon>
+                </Tooltip>
+                <TextInput
+                  placeholder={'Pincode'}
+                  value={pincode}
+                  size='xs'
+                  mt={'md'}
+                  type='number'
+                  onChange={e => setPincode(e.target.value)}
+                />
+              </div>
             </Box>
+
             <Box style={{ overflow: 'hidden' }}>
               {(getPincodeDetails?.isFetching || getPincodeDetails?.data?.length)
                 ? (

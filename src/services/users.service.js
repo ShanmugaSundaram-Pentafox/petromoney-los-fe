@@ -542,3 +542,20 @@ export const getUsersByPincode = ({ pincode }) => {
       })
   });
 }
+
+export const downloadUserData = (status, qryStr = {}) => {
+  return new Promise((resolve, reject) => {
+    let apiUrl = 'user/mappings?download_csv=yes';
+    apiCall(apiUrl)
+      .then((res) => {
+        if (res?.status.toUpperCase() === 'SUCCESS') {
+          resolve(res);
+        } else {
+          reject(res?.message);
+        }
+      })
+      .catch(e => {
+        reject(e.message);
+      })
+  });
+}

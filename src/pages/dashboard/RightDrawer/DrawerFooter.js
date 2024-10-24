@@ -46,6 +46,7 @@ const DrawerFooter = ({
   handleApprovalModal,
   handlePendingApprovalModal,
   updateApprovalStatus,
+  disabled = false,
 }) => {
   const history = useHistory();
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
@@ -296,7 +297,7 @@ const DrawerFooter = ({
                 size="xs"
                 color="green"
                 onClick={handleReviewModal}
-                disabled={loanData?.isLoading}
+                loading={disabled}
               >
                 Submit
               </Button>

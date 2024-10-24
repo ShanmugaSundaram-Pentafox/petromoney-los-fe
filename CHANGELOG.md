@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.42.0](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.41.0...v2.42.0) (2024-10-24)
+
+
+### Features
+
+* **Dashboard:** Added city column in dashboard ([3616c86](https://bitbucket.org/gmfvl/petromoney-fe/commit/3616c86c96cf959f7e6e898d97153a516640b679))
+* **Dashboard:** capitalized the city ([1f85809](https://bitbucket.org/gmfvl/petromoney-fe/commit/1f85809e5e6ef5efcbd4585764a96c680c4441f8))
+* **users:** pulled latest code from dev-los ([b391633](https://bitbucket.org/gmfvl/petromoney-fe/commit/b391633937eb3638aa39884b03592397cc99c4a0))
+* **users:** user download in table moved near pincode search ([707e047](https://bitbucket.org/gmfvl/petromoney-fe/commit/707e047bef5aa6c9b82895fe129a5cff25bc4dc2))
+* **Users:** users download is added ([e1cc109](https://bitbucket.org/gmfvl/petromoney-fe/commit/e1cc1090ec89afc04e2e09f81c096dedcb327ef0))
+
+
+### Bug Fixes
+
+* **Drawerfooter:** loanData isLoading is fixed ([7380a21](https://bitbucket.org/gmfvl/petromoney-fe/commit/7380a214d3b836305b6e72173ce657dcbbd4cd0e))
+* **SubmittedDrawer:** added loading in button to prevent multiple clicks ([cf4de82](https://bitbucket.org/gmfvl/petromoney-fe/commit/cf4de821d4b8b9a8855fb7e6306b86ccc288256b))
+
 ## [2.41.0](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.40.0...v2.41.0) (2024-10-04)
 
 

@@ -125,6 +125,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
         id={id}
         currentUser={currentUser}
         status={status}
+        disabled={loading}
       />
 
       <Modal

@@ -46,9 +46,10 @@ const DrawerFooter = ({
   handleApprovalModal,
   handlePendingApprovalModal,
   updateApprovalStatus,
+  disabled = false,
 }) => {
   const history = useHistory();
-  const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
+  const { data: loanData = {}, isLoading: loanDataLoading } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const [reLoader, setReloader] = useState(false);
   const [rejectModal, setRejectModal] = useState(false);
   const [pushback, setPushback] = useState(false);
@@ -270,7 +271,7 @@ const DrawerFooter = ({
             size="xs"
             color="gray"
             onClick={() => history.push(`/dealership/${id}`)}
-            disabled={loanData?.isLoading}
+            disabled={loanDataLoading}
           >
             View more
           </Button>
@@ -282,7 +283,7 @@ const DrawerFooter = ({
                 size="xs"
                 color="green"
                 onClick={handleReviewModal}
-                disabled={loanData?.isLoading}
+                disabled={loanDataLoading}
               >
                 Send for Review
               </Button>
@@ -296,7 +297,8 @@ const DrawerFooter = ({
                 size="xs"
                 color="green"
                 onClick={handleReviewModal}
-                disabled={loanData?.isLoading}
+                disabled={loanDataLoading}
+                loading={disabled}
               >
                 Submit
               </Button>
@@ -310,7 +312,7 @@ const DrawerFooter = ({
                 size="xs"
                 color="red"
                 onClick={() => setRejectModal(true)}
-                disabled={loanData?.loading}
+                disabled={loanDataLoading}
               >
                 Reject
               </Button>
@@ -324,7 +326,7 @@ const DrawerFooter = ({
                 size="xs"
                 color="green"
                 onClick={updateApprovalStatus}
-                disabled={loanData?.loading}
+                disabled={loanDataLoading}
               >
                 Approve
               </Button>
@@ -337,7 +339,7 @@ const DrawerFooter = ({
               size="xs"
               color="green"
               onClick={handlePendingApprovalModal}
-              disabled={loanData?.loading}
+              disabled={loanDataLoading}
             >
               Approve
             </Button>
@@ -349,7 +351,7 @@ const DrawerFooter = ({
               size="xs"
               color='green'
               onClick={handleApprovalModal}
-              disabled={loanData?.loading}
+              disabled={loanDataLoading}
             >
               Send for Approval
             </Button>

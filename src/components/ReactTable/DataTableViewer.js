@@ -258,7 +258,6 @@ const DataTableViewer = ({
             </Box>
           </Box>
           {/* )} */}
-          {(!loading && Array.isArray(rowData) && !rowData?.length && showAction) ? showAction : null}
         </Group>
       </Box >
       {

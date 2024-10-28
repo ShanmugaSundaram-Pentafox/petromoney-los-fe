@@ -107,7 +107,6 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
   const [addNewRow, setAddNewRow] = useState(false);
   const [editRow, setEditRow] = useState({ editForm: false, index: 0});
   const { data: bankData = [] } = useQuery('bank-data', () => getBankDetailsbyID(dealer_id), {refetchOnWindowFocus: false})
-
   const editBankRow = (rowData, rowIndex) => {
     // setEditRow({ ...rowData, rowIndex });
     setEditRow({ editForm: true, index: rowIndex })
@@ -245,9 +244,9 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                     <TextInput
                       label="Account Number"
                       placeholder='Enter account number'
-
                       value={values.account_no?.toUpperCase()}
                       error={errors.account_no}
+                      disabled={bankData[editRow?.index]?.bank_verified || false }
                       onChange={(e) => setFieldValue('account_no', e.target.value)}
                     />
                   </Grid.Col>
@@ -257,6 +256,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                       placeholder='Enter IFSC number'
                       value={values.ifsc?.toUpperCase()}
                       error={errors.ifsc}
+                      disabled={bankData[editRow?.index]?.bank_verified || false }
                       onChange={(e) => { onChangeIFSC(e) ,setFieldValue('ifsc',e.target.value)}}
                     />
                   </Grid.Col>
@@ -266,6 +266,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                       placeholder='Enter bank name'
                       value={values.bank_name}
                       error={errors.bank_name}
+                      disabled={bankData[editRow?.index]?.bank_verified || false}
                       onChange={(e) => setFieldValue('bank_name', e.target.value)}
                     />
                   </Grid.Col>
@@ -275,6 +276,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                       placeholder='Enter branch name'
                       value={values.bank_branch}
                       error={errors.bank_branch}
+                      disabled={bankData[editRow?.index]?.bank_verified || false}
                       onChange={(e) => setFieldValue('bank_branch', e.target.value)}
                     />
                   </Grid.Col>
@@ -284,6 +286,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                       placeholder='Enter city name'
                       value={values.bank_city}
                       error={errors.bank_city}
+                      disabled={bankData[editRow?.index]?.bank_verified || false}
                       onChange={(e) => setFieldValue('bank_city', e.target.value)}
                     />
                   </Grid.Col>
@@ -301,6 +304,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
                       value={String(values.account_since)}
                       searchable
                       error={errors.account_since}
+                      disabled={bankData[editRow?.index]?.bank_verified || false}
                       onChange={(e) => setFieldValue('account_since', e)} />
                   </Grid.Col>
                 </Grid>

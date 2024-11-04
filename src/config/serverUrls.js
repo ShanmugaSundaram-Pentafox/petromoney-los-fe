@@ -1,7 +1,5 @@
 export const URL = {
   base: process.env.REACT_APP_API_BASE,
-  base: 'https://api-uat.petromoney.in/api/',
-  // base: 'http://192.168.0.125:5000/api/',
   login: 'login/user',
   verifyMobileNumber: 'login/otp',
   resendOtp: 'otp/resend',

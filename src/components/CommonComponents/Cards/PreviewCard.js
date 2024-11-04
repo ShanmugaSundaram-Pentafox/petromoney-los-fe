@@ -215,19 +215,19 @@ export const PreviewCardBank = ({ id, children, onVerify, onEdit, action = true,
                 <div className='card-footer'>
                   {data?.is_active == 1
                     ? (<>
-                      {/* <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.editVerifiedBank}> */}
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        color="success"
-                        style={{ margin: 4 }}
-                        className={classes.btnSuccess}
-                        startIcon={<EditIcon color="primary" />}
-                        onClick={onEdit}
-                      >
-                        Edit
-                      </Button>
-                      {/* </CheckAllowed> */}
+                      <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.editVerifiedBank}>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          color="success"
+                          style={{ margin: 4 }}
+                          className={classes.btnSuccess}
+                          startIcon={<EditIcon color="primary" />}
+                          onClick={onEdit}
+                        >
+                          Edit
+                        </Button>
+                      </CheckAllowed>
                       <CheckAllowed currentUser={currentUser} resource={resources_id?.personalDiscussion} action={action_id?.personalDiscussion?.bankActivateDeactivate}>
                         <Button
                           size="small"

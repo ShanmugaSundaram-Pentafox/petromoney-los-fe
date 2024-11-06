@@ -82,6 +82,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
           setFieldValue('address', res?.details?.pradr?.adr);
         })
         .catch(e => {
+          displayNotification({ message: e, variant: 'error'})
           action === 'pan' ?
             setPanValidateData({ icon: true, idType: 'PAN' }) :
             setGstValidateData({ icon: true, idType: 'GST' })

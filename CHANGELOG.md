@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.42.1](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.42.0...v2.42.1) (2024-11-11)
+
+
+### Bug Fixes
+
+* **DataTableViewer:** removed unwanted show action ([df4042a](https://bitbucket.org/gmfvl/petromoney-fe/commit/df4042aa1da0c08f17d99a0934f85f7e1bf9a1a2))
+* **DealershipInfo:** displayNotification added ([b0079c9](https://bitbucket.org/gmfvl/petromoney-fe/commit/b0079c9cea23794439796e55e5452f709f9384c2))
+* **SettingMasters:** duplicate header removed ([0bb6769](https://bitbucket.org/gmfvl/petromoney-fe/commit/0bb67694bcfb96cc8ea41afe98beab589e215305))
+
 ## [2.42.0](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.41.0...v2.42.0) (2024-10-24)
 
 

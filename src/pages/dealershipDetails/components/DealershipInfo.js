@@ -207,7 +207,6 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
 
   const getUDYAMDetails = () => {
     if (values?.udyam_no) {
-      console.log('👽👽👽 : ',values?.udyam_no)
       const udyamRegex = /^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/;
       if (!udyamRegex.test(values.udyam_no)) {
         setFieldError('udyam_no', 'Invalid Udyam Number. Format: UDYAM-XX-XX-XXXXXXX.');

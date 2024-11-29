@@ -1,4 +1,4 @@
-import { Box, Card, Flex, Grid, Space, Text, Title } from '@mantine/core';
+import { Box, Card, Flex, Grid, LoadingOverlay, Space, Text, Title } from '@mantine/core';
 import { Tooltip, Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Sync } from '@material-ui/icons';
@@ -579,6 +579,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
         </>
       ) : (
         <>
+          <LoadingOverlay visible={loading} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} style={{position: 'fixed'}}/>
           <Grid gutter="lg">
             <Grid.Col span={{ base: 12, lg: 6 }}>
               <TextInput
@@ -846,7 +847,6 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
 
           <Button
             onClick={handleSubmit}
-            loading={isLoading}
           >
             Save
           </Button>

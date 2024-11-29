@@ -33,6 +33,8 @@ const DealerEditSideWrapper = ({
   currentUser,
   onClose,
   id,
+  setShowDealerEditForm,
+  showDealerEditForm
 }) => {
   const queryClient = useQueryClient()
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
@@ -185,6 +187,7 @@ const DealerEditSideWrapper = ({
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (values) => {
+      setShowDealerEditForm({...showDealerEditForm, loading: true})
       setLoading(true);
       if (isAdd === 'Add') {
         validateId('pan', values?.pan)
@@ -231,6 +234,7 @@ const DealerEditSideWrapper = ({
             },
             variant: 'success',
           });
+          setShowDealerEditForm({...showDealerEditForm, loading: false})
           onClose()
           queryClient.invalidateQueries(['dealership-applicants', id])
         })
@@ -243,6 +247,7 @@ const DealerEditSideWrapper = ({
             },
             variant: 'error',
           });
+          setShowDealerEditForm({...showDealerEditForm, loading: false})
         })
     },
   });

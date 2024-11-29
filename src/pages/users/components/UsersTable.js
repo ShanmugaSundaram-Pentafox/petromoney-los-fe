@@ -16,18 +16,17 @@ const UsersTable = ({ title, withRole, currentUser, refetchQuery, apiFilter, set
   const [page, setPage] = useState(1)
   const [search, setSearch] = useDebouncedState('', 500);
   const [downloadLoading, setDownloadLoading] = useState(false);
-  const [dateObj, setDateObj] = useState({ from: new Date(), to: new Date() });
   const apiFilterHeader = [
     {name:'role_id', label: 'Role', apiUrl: 'user/roles', data: null, type: 'select',},
     {name:'status', label: 'Status', apiUrl: null, data: [{label: 'Active', value: '1'},{label: 'Inactive', value: '0'}], type: 'select'}
   ];
-  const { data: usersData = [], isFetching } = useQuery(['users-data', search, dateObj, page, apiFilter], () => getUsersData({ search, dateObj, page, apiFilter }), {
+  const { data: usersData = [], isFetching } = useQuery(['users-data', search, page, apiFilter], () => getUsersData({ search, page, apiFilter }), {
     refetchOnWindowFocus: false
   });
 
   useEffect(() => {
     page != 1 && setPage(1)
-  }, [search,dateObj])
+  }, [search])
 
   const column = [
     {

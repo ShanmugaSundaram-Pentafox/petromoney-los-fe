@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.42.2](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.42.1...v2.42.2) (2024-12-02)
+
+
+### Bug Fixes
+
+* **DealersList:** if no data in table then shows no data found ([7c94e5d](https://bitbucket.org/gmfvl/petromoney-fe/commit/7c94e5dc5e5ddbbc02905776a27ad6f20e19bc01))
+* **FleetOperatorsTable TransportOwnerTable:** handled if there is no data to display ([521d8fd](https://bitbucket.org/gmfvl/petromoney-fe/commit/521d8fd6eab546d3d3e6d2ac6804fde1b09039ef))
+* resend notification payload fix ([86e1e58](https://bitbucket.org/gmfvl/petromoney-fe/commit/86e1e58945bc7f010faf987810a9b199632bd146))
+
 ### [2.42.1](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.42.0...v2.42.1) (2024-11-11)
 
 

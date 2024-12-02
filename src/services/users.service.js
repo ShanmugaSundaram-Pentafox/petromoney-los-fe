@@ -6,7 +6,7 @@ export const getAllUsers = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.allUsers)
       .then(({ status, data, message }) => {
-        if (status === 'success') {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)

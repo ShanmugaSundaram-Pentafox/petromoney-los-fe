@@ -12,10 +12,6 @@ const Users = ({ currentUser }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [tableData, setTableData] = useState();
   const [apiFilter, setApiFilter] = useState({})
-  // const allUsersDataQuery = useQuery({
-  //   queryKey: ['users'],
-  //   queryFn: () => getAllUsers(),
-  // })
   const activeUsersCount = useQuery({
     queryKey: ['active-users-count'],
     queryFn: () => getActiveUsersCountData(),
@@ -51,10 +47,6 @@ const Users = ({ currentUser }) => {
     enabled: Boolean(false),
     retry: Boolean(false),
   });
-
-  // const getUserById = id => {
-  //   return allUsersDataQuery?.data?.find(item => item.id === id) || {};
-  // };
 
   const handleRoleSelect = (role) => {
     setSelectedRole(role);

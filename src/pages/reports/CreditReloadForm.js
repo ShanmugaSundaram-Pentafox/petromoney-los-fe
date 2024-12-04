@@ -290,19 +290,21 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                             }
                           </Box>
                         </Grid.Col>
-                        <Grid.Col span={12}>
-                          <Group>
-                            <label>Do you want proceed with express reload</label>
-                            <Checkbox
-                              checked={expressCRR}
-                              size='xs'
-                              onChange={(e) => setExpressCRR(e.currentTarget.checked)}
-                            />
-                          </Group>
-                          <Alert mt={'md'} radius={'md'} variant="light" color="orange" title="Note" icon={<IconInfoCircle />} styles={{ message: { fontSize: 12 } }}>
-                            Express Reload will charge Rs. 590 (including GST) will be deducted, and your request will be processed.
-                          </Alert>
-                        </Grid.Col>
+                        {values?.is_express_fee_eligible &&
+                          <Grid.Col span={12}>
+                            <Group>
+                              <label>Do you want proceed with express reload</label>
+                              <Checkbox
+                                checked={expressCRR}
+                                size='xs'
+                                onChange={(e) => setExpressCRR(e.currentTarget.checked)}
+                              />
+                            </Group>
+                            <Alert mt={'md'} radius={'md'} variant="light" color="orange" title="Note" icon={<IconInfoCircle />} styles={{ message: { fontSize: 12 } }}>
+                              Express Reload will charge Rs. 590 (including GST) will be deducted, and your request will be processed.
+                            </Alert>
+                          </Grid.Col>
+                        }
                         <Grid.Col span={12}>
                           <Grid>
                             <Grid.Col span={12}>

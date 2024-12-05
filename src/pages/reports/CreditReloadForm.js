@@ -124,6 +124,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
     refetchOnWindowFocus: false,
     retry: false,
     enabled: selectedValue ? true : false,
+    cacheTime: 0,
     onError: (err) => {
       setErrorMessage(err)
     }

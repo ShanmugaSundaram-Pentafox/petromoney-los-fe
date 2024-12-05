@@ -290,7 +290,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                             }
                           </Box>
                         </Grid.Col>
-                        {values?.is_express_fee_eligible &&
+                        {creditLimit?.is_express_fee_eligible &&
                           <Grid.Col span={12}>
                             <Group>
                               <label>Do you want proceed with express reload</label>

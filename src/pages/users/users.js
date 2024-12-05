@@ -155,7 +155,7 @@ const Users = ({ currentUser }) => {
           </Paper>
         </Grid.Col>
         <Grid.Col>
-          <UsersTable currentUser={currentUser} title="Users" apiFilter={apiFilter} setApiFilter={setApiFilter}/>
+          <UsersTable currentUser={currentUser} title="Users" apiFilter={apiFilter} setApiFilter={setApiFilter} userCountRefetch={activeUsersCount?.refetch}/>
         </Grid.Col>
       </Grid>
     </Box>

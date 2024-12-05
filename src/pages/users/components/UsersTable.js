@@ -11,7 +11,7 @@ import { useQuery } from 'react-query';
 import { getUsersData } from '../../../services/users.service';
 import usePageTitle from '../../../hooks/usePageTitle';
 
-const UsersTable = ({ title, withRole, currentUser, refetchQuery, apiFilter, setApiFilter }) => {
+const UsersTable = ({ title, withRole, currentUser, apiFilter, setApiFilter, userCountRefetch }) => {
   usePageTitle('Users');
   const [page, setPage] = useState(1)
   const [search, setSearch] = useDebouncedState('', 500);
@@ -20,7 +20,7 @@ const UsersTable = ({ title, withRole, currentUser, refetchQuery, apiFilter, set
     {name:'role_id', label: 'Role', apiUrl: 'user/roles', data: null, type: 'select',},
     {name:'status', label: 'Status', apiUrl: null, data: [{label: 'Active', value: '1'},{label: 'Inactive', value: '0'}], type: 'select'}
   ];
-  const { data: usersData = [], isFetching } = useQuery(['users-data', search, page, apiFilter], () => getUsersData({ search, page, apiFilter }), {
+  const { data: usersData = [], isFetching, refetch } = useQuery(['users-data', search, page, apiFilter], () => getUsersData({ search, page, apiFilter }), {
     refetchOnWindowFocus: false
   });
 
@@ -118,7 +118,10 @@ const UsersTable = ({ title, withRole, currentUser, refetchQuery, apiFilter, set
               column
         }
         action={
-          <AddNewUserAction currentUser={currentUser} refetchQuery={usersData?.refetch} />
+          <AddNewUserAction currentUser={currentUser} refetchQuery={()=>{
+            refetch();
+            userCountRefetch();
+          }} />
         }
       />
     </Paper>

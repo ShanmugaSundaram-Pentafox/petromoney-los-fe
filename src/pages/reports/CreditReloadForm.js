@@ -149,8 +149,8 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
         .nullable('Enter Amount')
         .required('Enter Amount')
         .min(isLimit ? creditLimit?.min_tranche_amount : 50000, `The minimum amount you can request is ${isLimit ? creditLimit?.min_tranche_amount : 50000}`)
-        .max(creditLimit?.available_limit, `The maximum amount you can request is ${creditLimit?.available_limit}`)
-        .test('maxDigits', creditLimit?.available_limit ? `You can request amount from 50k to ${creditLimit?.available_limit}` : 'Enter dealership ID to check the limit', (value) => String(value) >= 50000 && String(value) <= creditLimit?.available_limit),
+        .max(creditLimit?.eligible_amount, `The maximum amount you can request is ${creditLimit?.eligible_amount}`)
+        .test('maxDigits', creditLimit?.eligible_amount ? `You can request amount from 50k to ${creditLimit?.eligible_amount}` : 'Enter dealership ID to check the limit', (value) => String(value) >= 50000 && String(value) <= creditLimit?.eligible_amount),
     }),
     onSubmit: (values) => {
       const d = { ...values, request_source: 'mdm', bank_id: bankId?.value, repayment_made: repaymentType?.value }
@@ -283,7 +283,7 @@ const CreditReloadForm = ({ callback, currentUser, view }) => {
                             onChange={handleChange}
                           />
                           <Box>
-                            <Text style={{ color: 'gray', fontSize: 12 }}>Available Limit: < Currency value={creditLimit?.available_limit} /></Text>
+                            <Text style={{ color: 'gray', fontSize: 12 }}>Available Limit: < Currency value={creditLimit?.eligible_amount} /></Text>
                             {
                               typeof (creditLimit?.available_tranche_limit) == 'number' &&
                                 <Text mt={'sm'} style={{ color: 'gray', fontSize: 12 }}>Available tranche count: {creditLimit?.available_tranche_limit}</Text>

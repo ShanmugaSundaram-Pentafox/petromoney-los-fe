@@ -18,6 +18,62 @@ export const getAllUsers = () => {
   })
 }
 
+export const getUsersData = ({ search, dateObj, download = false, page = 1, apiFilter = {}}) => {
+  let qry = []
+  let apiUrl = 'users';
+  if (page) qry.push(`page=${page}`)
+  if (search) qry.push(`search=${search}`)
+  if (download) qry.push('download=yes')
+  if (dateObj?.from) qry.push(`from_date=${moment(dateObj?.from).format('YYYY-MM-DD')}&to_date=${moment(dateObj?.to).format('YYYY-MM-DD')}`)
+  Object.entries(apiFilter).forEach(([key, value]) => {
+    if (value) qry.push(`${key}=${value}`);
+  });
+  if (qry.length) apiUrl += '?' + qry.join('&')
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl)
+      .then((res) => {
+        if (res?.status === 'success') {
+          resolve(res)
+        } else {
+          reject(res?.message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+
+export const getActiveUsersCountData = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('users/count')
+      .then(({ status, data, message }) => {
+        if (status === 'success') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
+export const getFilterDataByHeader = ({header}) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`user/${header}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  })
+}
 export const getAllUserRoles = () => {
   return new Promise((resolve, reject) => {
     apiCall(URL.userRoles)

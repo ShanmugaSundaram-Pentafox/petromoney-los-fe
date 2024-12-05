@@ -26,7 +26,7 @@ const UsersTable = ({ title, withRole, currentUser, apiFilter, setApiFilter, use
 
   useEffect(() => {
     page != 1 && setPage(1)
-  }, [search])
+  }, [search, apiFilter])
 
   const column = [
     {

@@ -1,14 +1,22 @@
 import { Grid, } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
-import { getAllWithheldLoans } from '../../services/withheld.services';
+import { getWithheldLoansData } from '../../services/withheld.services';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import moment from 'moment';
 import { getSignedUrl } from '../../services/common.service';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
+import { useDebouncedState } from '@mantine/hooks';
 
 const ResolvedTable = () => {
-  const { data = [], isLoading } = useQuery('withheld-loans-resolved', () => getAllWithheldLoans(1), { refetchOnWindowFocus: false });
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useDebouncedState('', 500);
+  const { data: resolvedData = [], isFetching} = useQuery(['withheld-loans-resolved', search, page], () => getWithheldLoansData({is_resolved: 1, search, page}), { refetchOnWindowFocus: false });
+
+  useEffect(() => {
+    page != 1 && setPage(1)
+  }, [search])
+  
   const column = [
     {
       key: 'id',
@@ -113,7 +121,7 @@ const ResolvedTable = () => {
   const [downloadLoading, setDownloadLoading] = useState(false);
   const downloadReport = () => {
     setDownloadLoading(true)
-    getAllWithheldLoans(1,true)
+    getWithheldLoansData({is_resolved: 1,download: true})
       .then((res) => {
         getSignedUrl(res?.[0]?.url)
           .then((res) => {
@@ -135,13 +143,18 @@ const ResolvedTable = () => {
     <>
       <Grid item md={12}>
         <DataTableViewer
-          rowData={data}
+          useAPIPagination
+          rowData={resolvedData?.data}
           filter={false}
           column={column}
           title={'Resolved Withheld Loans'}
-          loading={isLoading}
+          loading={isFetching}
           downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
           excelDownload
+          page={page}
+          setPage={setPage}
+          apiSearch={setSearch}
+          totalNoOfRecords={resolvedData?.total_records}
         />
       </Grid>
     </>

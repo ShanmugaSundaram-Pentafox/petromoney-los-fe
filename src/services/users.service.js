@@ -32,7 +32,7 @@ export const getUsersData = ({ search, dateObj, download = false, page = 1, apiF
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then((res) => {
-        if (res?.status === 'success') {
+        if (res?.status === 'SUCCESS') {
           resolve(res)
         } else {
           reject(res?.message)
@@ -48,7 +48,7 @@ export const getActiveUsersCountData = () => {
   return new Promise((resolve, reject) => {
     apiCall('users/count')
       .then(({ status, data, message }) => {
-        if (status === 'success') {
+        if (status === 'SUCCESS') {
           resolve(data)
         } else {
           reject(message)

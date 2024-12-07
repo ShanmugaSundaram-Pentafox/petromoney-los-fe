@@ -123,7 +123,7 @@ const ResolvedTable = () => {
     setDownloadLoading(true)
     getWithheldLoansData({is_resolved: 1,download: true})
       .then((res) => {
-        getSignedUrl(res?.[0]?.url)
+        getSignedUrl(res?.data?.[0]?.url)
           .then((res) => {
             window.open(res?.url, '_blank');
           })
@@ -154,6 +154,7 @@ const ResolvedTable = () => {
           page={page}
           setPage={setPage}
           apiSearch={setSearch}
+          totalNoOfPages={resolvedData?.total_pages}
           totalNoOfRecords={resolvedData?.total_records}
         />
       </Grid>

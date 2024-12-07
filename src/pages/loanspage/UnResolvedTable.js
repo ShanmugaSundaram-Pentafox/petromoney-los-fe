@@ -49,7 +49,8 @@ const UnresolvedTable = ({ currentUser }) => {
     setDownloadLoading(true)
     getWithheldLoansData({is_resolved: 0,download: true})
       .then((res) => {
-        getSignedUrl(res?.[0]?.url)
+        console.log('ress : ',res)
+        getSignedUrl(res?.data?.[0]?.url)
           .then((res) => {
             window.open(res?.url, '_blank');
           })
@@ -277,6 +278,7 @@ const UnresolvedTable = ({ currentUser }) => {
           page={page}
           setPage={setPage}
           apiSearch={setSearch}
+          totalNoOfPages={unResolvedData?.total_pages}
           totalNoOfRecords={unResolvedData?.total_records}
         />
       </Grid>

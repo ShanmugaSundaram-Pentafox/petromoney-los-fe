@@ -6,17 +6,24 @@ export const getWithheldLoansData = ({is_resolved, search, dateObj, download = f
   let apiUrl = `withheld/loans?is_resolved=${is_resolved}`;
   if (page) qry.push(`page=${page}`)
   if (search) qry.push(`search=${search}`)
-  if (download) qry.push('download=yes')
+  if (download) qry.push('download_as_csv=yes')
   if (dateObj?.from) qry.push(`from_date=${moment(dateObj?.from).format('YYYY-MM-DD')}&to_date=${moment(dateObj?.to).format('YYYY-MM-DD')}`)
   Object.entries(apiFilter).forEach(([key, value]) => {
     if (value) qry.push(`${key}=${value}`);
   });
-  if (qry.length) apiUrl += '?' + qry.join('&')
+  if (qry.length) apiUrl += '&' + qry.join('&')
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then((res) => {
-        if (res?.status === 'success') {
-          resolve(res)
+        if (res?.status === 'SUCCESS') {
+          let data = []
+          res?.data?.forEach((item, i) => {
+            data.push({
+              ...item,
+              comments: typeof (item?.comments || item?.resolved_comments) === 'string' ? JSON.parse(item?.comments || item?.resolved_comments) : (item?.comments || item?.resolved_comment || [])
+            })
+          })
+          resolve({...res, data : data})
         } else {
           reject(res?.message)
         }

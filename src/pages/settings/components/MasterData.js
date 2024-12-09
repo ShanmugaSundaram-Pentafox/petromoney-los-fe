@@ -203,7 +203,7 @@ function MasterData({ currentUser }) {
         onClose={() => setCustomForm()}
         title={'Select Role to Assign Product'}
       >
-        <AssignProducts currentUser={currentUser} title='Select Role to Assign Product' callback={setCustomForm} />
+        <AssignProducts currentUser={currentUser} />
       </RightSideDrawer>
       <RightSideDrawer
         opened={customForm === 'city'}

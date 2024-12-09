@@ -66,6 +66,7 @@ const AddNewUserForm = ({ callback, action }) => {
           });
           callback &&
             setTimeout(() => {
+              action();
               callback();
             }, 1000);
         })

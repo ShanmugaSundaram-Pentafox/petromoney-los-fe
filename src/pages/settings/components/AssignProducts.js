@@ -93,18 +93,12 @@ const UserGroup = ({data, setAddForm, currentUser}) => {
   )
 }
 
-const AssignProducts = ({ callback, title, currentUser }) => {
+const AssignProducts = ({ currentUser }) => {
   const classes = useStyles()
   const [addForm, setAddForm] = useState()
   const { data: roles = [] } = useQuery('roles', () => getAllUserRoles(), {refetchOnWindowFocus: false})
   return (
     <>
-      <Typography className={classes.sidePanelTitle} variant="h4">
-        <div>{title}</div>
-        <IconButton onClick={() => callback(false)} size='small'>
-          <CloseIcon />
-        </IconButton>
-      </Typography>
       <Paper className={classes.root}>
         <div className={classes.content}>
           {

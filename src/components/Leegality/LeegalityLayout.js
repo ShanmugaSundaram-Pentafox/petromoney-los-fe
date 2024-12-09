@@ -1,14 +1,8 @@
 import {
   Backdrop,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -16,8 +10,8 @@ import styled from 'styled-components';
 import { deleteRequestUrl } from '../../services/leegality.service';
 import apiCall from '../../utils/api.util';
 import FilePreview from '../CommonComponents/FilePreview';
-import { Avatar, Badge, Box, Button, Grid, Group, Menu, Modal, Popover, Table, Text } from '@mantine/core';
-import { IconCopy, IconMessageCircle, IconSettings, IconSquareRoundedCheck, IconSquareRoundedX, IconTrash } from '@tabler/icons-react';
+import { Avatar, Badge, Box, Button, Grid, Group, Menu, Modal, Table, Text } from '@mantine/core';
+import { IconCopy, IconSettings, IconSquareRoundedCheck, IconSquareRoundedX, IconTrash } from '@tabler/icons-react';
 import { displayNotification } from '../CommonComponents/Notification/displayNotification';
 
 const Card = styled.div`
@@ -82,10 +76,10 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
     }
   })
 
-  const ResendNotification = () => {
+  const ResendNotification = (item) => {
     apiCall('document/resend', {
       method: 'POST',
-      body: { sign_url: selectedItemData.signUrl },
+      body: { sign_url: item?.signUrl },
     })
       .then((res) => {
         displayNotification({
@@ -267,7 +261,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
                         {item.active ? (
                           <Button
                             variant="outline"
-                            onClick={ResendNotification}
+                            onClick={() => ResendNotification(item)}
                             size='compact-sm'
                           >
                             Resend Notification

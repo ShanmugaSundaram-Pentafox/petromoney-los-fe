@@ -1,4 +1,4 @@
-import { Box, Flex } from '@mantine/core';
+import { Box, Flex, Image, Text } from '@mantine/core';
 import { useSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import { useQuery } from 'react-query';
@@ -138,62 +138,90 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
           </Flex>
         </CheckAllowed>
       </Flex>
-
-      <Box style={{ display: 'flex', }}>
-        <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
-          <DealersTable
-            id={id}
-            deletable={deletable}
-            data={applicantsData?.filter(item => item.category === 'DEALER')}
-            formType={formType}
-            rowData={rowData}
-            titleAlign={titleAlign}
-            showCreditForm={showCreditForm}
-            openCloseCreditForm={openCloseCreditForm}
-            editFormClose={editFormClose}
-            dealersClickRow={dealersClickRow}
-            onClickAddMenu={onClickAddMenu}
-            currentUser={currentUser}
-            showDealerEditForm={showDealerEditForm} />
-        </Box>
-      </Box>
-      <Box style={{ display: 'flex', }}>
-        <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
-          <CoApplicantsTable
-            id={id}
-            deletable={deletable}
-            titleAlign={titleAlign}
-            coApplicantsData={applicantsData?.filter(item => item.category === 'COAPPLICANT')}
-            formType={formType}
-            rowData={rowData}
-            showCreditForm={showCreditForm}
-            openCloseCreditForm={openCloseCreditForm}
-            editFormClose={editFormClose}
-            dealersClickRow={dealersClickRow}
-            onClickAddMenu={onClickAddMenu}
-            currentUser={currentUser}
-            showDealerEditForm={showDealerEditForm} />
-        </Box>
-      </Box>
-      <Box style={{ display: 'flex', }}>
-        <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
-          <GuarantorsTable
-            id={id}
-            deletable={deletable}
-            titleAlign={titleAlign}
-            guarantorsData={applicantsData?.filter(item => item.category === 'GUARANTOR')}
-            formType={formType}
-            rowData={rowData}
-            showCreditForm={showCreditForm}
-            openCloseCreditForm={openCloseCreditForm}
-            editFormClose={editFormClose}
-            dealersClickRow={dealersClickRow}
-            onClickAddMenu={onClickAddMenu}
-            currentUser={currentUser}
-            showDealerEditForm={showDealerEditForm} />
-        </Box>
-      </Box>
-
+      {(applicantsData?.filter(item => item.category === 'DEALER').length !== 0) && (
+        <Box style={{ display: 'flex', }}>
+          <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
+            <DealersTable
+              id={id}
+              deletable={deletable}
+              data={applicantsData?.filter(item => item.category === 'DEALER')}
+              formType={formType}
+              rowData={rowData}
+              titleAlign={titleAlign}
+              showCreditForm={showCreditForm}
+              openCloseCreditForm={openCloseCreditForm}
+              editFormClose={editFormClose}
+              dealersClickRow={dealersClickRow}
+              onClickAddMenu={onClickAddMenu}
+              currentUser={currentUser}
+              showDealerEditForm={showDealerEditForm} />
+          </Box>
+        </Box>)}
+      {(applicantsData?.filter(item => item.category === 'COAPPLICANT').length !== 0) && (
+        <Box style={{ display: 'flex', }}>
+          <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
+            <CoApplicantsTable
+              id={id}
+              deletable={deletable}
+              titleAlign={titleAlign}
+              coApplicantsData={applicantsData?.filter(item => item.category === 'COAPPLICANT')}
+              formType={formType}
+              rowData={rowData}
+              showCreditForm={showCreditForm}
+              openCloseCreditForm={openCloseCreditForm}
+              editFormClose={editFormClose}
+              dealersClickRow={dealersClickRow}
+              onClickAddMenu={onClickAddMenu}
+              currentUser={currentUser}
+              showDealerEditForm={showDealerEditForm} />
+          </Box>
+        </Box>)}
+      {(applicantsData?.filter(item => item.category === 'GUARANTOR').length !== 0) && (
+        <Box style={{ display: 'flex', }}>
+          <Box style={{ flex: 1, overflowX: 'scroll', width: '700px' }}>
+            <GuarantorsTable
+              id={id}
+              deletable={deletable}
+              titleAlign={titleAlign}
+              guarantorsData={applicantsData?.filter(item => item.category === 'GUARANTOR')}
+              formType={formType}
+              rowData={rowData}
+              showCreditForm={showCreditForm}
+              openCloseCreditForm={openCloseCreditForm}
+              editFormClose={editFormClose}
+              dealersClickRow={dealersClickRow}
+              onClickAddMenu={onClickAddMenu}
+              currentUser={currentUser}
+              showDealerEditForm={showDealerEditForm} />
+          </Box>
+        </Box>)}  
+      {!(applicantsData?.filter(item => item.category === 'DEALER' || item.category === 'COAPPLICANT' || item.category === 'GUARANTOR').length) && (
+        <Box
+          mt="md"
+          p="xl"
+          style={{
+            textAlign: 'center',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            gap: 10,
+            height: '60vh',
+          }}
+        >
+          <Image
+            src="https://i.imgur.com/A6KRQAV.png"
+            w={150}
+            h={100}
+            radius="md"
+          />
+          <Box>
+            <Text>No data yet!</Text>
+            <Text size="sm" sx={{ color: 'rgb(0,0,0,0.4)' }}>
+              No data found in this section
+            </Text>
+          </Box>
+        </Box>)}
       <RightSideDrawer
         size="lg"
         opened={showDealerEditForm.modal}

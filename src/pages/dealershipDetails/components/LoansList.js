@@ -1,9 +1,8 @@
-import { Stack, Table, Text, Title, Button, Select as MantineSelect, Group, Box, ScrollArea } from '@mantine/core';
+import { Stack, Table, Text, Title, Button, Select as MantineSelect, Group, Box, ScrollArea, Select } from '@mantine/core';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import Select from 'react-select';
 import AccountStatement from './AccountStatement';
 import { Modal } from '../../../components/Mantine/Modal/Modal';
 import Currency from '../../../components/Number/Currency';
@@ -16,6 +15,7 @@ import { getApplicationStatusById, updateLoanApprovalStatusById } from '../../..
 import apiCall from '../../../utils/api.util';
 import { isAllowed } from '../../../utils/cerbos';
 import RichTextEditorBox from '../../../components/RichTexEditor/RichTextEditorBox';
+import { useDebouncedState } from '@mantine/hooks';
 
 const LoansList = ({ id, currentUser, titleAlign }) => {
   const queryClient = useQueryClient()
@@ -23,8 +23,9 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [remarks, setRemarks] = useState();
   const [dialogState, setDialogState] = useState({});
   const [user, setUser] = useState([]);
-  const [userRole, setUserRole] = useState([]);
+  // const [userRole, setUserRole] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
+  const [searchValue, setSearchValue] = useDebouncedState('');
   const readOnly = permissionCheck(currentUser.role_name, rulesList.external_view);
   const { enqueueSnackbar } = useSnackbar();
   const { data: loanData = [], isLoading } = useQuery(['dealership-loans', id], () => getDealershipLoansById(id), { refetchOnWindowFocus: false })
@@ -40,35 +41,47 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       refetchOnWindowFocus: false
     }
   );
-
-  useEffect(() => {
-    if (!isLoading) {
-      if (loanData.length) {
-        let val = loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1'
-        if (isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_review)) {
-          getUserRoleForReview(val)
-            .then(res => {
-              let d = [];
-              res.forEach((item, i) => {
-                d.push({
-                  label: <div>{item.first_name} {item.last_name}</div>,
-                  value: item.id
-                })
-              })
-              setUserRole(d);
-            })
-            .catch(e => {
-              console.log(e);
-            })
-        }
-      }
+  const { data: userRole } = useQuery(
+    ['userRoles', searchValue, status, loanData],
+    () => getUserRoleForReview({ status: loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1', search: searchValue }),
+    {
+      select: (data) =>
+        data.map((item) => ({
+          label: `${item.first_name} ${item.last_name}`,
+          value: item.id?.toString(),
+        })),
+      enabled: Boolean(!isLoading && loanData.length && isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval)),
     }
-    // if (loanData[0]?.application_state_id && status?.length) {
-    //   console.log(selectedStatus);
-    //   const re = status?.find(d => d.id == loanData[0]?.application_state_id)
-    //   setSelectedStatus({ ...re, value: re?.id } || {});
-    // }
-  }, [status, loanData])
+  );
+
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     if (loanData.length) {
+  //       let val = loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1'
+  //       if (isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_review)) {
+  //         getUserRoleForReview(val)
+  //           .then(res => {
+  //             let d = [];
+  //             res.forEach((item, i) => {
+  //               d.push({
+  //                 label: <div>{item.first_name} {item.last_name}</div>,
+  //                 value: item.id
+  //               })
+  //             })
+  //             setUserRole(d);
+  //           })
+  //           .catch(e => {
+  //             console.log(e);
+  //           })
+  //       }
+  //     }
+  //   }
+  // if (loanData[0]?.application_state_id && status?.length) {
+  //   console.log(selectedStatus);
+  //   const re = status?.find(d => d.id == loanData[0]?.application_state_id)
+  //   setSelectedStatus({ ...re, value: re?.id } || {});
+  // }
+  // }, [status, loanData])
 
   const processLoan = loan => {
     let status, remarksObj = {};
@@ -289,12 +302,26 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
         {dialogState.data?.status?.toLowerCase() === 'submitted' && (
           <Stack gap="4">
             <Text id="approval-remarks-desc">Please choose whom did you want to sent for review</Text>
-            <Select
+            {/* <Select
               isClearable
               name='type'
               onChange={setUser}
               options={userRole}
               maxMenuHeight="200px"
+            /> */}
+            <Select
+              searchable
+              nothingFoundMessage = "No data found"
+              onSearchChange={setSearchValue}
+              placeholder='Select Reviewer'
+              clearable
+              name='type'
+              onChange={setUser}
+              data={userRole || []}
+              styles={{ dropdown: { boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', zIndex: 99999 } }}
+              menuPlacement='bottom'
+              menuPosition='fixed'
+              maxMenuHeight='200px'
             />
           </Stack>
         )}
@@ -303,12 +330,27 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
           <Stack gap="4">
             <Text id="approval-remarks-desc">Please choose whom did you want to sent for approval</Text>
 
-            <Select
+            {/* <Select
+            
               isClearable
               name='review'
               onChange={setUser}
               options={userRole}
               maxMenuHeight="250px"
+            /> */}
+            <Select
+              searchable
+              onSearchChange={setSearchValue}
+              nothingFoundMessage = "No data found"
+              placeholder='Select Reviewer'
+              clearable
+              name='review'
+              onChange={setUser}
+              data={userRole || []}
+              styles={{ dropdown: { boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', zIndex: 99999 } }}
+              menuPlacement='bottom'
+              menuPosition='fixed'
+              maxMenuHeight='200px'
             />
           </Stack>
         )}

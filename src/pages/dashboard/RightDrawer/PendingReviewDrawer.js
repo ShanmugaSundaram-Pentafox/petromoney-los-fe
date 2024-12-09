@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { useMount } from 'react-use';
 import DealershipData from './DealershipData';
 import DrawerFooter from './DrawerFooter';
 import DrawerRemarks from './DrawerRemarks';
@@ -15,6 +14,7 @@ import classes from './SideDrawer.module.css';
 import { Alert, Box, Button, Group, Modal, Select, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import RichTextEditorBox from '../../../components/RichTexEditor/RichTextEditorBox';
+import { useDebouncedState } from '@mantine/hooks';
 
 const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editable, data, onClose, readOnly }) => {
   const { data: loanData = {} } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
@@ -23,26 +23,39 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState()
   const [errorStatus, setErrorStatus] = useState()
-  const [userRole, setUserRole] = useState([]);
+  // const [userRole, setUserRole] = useState([]);
   const [remarks, setRemarks] = useState();
+  const [searchValue, setSearchValue] = useDebouncedState('');
 
-
-  useMount(() => {
-    if (isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval)) {
-      getUserRoleForReview('is_approve=1')
-        .then(res => {
-          let d = [];
-          res.forEach((item) => {
-            d.push({
-              label: `${item.first_name} ${item.last_name}`,
-              value: item.id?.toString()
-            })
-          })
-          setUserRole(d);
-        })
-        .catch(() => null)
+  const { data: userRole, isLoading: isUserRoleLoading } = useQuery(
+    ['userRoles', searchValue],
+    () => getUserRoleForReview({ status: 'is_approve=1', search: searchValue }),
+    {
+      select: (data) =>
+        data.map((item) => ({
+          label: `${item.first_name} ${item.last_name}`,
+          value: item.id?.toString(),
+        })),
+      enabled: isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval),
     }
-  })
+  );
+
+  // useMount(() => {
+  //   if (isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval)) {
+  //     getUserRoleForReview({status : 'is_approve=1', search: searchValue})
+  //       .then(res => {
+  //         let d = [];
+  //         res.forEach((item) => {
+  //           d.push({
+  //             label: `${item.first_name} ${item.last_name}`,
+  //             value: item.id?.toString()
+  //           })
+  //         })
+  //         setUserRole(d);
+  //       })
+  //       .catch(() => null)
+  //   }
+  // })
 
   const handleApprovalModal = () => {
     if (info?.amount_requested > 0) {
@@ -129,10 +142,14 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
               Please choose whom did you want to sent for approval.
             </Text>
             <Select
+              searchable
+              nothingFoundMessage = "No data found"
+              onSearchChange={setSearchValue}
+              placeholder='Select Reviewer'
               clearable
               name='user_approve'
               onChange={(_value, option) => { setUser(option); setErrorStatus(); }}
-              data={userRole}
+              data={userRole || []}
               styles={{ dropdown: { boxShadow: 'rgba(0, 0, 0, 0.24) 0px 3px 8px', zIndex: 9999 } }}
               menuPlacement='bottom'
               menuPosition='fixed'

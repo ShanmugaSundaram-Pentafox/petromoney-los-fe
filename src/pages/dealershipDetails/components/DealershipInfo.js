@@ -40,7 +40,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
   const [omcs, setOmcs] = useState([])
   const [crimeData, setCrimeData] = useState();
   const businessTypes = useQuery('business-types', getBusinessTypes, { cacheTime: 300000 })
-  const states = useQuery('state_id', getActiveStates, { cacheTime: 300000 })
+  const states = useQuery('state', getActiveStates, { cacheTime: 300000 })
   const { data: loanData = [], isLoading: loanDataLoading } = useQuery(
     ['dealership-loans', data?.id],
     () => getDealershipLoansById(data?.id),
@@ -119,7 +119,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
         .nullable('Please enter address')
         .required('Please enter address')
         .test('Invalid characters', 'Please don\'t use _ # $ % ^ & * @ ( ) < > ! ~ { } = : ; " ? ', value => !/[_#$%^&*@()<>!~{}=:;"?]/.test(value)),
-      state_id: Yup.string().nullable('Please choose state').required('Please choose state'),
+      state: Yup.string().nullable('Please choose state').required('Please choose state'),
       district: Yup.string().nullable('Please enter district').required('Please enter district'),
       pincode: Yup.string().nullable('Enter pincode').matches(/^[1-9][0-9]{5}$/, 'Invalid pincode').required('Enter pincode'),
       pan: Yup.string()
@@ -152,21 +152,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
         if (key === 'pan') {
           let pan = values?.pan ? cryptoEncrypt(values.pan) : values?.pan;
           formData.append(key, pan)
-        }
-        else if (key === 'state_id'){
-          formData.append('state', values?.state_id)
-          formData.append('state_id', values?.state_id)
-        }
-        else if (key === 'region_id'){
-          formData.append('region', values?.region_id)
-          formData.append('region_id', values?.region_id)
-        }
-        else if (key === 'business_type_id'){
-          formData.append('business_type', values?.business_type_id)
-          formData.append('business_type_id', values?.business_type_id)
-        }
-        else {
-          console.log('KEY : ', key)
+        } else {
           formData.append(key, obj[key]);
         }
       })
@@ -216,7 +202,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
         })
     }
   });
-  const getRegion = useQuery(['region_id', values?.state_id], () => getRegionById(parseInt(values?.state_id || 1)))
+  const getRegion = useQuery(['region', values?.state], () => getRegionById(parseInt(values?.state || 1)))
 
   const getUDYAMDetails = () => {
     if (values?.udyam_no) {
@@ -366,8 +352,8 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
               <ViewData
                 loading={isLoading}
                 title='State'
-                value={(states?.data?.find(function (state_id) {
-                  if (state_id.id == values?.state_id)
+                value={(states?.data?.find(function (state) {
+                  if (state.id == values?.state)
                     return true;
                 }))?.name}
               />
@@ -378,7 +364,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
                 loading={isLoading}
                 title='Business type'
                 value={businessTypes.data?.find(function (type, index) {
-                  if (type.id == values?.business_type_id)
+                  if (type.id == values?.business_type)
                     return true;
                 })?.name}
               />
@@ -642,12 +628,12 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
               <TextInput
                 select
                 labelText="Business Type"
-                name="business_type_id"
+                name="business_type"
                 readOnly={readOnly}
                 disabled={readOnly}
-                defaultValue={values?.business_type_id}
-                error={errors.business_type_id}
-                helperText={errors.business_type_id}
+                defaultValue={values?.business_type}
+                error={errors.business_type}
+                helperText={errors.business_typeF}
                 {...fieldProps}
               >
                 {
@@ -659,12 +645,12 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
               <TextInput
                 select
                 labelText="State"
-                name="state_id"
+                name="state"
                 readOnly={readOnly}
                 disabled={readOnly}
-                value={values?.state_id}
-                error={errors.state_id}
-                helperText={errors.state_id}
+                value={values?.state}
+                error={errors.state}
+                helperText={errors.state}
                 {...fieldProps}
               >
                 {
@@ -677,12 +663,12 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
                 <TextInput
                   select
                   labelText="Region"
-                  name="region_id"
-                  value={values?.region_id}
+                  name="region"
+                  value={values?.region}
                   readOnly={readOnly}
                   disabled={readOnly}
-                  error={errors.region_id}
-                  helperText={errors.region_id}
+                  error={errors.region}
+                  helperText={errors.region}
                   {...fieldProps}
                 >
                   {

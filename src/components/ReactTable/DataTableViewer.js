@@ -7,6 +7,8 @@ import { useDisclosure } from '@mantine/hooks';
 import { useJsonToCsv } from 'react-json-csv';
 import { generateCSVHeader, generateTableHeader } from '../../utils/tableHeader.util';
 import StatusViewer from '../../pages/dashboard/components/StatusViewer';
+import { useQuery } from 'react-query';
+import { getApiFilters } from '../../services/common.service';
 
 const Filter = ({
   column,
@@ -50,6 +52,56 @@ const Filter = ({
   )
 }
 
+const ApiFilter = ({
+  apiFilterHeader,
+  apiFilter = {},
+  setApiFilter,
+}) => {
+  const filterQuery = useQuery({
+    queryKey: ['filter-query', apiFilterHeader],
+    queryFn: () => getApiFilters(apiFilterHeader?.apiUrl),
+    select: (data)=> {
+      const res = data?.map((item, index) => ({ label: `${item?.role_name}`, value: `${item?.id}` }));
+      return res
+    },
+    enabled: Boolean(apiFilterHeader && !apiFilterHeader?.data)
+  })
+
+  return (<>
+    <Text size='xs' c={'gray'}>{apiFilterHeader.label}</Text>
+    <Select
+      size='xs'
+      styles={{
+        dropdown: {
+          boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px'
+        },
+        option: {
+          textTransform: 'capitalize'
+        }
+      }}
+      placeholder='All'
+      searchable
+      comboboxProps={{ offset: 2 }}
+      value={apiFilter?.[apiFilterHeader.name] || ''}
+      onChange={(e) => {
+        setApiFilter((prev) => {
+          const updatedFilter = { ...prev };
+          if (e) {
+            updatedFilter[apiFilterHeader.name] = e;
+          } else {
+            delete updatedFilter[apiFilterHeader.name];
+          }
+          console.log('Updated apiFilter:', updatedFilter);
+          return updatedFilter;
+        });
+      }}
+      clearable
+      data={apiFilterHeader.data ? apiFilterHeader?.data : filterQuery?.data}
+      maxDropdownHeight={200}
+    />
+  </>)
+}
+
 const DataTableViewer = ({
   sorting,
   setSorting,
@@ -81,6 +133,10 @@ const DataTableViewer = ({
   totalNoOfPages,
   action = false,
   showAction = false,
+  apiFilterHeader,
+  apiFilter,
+  setApiFilter,
+  totalNoOfRecords,
 }) => {
   const [search, setSearch] = useState();
   const [filterHeader, setFilterHeader] = useState();
@@ -212,15 +268,25 @@ const DataTableViewer = ({
                   </Popover.Target>
                   <Popover.Dropdown mr={'md'}>
                     <Grid w={300} gutter={'sm'}>
-                      {filterHeader?.getHeaderGroups().map((headerGroup) => (headerGroup?.headers?.map((header) =>
-                        header.column.getCanFilter()
-                          ? (
-                            <Grid.Col span={6} key={header.id}>
-                              <Filter column={header.column} table={filterHeader} />
+                      {
+                        apiFilterHeader ? (
+                          apiFilterHeader.map((item, index) => {
+                            return <Grid.Col span={6} key={index}>
+                              {ApiFilter({apiFilterHeader: item, apiFilter: apiFilter, setApiFilter: setApiFilter})}
                             </Grid.Col>
-                          )
-                          : null
-                      )))}
+                          }
+                          ))
+                          : <>
+                            {filterHeader?.getHeaderGroups().map((headerGroup) => (headerGroup?.headers?.map((header) =>
+                              header.column.getCanFilter()
+                                ? (
+                                  <Grid.Col span={6} key={header.id}>
+                                    <Filter column={header.column} table={filterHeader} />
+                                  </Grid.Col>
+                                )
+                                : null
+                            )))}</>
+                      }
                     </Grid>
                   </Popover.Dropdown>
                 </Popover>
@@ -321,6 +387,7 @@ const DataTableViewer = ({
             allowSorting={allowSorting}
             sorting={apiSorting ? sorting : sortingIn}
             setFilteredData={setFilteredData}
+            totalNoOfRecords={totalNoOfRecords && totalNoOfRecords}
           />
         )
       }

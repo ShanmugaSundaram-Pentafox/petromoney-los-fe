@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink as RouterLink } from 'react-router-dom';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { isAllowed } from '../../../utils/cerbos';
@@ -6,8 +6,27 @@ import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 import { Paper, Tooltip } from '@mantine/core';
 import { IconCheck, IconEdit, IconX } from '@tabler/icons-react';
 import AddNewUserAction from '../../../components/AddNewUser/AddNewUserAction';
+import { useDebouncedState } from '@mantine/hooks';
+import { useQuery } from 'react-query';
+import { getUsersData } from '../../../services/users.service';
+import usePageTitle from '../../../hooks/usePageTitle';
 
-const UsersTable = ({ title, data, withRole, currentUser, loading, refetchQuery }) => {
+const UsersTable = ({ title, withRole, currentUser, apiFilter, setApiFilter, userCountRefetch }) => {
+  usePageTitle('Users');
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useDebouncedState('', 500);
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const apiFilterHeader = [
+    {name:'role_id', label: 'Role', apiUrl: 'user/roles', data: null, type: 'select',},
+    {name:'status', label: 'Status', apiUrl: null, data: [{label: 'Active', value: '1'},{label: 'Inactive', value: '0'}], type: 'select'}
+  ];
+  const { data: usersData = [], isFetching, refetch } = useQuery(['users-data', search, page, apiFilter], () => getUsersData({ search, page, apiFilter }), {
+    refetchOnWindowFocus: false
+  });
+
+  useEffect(() => {
+    page != 1 && setPage(1)
+  }, [search, apiFilter])
 
   const column = [
     {
@@ -74,8 +93,18 @@ const UsersTable = ({ title, data, withRole, currentUser, loading, refetchQuery 
   return (
     <Paper>
       <DataTableViewer
-        rowData={data}
-        loading={loading}
+        useAPIPagination
+        title={title}
+        totalNoOfRecords={usersData?.total_records}
+        rowData={usersData?.data}
+        loading={isFetching}
+        page={page}
+        setPage={setPage}
+        apiFilter={apiFilter}
+        setApiFilter={setApiFilter}
+        apiFilterHeader={apiFilterHeader}
+        totalNoOfPages={usersData?.total_pages}
+        apiSearch={setSearch}
         column={
           withRole ?
             [
@@ -89,9 +118,11 @@ const UsersTable = ({ title, data, withRole, currentUser, loading, refetchQuery 
               column
         }
         action={
-          <AddNewUserAction currentUser={currentUser} refetchQuery={refetchQuery} />
+          <AddNewUserAction currentUser={currentUser} refetchQuery={()=>{
+            refetch();
+            userCountRefetch();
+          }} />
         }
-        title={title}
       />
     </Paper>
   )

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import UsersTable from './components/UsersTable';
-import { downloadUserData, getAllUsers, getUsersByPincode, getUsersByRole } from '../../services/users.service';
+import { downloadUserData, getActiveUsersCountData, getUsersByPincode } from '../../services/users.service';
 import { ActionIcon, Box, Grid, Paper, Skeleton, Table, Text, TextInput, Tooltip } from '@mantine/core';
 import PieChartUsers from './components/PieChartUsers';
 import { IconDownload } from '@tabler/icons-react';
@@ -11,15 +11,16 @@ import { displayNotification } from '../../components/CommonComponents/Notificat
 const Users = ({ currentUser }) => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [tableData, setTableData] = useState();
-  const allUsersDataQuery = useQuery({
-    queryKey: ['users'],
-    queryFn: () => getAllUsers(),
+  const [apiFilter, setApiFilter] = useState({})
+  const activeUsersCount = useQuery({
+    queryKey: ['active-users-count'],
+    queryFn: () => getActiveUsersCountData(),
   })
 
-  const fo = getUsersByRole(allUsersDataQuery?.data, 'FIELD_OFFICER');
-  const trans = getUsersByRole(allUsersDataQuery?.data, 'TRANSPORTER');
-  const dealers = getUsersByRole(allUsersDataQuery?.data, 'DEALER');
-  const others = allUsersDataQuery?.data?.filter(user => !(['FIELD_OFFICER', 'TRANSPORTER', 'DEALER'].includes(user.role_name)));
+  const fo = activeUsersCount?.data && activeUsersCount?.data.find(item => item.role_name === 'FIELD_OFFICER')?.total_users || 0;
+  const trans = activeUsersCount?.data && activeUsersCount?.data.find(item => item.role_name === 'TRANSPORTER')?.total_users || 0;
+  const dealers = activeUsersCount?.data && activeUsersCount?.data.find(item => item.role_name === 'DEALER')?.total_users || 0;
+  const others = activeUsersCount?.data?.filter(item => !['FIELD_OFFICER', 'TRANSPORTER', 'DEALER'].includes(item.role_name)).reduce((sum, item) => sum + item.total_users, 0);
   const [pincode, setPincode] = React.useState('');
 
   const getPincodeDetails = useQuery({
@@ -47,19 +48,15 @@ const Users = ({ currentUser }) => {
     retry: Boolean(false),
   });
 
-  const getUserById = id => {
-    return allUsersDataQuery?.data?.find(item => item.id === id) || {};
-  };
-
   const handleRoleSelect = (role) => {
     setSelectedRole(role);
     if (role) {
-      if (role === 'Field Officer') setTableData(fo)
-      if (role === 'Dealer') setTableData(dealers)
-      if (role === 'Transporter') setTableData(trans)
-      if (role === 'Others') setTableData(others)
+      if (role === 'Field Officer') setApiFilter({role_id : '12', status : '1'})
+      if (role === 'Dealer') setApiFilter({role_id : '13', status : '1'})
+      if (role === 'Transporter') setApiFilter({role_id : '14', status : '1'})
+      if (role === 'Others') setApiFilter({role_id: '1,2,3,4,5,6,7,8,9,10,11,15,16,17,18', status : '1'})
     } else {
-      setTableData(allUsersDataQuery?.data);
+      setApiFilter({})
     }
   }
 
@@ -70,12 +67,12 @@ const Users = ({ currentUser }) => {
           <PieChartUsers
             selectedRole={selectedRole}
             setSelectedRole={handleRoleSelect}
-            loading={allUsersDataQuery?.isLoading}
+            loading={activeUsersCount?.isLoading}
             data={{
-              field_officer: fo?.filter(fo => fo.status == 'Active').length,
-              dealer: dealers?.filter(dealer => dealer.status == 'Active').length,
-              transporter: trans?.filter(trans => trans.status == 'Active').length,
-              others: others?.filter(other => other.status == 'Active').length,
+              field_officer: fo,
+              dealer: dealers,
+              transporter: trans,
+              others: others,
             }}
           />
         </Grid.Col>
@@ -158,7 +155,7 @@ const Users = ({ currentUser }) => {
           </Paper>
         </Grid.Col>
         <Grid.Col>
-          <UsersTable loading={allUsersDataQuery?.isLoading} refetchQuery={allUsersDataQuery?.refetch} currentUser={currentUser} title="Users" data={tableData || allUsersDataQuery?.data} />
+          <UsersTable currentUser={currentUser} title="Users" apiFilter={apiFilter} setApiFilter={setApiFilter} userCountRefetch={activeUsersCount?.refetch}/>
         </Grid.Col>
       </Grid>
     </Box>

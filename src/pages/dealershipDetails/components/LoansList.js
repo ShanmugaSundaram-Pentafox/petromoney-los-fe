@@ -304,6 +304,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
         open={dialogState.open}
         close={() => {setDialogState({})
           setSearchValue(null)
+          setErrorStatus(null)
         }}
         title={`Send for ${dialogState.data?.status?.toLowerCase() === 'submitted' ? 'review' : dialogState.data?.status?.toLowerCase() === 'loan_review' ? 'Approval' : 'Pre Disbursement Approval'}`}
       >

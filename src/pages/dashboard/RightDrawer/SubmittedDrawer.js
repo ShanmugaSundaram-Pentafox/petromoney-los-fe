@@ -58,6 +58,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   const handleReviewModal = () => {
     if (info?.amount_requested > 0) {
       setSearchValue(null)
+      setErrorStatus(null)
       setReviewModal(!reviewModal)
     }
     else {

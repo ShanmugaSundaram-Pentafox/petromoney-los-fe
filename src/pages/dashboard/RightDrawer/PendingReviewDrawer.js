@@ -60,6 +60,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   const handleApprovalModal = () => {
     if (info?.amount_requested > 0) {
       setSearchValue(null)
+      setErrorStatus(null)
       setApprovalModal(!approvalModal)
     }
     else {

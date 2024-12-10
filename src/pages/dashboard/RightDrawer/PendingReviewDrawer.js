@@ -146,6 +146,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
             searchable
             nothingFoundMessage = {userRoleLoading ? <Loader size="xs"/> : 'No data found'}
             onSearchChange={setSearchValue}
+            onBlur={setSearchValue(null)}
             placeholder='search or select reviewer'
             clearable
             name='user_approve'

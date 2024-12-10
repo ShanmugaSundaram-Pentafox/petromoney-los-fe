@@ -322,6 +322,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
               searchable
               nothingFoundMessage = {userRoleLoading ? <Loader size="xs"/> : 'No data found'}
               onSearchChange={setSearchValue}
+              onBlur={setSearchValue(null)}
               placeholder='search or select reviewer'
               clearable
               name='type'
@@ -351,6 +352,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
             <Select
               searchable
               onSearchChange={setSearchValue}
+              onBlur={setSearchValue(null)}
               nothingFoundMessage = {userRoleLoading ? <Loader size="xs"/> : 'No data found'}
               placeholder='search or select reviewer'
               clearable

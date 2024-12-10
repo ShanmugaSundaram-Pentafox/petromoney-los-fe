@@ -159,6 +159,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
             searchable
             nothingFoundMessage = {userRoleLoading ? <Loader size="xs"/> : 'No data found'}
             onSearchChange={setSearchValue}
+            onBlur={setSearchValue(null)}
             placeholder='search or select reviewer'
             clearable
             name='user_approve'

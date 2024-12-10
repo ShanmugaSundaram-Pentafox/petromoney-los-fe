@@ -817,7 +817,7 @@ export const getUserRoleForReview = ({status, search}) => {
   let qry = []
   let apiUrl = `users?${status}`;
   if (search) qry.push(`search=${search}`);
-  // qry.push(`records=3`);
+  qry.push('records=5');
   if (qry.length) apiUrl += '&' + qry.join('&');
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)

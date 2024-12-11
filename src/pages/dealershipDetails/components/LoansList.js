@@ -24,7 +24,6 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [remarks, setRemarks] = useState();
   const [dialogState, setDialogState] = useState({});
   const [user, setUser] = useState([]);
-  // const [userRole, setUserRole] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
   const [searchValue, setSearchValue] = useDebouncedState('');
   const readOnly = permissionCheck(currentUser.role_name, rulesList.external_view);
@@ -55,35 +54,6 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       enabled: Boolean(!isLoading && loanData.length && isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval)),
     }
   );
-
-  // useEffect(() => {
-  //   if (!isLoading) {
-  //     if (loanData.length) {
-  //       let val = loanData[0].status === 'submitted' ? 'is_review=1' : 'is_approve=1'
-  //       if (isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_review)) {
-  //         getUserRoleForReview(val)
-  //           .then(res => {
-  //             let d = [];
-  //             res.forEach((item, i) => {
-  //               d.push({
-  //                 label: <div>{item.first_name} {item.last_name}</div>,
-  //                 value: item.id
-  //               })
-  //             })
-  //             setUserRole(d);
-  //           })
-  //           .catch(e => {
-  //             console.log(e);
-  //           })
-  //       }
-  //     }
-  //   }
-  // if (loanData[0]?.application_state_id && status?.length) {
-  //   console.log(selectedStatus);
-  //   const re = status?.find(d => d.id == loanData[0]?.application_state_id)
-  //   setSelectedStatus({ ...re, value: re?.id } || {});
-  // }
-  // }, [status, loanData])
 
   const processLoan = loan => {
     if (user && remarks) {
@@ -313,13 +283,6 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
         {dialogState.data?.status?.toLowerCase() === 'submitted' && (
           <Stack gap="4">
             <Text id="approval-remarks-desc">Please choose whom did you want to sent for review</Text>
-            {/* <Select
-              isClearable
-              name='type'
-              onChange={setUser}
-              options={userRole}
-              maxMenuHeight="200px"
-            /> */}
             <Select
               searchable
               nothingFoundMessage = {userRoleLoading ? <Loader size="xs"/> : 'No data found'}
@@ -342,15 +305,6 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
         {dialogState.data?.status?.toLowerCase() === 'loan_review' && (
           <Stack gap="4">
             <Text id="approval-remarks-desc">Please choose whom did you want to sent for approval</Text>
-
-            {/* <Select
-            
-              isClearable
-              name='review'
-              onChange={setUser}
-              options={userRole}
-              maxMenuHeight="250px"
-            /> */}
             <Select
               searchable
               onSearchChange={setSearchValue}

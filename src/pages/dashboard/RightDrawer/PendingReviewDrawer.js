@@ -23,7 +23,6 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   const [loading, setLoading] = useState(false)
   const [user, setUser] = useState()
   const [errorStatus, setErrorStatus] = useState()
-  // const [userRole, setUserRole] = useState([]);
   const [remarks, setRemarks] = useState();
   const [searchValue, setSearchValue] = useDebouncedState('');
 
@@ -39,23 +38,6 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
       enabled: isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval),
     }
   );
-
-  // useMount(() => {
-  //   if (isAllowed(currentUser?.permissions, resources_id.dashboard, action_id.dashboard.send_for_approval)) {
-  //     getUserRoleForReview({status : 'is_approve=1', search: searchValue})
-  //       .then(res => {
-  //         let d = [];
-  //         res.forEach((item) => {
-  //           d.push({
-  //             label: `${item.first_name} ${item.last_name}`,
-  //             value: item.id?.toString()
-  //           })
-  //         })
-  //         setUserRole(d);
-  //       })
-  //       .catch(() => null)
-  //   }
-  // })
 
   const handleApprovalModal = () => {
     if (info?.amount_requested > 0) {

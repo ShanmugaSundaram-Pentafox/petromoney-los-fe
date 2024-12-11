@@ -49,7 +49,6 @@ const UnresolvedTable = ({ currentUser }) => {
     setDownloadLoading(true)
     getWithheldLoansData({is_resolved: 0,download: true})
       .then((res) => {
-        console.log('ress : ',res)
         getSignedUrl(res?.data?.[0]?.url)
           .then((res) => {
             window.open(res?.url, '_blank');

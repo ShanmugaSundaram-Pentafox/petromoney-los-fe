@@ -91,13 +91,15 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
       if (loan?.status?.toLowerCase() === 'submitted') {
         setLoading(true);
         status = 'loan_review';
-        remarksObj.reviewer_id = user;
+        remarksObj.user_id = currentUser?.id
+        remarksObj.reviewer_id = parseInt(user);
         remarksObj.review_remarks = remarks;
       } else if (loan?.status?.toLowerCase() === 'loan_review') {
         setLoading(true);
         status = 'loan_approval';
-        remarksObj.approver_id = user;
-        remarksObj.recommendation_remarks = remarks;
+        remarksObj.user_id = currentUser?.id
+        remarksObj.approver_id = parseInt(user);
+        remarksObj.approval_remarks = remarks;
       }
       else if (loan?.status?.toLowerCase() === 'approved') {
         setLoading(true);

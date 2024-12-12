@@ -5,7 +5,7 @@ import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import { useMount } from 'react-use';
 import AddBlackListForm from './AddBlackListForm';
@@ -13,13 +13,14 @@ import Button from '../../components/CommonComponents/Button/Button';
 import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { action_id, resources_id } from '../../config/accessControl';
 import { getAllDealership } from '../../services/dealerships.service';
-import { deleteRemarks, getAllWithheldLoans, resolveRemarks } from '../../services/withheld.services';
+import { deleteRemarks, getWithheldLoansData, resolveRemarks } from '../../services/withheld.services';
 import CheckAllowed from '../rbac/CheckAllowed';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { Group, Text } from '@mantine/core';
 import moment from 'moment';
 import { getSignedUrl } from '../../services/common.service';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
+import { useDebouncedState } from '@mantine/hooks';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -35,14 +36,20 @@ const UnresolvedTable = ({ currentUser }) => {
   const [withheldModal, setWithheldModal] = useState(false);
   const classes = useStyles()
   const { enqueueSnackbar } = useSnackbar();
-  const { data = [], isLoading, refetch } = useQuery('withheld-loans-unresolved', () => getAllWithheldLoans(0), { refetchOnWindowFocus: false })
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useDebouncedState('', 500);
+  const { data: unResolvedData = [], isFetching } = useQuery(['withheld-loans-unresolved', search, page], () => getWithheldLoansData({is_resolved: 0, search, page}), { refetchOnWindowFocus: false })
   const [downloadLoading, setDownloadLoading] = useState(false);
+
+  useEffect(() => {
+    page != 1 && setPage(1)
+  }, [search])
 
   const downloadReport = () => {
     setDownloadLoading(true)
-    getAllWithheldLoans(0,true)
+    getWithheldLoansData({is_resolved: 0,download: true})
       .then((res) => {
-        getSignedUrl(res?.[0]?.url)
+        getSignedUrl(res?.data?.[0]?.url)
           .then((res) => {
             window.open(res?.url, '_blank');
           })
@@ -248,10 +255,11 @@ const UnresolvedTable = ({ currentUser }) => {
     <>
       <Grid item md={12}>
         <DataTableViewer
-          rowData={data}
+          useAPIPagination
+          rowData={unResolvedData?.data}
           filter={false}
           column={column}
-          loading={isLoading}
+          loading={isFetching}
           showAction={<CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.create}>
             <Button
               color="primary"
@@ -266,6 +274,11 @@ const UnresolvedTable = ({ currentUser }) => {
           noDataText='No un-resolved loans found'
           downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
           excelDownload
+          page={page}
+          setPage={setPage}
+          apiSearch={setSearch}
+          totalNoOfPages={unResolvedData?.total_pages}
+          totalNoOfRecords={unResolvedData?.total_records}
         />
       </Grid>
       <Drawer

@@ -24,7 +24,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   const [user, setUser] = useState()
   const [errorStatus, setErrorStatus] = useState()
   const [remarks, setRemarks] = useState();
-  const [searchValue, setSearchValue] = useDebouncedState('');
+  const [searchValue, setSearchValue] = useDebouncedState('', 500 );
 
   const { data: userRole, isLoading: userRoleLoading } = useQuery(
     ['userRoles', searchValue],

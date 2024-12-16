@@ -23,7 +23,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   const [remarks, setRemarks] = useState();
   const [info, setInfo] = useState({})
   const [errorStatus, setErrorStatus] = useState()
-  const [searchValue, setSearchValue] = useDebouncedState(null);
+  const [searchValue, setSearchValue] = useDebouncedState('', 500);
 
   const { data: userRole, isLoading: userRoleLoading  } = useQuery(
     ['userRoles', searchValue],

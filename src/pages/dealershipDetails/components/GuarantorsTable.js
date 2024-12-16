@@ -111,7 +111,7 @@ const GuarantorsTable = ({
     // }
   }
   const saveApplicantTypeUpdate = () => {
-    updateApplicantType(rowData?.id, { applicant_type: updatedApplicantType.toUpperCase() })
+    updateApplicantType(rowData?.id, { applicant_type: updatedApplicantType.toUpperCase(), dealership_id: rowData?.dealership_id })
       .then((res) => {
         setRowData()
         setopenChangeTypeDialog(false)

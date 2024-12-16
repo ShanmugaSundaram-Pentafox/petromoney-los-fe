@@ -18,7 +18,7 @@ import CheckAllowed from '../../rbac/CheckAllowed';
 
 const DealersList = ({ id, titleAlign, currentUser }) => {
   const [showCreditForm, setShowCreditForm] = useState(false);
-  const [showDealerEditForm, setShowDealerEditForm] = useState(false);
+  const [showDealerEditForm, setShowDealerEditForm] = useState({modal : false, loading : false});
   const [formType, setFormType] = useState('');
   const [modelType, setModelType] = useState('');
   const [rowData, setRowData] = useState({});
@@ -50,7 +50,7 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     }
     setFormType('Add');
     setRowData({})
-    setShowDealerEditForm(true);
+    setShowDealerEditForm({...showDealerEditForm ,modal : true});
     return null;
   }
 
@@ -61,12 +61,14 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
     const d = { ...row, pan_details: typeof (row.pan_details) === 'string' ? JSON.parse(row.pan_details) : (row.pan_details || {}) }
     setModelType(type);
     setFormType('Edit');
-    setShowDealerEditForm(true);
+    setShowDealerEditForm({...showDealerEditForm ,modal : true});
     setRowData(d);
   }
 
   const editFormClose = (type) => {
-    setShowDealerEditForm(false)
+    if(!showDealerEditForm?.loading){
+      setShowDealerEditForm({...showDealerEditForm ,modal : false});
+    }
   }
   const updateApplicantData = () => {
     updateApplicantDataById(id, updateApplicant?.value)
@@ -222,8 +224,11 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
         </Box>)}
       <RightSideDrawer
         size="lg"
-        opened={showDealerEditForm}
-        onClose={() => setShowDealerEditForm(false)}
+        opened={showDealerEditForm.modal}
+        onClose={() => {
+          if(!showDealerEditForm.loading){
+            setShowDealerEditForm({...showDealerEditForm ,modal : false})}}
+        }
         title={modelType === 'DEALER' ? 'Dealer Edit Form' : modelType === 'GUARANTOR' ? 'Guarantor Edit Form' : 'CoApplicant Edit Form'}
       >
         <DealerEditSideWrapper
@@ -235,6 +240,8 @@ const DealersList = ({ id, titleAlign, currentUser }) => {
           data={rowData}
           currentUser={currentUser}
           onClose={() => editFormClose(modelType)}
+          setShowDealerEditForm = {setShowDealerEditForm}
+          showDealerEditForm = {showDealerEditForm}
         />
       </RightSideDrawer>
     </>

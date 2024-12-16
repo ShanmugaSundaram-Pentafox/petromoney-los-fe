@@ -181,7 +181,7 @@ const DrawerFooter = ({
         setLoading(false)
         displayNotification({
           message: err,
-          variant: 'success',
+          variant: 'error',
         });
       })
   }

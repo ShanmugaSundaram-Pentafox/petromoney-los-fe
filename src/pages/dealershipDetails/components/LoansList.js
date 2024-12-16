@@ -25,7 +25,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [dialogState, setDialogState] = useState({});
   const [user, setUser] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
-  const [searchValue, setSearchValue] = useDebouncedState('');
+  const [searchValue, setSearchValue] = useDebouncedState('', 500);
   const readOnly = permissionCheck(currentUser.role_name, rulesList.external_view);
   const { enqueueSnackbar } = useSnackbar();
   const [errorStatus, setErrorStatus] = useState()

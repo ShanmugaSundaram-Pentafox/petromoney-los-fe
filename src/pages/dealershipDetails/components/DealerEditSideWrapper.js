@@ -33,6 +33,8 @@ const DealerEditSideWrapper = ({
   currentUser,
   onClose,
   id,
+  setShowDealerEditForm,
+  showDealerEditForm
 }) => {
   const queryClient = useQueryClient()
   const [readOnly, setReadOnly] = useState(isAdd === 'Add' ? false : true);
@@ -185,6 +187,7 @@ const DealerEditSideWrapper = ({
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (values) => {
+      setShowDealerEditForm({...showDealerEditForm, loading: true})
       setLoading(true);
       if (isAdd === 'Add') {
         validateId('pan', values?.pan)
@@ -203,7 +206,7 @@ const DealerEditSideWrapper = ({
           })
       }
       const dob = selectedDate ? format(new Date(selectedDate), 'dd-MM-yyyy') : values.dob ? values.dob : null
-      const date_values = { ...values, dob: dob, pan: values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0, category: modelType };
+      const date_values = { ...values, dob: dob, pan: values.pan && values.pan.toUpperCase(), is_whatsapp: selectedState.checkedA === true ? 1 : 0, is_aadhar_linked: selectedState.checkedB === true ? 1 : 0, category: modelType };
       let commonObj = { category: modelType }
       if (date_values?.pan_file_url != data?.pan_file_url) {
         commonObj = { ...commonObj, pan: data?.pan }
@@ -231,6 +234,7 @@ const DealerEditSideWrapper = ({
             },
             variant: 'success',
           });
+          setShowDealerEditForm({...showDealerEditForm, loading: false})
           onClose()
           queryClient.invalidateQueries(['dealership-applicants', id])
         })
@@ -243,6 +247,7 @@ const DealerEditSideWrapper = ({
             },
             variant: 'error',
           });
+          setShowDealerEditForm({...showDealerEditForm, loading: false})
         })
     },
   });

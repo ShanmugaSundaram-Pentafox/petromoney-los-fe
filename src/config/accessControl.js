@@ -200,6 +200,7 @@ export const action_id = {
     bankSync: 'bank_sync',
     manualBankVerify: 'manual_bank_verify',
     bankActivateDeactivate: 'bank_activate_deactivate',
+    editVerifiedBank: 'edit_verified_bank',
   },
   docChecklist: {
     upload: 'doc:upload',

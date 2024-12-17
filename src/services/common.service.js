@@ -1104,3 +1104,19 @@ export const getUdyamVerified = ({ body }) => {
       });
   });
 }
+
+export const getApiFilters = (apiUrl) => {
+  return new Promise((resolve, reject) => {
+    apiCall(apiUrl, {}, 'GET')
+      .then((response) => {
+        if (response?.status === 'SUCCESS') {
+          resolve(response.data || []);
+        } else {
+          reject(new Error(response.message || 'Unable to get filters'));
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};

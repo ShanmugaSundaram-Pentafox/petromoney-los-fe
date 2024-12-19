@@ -64,6 +64,8 @@ const DrawerFooter = ({
   const [errorMsg, setErrorMsg] = useState();
   const [openEnhancementModal, setEnhancementModal] = useState(false)
   const [enhancementRemarks, setEnhancementRemarks] = useState();
+  const [rejectRemarks, setRejectRemarks] = useState();
+
   useMount(() => {
     getLoanRejectReason()
       .then(data => {
@@ -190,6 +192,7 @@ const DrawerFooter = ({
     let reqBody = {
       user_id: currentUser.id,
       reason_id: rejectReason,
+      reject_reason: rejectRemarks,
     }
     if (rejectReason?.length) {
       setLoading(true)
@@ -398,9 +401,8 @@ const DrawerFooter = ({
                   label={'Reason'}
                   description={'Select the reason to reject'}
                 >
-
-                  <ScrollArea.Autosize mah={70} mih={25} my={'sm'} type="auto" scrollbars="y">
-                    <Stack mah={70} mih={25}>
+                  <ScrollArea.Autosize mah={80} mih={25} my={'sm'} type="auto" scrollbars="y">
+                    <Stack mah={80} mih={25}>
                       {
                         reasonData[selectedCategory.value][0].map((data, index) => {
                           return (
@@ -420,6 +422,15 @@ const DrawerFooter = ({
                     </Stack>
                   </ScrollArea.Autosize>
                 </Checkbox.Group>
+                {selectedCategory.value === 4 && (
+                  <>
+                    <Text my={'xs'}>
+                      Additional Reason
+                    </Text>
+                    <RichTextEditorBox onChange={setRejectRemarks} value={rejectRemarks} />
+                  </>
+                )
+                }
               </Box>
             )
           }
@@ -445,7 +456,7 @@ const DrawerFooter = ({
             )
           }
         </>
-        <Group justify='center'>
+        <Group justify='flex-end' mt={'md'}>
           <Button variant='outline' size='xs' onClick={() => setRejectModal(false)}>Cancel</Button>
           <Button size='xs' color='red' onClick={updateLoanStatus} loading={loading}>Confirm</Button>
         </Group>

@@ -61,14 +61,14 @@ const ApiFilter = ({
     queryKey: ['filter-query', apiFilterHeader],
     queryFn: () => getApiFilters(apiFilterHeader?.apiUrl),
     select: (data)=> {
-      const res = data?.map((item, index) => ({ label: `${item?.role_name}`, value: `${item?.id}` }));
+      const res = data?.map((item, index) => ({ label: `${item?.[apiFilterHeader?.label]}`, value: `${item?.[apiFilterHeader?.value]}` }));
       return res
     },
     enabled: Boolean(apiFilterHeader && !apiFilterHeader?.data)
   })
 
   return (<>
-    <Text size='xs' c={'gray'}>{apiFilterHeader.label}</Text>
+    <Text size='xs' c={'gray'}>{apiFilterHeader.filterLabel}</Text>
     <Select
       size='xs'
       styles={{
@@ -82,16 +82,15 @@ const ApiFilter = ({
       placeholder='All'
       searchable
       comboboxProps={{ offset: 2 }}
-      value={apiFilter?.[apiFilterHeader.name] || ''}
+      value={apiFilter?.[apiFilterHeader.key] || ''}
       onChange={(e) => {
         setApiFilter((prev) => {
           const updatedFilter = { ...prev };
           if (e) {
-            updatedFilter[apiFilterHeader.name] = e;
+            updatedFilter[apiFilterHeader.key] = e;
           } else {
-            delete updatedFilter[apiFilterHeader.name];
+            delete updatedFilter[apiFilterHeader.key];
           }
-          console.log('Updated apiFilter:', updatedFilter);
           return updatedFilter;
         });
       }}

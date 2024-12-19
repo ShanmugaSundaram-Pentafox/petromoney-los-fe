@@ -1,16 +1,67 @@
 import { format } from 'date-fns';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { getAllDealership } from '../../../services/dealerships.service';
 import DataTableViewer from '../../../components/ReactTable/DataTableViewer';
 import { useQuery } from 'react-query';
+import { useDebouncedState } from '@mantine/hooks';
+import { getSignedUrl } from '../../../services/common.service';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
+import { decrypt } from '../../../services/crypto.service';
 
 const DealershipsTable = () => {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useDebouncedState('', 500);
+  const [apiFilter, setApiFilter] = useState({});
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const apiFilterHeader = [
+    { key: 'region_id', label: 'name', value: 'region', filterLabel: 'Region', apiUrl: 'regions/all', data: null, type: 'select' }
+  ];
+  const { data: dealershipsData = [], isFetching, refetch } = useQuery(['dealership-details', search, page, apiFilter], () => getAllDealership({ search, page, apiFilter }), {
+    select: (res) => {
+      const result = res?.data?.map((item, i) => {
+        let pan = item?.pan;
+        let gst = item?.gst;
+        if (pan) {
+          pan = decrypt(pan)
+        }
+        if (gst) {
+          gst = decrypt(gst)
+        }
+        return {
+          ...item,
+          pan,
+          gst,
+        }
+      })
+      return {...res, data: result}
+    },
+    refetchOnWindowFocus: false
+  });
 
-  const delaershipDetailsQuery = useQuery({
-    queryKey: ['dealership-details'],
-    queryFn: () => getAllDealership(),
-  })
+  useEffect(() => {
+    page != 1 && setPage(1)
+  }, [search, apiFilter])
+
+  const downloadReport = () => {
+    setDownloadLoading(true)
+    getAllDealership({ search, download: true })
+      .then((res) => {
+        getSignedUrl(res?.data)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e => {
+            displayNotification({
+              message: e?.message || e,
+              variant: 'error',
+            })
+          })
+          .finally(() => {
+            setDownloadLoading(false);
+          })
+      })
+  }
 
   const history = useHistory();
 
@@ -63,12 +114,22 @@ const DealershipsTable = () => {
     <div>
       <DataTableViewer
         allowSorting={true}
-        rowData={delaershipDetailsQuery?.data}
+        rowData={dealershipsData?.data}
         column={column}
         title={'Dealership List'}
-        loading={delaershipDetailsQuery?.isLoading}
+        loading={isFetching}
         excelDownload={true}
         onRowClick={handleRowClick}
+        useAPIPagination
+        totalNoOfRecords={dealershipsData?.total_records}
+        page={page}
+        setPage={setPage}
+        apiFilter={apiFilter}
+        setApiFilter={setApiFilter}
+        apiFilterHeader={apiFilterHeader}
+        totalNoOfPages={dealershipsData?.total_pages}
+        apiSearch={setSearch}
+        downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
       />
     </div>
   )

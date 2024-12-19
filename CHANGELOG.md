@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.43.0](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.42.2...v2.43.0) (2024-12-19)
+
+
+### Features
+
+* **DealershipInfo:** state_id and region_id sent ([1064fe0](https://bitbucket.org/gmfvl/petromoney-fe/commit/1064fe0fec4d3ebc5720ac3b2201da61ba7520d1))
+* **PreviewCard:** edit verified bank in personal discussion for admin ([1cd3ae6](https://bitbucket.org/gmfvl/petromoney-fe/commit/1cd3ae672c820cf533ba7e34d33063df8ca90fe0))
+
+
+### Bug Fixes
+
+* cache cleared ([ae84f25](https://bitbucket.org/gmfvl/petromoney-fe/commit/ae84f2523ce112ff189a6be2477b35b8c4b3fc6e))
+* **DealerEditSideWrapper:** loader added ([8aa6dad](https://bitbucket.org/gmfvl/petromoney-fe/commit/8aa6dadf7085432487350778bf959c6bd12ddcf5))
+* **DealerEditSideWrapper:** on save pan.toUpperCase() fix ([a343492](https://bitbucket.org/gmfvl/petromoney-fe/commit/a3434924390d816ad6d1e310b31a0703376c75e5))
+* **DealerTable:** sent dealership_id in query params ([5e7009f](https://bitbucket.org/gmfvl/petromoney-fe/commit/5e7009fbd09b17cda7c123ae6e5a2be620886de6))
+* if filter changes page set to 1 ([3677275](https://bitbucket.org/gmfvl/petromoney-fe/commit/3677275cee2bc16808f307d2aab07f6fd3b1e805))
+* imported packages ([3beb9a5](https://bitbucket.org/gmfvl/petromoney-fe/commit/3beb9a578437f801a7323b75ccad0e927ab9c292))
+* key changes from values to creditLimit ([78bf344](https://bitbucket.org/gmfvl/petromoney-fe/commit/78bf344957b578d4b786f301052537d3b7824fb4))
+* padding fixes ([9294f64](https://bitbucket.org/gmfvl/petromoney-fe/commit/9294f64d4a1d7bfb4248db02052edbaf86bdf552))
+* payload changes ([0761a7f](https://bitbucket.org/gmfvl/petromoney-fe/commit/0761a7f35c47d0498d1f12b7b794e8240478a57d))
+* **PreviewCard:** uncommented checkallowed ([83ee220](https://bitbucket.org/gmfvl/petromoney-fe/commit/83ee22008e6a606ce9e8dc935330f82bbd0e3c30))
+* refresh user and user/count query when new user added and also closes modal ([c0ea579](https://bitbucket.org/gmfvl/petromoney-fe/commit/c0ea579bc25aebe94c15ff3460bee242ec2e8136))
+* removed console log ([6fbc521](https://bitbucket.org/gmfvl/petromoney-fe/commit/6fbc52163b5bc044b5009f4269eea221f4f54d62))
+* removed error on modal close ([6b35331](https://bitbucket.org/gmfvl/petromoney-fe/commit/6b35331d62fede66f489a110b3c788343f7c5c7d))
+* removed unwanted changes ([9c2ec45](https://bitbucket.org/gmfvl/petromoney-fe/commit/9c2ec452f1456ab7b299e8209e4333b9ec02430c))
+* removed unwanted left and right padding for Type in table ([b65530b](https://bitbucket.org/gmfvl/petromoney-fe/commit/b65530b9319be8c4b953cd23845db92efeaa35f3))
+* **removed:** test ([a02d493](https://bitbucket.org/gmfvl/petromoney-fe/commit/a02d4937a18e194cca9f3e93650d3118c39e8372))
+* result status changed from success to SUCCESS ([241a9ad](https://bitbucket.org/gmfvl/petromoney-fe/commit/241a9ad09b24ddcc1b1ba26328a5bac074c60b55))
+* reviewer select pagination handles using search ([3df7415](https://bitbucket.org/gmfvl/petromoney-fe/commit/3df7415fd09a142d0569f3b7ae94c3b3434f8c44))
+* selected reviewer searched extra words then blured the close ([457e542](https://bitbucket.org/gmfvl/petromoney-fe/commit/457e5425a6005a4b3b06ca49c62e2d9eba894f74))
+* ui and state fixes ([7b6371b](https://bitbucket.org/gmfvl/petromoney-fe/commit/7b6371b1d8061b023a26a96b0a679ed2f46aa537))
+* **UsersTable:** pagination for users ([1a7889b](https://bitbucket.org/gmfvl/petromoney-fe/commit/1a7889b9da4db97328bbfea8d32192711fbd9615))
+* **UsersTable:** removed unwanted dateObj props passing ([dfc6987](https://bitbucket.org/gmfvl/petromoney-fe/commit/dfc69872c6b3e59dff710420d1392b1f1b413f52))
+* withheld pagination response handle fixes ([d78fc55](https://bitbucket.org/gmfvl/petromoney-fe/commit/d78fc558ece9c19c6afa9166e1d9b34a472ad417))
+
 ### [2.42.2](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.42.1...v2.42.2) (2024-12-02)
 
 

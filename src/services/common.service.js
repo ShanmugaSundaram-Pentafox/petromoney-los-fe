@@ -813,9 +813,13 @@ export const getLoanTypes = () => {
   });
 };
 
-export const getUserRoleForReview = (status) => {
+export const getUserRoleForReview = ({status, search}) => {
+  let qry = []
+  let apiUrl = `users?${status}`;
+  if (search) qry.push(`search=${search}`);
+  if (qry.length) apiUrl += '&' + qry.join('&');
   return new Promise((resolve, reject) => {
-    apiCall(`users?${status}`)
+    apiCall(apiUrl)
       .then(({ status, data, message }) => {
         if (status === 'SUCCESS') {
           resolve(data);

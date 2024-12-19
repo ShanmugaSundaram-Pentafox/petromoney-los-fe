@@ -47,7 +47,7 @@ const DealershipsTable = () => {
     setDownloadLoading(true)
     getAllDealership({ search, download: true })
       .then((res) => {
-        getSignedUrl(res?.data)
+        getSignedUrl(res?.data?.[0]?.url)
           .then((res) => {
             window.open(res?.url, '_blank');
           })

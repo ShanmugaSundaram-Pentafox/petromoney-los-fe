@@ -1,4 +1,4 @@
-import { Flex, Button, Text, Box, Alert, Loader, Chip, Group, Select, Modal, Checkbox, Tooltip, ActionIcon, Stack, ScrollArea } from '@mantine/core';
+import { Flex, Button, Text, Box, Alert, Loader, Chip, Group, Select, Modal, Checkbox, Tooltip, ActionIcon, Stack, ScrollArea, Accordion } from '@mantine/core';
 import { IconInfoCircle, IconX } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -370,91 +370,101 @@ const DrawerFooter = ({
         size={'lg'}
       >
         <>
-          <Box>
+          <ScrollArea.Autosize mah={400} mih={200} offsetScrollbars>
+            <Box>
+              {
+                errorMsg &&
+                  <Alert severity='error' style={{ marginBottom: 12 }}>{errorMsg}</Alert>
+              }
+              <Text mb={16} fz={'sm'}>Choose category and reasons for rejection.</Text>
+              <Chip.Group
+                onChange={(e) => {
+                  setSelectedCategory({ label: e, value: optionsData?.find(i => i?.label === e)?.value })
+                  setActiveTab(optionsData?.find(i => i?.label === e)?.value)
+                }}
+                value={optionsData?.find(i => i?.value === activeTab)?.label}
+                multiple={false}
+              >
+                <Group gap={4} mt={'xs'} mb={'sm'}>
+                  {
+                    optionsData.map((item, i) => {
+                      return <Chip variant='light' radius={'xs'} key={i} value={item?.label}>{item?.label}</Chip>
+                    })
+                  }
+                </Group>
+              </Chip.Group>
+            </Box>
             {
-              errorMsg &&
-                <Alert severity='error' style={{ marginBottom: 12 }}>{errorMsg}</Alert>
+              selectedCategory && (
+                <Box>
+                  <Checkbox.Group
+                    value={rejectReason}
+                    label={'Reason'}
+                    description={'Select the reason to reject'}
+                  >
+                    <ScrollArea.Autosize mah={80} mih={25} my={'sm'} type="auto" scrollbars="y">
+                      <Stack mah={80} mih={25}>
+                        {
+                          reasonData[selectedCategory.value][0].map((data, index) => {
+                            return (
+                              <Checkbox
+                                key={`${index}-${data?.value}`}
+                                styles={{ input: { cursor: 'pointer' }, label: { cursor: 'pointer' } }}
+                                value={data.value}
+                                size='xs'
+                                onChange={handleReasonChange}
+                                checked={rejectReason.includes(data.value)}
+                                name={data.label}
+                                label={data.label}
+                              />
+                            )
+                          })
+                        }
+                      </Stack>
+                    </ScrollArea.Autosize>
+                  </Checkbox.Group>
+                  {selectedCategory.value === 4 && (
+                    <>
+                      <Accordion 
+                        styles={{
+                          content: {
+                            padding: 0,
+                          },
+                        }}>
+                        <Accordion.Item value="Accordion Title">
+                          <Accordion.Control p={0}><Text fz={'sm'}>Additional Reason</Text></Accordion.Control>
+                          <Accordion.Panel><RichTextEditorBox onChange={setRejectRemarks} value={rejectRemarks} />
+                          </Accordion.Panel>
+                        </Accordion.Item>
+                      </Accordion >
+                    </>
+                  )
+                  }
+                </Box>
+              )
             }
-            <Text mb={16} fz={'sm'}>Choose category and reasons for rejection.</Text>
-            <Chip.Group
-              onChange={(e) => {
-                setSelectedCategory({ label: e, value: optionsData?.find(i => i?.label === e)?.value })
-                setActiveTab(optionsData?.find(i => i?.label === e)?.value)
-              }}
-              value={optionsData?.find(i => i?.value === activeTab)?.label}
-              multiple={false}
-            >
-              <Group gap={4} mt={'xs'} mb={'sm'}>
-                {
-                  optionsData.map((item, i) => {
-                    return <Chip variant='light' radius={'xs'} key={i} value={item?.label}>{item?.label}</Chip>
-                  })
-                }
-              </Group>
-            </Chip.Group>
-          </Box>
-          {
-            selectedCategory && (
-              <Box>
-                <Checkbox.Group
-                  value={rejectReason}
-                  label={'Reason'}
-                  description={'Select the reason to reject'}
-                >
-                  <ScrollArea.Autosize mah={80} mih={25} my={'sm'} type="auto" scrollbars="y">
-                    <Stack mah={80} mih={25}>
-                      {
-                        reasonData[selectedCategory.value][0].map((data, index) => {
-                          return (
-                            <Checkbox
-                              key={`${index}-${data?.value}`}
-                              styles={{ input: { cursor: 'pointer' }, label: { cursor: 'pointer' } }}
-                              value={data.value}
-                              size='xs'
-                              onChange={handleReasonChange}
-                              checked={rejectReason.includes(data.value)}
-                              name={data.label}
-                              label={data.label}
-                            />
-                          )
-                        })
-                      }
-                    </Stack>
-                  </ScrollArea.Autosize>
-                </Checkbox.Group>
-                {selectedCategory.value === 4 && (
-                  <>
-                    <Text my={'xs'}>
-                      Additional Reason
-                    </Text>
-                    <RichTextEditorBox onChange={setRejectRemarks} value={rejectRemarks} />
-                  </>
-                )
-                }
-              </Box>
-            )
-          }
-          {
-            displayReason.length != 0 && (
-              <Box mb={'md'} className={classes.actions2}>
-                <Text fz={'sm'}>Selected Reasons</Text>
-                {
-                  displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
-                    return (
-                      <Box key={i} className={classes.items}>
-                        <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
-                        <Tooltip label="Remove" color='gray' withArrow>
-                          <ActionIcon size='xs' color='gray' onClick={() => removeItem(item)} variant="transparent">
-                            <IconX />
-                          </ActionIcon>
-                        </Tooltip>
-                      </Box>
-                    )
-                  })
-                }
-              </Box>
-            )
-          }
+            {
+              displayReason.length != 0 && (
+                <Box mb={'md'} className={classes.actions2} pt={'xs'}>
+                  <Text fz={'sm'}>Selected Reasons</Text>
+                  {
+                    displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
+                      return (
+                        <Box key={i} className={classes.items}>
+                          <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
+                          <Tooltip label="Remove" color='gray' withArrow>
+                            <ActionIcon size='xs' color='gray' onClick={() => removeItem(item)} variant="transparent">
+                              <IconX />
+                            </ActionIcon>
+                          </Tooltip>
+                        </Box>
+                      )
+                    })
+                  }
+                </Box>
+              )
+            }
+          </ScrollArea.Autosize>
         </>
         <Group justify='flex-end' mt={'md'}>
           <Button variant='outline' size='xs' onClick={() => setRejectModal(false)}>Cancel</Button>

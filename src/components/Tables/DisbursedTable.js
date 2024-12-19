@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   pill: {
     display: 'inline-block',
     borderRadius: '29px',
-    padding: '3px 8px',
+    padding: '3px 0px',
     fontSize: '12px',
     fontWeight: '500',
     minWidth: '30px',

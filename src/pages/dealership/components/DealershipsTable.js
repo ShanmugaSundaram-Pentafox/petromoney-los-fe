@@ -15,7 +15,7 @@ const DealershipsTable = () => {
   const [apiFilter, setApiFilter] = useState({});
   const [downloadLoading, setDownloadLoading] = useState(false);
   const apiFilterHeader = [
-    { key: 'region_id', label: 'name', value: 'region', filterLabel: 'Region', apiUrl: 'regions/all', data: null, type: 'select' }
+    { key: 'region_id', label: 'region', value: 'id', filterLabel: 'Region', apiUrl: 'regions/los', data: null, type: 'select' }
   ];
   const { data: dealershipsData = [], isFetching, refetch } = useQuery(['dealership-details', search, page, apiFilter], () => getAllDealership({ search, page, apiFilter }), {
     select: (res) => {

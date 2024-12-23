@@ -119,6 +119,7 @@ const ApiFilter = ({
       <>
         <Text size='xs' c={'gray'}>{apiFilterHeader.filterLabel}</Text>
         <DatePickerInput
+          placeholder='All'
           clearable
           valueFormat="MMM DD YYYY"
           type='range'

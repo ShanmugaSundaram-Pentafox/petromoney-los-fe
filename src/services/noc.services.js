@@ -1,13 +1,24 @@
+import moment from 'moment';
 import apiCall from '../utils/api.util';
 
-export const getAllNocRequest = () => {
+export const getAllNocRequest = ({ search, dateObj, download = false, page = 1, apiFilter = {} }) => {
+  let qry = []
+  let apiUrl = 'dealership/noc';
+  if (page) qry.push(`page=${page}`)
+  if (search) qry.push(`search=${search}`)
+  if (download) qry.push('download=yes')
+  if (dateObj?.from) qry.push(`from_date=${moment(dateObj?.from).format('YYYY-MM-DD')}&to_date=${moment(dateObj?.to).format('YYYY-MM-DD')}`)
+  Object.entries(apiFilter).forEach(([key, value]) => {
+    if (value) qry.push(`${key}=${value}`);
+  });
+  if (qry.length) apiUrl += '?' + qry.join('&')
   return new Promise((resolve, reject) => {
-    apiCall('dealership/noc')
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          resolve(data);
+    apiCall(apiUrl)
+      .then((res) => {
+        if (res?.status === 'SUCCESS') {
+          resolve(res);
         } else {
-          reject(message);
+          reject(res?.message);
         }
       })
       .catch((e) => {

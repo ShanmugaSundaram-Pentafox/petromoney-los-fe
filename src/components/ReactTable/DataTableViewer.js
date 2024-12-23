@@ -65,8 +65,20 @@ const ApiFilter = ({
       const res = data?.map((item, index) => ({ label: `${item?.[apiFilterHeader?.label]}`, value: `${item?.[apiFilterHeader?.value]}` }));
       return res
     },
-    enabled: Boolean(apiFilterHeader && !apiFilterHeader?.data && !apiFilterHeader?.type === 'date')
+    enabled: Boolean(apiFilterHeader && !apiFilterHeader?.data && apiFilterHeader?.type !== 'dateRange')
   })
+
+  const parseDate = (dateStr) => {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const formatDate = (date) => {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  };
 
   return (<>
     {apiFilterHeader?.type === 'select'
@@ -103,18 +115,45 @@ const ApiFilter = ({
           /></>
       )
     }
-    {apiFilterHeader?.type === 'date' && (
-      <DatePickerInput onChange={(e) => {
-        setApiFilter((prev) => {
-          const updatedFilter = { ...prev };
-          if (e) {
-            updatedFilter[apiFilterHeader.key] = e;
-          } else {
-            delete updatedFilter[apiFilterHeader.key];
-          }
-          return updatedFilter;
-        });
-      }} />
+    {apiFilterHeader?.type === 'dateRange' && (
+      <>
+        <Text size='xs' c={'gray'}>{apiFilterHeader.filterLabel}</Text>
+        <DatePickerInput
+          clearable
+          valueFormat="MMM DD YYYY"
+          type='range'
+          popoverProps={{ withinPortal: false }}
+          size='xs'
+          styles={{
+            dropdown: {
+              boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px'
+            },
+            option: {
+              textTransform: 'capitalize'
+            }
+          }}
+          value={[
+            apiFilter?.[apiFilterHeader?.key1] ? parseDate(apiFilter?.[apiFilterHeader?.key1]) : null,
+            apiFilter?.[apiFilterHeader?.key2] ? parseDate(apiFilter?.[apiFilterHeader?.key2]) : null,
+          ]}
+          onChange={(e) => {
+            setApiFilter((prev) => {
+              const updatedFilter = { ...prev };
+              if (e && e[0] && e[1]) {
+                updatedFilter[apiFilterHeader?.key1] = formatDate(e[0]),
+                updatedFilter[apiFilterHeader?.key2] = formatDate(e[1])
+              } else if (e && e[0]) {
+                updatedFilter[apiFilterHeader?.key1] = formatDate(e[0])
+              } else if (e && e[1]) {
+                updatedFilter[apiFilterHeader?.key2] = formatDate(e[1])
+              } else {
+                delete updatedFilter[apiFilterHeader?.key1];
+                delete updatedFilter[apiFilterHeader?.key2];
+              }
+              return updatedFilter;
+            });
+          }} />
+      </>
     )}
 
   </>)

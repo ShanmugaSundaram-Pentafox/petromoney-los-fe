@@ -67,7 +67,7 @@ const NOCertificateRequestTable = ({ currentUser }) => {
     { key: 'region_id', label: 'region', value: 'id', filterLabel: 'Region', apiUrl: 'regions/los', data: null, type: 'select' },
     { key: 'type', label: null, value: null, filterLabel: 'Type', apiUrl: null, data: [{ label: 'Closed', value: 'closed' }, { label: 'Overdue', value: 'overdue' }, { label: 'Regular', value: 'regular' },], type: 'select' },
     { key: 'product_id', label: 'product_name', value: 'product_id', filterLabel: 'Scheme', apiUrl: 'products/los', data: null, type: 'select' },
-    { key: 'issued_month', label: null, value: null, filterLabel: 'Issued Month', apiUrl: 'regions/los', data: null, type: 'date' },
+    { key1: 'from', key2: 'to', label: null, value: null, filterLabel: 'Issued Month', apiUrl: 'regions/los', data: null, type: 'dateRange' },
     { key: 'status', label: null, value: null, filterLabel: 'Status', apiUrl: null, data: [{ label: 'Approved', value: 'approved' }, { label: 'Rejected', value: 'rejected' }, { label: 'Submitted', value: 'submitted' }], type: 'select' },
   ]
 

@@ -58,6 +58,7 @@ const ApiFilter = ({
   apiFilter = {},
   setApiFilter,
 }) => {
+  const [dateRange, setDateRange] = useState([])
   const filterQuery = useQuery({
     queryKey: ['filter-query', apiFilterHeader],
     queryFn: () => getApiFilters(apiFilterHeader?.apiUrl),
@@ -124,6 +125,7 @@ const ApiFilter = ({
           valueFormat="MMM DD YYYY"
           type='range'
           popoverProps={{ withinPortal: false }}
+          allowSingleDateInRange
           size='xs'
           styles={{
             dropdown: {
@@ -133,21 +135,16 @@ const ApiFilter = ({
               textTransform: 'capitalize'
             }
           }}
-          value={[
-            apiFilter?.[apiFilterHeader?.key1] ? parseDate(apiFilter?.[apiFilterHeader?.key1]) : null,
-            apiFilter?.[apiFilterHeader?.key2] ? parseDate(apiFilter?.[apiFilterHeader?.key2]) : null,
-          ]}
+          value={dateRange}
           onChange={(e) => {
+            setDateRange(e);
             setApiFilter((prev) => {
               const updatedFilter = { ...prev };
               if (e && e[0] && e[1]) {
                 updatedFilter[apiFilterHeader?.key1] = formatDate(e[0]),
                 updatedFilter[apiFilterHeader?.key2] = formatDate(e[1])
-              } else if (e && e[0]) {
-                updatedFilter[apiFilterHeader?.key1] = formatDate(e[0])
-              } else if (e && e[1]) {
-                updatedFilter[apiFilterHeader?.key2] = formatDate(e[1])
-              } else {
+              }
+              else {
                 delete updatedFilter[apiFilterHeader?.key1];
                 delete updatedFilter[apiFilterHeader?.key2];
               }

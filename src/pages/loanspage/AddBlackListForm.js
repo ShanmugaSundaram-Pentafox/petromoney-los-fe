@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-const AddBlackListForm = ({ data, callback }) => {
+const AddBlackListForm = ({ callback }) => {
   const queryClient = useQueryClient()
   const [dealerID, setDealerID] = useState()
   const [comment, setComment] = useState()
@@ -139,75 +139,66 @@ const AddBlackListForm = ({ data, callback }) => {
         <div>Add Withheld Form</div>
         <CloseIcon onClick={callback} />
       </Typography>
-      {
-        Array.isArray(data) ? (
-          <>
-            <div className={classes.sidePanelFormContentWrapper}>
-              <div className={classes.stepperRoot}>
-                <Box>
-                  <form>
-                    <Grid container spacing={2}>
-                      <Grid item md={7}>
-                        <label style={{ marginBottom: 8 }}>Dealership</label>
-                        <AsyncSelect
-                          components={optionsLoading ? null : { LoadingIndicator: null }}
-                          styles={{
-                            menu: provided => ({ ...provided, zIndex: 9999 })
-                          }}
-                          onChange={onChangeOption}
-                          loadingMessage={() => ' '}
-                          loadOptions={getOptions}
-                          placeholder='Search Dealership ID or Name'
-                        />
-                      </Grid>
-                      <Grid item md={7}>
-                        <label style={{ marginBottom: 8 }}>Comments</label>
-                        <TextField
-                          name='comment'
-                          fullWidth
-                          variant='outlined'
-                          value={comment}
-                          onChange={handleChange}
-                        />
-                      </Grid>
-                    </Grid>
-                    {
-                      error &&
-                        <Alert severity='error' style={{ margin: 12, marginLeft: 0 }}>{error}</Alert>
-                    }
-                  </form>
-                </Box>
-              </div>
-            </div>
-            <div className={classes.actionFooter}>
-              <Divider />
-              <div className={classes.actionButtonsWrapper}>
-                <div>
-                  <Button
-                    variant="outlined"
-                    onClick={callback}
-                  >
-                    Back
-                  </Button>
-                </div>
-                <div>
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    onClick={handleSave}
-                    className={clsx(classes.btn, classes.editButton)}
-                  >
-                    Save
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <Typography style={{ textAlign: 'center', marginTop: 12 }}>Getting dealership data...</Typography>
-        )
-      }
-
+      <div className={classes.sidePanelFormContentWrapper}>
+        <div className={classes.stepperRoot}>
+          <Box>
+            <form>
+              <Grid container spacing={2}>
+                <Grid item md={7}>
+                  <label style={{ marginBottom: 8 }}>Dealership</label>
+                  <AsyncSelect
+                    components={optionsLoading ? null : { LoadingIndicator: null }}
+                    styles={{
+                      menu: provided => ({ ...provided, zIndex: 9999 })
+                    }}
+                    onChange={onChangeOption}
+                    loadingMessage={() => ' '}
+                    loadOptions={getOptions}
+                    placeholder='Search Dealership ID or Name'
+                  />
+                </Grid>
+                <Grid item md={7}>
+                  <label style={{ marginBottom: 8 }}>Comments</label>
+                  <TextField
+                    name='comment'
+                    fullWidth
+                    variant='outlined'
+                    value={comment}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              </Grid>
+              {
+                error &&
+                  <Alert severity='error' style={{ margin: 12, marginLeft: 0 }}>{error}</Alert>
+              }
+            </form>
+          </Box>
+        </div>
+      </div>
+      <div className={classes.actionFooter}>
+        <Divider />
+        <div className={classes.actionButtonsWrapper}>
+          <div>
+            <Button
+              variant="outlined"
+              onClick={callback}
+            >
+              Back
+            </Button>
+          </div>
+          <div>
+            <Button
+              variant="contained"
+              type="submit"
+              onClick={handleSave}
+              className={clsx(classes.btn, classes.editButton)}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 

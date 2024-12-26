@@ -1,34 +1,30 @@
 import { decrypt } from './crypto.service';
 import { URL } from '../config/serverUrls';
 import apiCall from '../utils/api.util';
+import moment from 'moment';
 
-export const getAllDealership = () => {
+export const getAllDealership = ({ search, dateObj, download = false, page = 1, apiFilter = {} }) => {
+  let qry = []
+  let apiUrl = URL.dealership;
+  if (page) qry.push(`page=${page}`)
+  if (search) qry.push(`search=${search}`)
+  if (download) qry.push('download=yes')
+  if (dateObj?.from) qry.push(`from_date=${moment(dateObj?.from).format('YYYY-MM-DD')}&to_date=${moment(dateObj?.to).format('YYYY-MM-DD')}`)
+  Object.entries(apiFilter).forEach(([key, value]) => {
+    if (value) qry.push(`${key}=${value}`);
+  });
+  if (qry.length) apiUrl += '?' + qry.join('&')
   return new Promise((resolve, reject) => {
-    apiCall(URL.dealership)
-      .then(({ status, data, message }) => {
-        if (status === 'SUCCESS') {
-          const result = data.map((item, i) => {
-            let pan = item.pan;
-            let gst = item.gst;
-            if (pan) {
-              pan = decrypt(pan)
-            }
-            if (gst) {
-              gst = decrypt(gst)
-            }
-            return {
-              ...item,
-              pan,
-              gst,
-            }
-          })
-          resolve(result);
+    apiCall(apiUrl)
+      .then((res) => {
+        if (res?.status === 'SUCCESS') {
+          resolve(res);
         } else {
-          reject(message);
+          reject(res?.message);
         }
       })
       .catch((e) => {
-        reject(e.message);
+        reject(e?.message);
       });
   });
 };

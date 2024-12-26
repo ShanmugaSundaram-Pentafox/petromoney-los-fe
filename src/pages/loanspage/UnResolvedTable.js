@@ -7,12 +7,10 @@ import { makeStyles } from '@material-ui/styles';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
-import { useMount } from 'react-use';
 import AddBlackListForm from './AddBlackListForm';
 import Button from '../../components/CommonComponents/Button/Button';
 import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { action_id, resources_id } from '../../config/accessControl';
-import { getAllDealership } from '../../services/dealerships.service';
 import { deleteRemarks, getWithheldLoansData, resolveRemarks } from '../../services/withheld.services';
 import CheckAllowed from '../rbac/CheckAllowed';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
@@ -64,19 +62,6 @@ const UnresolvedTable = ({ currentUser }) => {
           })
       })
   }
-
-  useMount(() => {
-    getAllDealership()
-      .then((data) => {
-        setDealershipData(data.map(({ id }) => ({
-          label: id,
-          value: id
-        })))
-      })
-      .catch((e) => {
-        console.log(e);
-      })
-  })
 
   const handleResolve = (id) => {
     resolveRemarks(id, withheldModal?.json)
@@ -288,7 +273,7 @@ const UnresolvedTable = ({ currentUser }) => {
         variant="temporary"
       >
         {
-          <AddBlackListForm data={dealershipData} callback={() => setOpenModal(false)} />
+          <AddBlackListForm callback={() => setOpenModal(false)} />
         }
       </Drawer>
       <Dialog

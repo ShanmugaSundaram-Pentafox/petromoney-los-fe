@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.43.1](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.43.0...v2.43.1) (2024-12-26)
+
+
+### Bug Fixes
+
+* fixed reviewer selection options ([6dda399](https://bitbucket.org/gmfvl/petromoney-fe/commit/6dda399924e6b54f29908dadf9e691a2a13a4da5))
+* response handling changes ([44a7912](https://bitbucket.org/gmfvl/petromoney-fe/commit/44a79126bb07dc98cc9b4e06eecbef539f4267ee))
+
 ## [2.43.0](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.42.2...v2.43.0) (2024-12-19)
 
 

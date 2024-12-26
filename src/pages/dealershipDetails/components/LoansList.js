@@ -25,7 +25,7 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
   const [dialogState, setDialogState] = useState({});
   const [user, setUser] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState();
-  const [searchValue, setSearchValue] = useDebouncedState('', 500);
+  const [searchValue, setSearchValue] = useDebouncedState('');
   const readOnly = permissionCheck(currentUser.role_name, rulesList.external_view);
   const { enqueueSnackbar } = useSnackbar();
   const [errorStatus, setErrorStatus] = useState()
@@ -286,8 +286,8 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
             <Select
               searchable
               nothingFoundMessage = {userRoleLoading ? <Loader size="xs"/> : 'No data found'}
+              searchValue={searchValue}
               onSearchChange={setSearchValue}
-              onBlur={setSearchValue(null)}
               placeholder='search or select reviewer'
               clearable
               name='type'
@@ -307,8 +307,8 @@ const LoansList = ({ id, currentUser, titleAlign }) => {
             <Text id="approval-remarks-desc">Please choose whom did you want to sent for approval</Text>
             <Select
               searchable
+              searchValue={searchValue}
               onSearchChange={setSearchValue}
-              onBlur={setSearchValue(null)}
               nothingFoundMessage = {userRoleLoading ? <Loader size="xs"/> : 'No data found'}
               placeholder='search or select reviewer'
               clearable

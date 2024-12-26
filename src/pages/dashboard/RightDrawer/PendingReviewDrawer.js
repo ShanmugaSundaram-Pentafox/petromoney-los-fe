@@ -24,7 +24,7 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
   const [user, setUser] = useState()
   const [errorStatus, setErrorStatus] = useState()
   const [remarks, setRemarks] = useState();
-  const [searchValue, setSearchValue] = useDebouncedState('', 500 );
+  const [searchValue, setSearchValue] = useDebouncedState('');
 
   const { data: userRole, isLoading: userRoleLoading } = useQuery(
     ['userRoles', searchValue],
@@ -127,8 +127,8 @@ const PendingReviewDrawer = ({ id, selectedLoanData, status, currentUser, editab
           <Select
             searchable
             nothingFoundMessage = {userRoleLoading ? <Loader size="xs"/> : 'No data found'}
+            searchValue={searchValue}
             onSearchChange={setSearchValue}
-            onBlur={setSearchValue(null)}
             placeholder='search or select reviewer'
             clearable
             name='user_approve'

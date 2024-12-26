@@ -23,7 +23,7 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
   const [remarks, setRemarks] = useState();
   const [info, setInfo] = useState({})
   const [errorStatus, setErrorStatus] = useState()
-  const [searchValue, setSearchValue] = useDebouncedState('', 500);
+  const [searchValue, setSearchValue] = useDebouncedState('');
 
   const { data: userRole, isLoading: userRoleLoading  } = useQuery(
     ['userRoles', searchValue],
@@ -141,8 +141,8 @@ const SubmittedDrawer = ({ id, selectedLoanData, status, currentUser, editable, 
           <Select
             searchable
             nothingFoundMessage = {userRoleLoading ? <Loader size="xs"/> : 'No data found'}
-            onSearchChange={setSearchValue}
-            onBlur={setSearchValue(null)}
+            searchValue={searchValue}
+            onSearchChange = {setSearchValue}
             placeholder='search or select reviewer'
             clearable
             name='user_approve'

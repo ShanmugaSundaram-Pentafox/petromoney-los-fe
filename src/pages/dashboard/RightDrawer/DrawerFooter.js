@@ -1,5 +1,5 @@
-import { Flex, Button, Text, Box, Alert, Loader, Chip, Group, Select, Modal, Checkbox, Tooltip, ActionIcon, Stack, ScrollArea, Accordion } from '@mantine/core';
-import { IconInfoCircle, IconX } from '@tabler/icons-react';
+import { Flex, Button, Text, Box, Alert, Loader, Chip, Group, Select, Modal, Checkbox, Tooltip, ActionIcon, Stack, ScrollArea, Accordion, Textarea } from '@mantine/core';
+import { IconCheck, IconInfoCircle, IconX } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
@@ -64,7 +64,9 @@ const DrawerFooter = ({
   const [errorMsg, setErrorMsg] = useState();
   const [openEnhancementModal, setEnhancementModal] = useState(false)
   const [enhancementRemarks, setEnhancementRemarks] = useState();
-  const [rejectRemarks, setRejectRemarks] = useState();
+  const [freeTextRemarks, setFreeTextRemarks] = useState();
+  const [freeTextOpen, setFreeTextOpen] = useState(false);
+  const [displayFreeTextRemarks, setDisplayFreeTextRemarks] = useState(false);
 
   useMount(() => {
     getLoanRejectReason()
@@ -192,9 +194,11 @@ const DrawerFooter = ({
     let reqBody = {
       user_id: currentUser.id,
       reason_id: rejectReason,
-      reject_reason: rejectRemarks,
     }
-    if (rejectReason?.length) {
+    if (displayFreeTextRemarks !== '' && displayFreeTextRemarks) {
+      reqBody.reject_reason = displayFreeTextRemarks;
+    }
+    if (rejectReason?.length || (displayFreeTextRemarks !== '' && displayFreeTextRemarks)) {
       setLoading(true)
       updateLoanApprovalStatusById(id, loanData.id, 'reject', reqBody)
         .then(res => {
@@ -211,13 +215,19 @@ const DrawerFooter = ({
           setLoading(false)
           displayNotification({
             message: err,
-            variant: 'success',
+            variant: 'error',
           });
         })
     } else {
       setErrorMsg('Please Select a reason to reject this loan')
     }
   }
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
+  };
 
   return (
     <>
@@ -430,10 +440,22 @@ const DrawerFooter = ({
                           content: {
                             padding: 0,
                           },
-                        }}>
-                        <Accordion.Item value="Accordion Title">
-                          <Accordion.Control p={0}><Text fz={'sm'}>Additional Reason</Text></Accordion.Control>
-                          <Accordion.Panel><RichTextEditorBox onChange={setRejectRemarks} value={rejectRemarks} />
+                        }}
+                        value={freeTextOpen}
+                        onChange={e => setFreeTextOpen(e)}
+                      >
+                        <Accordion.Item value="Accordion Title" >
+                          <Accordion.Control ><Text fz={'sm'}>Additional Reason</Text></Accordion.Control>
+                          <Accordion.Panel color='blue'><Textarea onChange={(e)=>{setFreeTextRemarks(e.target.value)}} autosize value={freeTextRemarks} minRows={6} placeholder='Type reason' onKeyDown={handleKeyDown}/>
+                            <Group justify="flex-end" mb={'md'} mt={5} gap={8}>
+                              <ActionIcon variant="default" onClick={() => {
+                                setFreeTextRemarks('')}}>
+                                <IconX color='red'/>
+                              </ActionIcon>
+                              <ActionIcon variant="default" onClick={()=> setDisplayFreeTextRemarks(freeTextRemarks)}>
+                                <IconCheck color='green'/> 
+                              </ActionIcon>
+                            </Group>
                           </Accordion.Panel>
                         </Accordion.Item>
                       </Accordion >
@@ -464,6 +486,24 @@ const DrawerFooter = ({
                 </Box>
               )
             }
+            {
+              displayFreeTextRemarks && (
+                <Box mb={'md'} className={classes.actions2} pt={'xs'}>
+                  <Text fz={'sm'}>Additional Reasons</Text>
+                  {
+                    <Box className={classes.items}>
+                      <Text> {displayFreeTextRemarks}</Text>
+                      <Tooltip label="Remove" color='gray' withArrow>
+                        <ActionIcon size='xs' color='gray' onClick={() => setDisplayFreeTextRemarks(null)} variant="transparent">
+                          <IconX />
+                        </ActionIcon>
+                      </Tooltip>
+                    </Box>
+                  }
+                </Box>
+              )
+            }
+            
           </ScrollArea.Autosize>
         </>
         <Group justify='flex-end' mt={'md'}>

@@ -438,15 +438,15 @@ const DrawerFooter = ({
                       <Accordion 
                         styles={{
                           content: {
-                            padding: 0,
+                            padding: '5px 0px',
                           },
                         }}
                         value={freeTextOpen}
                         onChange={e => setFreeTextOpen(e)}
                       >
                         <Accordion.Item value="Accordion Title" >
-                          <Accordion.Control ><Text fz={'sm'}>Additional Reason</Text></Accordion.Control>
-                          <Accordion.Panel color='blue'><Textarea onChange={(e)=>{setFreeTextRemarks(e.target.value)}} autosize value={freeTextRemarks} minRows={6} placeholder='Type reason' onKeyDown={handleKeyDown}/>
+                          <Accordion.Control bg='blue.1'><Text fz={'sm'}>Additional Reason</Text></Accordion.Control>
+                          <Accordion.Panel ><Textarea onChange={(e)=>{setFreeTextRemarks(e.target.value)}} autosize value={freeTextRemarks} minRows={6} placeholder='Type reason' onKeyDown={handleKeyDown}/>
                             <Group justify="flex-end" mb={'md'} mt={5} gap={8}>
                               <ActionIcon variant="default" onClick={() => {
                                 setFreeTextRemarks('')}}>

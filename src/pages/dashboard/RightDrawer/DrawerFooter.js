@@ -1,5 +1,5 @@
-import { Flex, Button, Text, Box, Alert, Loader, Chip, Group, Select, Modal, Checkbox, Tooltip, ActionIcon, Stack, ScrollArea } from '@mantine/core';
-import { IconInfoCircle, IconX } from '@tabler/icons-react';
+import { Flex, Button, Text, Box, Alert, Loader, Chip, Group, Select, Modal, Checkbox, Tooltip, ActionIcon, Stack, ScrollArea, Accordion, Textarea } from '@mantine/core';
+import { IconCheck, IconInfoCircle, IconX } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
@@ -64,6 +64,10 @@ const DrawerFooter = ({
   const [errorMsg, setErrorMsg] = useState();
   const [openEnhancementModal, setEnhancementModal] = useState(false)
   const [enhancementRemarks, setEnhancementRemarks] = useState();
+  const [freeTextRemarks, setFreeTextRemarks] = useState();
+  const [freeTextOpen, setFreeTextOpen] = useState(false);
+  const [displayFreeTextRemarks, setDisplayFreeTextRemarks] = useState(false);
+
   useMount(() => {
     getLoanRejectReason()
       .then(data => {
@@ -191,7 +195,10 @@ const DrawerFooter = ({
       user_id: currentUser.id,
       reason_id: rejectReason,
     }
-    if (rejectReason?.length) {
+    if (displayFreeTextRemarks !== '' && displayFreeTextRemarks) {
+      reqBody.reject_reason = displayFreeTextRemarks;
+    }
+    if (rejectReason?.length || (displayFreeTextRemarks !== '' && displayFreeTextRemarks)) {
       setLoading(true)
       updateLoanApprovalStatusById(id, loanData.id, 'reject', reqBody)
         .then(res => {
@@ -208,13 +215,19 @@ const DrawerFooter = ({
           setLoading(false)
           displayNotification({
             message: err,
-            variant: 'success',
+            variant: 'error',
           });
         })
     } else {
       setErrorMsg('Please Select a reason to reject this loan')
     }
   }
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+    }
+  };
 
   return (
     <>
@@ -367,85 +380,133 @@ const DrawerFooter = ({
         size={'lg'}
       >
         <>
-          <Box>
+          <ScrollArea.Autosize mah={400} mih={200} offsetScrollbars>
+            <Box>
+              {
+                errorMsg &&
+                  <Alert severity='error' style={{ marginBottom: 12 }}>{errorMsg}</Alert>
+              }
+              <Text mb={16} fz={'sm'}>Choose category and reasons for rejection.</Text>
+              <Chip.Group
+                onChange={(e) => {
+                  setSelectedCategory({ label: e, value: optionsData?.find(i => i?.label === e)?.value })
+                  setActiveTab(optionsData?.find(i => i?.label === e)?.value)
+                }}
+                value={optionsData?.find(i => i?.value === activeTab)?.label}
+                multiple={false}
+              >
+                <Group gap={4} mt={'xs'} mb={'sm'}>
+                  {
+                    optionsData.map((item, i) => {
+                      return <Chip variant='light' radius={'xs'} key={i} value={item?.label}>{item?.label}</Chip>
+                    })
+                  }
+                </Group>
+              </Chip.Group>
+            </Box>
             {
-              errorMsg &&
-                <Alert severity='error' style={{ marginBottom: 12 }}>{errorMsg}</Alert>
+              selectedCategory && (
+                <Box>
+                  <Checkbox.Group
+                    value={rejectReason}
+                    label={'Reason'}
+                    description={'Select the reason to reject'}
+                  >
+                    <ScrollArea.Autosize mah={80} mih={25} my={'sm'} type="auto" scrollbars="y">
+                      <Stack mah={80} mih={25}>
+                        {
+                          reasonData[selectedCategory.value][0].map((data, index) => {
+                            return (
+                              <Checkbox
+                                key={`${index}-${data?.value}`}
+                                styles={{ input: { cursor: 'pointer' }, label: { cursor: 'pointer' } }}
+                                value={data.value}
+                                size='xs'
+                                onChange={handleReasonChange}
+                                checked={rejectReason.includes(data.value)}
+                                name={data.label}
+                                label={data.label}
+                              />
+                            )
+                          })
+                        }
+                      </Stack>
+                    </ScrollArea.Autosize>
+                  </Checkbox.Group>
+                  {selectedCategory.value === 4 && (
+                    <>
+                      <Accordion 
+                        styles={{
+                          content: {
+                            padding: '5px 0px',
+                          },
+                        }}
+                        value={freeTextOpen}
+                        onChange={e => setFreeTextOpen(e)}
+                      >
+                        <Accordion.Item value="Accordion Title" >
+                          <Accordion.Control bg='blue.1'><Text fz={'sm'}>Additional Reason</Text></Accordion.Control>
+                          <Accordion.Panel ><Textarea onChange={(e)=>{setFreeTextRemarks(e.target.value)}} autosize value={freeTextRemarks} minRows={6} placeholder='Type reason' onKeyDown={handleKeyDown}/>
+                            <Group justify="flex-end" mb={'md'} mt={5} gap={8}>
+                              <ActionIcon variant="default" onClick={() => {
+                                setFreeTextRemarks('')}}>
+                                <IconX color='red'/>
+                              </ActionIcon>
+                              <ActionIcon variant="default" onClick={()=> setDisplayFreeTextRemarks(freeTextRemarks)}>
+                                <IconCheck color='green'/> 
+                              </ActionIcon>
+                            </Group>
+                          </Accordion.Panel>
+                        </Accordion.Item>
+                      </Accordion >
+                    </>
+                  )
+                  }
+                </Box>
+              )
             }
-            <Text mb={16} fz={'sm'}>Choose category and reasons for rejection.</Text>
-            <Chip.Group
-              onChange={(e) => {
-                setSelectedCategory({ label: e, value: optionsData?.find(i => i?.label === e)?.value })
-                setActiveTab(optionsData?.find(i => i?.label === e)?.value)
-              }}
-              value={optionsData?.find(i => i?.value === activeTab)?.label}
-              multiple={false}
-            >
-              <Group gap={4} mt={'xs'} mb={'sm'}>
-                {
-                  optionsData.map((item, i) => {
-                    return <Chip variant='light' radius={'xs'} key={i} value={item?.label}>{item?.label}</Chip>
-                  })
-                }
-              </Group>
-            </Chip.Group>
-          </Box>
-          {
-            selectedCategory && (
-              <Box>
-                <Checkbox.Group
-                  value={rejectReason}
-                  label={'Reason'}
-                  description={'Select the reason to reject'}
-                >
-
-                  <ScrollArea.Autosize mah={70} mih={25} my={'sm'} type="auto" scrollbars="y">
-                    <Stack mah={70} mih={25}>
-                      {
-                        reasonData[selectedCategory.value][0].map((data, index) => {
-                          return (
-                            <Checkbox
-                              key={`${index}-${data?.value}`}
-                              styles={{ input: { cursor: 'pointer' }, label: { cursor: 'pointer' } }}
-                              value={data.value}
-                              size='xs'
-                              onChange={handleReasonChange}
-                              checked={rejectReason.includes(data.value)}
-                              name={data.label}
-                              label={data.label}
-                            />
-                          )
-                        })
-                      }
-                    </Stack>
-                  </ScrollArea.Autosize>
-                </Checkbox.Group>
-              </Box>
-            )
-          }
-          {
-            displayReason.length != 0 && (
-              <Box mb={'md'} className={classes.actions2}>
-                <Text fz={'sm'}>Selected Reasons</Text>
-                {
-                  displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
-                    return (
-                      <Box key={i} className={classes.items}>
-                        <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
-                        <Tooltip label="Remove" color='gray' withArrow>
-                          <ActionIcon size='xs' color='gray' onClick={() => removeItem(item)} variant="transparent">
-                            <IconX />
-                          </ActionIcon>
-                        </Tooltip>
-                      </Box>
-                    )
-                  })
-                }
-              </Box>
-            )
-          }
+            {
+              displayReason.length != 0 && (
+                <Box mb={'md'} className={classes.actions2} pt={'xs'}>
+                  <Text fz={'sm'}>Selected Reasons</Text>
+                  {
+                    displayReason.sort((a, b) => sortByKey(a, b, 'label')).map((item, i) => {
+                      return (
+                        <Box key={i} className={classes.items}>
+                          <p className={classes.eachItem}><span className={classes.itemNotation}>{i + 1}.</span> {item.label}</p>
+                          <Tooltip label="Remove" color='gray' withArrow>
+                            <ActionIcon size='xs' color='gray' onClick={() => removeItem(item)} variant="transparent">
+                              <IconX />
+                            </ActionIcon>
+                          </Tooltip>
+                        </Box>
+                      )
+                    })
+                  }
+                </Box>
+              )
+            }
+            {
+              displayFreeTextRemarks && (
+                <Box mb={'md'} className={classes.actions2} pt={'xs'}>
+                  <Text fz={'sm'}>Additional Reasons</Text>
+                  {
+                    <Box className={classes.items}>
+                      <Text> {displayFreeTextRemarks}</Text>
+                      <Tooltip label="Remove" color='gray' withArrow>
+                        <ActionIcon size='xs' color='gray' onClick={() => setDisplayFreeTextRemarks(null)} variant="transparent">
+                          <IconX />
+                        </ActionIcon>
+                      </Tooltip>
+                    </Box>
+                  }
+                </Box>
+              )
+            }
+            
+          </ScrollArea.Autosize>
         </>
-        <Group justify='center'>
+        <Group justify='flex-end' mt={'md'}>
           <Button variant='outline' size='xs' onClick={() => setRejectModal(false)}>Cancel</Button>
           <Button size='xs' color='red' onClick={updateLoanStatus} loading={loading}>Confirm</Button>
         </Group>

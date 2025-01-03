@@ -309,7 +309,7 @@ export const getBankDetailsbyID = (id, resquestType) => {
   });
 }
 
-export const getAllBankDetailsbyID = (id, resquestType) => {
+export const getAllBankDetailsbyID = (id) => {
   return new Promise((resolve, reject) => {
     apiCall(`dealership/${id}/all-banks`)
       .then(({ status, data = [], message }) => {

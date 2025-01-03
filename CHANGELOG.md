@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.43.2](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.43.1...v2.43.2) (2025-01-03)
+
+
+### Bug Fixes
+
+* displayed all banks in pd ([a24e746](https://bitbucket.org/gmfvl/petromoney-fe/commit/a24e74692e4ec69a537f35626d9cf2f041cf3627))
+
 ### [2.43.1](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.43.0...v2.43.1) (2024-12-26)
 
 

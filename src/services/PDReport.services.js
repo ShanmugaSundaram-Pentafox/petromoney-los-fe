@@ -308,6 +308,22 @@ export const getBankDetailsbyID = (id, resquestType) => {
       })
   });
 }
+
+export const getAllBankDetailsbyID = (id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/${id}/all-banks`)
+      .then(({ status, data = [], message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data)
+        } else {
+          reject(message)
+        }
+      })
+      .catch((e) => {
+        reject(e.message)
+      })
+  });
+}
 export const updateBankDetailsByID = (data, id) => {
   let url = `dealership/${id}/bank`;
   if (data?.id) {

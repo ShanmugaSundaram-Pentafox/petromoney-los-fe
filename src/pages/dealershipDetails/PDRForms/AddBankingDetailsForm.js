@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import BankDetailsCard from './Components/BankDetailsCard';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { URL } from '../../../config/serverUrls';
-import { getBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
+import { getAllBankDetailsbyID, updateBankDetailsByID } from '../../../services/PDReport.services';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
 import { ActionIcon, Button, Divider, Grid, Select, Text, TextInput, Title } from '@mantine/core';
@@ -106,7 +106,7 @@ const AddBankingDetailsForm = ({ dealer_id, isEdit, callback, currentUser, edita
   const classes = useStyles()
   const [addNewRow, setAddNewRow] = useState(false);
   const [editRow, setEditRow] = useState({ editForm: false, index: 0});
-  const { data: bankData = [] } = useQuery('bank-data', () => getBankDetailsbyID(dealer_id), {refetchOnWindowFocus: false})
+  const { data: bankData = [] } = useQuery('bank-data', () => getAllBankDetailsbyID(dealer_id), {refetchOnWindowFocus: false})
   const editBankRow = (rowData, rowIndex) => {
     // setEditRow({ ...rowData, rowIndex });
     setEditRow({ editForm: true, index: rowIndex })

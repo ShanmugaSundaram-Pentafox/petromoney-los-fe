@@ -222,7 +222,6 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
             })
             setTimeout(() => {
               ReloadData();
-              onClose();
               setHideSend(false);
             }, 3000);
           } else {
@@ -231,6 +230,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
               message: res?.message,
               variant: 'error',
             })
+            onClose();
           }
         })
         .catch(err => {

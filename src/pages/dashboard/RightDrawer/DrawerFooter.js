@@ -269,7 +269,7 @@ const DrawerFooter = ({
 
           {isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_resubmit') && status && ['disbursed'].includes(status.toLowerCase()) && (
             <Button
-              loading={reLoader}
+              loading={reLoader || loanDataLoading}
               onClick={() => setEnhancementModal(true)}
               size='xs'
             >

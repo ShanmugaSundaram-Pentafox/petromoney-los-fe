@@ -263,14 +263,14 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
             <ActionIcon
               variant="white"
               onClick={handleSearch}
-              ml={10}
+              mx={10}
               mt={21}
               loading={searchLoading}
             >
               <IconSearch size={16} color={'#4196f0'} />
             </ActionIcon>
           </Tooltip>
-          <Box mt={10}>
+          <Box mt={20}>
             {
               filterType == 'processed' && (
                 <>

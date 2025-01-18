@@ -270,32 +270,32 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
               <IconSearch size={16} color={'#4196f0'} />
             </ActionIcon>
           </Tooltip>
-          <Box mt={20}>
-            {
-              filterType == 'processed' && (
-                <>
-                  <Button
-                    variant="outline"
-                    size='xs'
-                    disabled={downloadLoading}
-                    leftSection={<IconDownload size={16} />}
-                    onClick={handleDownload}
-                  >
-                    Download Report
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size='xs'
-                    disabled={!fileData?.file_url}
-                    ml={10}
-                    onClick={downloadExistingReport}
-                  >
-                    {fileData?.file_url ? `Show Report ( Last update : ${isValid(new Date(fileData?.modified_date)) && format(new Date(fileData?.modified_date), 'MMM dd yyyy hh:mma')} )` : fileData?.status}
-                  </Button>
-                </>
-              )
-            }
-          </Box>
+          {
+            filterType == 'processed' && (
+              <>
+                <Button
+                  mt={20}
+                  mr={10}
+                  variant="outline"
+                  size='xs'
+                  disabled={downloadLoading}
+                  leftSection={<IconDownload size={16} />}
+                  onClick={handleDownload}
+                >
+                  Download Report
+                </Button>
+                <Button
+                  mt={20}
+                  variant="outline"
+                  size='xs'
+                  disabled={!fileData?.file_url}
+                  onClick={downloadExistingReport}
+                >
+                  {fileData?.file_url ? `Show Report ( Last update : ${isValid(new Date(fileData?.modified_date)) && format(new Date(fileData?.modified_date), 'MMM dd yyyy hh:mma')} )` : fileData?.status}
+                </Button>
+              </>
+            )
+          }
           {/* </Group> */}
         </Box>
         <SupportContactModal opened={opened} onClose={close} />

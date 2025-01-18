@@ -107,7 +107,11 @@ const DrawerFooter = ({
           window.location.reload();
         }, 2000)
       })
-      .catch(() => {
+      .catch(err => {
+        displayNotification({
+          message: err,
+          variant: 'error',
+        });
         setReloader(false);
       })
   }

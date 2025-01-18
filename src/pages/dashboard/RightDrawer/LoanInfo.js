@@ -1,5 +1,5 @@
 import { Box, Group, Table } from '@mantine/core';
-import { Select as MSelect } from '@material-ui/core';
+import { makeStyles, Select as MSelect } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
@@ -11,6 +11,12 @@ import { getProductsMaster } from '../../../services/common.service';
 import { isAllowed } from '../../../utils/cerbos';
 
 
+const useStyles = makeStyles(theme => ({
+  tablerowheader: {
+    textAlign: 'right',
+  }
+}))
+
 const LoanInfo = ({
   data: row,
   status,
@@ -20,6 +26,7 @@ const LoanInfo = ({
   updateNewLoanInfo,
   viewable
 }) => {
+  const classes = useStyles();
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState({ amount_approved: newInfo?.amount_approved });
 
@@ -67,14 +74,14 @@ const LoanInfo = ({
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Loan Type</Table.Th>
-              <Table.Th>Interest %</Table.Th>
-              <Table.Th>Penal Interest %</Table.Th>
-              <Table.Th>Amount</Table.Th>
+              <Table.Th className={classes.tablerowheader}>Interest %</Table.Th>
+              <Table.Th className={classes.tablerowheader}>Penal Interest %</Table.Th>
+              <Table.Th className={classes.tablerowheader}>Amount</Table.Th>
               {viewable && (
-                <Table.Th>Amount Approved</Table.Th>
+                <Table.Th className={classes.tablerowheader}>Amount Approved</Table.Th>
               )}
               {['disbursed', 'disbursement_approval'].includes(status) ? (
-                <Table.Th>Disbursement Amount</Table.Th>
+                <Table.Th className={classes.tablerowheader}>Disbursement Amount</Table.Th>
               ) : null}
             </Table.Tr>
           </Table.Thead>
@@ -107,11 +114,11 @@ const LoanInfo = ({
                 </MSelect>
               </Table.Td>
 
-              <Table.Td scope="row" component="th">
+              <Table.Td scope="row" component="th" align='right'>
                 <strong>{selectedProduct?.interest}</strong>
               </Table.Td>
 
-              <Table.Td scope="row" component="th">
+              <Table.Td scope="row" component="th" align='right'>
                 <strong>{selectedProduct?.penal_interest}</strong>
               </Table.Td>
 
@@ -175,7 +182,7 @@ const LoanInfo = ({
                 </Table.Td>
               ))}
 
-              <Table.Td>
+              <Table.Td align="right">
                 {status === 'loan_approval' ? (
                   <UserCan
                     role={currentUser.role_name}
@@ -201,7 +208,7 @@ const LoanInfo = ({
               </Table.Td>
 
               {['disbursement_approval', 'disbursed']?.includes(status) ? (
-                <Table.Td>
+                <Table.Td align='right'>
                   <Currency value={row?.amount_disbursed} />
                 </Table.Td>
               ): null}

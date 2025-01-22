@@ -63,7 +63,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
     queryKey: ['getLegality-document', docId, dealershipId],
     queryFn: () => apiCall(`dealership/${dealershipId}/document/${docId}`),
     enabled: Boolean(docId && dealershipId),
-    select: (data) => data?.data,
+    select: (data) => data?.data?.data,
     onSuccess: (data) => {
       setActiveState(data);
     },

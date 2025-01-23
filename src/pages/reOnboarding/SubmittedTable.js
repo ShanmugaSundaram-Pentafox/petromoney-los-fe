@@ -166,7 +166,6 @@ const SubmittedTable = ({ title, onRowClick, filterQry }) => {
         rowData={getReOnboardingDataQuery?.data}
         column={column}
         title={title}
-        count={getReOnboardingDataQuery?.data?.length}
         onRowClick={i => onRowClick(i?.dealership_id, i, 'submit')}
         useAPIPagination
         apiSearch={setSearch}

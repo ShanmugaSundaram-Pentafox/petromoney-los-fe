@@ -162,6 +162,7 @@ const DrawerFooter = ({
   }
 
   const handlePushToEnhancement = () => {
+    setLoading(true);
     const { amount_approved, id, product_id, dealership_id } = selectedLoanData
     let reqBody = {
       loan_amount: amount_approved,
@@ -641,21 +642,23 @@ const DrawerFooter = ({
 
       <Modal
         opened={openEnhancementModal}
-        onClose={() => setEnhancementModal(false)}
+        onClose={() => !loading && setEnhancementModal(false)}
         zIndex={99999}
         withCloseButton={false}
+        title={`Send for ${loanData?.is_noc ? 'Re onboarding' : 'Enhancement'}`}
+        size={'lg'}
       >
-        <Text>
+        <Text mb={16} fz={'sm'}>
           {`Are you sure want to move your loan for ${loanData?.is_noc ? 'Re onboarding' : 'Enhancement'}?`}
         </Text>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 12 }}>
-          <Button variant='outline' size='xs' style={{ marginRight: 8 }} onClick={() => setEnhancementModal(false)}>Cancel</Button>
+        <div style={{ display: 'flex', justifyContent: 'end', marginTop: 12 }}>
+          <Button disabled={loading} variant='outline' size='xs' style={{ marginRight: 8 }} onClick={() => setEnhancementModal(false)}>Cancel</Button>
           <Button
             loading={loading}
             size='xs'
             color='green'
             onClick={handlePushToEnhancement}
-          >Yes</Button>
+          >Confirm</Button>
         </div>
       </Modal>
     </>

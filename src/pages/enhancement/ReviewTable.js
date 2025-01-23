@@ -83,7 +83,6 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
         column={column}
         rowData={getEnhancementDataQuery?.data}
         title={title}
-        count={getEnhancementDataQuery?.data?.length}
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'review')}
         useAPIPagination
         apiSearch={setSearch}

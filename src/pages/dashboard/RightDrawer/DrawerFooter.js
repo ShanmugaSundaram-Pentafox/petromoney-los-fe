@@ -644,7 +644,7 @@ const DrawerFooter = ({
         opened={openEnhancementModal}
         onClose={() => !loading && setEnhancementModal(false)}
         zIndex={99999}
-        withCloseButton={false}
+        withCloseButton={true}
         title={`Send for ${loanData?.is_noc ? 'Re onboarding' : 'Enhancement'}`}
         size={'lg'}
       >

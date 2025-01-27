@@ -182,8 +182,8 @@ const LoanInfo = ({
                 </Table.Td>
               ))}
 
-              <Table.Td align="right">
-                {status === 'loan_approval' ? (
+              {status === 'loan_approval' ? (
+                <Table.Td align="right">
                   <UserCan
                     role={currentUser.role_name}
                     perform={rulesList.loan_approval}
@@ -203,9 +203,12 @@ const LoanInfo = ({
                     )}
                     no={() => <Currency value={row?.amount_approved} />}
                   />
-                ) : viewable && <Currency value={row?.amount_approved} />
-                }
-              </Table.Td>
+                </Table.Td>
+              ) : viewable && 
+                <Table.Td align="right">
+                  <Currency value={row?.amount_approved} />
+                </Table.Td>
+              }
 
               {['disbursement_approval', 'disbursed']?.includes(status) ? (
                 <Table.Td align='right'>

@@ -1,5 +1,5 @@
-import { Box, Group, Table } from '@mantine/core';
-import { makeStyles, Select as MSelect } from '@material-ui/core';
+import { Box, Group, Select, Table } from '@mantine/core';
+import { makeStyles } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
@@ -89,29 +89,28 @@ const LoanInfo = ({
           <Table.Tbody>
             <Table.Tr key={row?.id}>
               <Table.Td>
-                <MSelect
-                  fullWidth
-                  native
-                  placeholder={'Select Loan Product'}
-                  value={selectedProduct?.product_id}
+                <Select
+                  value={String(selectedProduct?.product_id)}
                   disabled={selectedProduct?.disabled || !isAllowed(currentUser?.permissions, resources_id.dashboard, 'edit_loantype')}
-                  onChange={e => {
-                    const d = products.find(i => i.product_id == e.target.value)
+                  data={products.map((item) => ({
+                    value: String(item.product_id),
+                    label: item.product_name,
+                  }))}
+                  styles={{ dropdown: { zIndex: 999999 } }}
+                  onChange={(value) => {
+                    console.log('VALUE : ', typeof (value))
+                    console.log('TYPE : ', typeof (updateNewLoanInfo))
+                    const d = products.find(i => i.product_id == parseInt(value))
                     setSelectedProduct(d)
-                    updateNewLoanInfo(!['approved', 'rejected'].includes(status) ? {
-                      product_id: e.target.value
+                    updateNewLoanInfo && updateNewLoanInfo(!['approved', 'rejected'].includes(status) ? {
+                      product_id: parseInt(value)
                     } : {
                       ...newInfo,
-                      product_id: e.target.value
+                      product_id: parseInt(value)
                     })
                   }}
-                  style={{
-                    color: '#333'
-                  }}
-                >
-                  {/* <option value="">Choose Loan type</option> */}
-                  {products.map(item => <option key={item.product_id} value={item.product_id}>{item.product_name}</option>)}
-                </MSelect>
+                  comboboxProps={{ shadow: 'md' }}
+                />
               </Table.Td>
 
               <Table.Td scope="row" component="th" align='right'>

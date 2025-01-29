@@ -89,7 +89,7 @@ const LoanInfo = ({
 
           <Table.Tbody>
             <Table.Tr key={row?.id}>
-              <Table.Td>
+              <Table.Td w={'30%'}>
                 <Select
                   value={String(selectedProduct?.product_id)}
                   disabled={selectedProduct?.disabled || !isAllowed(currentUser?.permissions, resources_id.dashboard, 'edit_loantype')}
@@ -99,8 +99,6 @@ const LoanInfo = ({
                   }))}
                   styles={{ dropdown: { zIndex: 999999 } }}
                   onChange={(value) => {
-                    console.log('VALUE : ', typeof (value))
-                    console.log('TYPE : ', typeof (updateNewLoanInfo))
                     const d = products.find(i => i.product_id == parseInt(value))
                     setSelectedProduct(d)
                     updateNewLoanInfo && updateNewLoanInfo(!['approved', 'rejected'].includes(status) ? {

@@ -55,7 +55,7 @@ const LoanInfo = ({
     <>
       <Box p="sm" bg="indigo.0" mb="md" className="rounded-lg">
         {type === 'enhancement' || type === 're-onboarding' && (
-          <Group gap={20}>
+          <Group gap={20} m={'xs'}>
             <Group gap={6}>
               <ViewData title='Old Product' value={newInfo?.old_product_name} />
             </Group>
@@ -76,6 +76,7 @@ const LoanInfo = ({
               <Table.Th>Loan Type</Table.Th>
               <Table.Th className={classes.tablerowheader}>Interest %</Table.Th>
               <Table.Th className={classes.tablerowheader}>Penal Interest %</Table.Th>
+              
               <Table.Th className={classes.tablerowheader}>Amount</Table.Th>
               {viewable && (
                 <Table.Th className={classes.tablerowheader}>Amount Approved</Table.Th>

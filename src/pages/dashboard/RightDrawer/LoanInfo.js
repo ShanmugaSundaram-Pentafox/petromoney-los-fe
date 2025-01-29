@@ -130,6 +130,7 @@ const LoanInfo = ({
                         perform={rulesList.loan_approval}
                         yes={() => (
                           <TextInput
+                            width={85}
                             money
                             number
                             fullWidth={false}
@@ -160,6 +161,7 @@ const LoanInfo = ({
                         perform={rulesList.loan_approval}
                         yes={() => (
                           <TextInput
+                            width={85}
                             money
                             number
                             fullWidth={false}
@@ -187,6 +189,7 @@ const LoanInfo = ({
                     perform={rulesList.loan_approval}
                     yes={() => (
                       <TextInput
+                        width={85}
                         money
                         number
                         fullWidth={false}

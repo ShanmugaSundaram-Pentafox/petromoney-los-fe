@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   input: {
-    width: 85,
+    // width: 85,
     '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
       '-webkit-appearance': 'none',
       margin: 0,
@@ -76,6 +76,7 @@ const TextInput = ({
   date,
   select,
   number,
+  width,
   ...restProps
 }) => {
   const classes = useStyles()
@@ -92,6 +93,7 @@ const TextInput = ({
           className: classes.input,
           readOnly,
           placeholder,
+          style: { width },
           ...inputProps
         }}
         back

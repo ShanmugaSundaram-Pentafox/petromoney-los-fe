@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   input: {
+    width: 85,
     '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
       '-webkit-appearance': 'none',
       margin: 0,

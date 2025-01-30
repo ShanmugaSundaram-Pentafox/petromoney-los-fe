@@ -91,7 +91,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
         setPage={setPage}
         totalNoOfPages={getEnhancementPaginationQuery?.data?.total_number_of_pages}
         filter={false}
-        columnsFilter={false}
+        columnsFilter
         loading={getEnhancementDataQuery?.isLoading}
         excelDownload
         downloadQuery={{ query: enhancementDownloadQuery?.refetch, isLoading: enhancementDownloadQuery?.isFetching }}

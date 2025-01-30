@@ -1,5 +1,6 @@
 import React from 'react'
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Paper } from '@mantine/core';
 
 const ProcessedCallRequest = ({ callbackProcessed, isLoading }) => {
 
@@ -43,7 +44,7 @@ const ProcessedCallRequest = ({ callbackProcessed, isLoading }) => {
   };
 
   return (
-    <div>
+    <Paper>
       <DataTableViewer
         rowData={callbackProcessed}
         column={column}
@@ -51,7 +52,7 @@ const ProcessedCallRequest = ({ callbackProcessed, isLoading }) => {
         title={'Processed'}
         loading={isLoading}
       />
-    </div>
+    </Paper>
   )
 }
 

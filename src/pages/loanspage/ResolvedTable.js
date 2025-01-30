@@ -7,6 +7,7 @@ import moment from 'moment';
 import { getSignedUrl } from '../../services/common.service';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 import { useDebouncedState } from '@mantine/hooks';
+import { Paper } from '@mantine/core';
 
 const ResolvedTable = () => {
   const [page, setPage] = useState(1)
@@ -140,7 +141,7 @@ const ResolvedTable = () => {
   }
 
   return (
-    <>
+    <Paper>
       <Grid item md={12}>
         <DataTableViewer
           useAPIPagination
@@ -158,7 +159,7 @@ const ResolvedTable = () => {
           totalNoOfRecords={resolvedData?.total_records}
         />
       </Grid>
-    </>
+    </Paper>
   )
 }
 export default ResolvedTable;

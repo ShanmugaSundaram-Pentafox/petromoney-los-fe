@@ -1,5 +1,3 @@
-import { Box, Grid, Badge } from '@material-ui/core';
-import Skeleton from '@material-ui/lab/Skeleton';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
 import styled from 'styled-components';
@@ -7,6 +5,7 @@ import NewCallRequest from './NewCallRequest';
 import ProcessedCallRequest from './ProcessedCallRequest';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getCallbackRequest } from '../../services/callrequest.service';
+import { Badge, Loader, Tabs } from '@mantine/core';
 
 const PaperWrapper = styled.div`
 margin-bottom:10px;
@@ -37,44 +36,22 @@ const CallRequestPage = () => {
 
   return (
     <>
-      {
-        callBackDataLoading ?
-          <Grid container spacing={2}>
-            <Grid item md={6}>
-              <Skeleton variant='rectangular' height={60} />
-            </Grid>
-            <Grid item md={6}>
-              <Skeleton variant='rectangular' height={60} />
-            </Grid>
-            <Grid item md={12}>
-              <Skeleton variant='rectangular' height={400} />
-            </Grid>
-          </Grid>
-          :
-          <>
-            <PaperWrapper>
-              <Box borderRadius={4} bgcolor="background.paper">
-                <Grid container>
-                  <Grid onClick={() => { setSelectedTab('new') }} className={selectedTab === 'new' ? 'inactive' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
-                    <Badge badgeContent={callbackData?.length || 0} style={{ paddingTop: 4, paddingRight: 8 }} color="primary">
-                      <div>New Requests</div>
-                    </Badge>
-                  </Grid>
-                  <Grid onClick={() => { setSelectedTab('processed') }} style={{ textAlign: 'center', padding: 16 }} className={selectedTab === 'processed' ? 'inactive' : 'active'} item md={6}>
-                    <div>Processed</div>
-                  </Grid>
-                </Grid>
-              </Box>
-            </PaperWrapper>
-            {
-              selectedTab === 'new' ? (
-                <NewCallRequest callbackData={callbackData} isLoading={callBackDataLoading} />
-              ) : (
-                <ProcessedCallRequest callbackProcessed={callbackProcessed} isLoading={callBackProcessedLoading} />
-              )
-            }
-          </>
-      }
+      <Tabs value={selectedTab} onChange={setSelectedTab} variant="pills" >
+        <Tabs.List grow>
+          <Tabs.Tab value="new">
+            New Requests<Badge variant={selectedTab === 'new' && 'white'} ml={'xs'}>{callBackDataLoading ? <Loader type='dots' size={'xs'} /> : callbackData?.length}</Badge>
+          </Tabs.Tab>
+          <Tabs.Tab value="processed">
+            Processed
+          </Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value='new' mt={'md'}>
+          <NewCallRequest callbackData={callbackData} isLoading={callBackDataLoading} />
+        </Tabs.Panel>
+        <Tabs.Panel value='processed' mt={'md'}>
+          <ProcessedCallRequest callbackProcessed={callbackProcessed} isLoading={callBackProcessedLoading} />
+        </Tabs.Panel>
+      </Tabs>
     </>
   )
 }

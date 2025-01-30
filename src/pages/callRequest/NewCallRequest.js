@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import TextInput from '../../components/TextInput/TextInput';
 import { resolveCallbackRequest } from '../../services/callrequest.service';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
+import { Paper } from '@mantine/core';
 
 const useStyles = makeStyles({
   pill: {
@@ -76,7 +77,7 @@ const NewCallRequest = ({ callbackData, isLoading }) => {
             <Typography variant='body1'>{row?.original?.dealer_name?.toUpperCase()}</Typography>
             {
               row?.original?.count > 1 &&
-              <Typography variant='body2' className={classes.pill}><strong>{row?.original?.count}</strong></Typography>
+                <Typography variant='body2' className={classes.pill}><strong>{row?.original?.count}</strong></Typography>
             }
           </div>
         )
@@ -122,7 +123,7 @@ const NewCallRequest = ({ callbackData, isLoading }) => {
   };
 
   return (
-    <div>
+    <Paper>
       <DataTableViewer
         rowData={callbackData}
         column={column}
@@ -150,7 +151,7 @@ const NewCallRequest = ({ callbackData, isLoading }) => {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+    </Paper>
   )
 }
 

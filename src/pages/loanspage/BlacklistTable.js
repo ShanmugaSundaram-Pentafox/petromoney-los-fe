@@ -1,11 +1,11 @@
 // import { useMount } from 'react-use';
-import { Grid, Box } from '@material-ui/core';
 // import { getAllWithheldLoans } from '../../services/withheld.services';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import ResolvedTable from './ResolvedTable';
 import UnresolvedTable from './UnResolvedTable';
 import usePageTitle from '../../hooks/usePageTitle';
+import { Tabs } from '@mantine/core';
 
 
 const PaperWrapper = styled.div`
@@ -30,21 +30,20 @@ const BlacklistTable = ({ currentUser }) => {
 
   return (
     <>
-      <PaperWrapper>
-        <Box borderRadius={4} bgcolor="background.paper">
-          <Grid container>
-            <Grid onClick={() => { setSelectedTab('unresolved') }} style={{ textAlign: 'center', padding: 16, borderRight: '1px dashed gray' }} className={selectedTab === 'unresolved' ? ' ' : 'active'} item md={6}>
-              <div>Unresolved</div>
-            </Grid>
-            <Grid onClick={() => { setSelectedTab('resolved') }} className={selectedTab === 'resolved' ? ' ' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
-              <div>Resolved</div>
-            </Grid>
-          </Grid>
-        </Box>
-      </PaperWrapper>
-      {
-        selectedTab === 'unresolved' ? <UnresolvedTable currentUser={currentUser} /> : <ResolvedTable />
-      }
+      <Tabs value={selectedTab} onChange={setSelectedTab} variant="pills" >
+        <Tabs.List grow>
+          <Tabs.Tab value="unresolved" p={'sm'}>
+            Unresolved
+          </Tabs.Tab>
+          <Tabs.Tab value="resolved">
+            Resolved
+          </Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value='unresolved' mt={'md'}>
+          <UnresolvedTable currentUser={currentUser} />        </Tabs.Panel>
+        <Tabs.Panel value='resolved' mt={'md'}>
+          <ResolvedTable />        </Tabs.Panel>
+      </Tabs>
     </>
   )
 }

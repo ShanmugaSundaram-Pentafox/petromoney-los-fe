@@ -44,6 +44,7 @@ const VehiclesLoanTable = () => {
         rowData={getVehicleLoanDetailsQuery?.data}
         filter={false}
         title={'Vehicle Loans List'}
+        count={getVehicleLoanDetailsQuery?.data?.length}
         columnsFilter={false}
         excelDownload
         loading={getVehicleLoanDetailsQuery?.isLoading}

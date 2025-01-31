@@ -146,7 +146,6 @@ const ApprovalTable = ({ title, onRowClick, filterQry, currentUser }) => {
         rowData={getReOnboardingDataQuery?.data}
         column={column}
         title={title}
-        count={getReOnboardingDataQuery?.data?.length}
         onRowClick={i => onRowClick(i?.dealership_id, i, 'approval')}
         useAPIPagination
         apiSearch={setSearch}

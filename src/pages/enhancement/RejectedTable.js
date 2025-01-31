@@ -84,7 +84,6 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
         rowData={getEnhancementDataQuery?.data}
         column={column}
         title={title}
-        count={getEnhancementDataQuery?.data?.length}
         onRowClick={i => onRowClick(i.dealership_id, i, 'rejected')}
         useAPIPagination
         apiSearch={setSearch}

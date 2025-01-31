@@ -170,6 +170,7 @@ const PDCReportTable = ({ filterQry }) => {
         columnsFilter={false}
         filter={false}
         totalNoOfPages={pdcReportQuery?.data?.no_of_pages}
+        count={pdcReportQuery?.data?.total_records}
         apiSearch={setSearch}
         excelDownload
         downloadQuery={{ isLoading: loading, query: handleDownload }}

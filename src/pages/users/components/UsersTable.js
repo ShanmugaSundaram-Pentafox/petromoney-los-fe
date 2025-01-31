@@ -104,6 +104,7 @@ const UsersTable = ({ title, withRole, currentUser, apiFilter, setApiFilter, use
         setApiFilter={setApiFilter}
         apiFilterHeader={apiFilterHeader}
         totalNoOfPages={usersData?.total_pages}
+        count={usersData?.total_records}
         apiSearch={setSearch}
         column={
           withRole ?

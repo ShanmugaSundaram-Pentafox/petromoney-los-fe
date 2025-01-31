@@ -18,6 +18,7 @@ import moment from 'moment';
 import { getSignedUrl } from '../../services/common.service';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 import { useDebouncedState } from '@mantine/hooks';
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -248,6 +249,7 @@ const UnresolvedTable = ({ currentUser }) => {
             <Button
               size='xs'
               onClick={() => setOpenModal(true)}
+              leftSection={<PlusIcon className='w-4 h-4' />}
             >
               Add
             </Button>

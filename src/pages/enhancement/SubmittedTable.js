@@ -75,7 +75,6 @@ const SubmittedTable = ({ title, onRowClick, filterQry }) => {
         rowData={getEnhancementDataQuery?.data}
         column={column}
         title={title}
-        count={getEnhancementDataQuery?.data?.length}
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'submit')}
         useAPIPagination
         apiSearch={setSearch}

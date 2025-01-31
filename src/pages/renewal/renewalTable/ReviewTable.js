@@ -122,6 +122,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
         page={page}
         setPage={setPage}
         totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
+        totalNoOfRecords={pageDetailsQuery?.data?.total_number_of_records}
         filter={false}
         action={<Button size='xs' onClick={() => setOpenModal(true)}>Send Reminder</Button>}
         downloadQuery={{ query: renewalDownloadQuery?.refetch, isLoading: renewalDownloadQuery?.isFetching }}

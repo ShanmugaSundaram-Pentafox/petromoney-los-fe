@@ -89,6 +89,7 @@ const ReviewTable = ({ title, onRowClick, filterQry }) => {
         page={page}
         setPage={setPage}
         totalNoOfPages={getEnhancementPaginationQuery?.data?.total_number_of_pages}
+        totalNoOfRecords={getEnhancementPaginationQuery?.data?.total_number_of_records}
         filter={false}
         columnsFilter
         loading={getEnhancementDataQuery?.isLoading}

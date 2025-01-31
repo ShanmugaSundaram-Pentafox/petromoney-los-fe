@@ -362,7 +362,7 @@ const ReactTable = ({
                       {totalNoOfRecords ? (
                         <Box>
                           <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                            {totalNoOfRecords} Records
+                            {totalNoOfRecords} {totalNoOfRecords == 1 ? 'Record' : 'Records'}
                           </Text>
                         </Box>
                       ) : null}
@@ -433,7 +433,7 @@ const ReactTable = ({
                   {data?.length ? (
                     <Box>
                       <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                        {table.getPrePaginationRowModel().rows.length} Records
+                        {table.getPrePaginationRowModel().rows.length} {table.getPrePaginationRowModel().rows.length == 1 ? 'Record' : 'Records'}
                       </Text>
                     </Box>
                   ) : null}

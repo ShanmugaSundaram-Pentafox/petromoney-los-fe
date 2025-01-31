@@ -39,7 +39,7 @@ const CallRequestPage = () => {
       <Tabs value={selectedTab} onChange={setSelectedTab} variant="pills" >
         <Tabs.List grow>
           <Tabs.Tab value="new">
-            New Requests<Badge variant={selectedTab === 'new' && 'white'} ml={'xs'}>{callBackDataLoading ? <Loader type='dots' size={'xs'} /> : callbackData?.length}</Badge>
+            New Requests<Badge variant={selectedTab === 'new' && 'white'} ml={'xs'}>{callBackDataLoading ? <Loader type='dots' size={'xs'} /> : callbackData?.length > 99 ? '99+' : callbackData?.length}</Badge>
           </Tabs.Tab>
           <Tabs.Tab value="processed">
             Processed

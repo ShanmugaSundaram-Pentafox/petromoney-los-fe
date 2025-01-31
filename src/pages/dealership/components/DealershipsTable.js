@@ -122,7 +122,6 @@ const DealershipsTable = () => {
         onRowClick={handleRowClick}
         useAPIPagination
         totalNoOfRecords={dealershipsData?.total_records}
-        count={dealershipsData?.total_records}
         page={page}
         setPage={setPage}
         apiFilter={apiFilter}

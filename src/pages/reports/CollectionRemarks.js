@@ -106,7 +106,6 @@ const CollectionRemarks = () => {
         page={page}
         setPage={setPage}
         totalNoOfPages={testData?.total_pages}
-        count={testData?.total_records}
         filter={false}
         apiSearch={setSearch}
         useAPIPagination

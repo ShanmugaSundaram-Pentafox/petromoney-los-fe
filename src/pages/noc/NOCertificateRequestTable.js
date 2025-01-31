@@ -190,7 +190,6 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         rowData={getAllNOCRequestQuery?.data}
         column={column}
         loading={getAllNOCRequestQuery?.isLoading}
-        count={getAllNOCRequestQuery?.data?.length}
         styles={{ overflowX: 'auto', whiteSpace: 'nowrap', maxWidth: '100vw' }}
         onRowClick={(i) => { isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) && onRowClick(i) }}
         action={

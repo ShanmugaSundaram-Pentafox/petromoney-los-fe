@@ -110,7 +110,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
     setValues(data)
     setDataJSON({ gst: data?.gst_verified ? JSON.parse(data?.gst_details) || {} : {}, udyam: data?.udyam_verified ? JSON.parse(data?.udyam_details) || {} : {} })
   }, [data])
-  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue, setValues, validateField } = useFormik({
+  const { values, errors, handleChange: onChange, handleSubmit, setFieldValue, setValues, validateField, setFieldError } = useFormik({
     initialValues: { ...data },
     validateOnChange: false,
     validateOnBlur: true,
@@ -129,7 +129,7 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
         .required('Enter PAN')
         .uppercase(),
       gst: Yup.string().nullable('Enter GST').matches(/^([0]{1}[1-9]{1}|[1-2]{1}[0-9]{1}|[3]{1}[0-7]{1})([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9a-zA-Z]{1}[zZ]{1}[0-9a-zA-Z]{1})+$/, 'Invalid GST').required('Enter GST').uppercase(),
-
+      udyam_no: Yup.string().nullable().matches(/^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/, 'Invalid Udyam Number. Format: UDYAM-XX-XX-XXXXXXX.')
     }),
     onSubmit: values => {
       values.name = values?.name?.toUpperCase();
@@ -207,6 +207,14 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
 
   const getUDYAMDetails = () => {
     if (values?.udyam_no) {
+      const udyamRegex = /^UDYAM-[A-Z]{2}-\d{2}-\d{7}$/;
+      if (!udyamRegex.test(values.udyam_no)) {
+        setFieldError('udyam_no', 'Invalid Udyam Number');
+        return;
+      }
+      else{
+        setFieldError('udyam_no', null);
+      }
       setUdyamQuery({ isLoading: true, data: {}, icon: true });
       getUdyamVerified({ body: { udyam_no: values?.udyam_no, dealership_id: data?.id } })
         .then((res) => {
@@ -219,6 +227,9 @@ const DealershipInfo = ({ viewOnly = true, setViewOnly = () => { }, data, curren
           })
           setUdyamQuery({ isLoading: false, data: {} });
         });
+    }
+    else{
+      setFieldError('udyam_no', 'Enter Udyam Number');
     }
   }
 

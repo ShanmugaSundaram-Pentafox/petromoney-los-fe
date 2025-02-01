@@ -1,5 +1,5 @@
-import { Box, Group, Table } from '@mantine/core';
-import { Select as MSelect } from '@material-ui/core';
+import { Box, Group, Select, Table } from '@mantine/core';
+import { makeStyles } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
@@ -11,6 +11,12 @@ import { getProductsMaster } from '../../../services/common.service';
 import { isAllowed } from '../../../utils/cerbos';
 
 
+const useStyles = makeStyles(theme => ({
+  tablerowheader: {
+    textAlign: 'right',
+  }
+}))
+
 const LoanInfo = ({
   data: row,
   status,
@@ -20,6 +26,7 @@ const LoanInfo = ({
   updateNewLoanInfo,
   viewable
 }) => {
+  const classes = useStyles();
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState({ amount_approved: newInfo?.amount_approved });
 
@@ -48,7 +55,7 @@ const LoanInfo = ({
     <>
       <Box p="sm" bg="indigo.0" mb="md" className="rounded-lg">
         {type === 'enhancement' || type === 're-onboarding' && (
-          <Group gap={20}>
+          <Group gap={20} m={'xs'}>
             <Group gap={6}>
               <ViewData title='Old Product' value={newInfo?.old_product_name} />
             </Group>
@@ -67,51 +74,49 @@ const LoanInfo = ({
           <Table.Thead>
             <Table.Tr>
               <Table.Th>Loan Type</Table.Th>
-              <Table.Th>Interest %</Table.Th>
-              <Table.Th>Penal Interest %</Table.Th>
-              <Table.Th>Amount</Table.Th>
+              <Table.Th className={classes.tablerowheader}>Interest %</Table.Th>
+              <Table.Th className={classes.tablerowheader}>Penal Interest %</Table.Th>
+              
+              <Table.Th className={classes.tablerowheader}>Amount</Table.Th>
               {viewable && (
-                <Table.Th>Amount Approved</Table.Th>
+                <Table.Th className={classes.tablerowheader}>Amount Approved</Table.Th>
               )}
               {['disbursed', 'disbursement_approval'].includes(status) ? (
-                <Table.Th>Disbursement Amount</Table.Th>
+                <Table.Th className={classes.tablerowheader}>Disbursement Amount</Table.Th>
               ) : null}
             </Table.Tr>
           </Table.Thead>
 
           <Table.Tbody>
             <Table.Tr key={row?.id}>
-              <Table.Td>
-                <MSelect
-                  fullWidth
-                  native
-                  placeholder={'Select Loan Product'}
-                  value={selectedProduct?.product_id}
+              <Table.Td w={'30%'}>
+                <Select
+                  value={String(selectedProduct?.product_id)}
                   disabled={selectedProduct?.disabled || !isAllowed(currentUser?.permissions, resources_id.dashboard, 'edit_loantype')}
-                  onChange={e => {
-                    const d = products.find(i => i.product_id == e.target.value)
+                  data={products.map((item) => ({
+                    value: String(item.product_id),
+                    label: item.product_name,
+                  }))}
+                  styles={{ dropdown: { zIndex: 999999 } }}
+                  onChange={(value) => {
+                    const d = products.find(i => i.product_id == parseInt(value))
                     setSelectedProduct(d)
-                    updateNewLoanInfo(!['approved', 'rejected'].includes(status) ? {
-                      product_id: e.target.value
+                    updateNewLoanInfo && updateNewLoanInfo(!['approved', 'rejected'].includes(status) ? {
+                      product_id: parseInt(value)
                     } : {
                       ...newInfo,
-                      product_id: e.target.value
+                      product_id: parseInt(value)
                     })
                   }}
-                  style={{
-                    color: '#333'
-                  }}
-                >
-                  {/* <option value="">Choose Loan type</option> */}
-                  {products.map(item => <option key={item.product_id} value={item.product_id}>{item.product_name}</option>)}
-                </MSelect>
+                  comboboxProps={{ shadow: 'md' }}
+                />
               </Table.Td>
 
-              <Table.Td scope="row" component="th">
+              <Table.Td scope="row" component="th" align='right'>
                 <strong>{selectedProduct?.interest}</strong>
               </Table.Td>
 
-              <Table.Td scope="row" component="th">
+              <Table.Td scope="row" component="th" align='right'>
                 <strong>{selectedProduct?.penal_interest}</strong>
               </Table.Td>
 
@@ -125,6 +130,7 @@ const LoanInfo = ({
                         perform={rulesList.loan_approval}
                         yes={() => (
                           <TextInput
+                            width={85}
                             money
                             number
                             fullWidth={false}
@@ -155,6 +161,7 @@ const LoanInfo = ({
                         perform={rulesList.loan_approval}
                         yes={() => (
                           <TextInput
+                            width={85}
                             money
                             number
                             fullWidth={false}
@@ -175,13 +182,14 @@ const LoanInfo = ({
                 </Table.Td>
               ))}
 
-              <Table.Td>
-                {status === 'loan_approval' ? (
+              {status === 'loan_approval' ? (
+                <Table.Td align="right">
                   <UserCan
                     role={currentUser.role_name}
                     perform={rulesList.loan_approval}
                     yes={() => (
                       <TextInput
+                        width={85}
                         money
                         number
                         fullWidth={false}
@@ -196,12 +204,15 @@ const LoanInfo = ({
                     )}
                     no={() => <Currency value={row?.amount_approved} />}
                   />
-                ) : viewable && <Currency value={row?.amount_approved} />
-                }
-              </Table.Td>
+                </Table.Td>
+              ) : viewable && 
+                <Table.Td align="right">
+                  <Currency value={row?.amount_approved} />
+                </Table.Td>
+              }
 
               {['disbursement_approval', 'disbursed']?.includes(status) ? (
-                <Table.Td>
+                <Table.Td align='right'>
                   <Currency value={row?.amount_disbursed} />
                 </Table.Td>
               ): null}

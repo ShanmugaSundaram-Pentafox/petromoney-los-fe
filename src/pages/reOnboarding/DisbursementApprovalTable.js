@@ -197,7 +197,6 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }
     <div className={classes.root}>
       <DataTableViewer
         title={title}
-        count={getReOnboardingDataQuery?.data?.length}
         rowData={getReOnboardingDataQuery?.data}
         column={column}
         onRowClick={i => onRowClick(i?.dealership_id, i, 'disbursement_approval')}

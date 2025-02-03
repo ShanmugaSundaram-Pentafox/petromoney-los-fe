@@ -7,6 +7,7 @@ import TimelineItem from '@material-ui/lab/TimelineItem';
 import TimelineSeparator from '@material-ui/lab/TimelineSeparator';
 import React, { useState, useEffect } from 'react';
 import { getRenewalRemarks } from '../../../services/renewal.service';
+import { ScrollArea } from '@mantine/core';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelWrapper: {
@@ -44,10 +45,11 @@ const ViewRemarks = ({ filterType, loanId, handleClose }) => {
       .catch((err) => console.log('remarks fetch err >>>', err))
   }, [loanId])
   return (
-    <div className={classes.sidePanelWrapper}>
-      <Divider />
-      <Timeline align="left">
-        {
+    <ScrollArea>
+      <div className={classes.sidePanelWrapper}>
+        <Divider />
+        <Timeline align="left">
+          {
           remarks?.map((remark, id) => {
             return (
               <TimelineItem key={id} className={classes.timelineItem}>
@@ -95,9 +97,11 @@ const ViewRemarks = ({ filterType, loanId, handleClose }) => {
               </TimelineItem>
             )
           })
-        }
-      </Timeline>
-    </div>
+          }
+        </Timeline>
+      </div>
+    </ScrollArea>
+    
   );
 }
 

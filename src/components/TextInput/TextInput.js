@@ -75,6 +75,7 @@ const TextInput = ({
   date,
   select,
   number,
+  width,
   ...restProps
 }) => {
   const classes = useStyles()
@@ -91,6 +92,7 @@ const TextInput = ({
           className: classes.input,
           readOnly,
           placeholder,
+          style: { width },
           ...inputProps
         }}
         back

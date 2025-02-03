@@ -1,7 +1,7 @@
-import { Badge, Box, Button, Checkbox, Grid, Group, TextInput, Title } from "@mantine/core";
-import React, { useEffect, useState } from "react";
-import DraggableList from "../DND/DraggableList";
-import { IconSearch, IconX } from "@tabler/icons-react";
+import { Badge, Box, Button, Checkbox, Grid, Group, TextInput, Title } from '@mantine/core';
+import React, { useEffect, useState } from 'react';
+import DraggableList from '../DND/DraggableList';
+import { IconSearch, IconX } from '@tabler/icons-react';
 
 const FilterModal = ({
   columnData,
@@ -46,7 +46,8 @@ const FilterModal = ({
       <Grid style={{
         borderTop: '2px solid rgb(0,0,0,0.1)',
         borderBottom: '2px solid rgb(0,0,0,0.1)',
-        margin: 0
+        margin: 0,
+        padding: 8
       }}>
         <Grid.Col span={6} p={10 * 2} pb={0} pl={10} pt={20} >
           <Title order={6}>Column Options</Title>
@@ -85,10 +86,10 @@ const FilterModal = ({
             mr={10}
             size="xs"
             placeholder="Search"
-            value={search}
+            value={columnSearch}
             onChange={(e) => setColumnSearch(e.target.value)}
             leftSection={<IconSearch size={16} />}
-            rightSection={search?.length ? <IconX style={{ cursor: 'pointer' }} size={12} onClick={() => setSearch('')} /> : null}
+            rightSection={columnSearch?.length ? <IconX style={{ cursor: 'pointer' }} size={12} onClick={() => setColumnSearch('')} /> : null}
           />
           <DraggableList
             containerStyle={{
@@ -103,7 +104,7 @@ const FilterModal = ({
       </Grid>
       <Group
         justify="flex-end"
-        mt={"md"}
+        mt={'md'}
       >
         <Button
           variant='outline'

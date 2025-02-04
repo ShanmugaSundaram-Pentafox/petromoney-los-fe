@@ -254,10 +254,12 @@ const ReactTable = ({
                           (onRowClick(row?.original), event.stopPropagation());
                           }}
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                          <span>
+                            {cell.getValue() ? flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            ) : '-'}
+                          </span>
                         </Table.Td>
                       ))}
                       {row?.original?.reload_type === 'express' ? <><div style={{ ...classes.expressContainer }}></div><div style={{ ...classes.expressInner }}>EXP CRR</div></> : null}

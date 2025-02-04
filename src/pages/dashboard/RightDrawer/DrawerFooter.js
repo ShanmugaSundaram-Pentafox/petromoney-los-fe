@@ -48,7 +48,6 @@ const DrawerFooter = ({
   updateApprovalStatus,
   disabled = false,
 }) => {
-  console.log('status : ',status)
   const history = useHistory();
   const { data: loanData = {}, isLoading: loanDataLoading } = useQuery(['loan-by-id', id], () => getLoanById(id, selectedLoanData?.id))
   const [reLoader, setReloader] = useState(false);

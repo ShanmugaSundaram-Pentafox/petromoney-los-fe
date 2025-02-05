@@ -255,7 +255,7 @@ const ReactTable = ({
                           }}
                         >
                           <span>
-                            {cell.getValue() ? flexRender(
+                            {cell.getValue() !== null && cell.getValue() !== undefined ? flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()
                             ) : '-'}

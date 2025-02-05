@@ -5,7 +5,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import DescriptionIcon from '@material-ui/icons/Description';
 import { makeStyles } from '@material-ui/styles';
 import { format, isValid, parse } from 'date-fns';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ApproveNocForm from './ApproveNocForm';
 import RequestNocForm from './RequestNocForm';
 import CustomToken from '../../components/CommonComponents/CustomToken';
@@ -22,6 +22,8 @@ import { useQuery } from 'react-query';
 import { Button } from '@mantine/core';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
+import { useDebouncedState } from '@mantine/hooks';
+import { getSignedUrl } from '../../services/common.service';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -57,17 +59,28 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   const [openModal, setOpenModal] = useState();
   const [openApproveModal, setOpenApproveModal] = useState();
   const [openViewer, setOpenViewer] = useState({ open: false });
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useDebouncedState('', 500);
+  const [apiFilter, setApiFilter] = useState({});
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const apiFilterHeader = [
+    { key: 'region_id', label: 'region', value: 'id', filterLabel: 'Region', apiUrl: 'regions/los', data: null, type: 'select' },
+    { key: 'type', label: null, value: null, filterLabel: 'Type', apiUrl: null, data: [{ label: 'Closed', value: 'closed' }, { label: 'Overdue', value: 'overdue' }, { label: 'Regular', value: 'regular' },], type: 'select' },
+    { key: 'product_id', label: 'product_name', value: 'product_id', filterLabel: 'Scheme', apiUrl: 'products/los', data: null, type: 'select' },
+    { key1: 'from', key2: 'to', label: null, value: null, filterLabel: 'Issued Month', apiUrl: 'regions/los', data: null, type: 'dateRange' },
+    { key: 'status', label: null, value: null, filterLabel: 'Status', apiUrl: null, data: [{ label: 'Approved', value: 'approved' }, { label: 'Deapproved', value: 'deapproved' }, { label: 'Rejected', value: 'rejected' }, { label: 'Submitted', value: 'submitted' }], type: 'select' },
+  ]
+
 
   const actionable = !permissionCheck(
     currentUser.role_name,
     rulesList.external_view
   );
 
-  const getAllNOCRequestQuery = useQuery({
-    queryKey: ['noc-request', refresh],
-    queryFn: () => getAllNocRequest(),
-    select: (data) => {
-      let d = data.map((item) => {
+  const { data: nocData = [], isFetching, refetch } = useQuery(['noc-request', search, page, apiFilter], () => getAllNocRequest({ search, page, apiFilter }), {
+    refetchOnWindowFocus: false,
+    select: (res) => {
+      let d = res?.data.map((item) => {
         const parsedDate = item?.issued_date ? parse(item?.issued_date, 'dd-MM-yyyy', new Date()) : null;
         const formatedDate = isValid(parsedDate) ? format(parsedDate, 'dd MMM yyyy') : '-';
         return {
@@ -75,9 +88,49 @@ const NOCertificateRequestTable = ({ currentUser }) => {
           formated_date: formatedDate,
         }
       });
-      return d;
+      return {...res, data : d};
     }
   });
+
+  useEffect(() => {
+    page != 1 && setPage(1)
+  }, [search, apiFilter])
+
+  const downloadReport = () => {
+    setDownloadLoading(true)
+    getAllNocRequest({ search, apiFilter, download: true })
+      .then((res) => {
+        getSignedUrl(res?.data?.[0]?.url)
+          .then((res) => {
+            window.open(res?.url, '_blank');
+          })
+          .catch(e => {
+            displayNotification({
+              message: e?.message || e,
+              variant: 'error',
+            })
+          })
+          .finally(() => {
+            setDownloadLoading(false);
+          })
+      })
+  }
+
+  // const getAllNOCRequestQuery = useQuery({
+  //   queryKey: ['noc-request', refresh],
+  //   queryFn: () => getAllNocRequest(),
+  //   select: (data) => {
+  //     let d = data.map((item) => {
+  //       const parsedDate = item?.issued_date ? parse(item?.issued_date, 'dd-MM-yyyy', new Date()) : null;
+  //       const formatedDate = isValid(parsedDate) ? format(parsedDate, 'dd MMM yyyy') : '-';
+  //       return {
+  //         ...item,
+  //         formated_date: formatedDate,
+  //       }
+  //     });
+  //     return d;
+  //   }
+  // });
 
   const onRowClick = (rowData) => {
     if (rowData?.status == 'approved' || rowData?.status == 'rejected') {
@@ -187,9 +240,9 @@ const NOCertificateRequestTable = ({ currentUser }) => {
   return (
     <div className={classes.root}>
       <DataTableViewer
-        rowData={getAllNOCRequestQuery?.data}
+        rowData={nocData?.data}
         column={column}
-        loading={getAllNOCRequestQuery?.isLoading}
+        loading={isFetching}
         styles={{ overflowX: 'auto', whiteSpace: 'nowrap', maxWidth: '100vw' }}
         onRowClick={(i) => { isAllowed(currentUser?.permissions, resources_id.nocLetter, action_id.nocLetter?.nocPreview) && onRowClick(i) }}
         action={
@@ -204,6 +257,16 @@ const NOCertificateRequestTable = ({ currentUser }) => {
         }
         title={'NOC Application'}
         excelDownload
+        useAPIPagination
+        totalNoOfRecords={nocData?.total_records}
+        page={page}
+        setPage={setPage}
+        apiFilter={apiFilter}
+        setApiFilter={setApiFilter}
+        apiFilterHeader={apiFilterHeader}
+        totalNoOfPages={nocData?.total_pages}
+        apiSearch={setSearch}
+        downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
       />
       <RightSideDrawer
         opened={openModal}

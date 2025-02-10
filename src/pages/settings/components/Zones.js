@@ -1,6 +1,5 @@
 import { makeStyles, Typography, Divider, Paper } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add';
-import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
@@ -11,7 +10,8 @@ import { logger } from '../../../config/logger';
 import { addZones, editZones, getZones } from '../../../services/common.service';
 import { getUnmappedStates, getZonesMapById, updateZoneMapById } from '../../../services/master.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
-import { ActionIcon, Box, Button, TextInput, Tooltip } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, TextInput, Tooltip } from '@mantine/core';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles(() => ({
   sidePanelFormWrapper: {
@@ -110,23 +110,10 @@ const Zones = ({ callback, title, currentUser }) => {
       queryClient.invalidateQueries('zones')
       setAddForm()
       setAddData()
-      enqueueSnackbar(message, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'success',
-      });
+      displayNotification({ message: message, variant: 'success' })
     },
     onError: (message) => {
-      console.log(message);
-      enqueueSnackbar(message, {
-        anchorOrigin: {
-          vertical: 'top',
-          horizontal: 'right',
-        },
-        variant: 'error',
-      });
+      displayNotification({ message: message, variant: 'error' })
     },
   })
 
@@ -138,13 +125,7 @@ const Zones = ({ callback, title, currentUser }) => {
         setSelectedItem([])
         queryClient.invalidateQueries('mapped')
         queryClient.invalidateQueries('unmapped')
-        enqueueSnackbar(res, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        })
+        displayNotification({ message: res, variant: 'success' })
       })
       .catch(e => logger(e))
   }
@@ -184,9 +165,9 @@ const Zones = ({ callback, title, currentUser }) => {
             </Box>
             {
               addForm?.action === 'Edit' &&
-              <TransferList title='States Map' mappedData={() => getZonesMapById(addForm?.id)} unmappedData={getUnmappedStates} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
+                <TransferList title='States Map' mappedData={() => getZonesMapById(addForm?.id)} unmappedData={getUnmappedStates} selectedItem={selectedItem} setSelectedItem={setSelectedItem} updateMapping={updateMapping} />
             }
-            <div className={classes.formFooter}>
+            <Group justify='flex-end' mt={'md'}>
               <Button
                 onClick={() => setAddForm()}
                 size='xs'
@@ -201,7 +182,7 @@ const Zones = ({ callback, title, currentUser }) => {
               >
                 Save
               </Button>
-            </div>
+            </Group>
           </div>
         )
       }
@@ -209,12 +190,13 @@ const Zones = ({ callback, title, currentUser }) => {
         <Divider />
         <div className={classes.actionButtonsWrapper}>
           <div>
-            <Button variant='outline' onClick={() => callback(false)}>
+            <Button variant='outline' onClick={() => callback(false)} size='xs'>
               Back
             </Button>
           </div>
           <CheckAllowed currentUser={currentUser} resource={resources_id.settings} action={action_id.settings.zonesAdd}>
             <Button
+              size='xs'
               type='submit'
               leftSection={<AddIcon />}
               onClick={() => {

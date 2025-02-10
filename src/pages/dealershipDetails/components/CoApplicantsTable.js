@@ -26,7 +26,8 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
   const [rowData, setRowData] = useState();
   const [crimeData, setCrimeData] = useState();
   const [openFilePreview, setOpenFilePreview] = useState({ open: false });
-  const [openChangeTypeDialog, setopenChangeTypeDialog] = useState(false)
+  const [openChangeTypeDialog, setopenChangeTypeDialog] = useState(false);
+  const [openCreditInfo, setOpenCreditInfo] = useState(false);
   const [updatedApplicantType, setUpdatedApplicantType] = useState();
   const [openDialog, setOpenDialog] = useState({ open: false });
 
@@ -190,7 +191,10 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
                           <Button
                             variant="outline"
                             size="xs"
-                            onClick={() => setRowData(row)}
+                            onClick={() => {
+                              setRowData(row)
+                              setOpenCreditInfo(true)
+                            }}
                           >
                             Credit Info
                           </Button>
@@ -279,9 +283,12 @@ const CoApplicantsTable = ({ id, coApplicantsData, titleAlign, onClickAddMenu, c
           </Dialog>
 
           <RightSideDrawer
-            opened={rowData && !openChangeTypeDialog}
+            opened={rowData && openCreditInfo}
             size="lg"
-            onClose={() => setRowData()}
+            onClose={() => {
+              setRowData()
+              setOpenCreditInfo(false);
+            }}
             title={`Credit Information (${rowData?.pan || '-'})`}
           >
             <CreditInfoSideWrapper

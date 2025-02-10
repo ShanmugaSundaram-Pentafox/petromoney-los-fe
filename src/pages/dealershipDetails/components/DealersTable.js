@@ -40,6 +40,7 @@ const DealersTable = ({ id, data, currentUser, dealersClickRow }) => {
   const [openChangeTypeDialog, setOpenChangeTypeDialog] = useState(false)
   const [openFilePreview, setOpenFilePreview] = useState();
   const [updatedApplicantType, setUpdatedApplicantType] = useState();
+  const [openCreditInfo, setOpenCreditInfo] = useState(false);
 
   const deleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
@@ -201,7 +202,10 @@ const DealersTable = ({ id, data, currentUser, dealersClickRow }) => {
                       <Button
                         variant="outline"
                         size="xs"
-                        onClick={() => setRowData(row)}
+                        onClick={() => {
+                          setRowData(row)
+                          setOpenCreditInfo(true)
+                        }}
                       >
                         Credit Info
                       </Button>
@@ -291,9 +295,12 @@ const DealersTable = ({ id, data, currentUser, dealersClickRow }) => {
       </Dialog>
 
       <RightSideDrawer
-        opened={rowData && !openChangeTypeDialog}
+        opened={rowData && openCreditInfo}
         size="lg"
-        onClose={() => setRowData()}
+        onClose={() => {
+          setRowData()
+          setOpenCreditInfo(false);
+        }}
         title={`Credit Information (${rowData?.pan || '-'})`}
       >
         <CreditInfoSideWrapper

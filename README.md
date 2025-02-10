@@ -84,6 +84,9 @@ This project uses the following technologies and libraries:
 ## Setup Instructions
 1. **Create a `.env` file**  
    Configure the necessary environment variables in a `.env` file.
+   add the below lines in the .env file.
+   REACT_APP_ENV=development
+   REACT_APP_API_BASE=https://api-uat.petromoney.in/api/
 
 1. **Ensure You Are in the `dev-los` Branch**  
    Check your current branch and switch to `dev-los`:  

@@ -12,6 +12,7 @@ import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
 import { rulesList } from '../../../config/userRules';
 import { getCibilReport, updatePanApplicant } from '../../../services/creditreport.service';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, currentUser, setFieldValue, cibilEditMode, editable }) => {
   let pan = dealerData?.pan
@@ -39,13 +40,7 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
           setCibilData(data)
         })
         .catch(e => {
-          enqueueSnackbar(e, {
-            anchorOrigin: {
-              vertical: 'top',
-              horizontal: 'right',
-            },
-            variant: 'error',
-          })
+          displayNotification({message: e, variant: 'error'});
           setCibilLoading({icon:true, loading:false, success:false,error:true})
         })
     } else {

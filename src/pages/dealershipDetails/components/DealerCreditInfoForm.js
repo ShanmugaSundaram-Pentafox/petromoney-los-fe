@@ -2,7 +2,6 @@ import { Alert, Grid, Text } from '@mantine/core';
 import { CircularProgress, Collapse } from '@material-ui/core';
 import CheckCircleOutlineOutlinedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import { IconBrandSpeedtest, IconInfoCircle } from '@tabler/icons-react';
-import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
@@ -24,7 +23,6 @@ const DealerCreditInfoForm = ({ values, errors, onChange, editMode, dealerData, 
   const [panLoading, setPanLoading] = useState({icon: false})
   const [cibilLoading, setCibilLoading] = useState({ icon: false })
   const [cibilData, setCibilData] = useState()
-  const { enqueueSnackbar } = useSnackbar();
   const [errorMsg, setErrorMsg] = useState({})
   const formData = new FormData()
   const [collapseOpen, setCollapseOpen] = useState(false)

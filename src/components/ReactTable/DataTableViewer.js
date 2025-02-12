@@ -9,6 +9,7 @@ import { generateCSVHeader, generateTableHeader } from '../../utils/tableHeader.
 import StatusViewer from '../../pages/dashboard/components/StatusViewer';
 import { useQuery } from 'react-query';
 import { getApiFilters } from '../../services/common.service';
+import { DatePickerInput } from '@mantine/dates';
 
 const Filter = ({
   column,
@@ -57,47 +58,102 @@ const ApiFilter = ({
   apiFilter = {},
   setApiFilter,
 }) => {
+  const [dateRange, setDateRange] = useState([])
   const filterQuery = useQuery({
     queryKey: ['filter-query', apiFilterHeader],
     queryFn: () => getApiFilters(apiFilterHeader?.apiUrl),
-    select: (data)=> {
+    select: (data) => {
       const res = data?.map((item, index) => ({ label: `${item?.[apiFilterHeader?.label]}`, value: `${item?.[apiFilterHeader?.value]}` }));
       return res
     },
-    enabled: Boolean(apiFilterHeader && !apiFilterHeader?.data)
+    enabled: Boolean(apiFilterHeader && !apiFilterHeader?.data && apiFilterHeader?.type !== 'dateRange')
   })
 
+  const parseDate = (dateStr) => {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const formatDate = (date) => {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+  };
+
   return (<>
-    <Text size='xs' c={'gray'}>{apiFilterHeader.filterLabel}</Text>
-    <Select
-      size='xs'
-      styles={{
-        dropdown: {
-          boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px'
-        },
-        option: {
-          textTransform: 'capitalize'
-        }
-      }}
-      placeholder='All'
-      searchable
-      comboboxProps={{ offset: 2 }}
-      value={apiFilter?.[apiFilterHeader.key] || ''}
-      onChange={(e) => {
-        setApiFilter((prev) => {
-          const updatedFilter = { ...prev };
-          if (e) {
-            updatedFilter[apiFilterHeader.key] = e;
-          } else {
-            delete updatedFilter[apiFilterHeader.key];
-          }
-          return updatedFilter;
-        });
-      }}
-      clearable
-      data={apiFilterHeader.data ? apiFilterHeader?.data : filterQuery?.data}
-      maxDropdownHeight={200}
-    />
+    {apiFilterHeader?.type === 'select'
+      && (
+        <><Text size='xs' c={'gray'}>{apiFilterHeader.filterLabel}</Text>
+          <Select
+            size='xs'
+            styles={{
+              dropdown: {
+                boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px'
+              },
+              option: {
+                textTransform: 'capitalize'
+              }
+            }}
+            placeholder='All'
+            searchable
+            comboboxProps={{ offset: 2 }}
+            value={apiFilter?.[apiFilterHeader.key] || ''}
+            onChange={(e) => {
+              setApiFilter((prev) => {
+                const updatedFilter = { ...prev };
+                if (e) {
+                  updatedFilter[apiFilterHeader.key] = e;
+                } else {
+                  delete updatedFilter[apiFilterHeader.key];
+                }
+                return updatedFilter;
+              });
+            }}
+            clearable
+            data={apiFilterHeader.data ? apiFilterHeader?.data : filterQuery?.data}
+            maxDropdownHeight={200}
+          /></>
+      )
+    }
+    {apiFilterHeader?.type === 'dateRange' && (
+      <>
+        <Text size='xs' c={'gray'}>{apiFilterHeader.filterLabel}</Text>
+        <DatePickerInput
+          placeholder='All'
+          clearable
+          valueFormat="MMM DD YYYY"
+          type='range'
+          popoverProps={{ withinPortal: false }}
+          allowSingleDateInRange
+          size='xs'
+          styles={{
+            dropdown: {
+              boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px'
+            },
+            option: {
+              textTransform: 'capitalize'
+            }
+          }}
+          value={dateRange}
+          onChange={(e) => {
+            setDateRange(e);
+            setApiFilter((prev) => {
+              const updatedFilter = { ...prev };
+              if (e && e[0] && e[1]) {
+                updatedFilter[apiFilterHeader?.key1] = formatDate(e[0]),
+                updatedFilter[apiFilterHeader?.key2] = formatDate(e[1])
+              }
+              else {
+                delete updatedFilter[apiFilterHeader?.key1];
+                delete updatedFilter[apiFilterHeader?.key2];
+              }
+              return updatedFilter;
+            });
+          }} />
+      </>
+    )}
+
   </>)
 }
 
@@ -150,7 +206,7 @@ const DataTableViewer = ({
   // }))
   const [filteredColumnData, setFilteredColumnData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  
+
   const addCellKey = (filteredColumn, actualColumn) => {
     /** It searches for an element in the actualColumn array that has a header property equal to the current element in the filteredColumn array. */
     /** If a matching element is found, the function returns the array of objects. */
@@ -271,7 +327,7 @@ const DataTableViewer = ({
                         apiFilterHeader ? (
                           apiFilterHeader.map((item, index) => {
                             return <Grid.Col span={6} key={index}>
-                              {ApiFilter({apiFilterHeader: item, apiFilter: apiFilter, setApiFilter: setApiFilter})}
+                              {ApiFilter({ apiFilterHeader: item, apiFilter: apiFilter, setApiFilter: setApiFilter })}
                             </Grid.Col>
                           }
                           ))

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.43.3](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.43.2...v2.43.3) (2025-02-01)
+
+
+### Bug Fixes
+
+* added loading for send for re-onboarding or enhancement button ([38e4098](https://bitbucket.org/gmfvl/petromoney-fe/commit/38e409801c7032627440edf8bf25edcf26bcc875))
+* **DealershipInfo:** removed console log ([7bf8bd9](https://bitbucket.org/gmfvl/petromoney-fe/commit/7bf8bd9ff5031486014772ab0f314dd4cd42a86b))
+* **DealershipInfo:** udyam number regex validation added ([cbc605d](https://bitbucket.org/gmfvl/petromoney-fe/commit/cbc605df1909ccf665c007ade978f995e2172baa))
+* **FilterModal.js:** search input fixes ([a884d2a](https://bitbucket.org/gmfvl/petromoney-fe/commit/a884d2a0615f91cf5f02396a273419d1340cb95c))
+* fixed bugs in UI ([c6fee8c](https://bitbucket.org/gmfvl/petromoney-fe/commit/c6fee8c6c65db6ebf9ca6acdf1d17582251d9201))
+* in dashboard, resumbit error notification is visible now ([9f0c821](https://bitbucket.org/gmfvl/petromoney-fe/commit/9f0c82183671712fa0504174263bcc51fb6304af))
+* production error document generation fix ([c22a4b3](https://bitbucket.org/gmfvl/petromoney-fe/commit/c22a4b3af8fae38aff9b81e070b73514975acbb5))
+
 ### [2.43.2](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.43.1...v2.43.2) (2025-01-03)
 
 

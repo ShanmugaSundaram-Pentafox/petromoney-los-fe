@@ -8,8 +8,8 @@ import { filterStyles, Selector } from '../../../components/CommonComponents/Fil
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getAllRegions, getFilteredProducts, getSignedUrl, getZones } from '../../../services/common.service';
 import CheckAllowed from '../../rbac/CheckAllowed';
-import { Box, Button, Group, Popover, Tooltip } from '@mantine/core';
-import { IconDownload } from '@tabler/icons-react';
+import { ActionIcon, Box, Button, Group, Popover, TextInput, Tooltip } from '@mantine/core';
+import { IconDownload, IconSearch } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import SupportContactModal from '../../../components/CommonComponents/SupportContactModal/SupportContactModal';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
@@ -211,6 +211,33 @@ const CreditDashboardFilter = ({ filterQry, filterType, setChartData, refetch, f
             }
           </Group>
           <Group>
+            {
+              filterType == 'processed' && (
+                <>
+                  <div style={{ width: '150px' }}>
+                    <label style={{ color: 'hsl(0,0%,75%)' }}>Enter dealership ID</label>
+                    <TextInput
+                      type={'number'}
+                      size='xs'
+                      value={selectedDealership?.id}
+                      onChange={(e) => { setSelectedDealership({ ...selectedDealership, id: e?.target?.value, error: null }); }}
+                      error={selectedDealership?.error}
+                    />
+                  </div>
+                  <Tooltip label={'Click to search'} withArrow color={'gray'}>
+                    <ActionIcon
+                      mr={'sm'}
+                      variant="white"
+                      onClick={handleSearch}
+                      mt={21}
+                      loading={searchLoading}
+                    >
+                      <IconSearch size={16} color={'#4196f0'} />
+                    </ActionIcon>
+                  </Tooltip>
+                </>
+              )
+            }
             {
               filters.includes('type') &&
                 <Box mr={'sm'}>

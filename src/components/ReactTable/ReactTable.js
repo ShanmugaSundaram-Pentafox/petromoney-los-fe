@@ -132,7 +132,7 @@ const ReactTable = ({
 
   useEffect(() => {
     setFilteredData(table.getFilteredRowModel().rows.map(row => row.original));
-    if(!table.getFilteredRowModel().rows.map(row => row.original).length){
+    if (!table.getFilteredRowModel().rows.map(row => row.original).length) {
       setFilteredData(rowData);
     }
   }, [table.getFilteredRowModel()]);
@@ -239,7 +239,7 @@ const ReactTable = ({
                     <Table.Tr
                       style={{
                         cursor:
-                      typeof onRowClick === 'function' ? 'pointer' : 'default',
+                          typeof onRowClick === 'function' ? 'pointer' : 'default',
                         position: 'relative',
                         background: (row?.original?.reload_type === 'express' ? COLORS.red(10) : row?.original?.is_withheld == 1 ? COLORS.warning.tableWarn : null),
                       }}
@@ -250,16 +250,19 @@ const ReactTable = ({
                           key={cell.id}
                           onClick={event => {
                             typeof onRowClick === 'function' &&
-                          cell?.column?.id?.split('-')?.[1] != 'action' &&
-                          (onRowClick(row?.original), event.stopPropagation());
+                              cell?.column?.id?.split('-')?.[1] != 'action' &&
+                              (onRowClick(row?.original), event.stopPropagation());
                           }}
                         >
+                          {/* {cell?.column?.id?.split('-')?.[1] == 'action' ? (
+                            flexRender(cell.column.columnDef.cell, cell.getContext())
+                          ) : ( */}
                           <span>
-                            {cell.getValue() !== null && cell.getValue() !== undefined ? flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            ) : '-'}
+                            {cell.getValue() !== null && cell.getValue() !== undefined && cell.row
+                              ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                              : '-'}
                           </span>
+                          {/* )} */}
                         </Table.Td>
                       ))}
                       {row?.original?.reload_type === 'express' ? <><div style={{ ...classes.expressContainer }}></div><div style={{ ...classes.expressInner }}>EXP CRR</div></> : null}
@@ -409,22 +412,22 @@ const ReactTable = ({
                     </ActionIcon>
                   )}
                   {table.getPageCount() != 0 &&
-                table.getPageCount() !=
-                table.getState().pagination.pageIndex + 1 && (
-                  <ActionIcon
+                    table.getPageCount() !=
+                    table.getState().pagination.pageIndex + 1 && (
+                      <ActionIcon
                       variant='light'
                       color='blue.1'
                       onClick={() => table.nextPage()}
                     >
                       <Text size='xs' style={{ color: 'rgb(0,0,0,0.5)' }}>
-                      {table.getState().pagination.pageIndex + 2}
-                    </Text>
+                          {table.getState().pagination.pageIndex + 2}
+                        </Text>
                     </ActionIcon>
                   )}
                   {table.getPageCount() != 0 &&
-                table.getPageCount() !=
-                table.getState().pagination.pageIndex + 1 && (
-                  <ActionIcon
+                    table.getPageCount() !=
+                    table.getState().pagination.pageIndex + 1 && (
+                      <ActionIcon
                       variant='light'
                       color='blue.1'
                       onClick={() => table.setPageIndex(table.getPageCount() - 1)}
@@ -444,7 +447,7 @@ const ReactTable = ({
             )}
           </Box>
         </>
-      ): <Box
+      ) : <Box
         mt="md"
         p="xl"
         style={{

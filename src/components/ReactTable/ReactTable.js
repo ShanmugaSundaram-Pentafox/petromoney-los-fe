@@ -254,15 +254,15 @@ const ReactTable = ({
                               (onRowClick(row?.original), event.stopPropagation());
                           }}
                         >
-                          {/* {cell?.column?.id?.split('-')?.[1] == 'action' ? (
+                          {cell?.column?.id?.split('-')?.[1] == 'action' ? (
                             flexRender(cell.column.columnDef.cell, cell.getContext())
-                          ) : ( */}
-                          <span>
-                            {cell.getValue() !== null && cell.getValue() !== undefined && cell.row
-                              ? flexRender(cell.column.columnDef.cell, cell.getContext())
-                              : '-'}
-                          </span>
-                          {/* )} */}
+                          ) : (
+                            <span>
+                              {cell.getValue() !== null && cell.getValue() !== undefined && cell.row
+                                ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                                : '-'}
+                            </span>
+                          )}
                         </Table.Td>
                       ))}
                       {row?.original?.reload_type === 'express' ? <><div style={{ ...classes.expressContainer }}></div><div style={{ ...classes.expressInner }}>EXP CRR</div></> : null}

@@ -135,7 +135,7 @@ const UnresolvedTable = ({ currentUser }) => {
       key: 'region',
       header: 'Region',
     }, {
-      key: 'with_held_by',
+      key: 'action',
       header: 'Withheld By',
       cell: ({ row }) => {
         return (
@@ -147,7 +147,7 @@ const UnresolvedTable = ({ currentUser }) => {
         )
       },
     }, {
-      key: 'with_held_date',
+      key: 'action',
       header: 'Withheld Date',
       cell: ({ row }) => {
         return (

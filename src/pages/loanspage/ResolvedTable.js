@@ -30,7 +30,7 @@ const ResolvedTable = () => {
       key: 'region',
       header: 'Region',
     }, {
-      key: 'with_held_by',
+      key: 'action',
       header: 'Withheld By',
       cell: ({ row }) => {
         return (
@@ -42,7 +42,7 @@ const ResolvedTable = () => {
         )
       },
     }, {
-      key: 'resolved_by',
+      key: 'action',
       header: 'Resolved By',
       cell: ({ row }) => {
         return (
@@ -54,7 +54,7 @@ const ResolvedTable = () => {
         )
       },
     }, {
-      key: 'resolved_date',
+      key: 'action',
       header: 'WithHeld Date',
       cell: ({ row }) => {
         return (
@@ -66,7 +66,7 @@ const ResolvedTable = () => {
         )
       },
     }, {
-      key: 'resolved_date',
+      key: 'action',
       header: 'Resolved Date',
       cell: ({ row }) => {
         return (
@@ -97,7 +97,7 @@ const ResolvedTable = () => {
         )
       },
     }, {
-      key: 'remarks',
+      key: 'action',
       header: 'Remarks',
       cell: ({ row }) => {
         return (

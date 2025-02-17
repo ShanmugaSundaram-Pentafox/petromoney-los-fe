@@ -6,6 +6,7 @@ import ProcessedCallRequest from './ProcessedCallRequest';
 import usePageTitle from '../../hooks/usePageTitle';
 import { getCallbackRequest } from '../../services/callrequest.service';
 import { Badge, Loader, Tabs } from '@mantine/core';
+import { makeStyles } from '@material-ui/styles';
 
 const PaperWrapper = styled.div`
 margin-bottom:10px;
@@ -26,8 +27,14 @@ background-color: #f1f1f1;
   }
 `;
 
+const useStyles = makeStyles(theme => ({
+  tab:{
+    border:'1px solid #d3d3d3'
+  }
+}))
 
 const CallRequestPage = () => {
+  const classes = useStyles();
   usePageTitle('Call Request');
   const [selectedTab, setSelectedTab] = useState('new');
 
@@ -38,10 +45,10 @@ const CallRequestPage = () => {
     <>
       <Tabs value={selectedTab} onChange={setSelectedTab} variant="pills" >
         <Tabs.List grow>
-          <Tabs.Tab value="new">
+          <Tabs.Tab value="new" className={classes.tab}>
             New Requests<Badge variant={selectedTab === 'new' && 'white'} ml={'xs'}>{callBackDataLoading ? <Loader type='dots' size={'xs'} /> : callbackData?.length > 99 ? '99+' : callbackData?.length}</Badge>
           </Tabs.Tab>
-          <Tabs.Tab value="processed">
+          <Tabs.Tab value="processed" className={classes.tab}>
             Processed
           </Tabs.Tab>
         </Tabs.List>

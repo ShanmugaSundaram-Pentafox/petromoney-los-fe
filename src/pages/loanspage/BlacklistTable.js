@@ -6,6 +6,7 @@ import ResolvedTable from './ResolvedTable';
 import UnresolvedTable from './UnResolvedTable';
 import usePageTitle from '../../hooks/usePageTitle';
 import { Tabs } from '@mantine/core';
+import { makeStyles } from '@material-ui/styles';
 
 
 const PaperWrapper = styled.div`
@@ -23,19 +24,26 @@ background-color: #f1f1f1;
   }
 `;
 
+const useStyles = makeStyles(theme => ({
+  tab:{
+    border:'1px solid #d3d3d3'
+  }
+}))
+
 const BlacklistTable = ({ currentUser }) => {
   const [selectedTab, setSelectedTab] = useState('unresolved');
   usePageTitle('Withheld loan', true)
+  const classes = useStyles();
 
 
   return (
     <>
-      <Tabs value={selectedTab} onChange={setSelectedTab} variant="pills" >
-        <Tabs.List grow>
-          <Tabs.Tab value="unresolved" p={'sm'}>
+      <Tabs value={selectedTab} onChange={setSelectedTab} variant="pills"  >
+        <Tabs.List grow >
+          <Tabs.Tab value="unresolved" p={'sm'} className={classes.tab}>
             Unresolved
           </Tabs.Tab>
-          <Tabs.Tab value="resolved">
+          <Tabs.Tab value="resolved" className={classes.tab}>
             Resolved
           </Tabs.Tab>
         </Tabs.List>

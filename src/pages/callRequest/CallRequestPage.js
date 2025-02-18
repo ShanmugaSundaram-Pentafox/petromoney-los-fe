@@ -38,8 +38,8 @@ const CallRequestPage = () => {
   usePageTitle('Call Request');
   const [selectedTab, setSelectedTab] = useState('new');
 
-  const { data: callbackData = [], isLoading: callBackDataLoading } = useQuery('new-request', () => getCallbackRequest(0), { refetchOnWindowFocus: false })
-  const { data: callbackProcessed = [], isLoading: callBackProcessedLoading } = useQuery('processed-request', () => getCallbackRequest(1), { refetchOnWindowFocus: false })
+  const { data: callbackData = [], isLoading: callBackDataLoading } = useQuery(['new-request', selectedTab], () => getCallbackRequest(0), { refetchOnWindowFocus: false })
+  const { data: callbackProcessed = [], isLoading: callBackProcessedLoading } = useQuery(['processed-request', selectedTab], () => getCallbackRequest(1), { refetchOnWindowFocus: false })
 
   return (
     <>

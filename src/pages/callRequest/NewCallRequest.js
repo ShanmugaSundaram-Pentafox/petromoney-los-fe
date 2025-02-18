@@ -30,7 +30,7 @@ const NewCallRequest = ({ callbackData, isLoading }) => {
   const { mutate: resolve } = useMutation(data => resolveCallbackRequest(data, rowData?.request_id), {
     onSuccess: (message) => {
       setRowData()
-      queryClient.invalidateQueries('new-request')
+      queryClient.invalidateQueries('new-call-request')
       queryClient.invalidateQueries('processed-request')
       enqueueSnackbar(message, {
         anchorOrigin: {

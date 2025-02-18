@@ -1,4 +1,4 @@
-import { Flex, Button, Text, Box, Alert, Loader, Chip, Group, Select, Modal, Checkbox, Tooltip, ActionIcon, Stack, ScrollArea, Accordion, Textarea } from '@mantine/core';
+import { Flex, Button, Text, Box, Alert, Loader, Chip, Group, Select, Modal, Checkbox, Tooltip, ActionIcon, Stack, ScrollArea, Accordion, Textarea, Center } from '@mantine/core';
 import { IconCheck, IconInfoCircle, IconX } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -248,7 +248,9 @@ const DrawerFooter = ({
           zIndex: 9
         }}
       >
-        <Flex gap="xs">
+        {loanDataLoading ? <Center w={'100%'}>
+          <Loader size={'sm'} />
+        </Center> : <>        <Flex gap="xs">
 
           <CheckAllowed currentUser={currentUser} resource={resources_id?.dashboard} action={action_id?.dashboard.pushback}>
             {!['disbursed'].includes(status) ? (
@@ -283,76 +285,76 @@ const DrawerFooter = ({
           )}
         </Flex>
 
-        <Flex gap="xs">
+          <Flex gap="xs">
           <Button
-            variant="outline"
-            size="xs"
-            color="gray"
-            onClick={() => history.push(`/dealership/${id}`)}
-            disabled={loanDataLoading}
+              variant="outline"
+              size="xs"
+              color="gray"
+              onClick={() => history.push(`/dealership/${id}`)}
+              disabled={loanDataLoading}
           >
-            View more
+              View more
           </Button>
 
           {status && ['submitted'].includes(status.toLowerCase()) && (
-            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'send_for_review'}>
               <Button
-                variant="filled"
-                size="xs"
-                color="green"
-                onClick={handleReviewModal}
-                disabled={loanDataLoading}
+                  variant="filled"
+                  size="xs"
+                  color="green"
+                  onClick={handleReviewModal}
+                  disabled={loanDataLoading}
               >
-                Send for Review
+                  Send for Review
               </Button>
             </CheckAllowed>
           )}
 
           {status && ['pre_submit'].includes(status.toLowerCase()) && (
-            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_submit'}>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_submit'}>
               <Button
-                variant="filled"
-                size="xs"
-                color="green"
-                onClick={handleReviewModal}
-                disabled={loanDataLoading}
-                loading={disabled}
+                  variant="filled"
+                  size="xs"
+                  color="green"
+                  onClick={handleReviewModal}
+                  disabled={loanDataLoading}
+                  loading={disabled}
               >
-                Submit
+                  Submit
               </Button>
             </CheckAllowed>
           )}
 
           {status && ['loan_approval', 'loan_review', 'disbursement_approval'].includes(status.toLowerCase()) && (
-            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_reject'}>
               <Button
-                variant="filled"
-                size="xs"
-                color="red"
-                onClick={() => setRejectModal(true)}
-                disabled={loanDataLoading}
+                  variant="filled"
+                  size="xs"
+                  color="red"
+                  onClick={() => setRejectModal(true)}
+                  disabled={loanDataLoading}
               >
-                Reject
+                  Reject
               </Button>
             </CheckAllowed>
           )}
 
           {status && ['disbursement_approval'].includes(status.toLowerCase()) && (
-            <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_approve'}>
+              <CheckAllowed currentUser={currentUser} resource={resources_id.dashboard} action={'loan_approve'}>
               <Button
-                variant="filled"
-                size="xs"
-                color="green"
-                onClick={updateApprovalStatus}
-                disabled={loanDataLoading}
+                  variant="filled"
+                  size="xs"
+                  color="green"
+                  onClick={updateApprovalStatus}
+                  disabled={loanDataLoading}
               >
-                Approve
+                  Approve
               </Button>
             </CheckAllowed>
           )}
 
           {status && status.toLowerCase() === 'loan_approval' && (currentUser.id == loanData?.approver_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'loan_approve')) && (
-            <Button
+              <Button
               variant="filled"
               size="xs"
               color="green"
@@ -364,7 +366,7 @@ const DrawerFooter = ({
           )}
 
           {status && ['loan_review'].includes(status.toLowerCase()) && (currentUser.id == loanData?.reviewer_id || isAllowed(currentUser?.permissions, resources_id.dashboard, 'send_for_approval')) && (
-            <Button
+              <Button
               variant="filled"
               size="xs"
               color='green'
@@ -375,8 +377,8 @@ const DrawerFooter = ({
             </Button>
           )}
         </Flex>
+        </>}
       </Flex>
-
       <Modal
         opened={rejectModal}
         onClose={() => setRejectModal(false)}
@@ -440,7 +442,7 @@ const DrawerFooter = ({
                   </Checkbox.Group>
                   {selectedCategory.value === 4 && (
                     <>
-                      <Accordion 
+                      <Accordion
                         styles={{
                           content: {
                             padding: '5px 0px',
@@ -451,14 +453,15 @@ const DrawerFooter = ({
                       >
                         <Accordion.Item value="Accordion Title" >
                           <Accordion.Control bg='blue.1'><Text fz={'sm'}>Additional Reason</Text></Accordion.Control>
-                          <Accordion.Panel ><Textarea onChange={(e)=>{setFreeTextRemarks(e.target.value)}} autosize value={freeTextRemarks} minRows={6} placeholder='Type reason' onKeyDown={handleKeyDown}/>
+                          <Accordion.Panel ><Textarea onChange={(e) => { setFreeTextRemarks(e.target.value) }} autosize value={freeTextRemarks} minRows={6} placeholder='Type reason' onKeyDown={handleKeyDown} />
                             <Group justify="flex-end" mb={'md'} mt={5} gap={8}>
                               <ActionIcon variant="default" onClick={() => {
-                                setFreeTextRemarks('')}}>
-                                <IconX color='red'/>
+                                setFreeTextRemarks('')
+                              }}>
+                                <IconX color='red' />
                               </ActionIcon>
-                              <ActionIcon variant="default" onClick={()=> setDisplayFreeTextRemarks(freeTextRemarks)}>
-                                <IconCheck color='green'/> 
+                              <ActionIcon variant="default" onClick={() => setDisplayFreeTextRemarks(freeTextRemarks)}>
+                                <IconCheck color='green' />
                               </ActionIcon>
                             </Group>
                           </Accordion.Panel>
@@ -508,7 +511,7 @@ const DrawerFooter = ({
                 </Box>
               )
             }
-            
+
           </ScrollArea.Autosize>
         </>
         <Group justify='flex-end' mt={'md'}>

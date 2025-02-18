@@ -8,8 +8,9 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import TextInput from '../../../components/TextInput/TextInput';
 import { action_id, resources_id } from '../../../config/accessControl';
 import { getActiveStates } from '../../../services/common.service';
-import { getCity, updateCity} from '../../../services/master.service';
+import { getCity, updateCity } from '../../../services/master.service';
 import { isAllowed } from '../../../utils/cerbos';
+import { Center, Text } from '@mantine/core';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -55,7 +56,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: 6,
     boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px',
   },
-  formFooter :{
+  formFooter: {
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
@@ -67,15 +68,15 @@ const useStyles = makeStyles(() => ({
   },
 }))
 
-const DataGroup = ({data, setAddForm, currentUser}) => {
+const DataGroup = ({ data, setAddForm, currentUser }) => {
   const classes = useStyles()
-  return(
+  return (
     <div className={classes.label}>
       <Typography variant="body1" style={{ paddingLeft: 10 }}>{data.name}</Typography>
       {
         isAllowed(currentUser?.permissions, resources_id.settings, action_id.settings.cityUpdate) &&
           <Tooltip title='Edit'>
-            <IconButton size='small' className={classes.btn} onClick={() => setAddForm({action: 'Edit', name: data.name, id: data.id, state_code: data?.state_code})}>
+            <IconButton size='small' className={classes.btn} onClick={() => setAddForm({ action: 'Edit', name: data.name, id: data.id, state_code: data?.state_code })}>
               <EditIcon fontSize='small' />
             </IconButton>
           </Tooltip>
@@ -91,14 +92,14 @@ const MasterCity = ({ callback, title, currentUser }) => {
   const [addForm, setAddForm] = useState()
   const [addData, setAddData] = useState()
   const [filteredData, setFilteredData] = useState([])
-  const { data: city = [], isLoading } = useQuery('city', () => getCity(), {refetchOnWindowFocus: false})
-  const { data: states = [] } = useQuery('state', getActiveStates, {refetchOnWindowFocus: false})
+  const { data: city = [], isLoading } = useQuery('city', () => getCity(), { refetchOnWindowFocus: false })
+  const { data: states = [] } = useQuery('state', getActiveStates, { refetchOnWindowFocus: false })
 
   useEffect(() => {
     setFilteredData(city)
-  },[city])
+  }, [city])
 
-  const { mutate: addCity } = useMutation(data =>!addForm.id ? updateCity(data) : updateCity(data, addForm.id), {
+  const { mutate: addCity } = useMutation(data => !addForm.id ? updateCity(data) : updateCity(data, addForm.id), {
     onSuccess: (message) => {
       queryClient.invalidateQueries('city')
       setAddForm()
@@ -124,12 +125,12 @@ const MasterCity = ({ callback, title, currentUser }) => {
 
   const handleAdd = (event) => {
     const { name, value } = event.target;
-    if(name === 'state'){
-      setAddData({...addData, state_code: value.toUpperCase()});
-      setAddForm({...addForm, state_code: value.toUpperCase()});
+    if (name === 'state') {
+      setAddData({ ...addData, state_code: value.toUpperCase() });
+      setAddForm({ ...addForm, state_code: value.toUpperCase() });
     } else {
-      setAddData({...addData, name: value.toUpperCase()});
-      setAddForm({...addForm, name: value.toUpperCase()});
+      setAddData({ ...addData, name: value.toUpperCase() });
+      setAddForm({ ...addForm, name: value.toUpperCase() });
     }
   };
 
@@ -144,10 +145,10 @@ const MasterCity = ({ callback, title, currentUser }) => {
 
   return (
     <>
-      <TextField 
+      <TextField
         name='search'
         variant='outlined'
-        style={{margin: 10}}
+        style={{ margin: 10 }}
         placeholder='Search...'
         onChange={handleSearch}
         InputProps={{
@@ -161,15 +162,17 @@ const MasterCity = ({ callback, title, currentUser }) => {
       <Paper className={classes.root}>
         {
           isLoading ?
-            <div style={{display: 'grid', justifyContent: 'center', alignContent: 'center'}}>
+            <Center h={'100%'}>
               <CircularProgress size={30} />
-            </div> :
-            <div className={classes.content}>
-              {
+            </Center> :
+            <div className={classes.content} style={{height: '100%'}}>
+              {filteredData.length ?
                 filteredData.map((item, i) => {
-                  return(<DataGroup data={item} key={i} setAddForm={setAddForm} currentUser={currentUser} />)
+                  return (<DataGroup data={item} key={i} setAddForm={setAddForm} currentUser={currentUser} />)
                 })
-              }
+                : <Center h={'100%'}>
+                  <Text size={'xl'}>No city found</Text>
+                </Center>}
             </div>
         }
       </Paper>
@@ -178,8 +181,8 @@ const MasterCity = ({ callback, title, currentUser }) => {
           <div className={classes.addForm}>
             <Typography variant='h5'>{addForm.action} {title}</Typography>
             <Grid container spacing={2}>
-              <Grid item md={6} style={{marginTop: 15}}>
-                <label style={{marginBottom: 8}}>State</label>
+              <Grid item md={6} style={{ marginTop: 15 }}>
+                <label style={{ marginBottom: 8 }}>State</label>
                 <TextInput
                   select
                   name='state'
@@ -191,15 +194,15 @@ const MasterCity = ({ callback, title, currentUser }) => {
                   <option value={null}>Choose State...</option>
                   {
                     states.map((item, i) => {
-                      return(
+                      return (
                         <option key={i} value={item?.id}>{item?.name}</option>
                       )
                     })
                   }
                 </TextInput>
               </Grid>
-              <Grid item md={6} style={{marginTop: 15}}>
-                <label style={{marginBottom: 8}}>{title}</label>
+              <Grid item md={6} style={{ marginTop: 15 }}>
+                <label style={{ marginBottom: 8 }}>{title}</label>
                 <TextInput
                   id={addForm.action}
                   fullWidth
@@ -218,7 +221,7 @@ const MasterCity = ({ callback, title, currentUser }) => {
               </Button>
               <Button
                 onClick={handleSubmit}
-                style={{ color: '#1EAE98', borderColor: '#1EAE98'}}
+                style={{ color: '#1EAE98', borderColor: '#1EAE98' }}
                 variant='outlined'
                 size='small'
               >
@@ -242,9 +245,9 @@ const MasterCity = ({ callback, title, currentUser }) => {
                 <Button
                   variant='contained'
                   type='submit'
-                  startIcon={<AddIcon  />}
+                  startIcon={<AddIcon />}
                   onClick={() => {
-                    setAddForm({action:'Add'})
+                    setAddForm({ action: 'Add' })
                   }}
                   color='primary'
                 >

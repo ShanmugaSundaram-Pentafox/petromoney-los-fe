@@ -1,6 +1,6 @@
 import { Flex, Button, Text, Box, Alert, Loader, Chip, Group, Select, Modal, Checkbox, Tooltip, ActionIcon, Stack, ScrollArea, Accordion, Textarea } from '@mantine/core';
 import { IconCheck, IconInfoCircle, IconX } from '@tabler/icons-react';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useHistory } from 'react-router-dom';
 import { useMount } from 'react-use';
@@ -67,7 +67,10 @@ const DrawerFooter = ({
   const [freeTextRemarks, setFreeTextRemarks] = useState();
   const [freeTextOpen, setFreeTextOpen] = useState(false);
   const [displayFreeTextRemarks, setDisplayFreeTextRemarks] = useState(false);
-
+  const previousStatuses = useMemo(() => {
+    const currentIndex = loanStatusList.findIndex(item => item.value === status);
+    return currentIndex > 0 ? loanStatusList.slice(0, currentIndex) : loanStatusList;
+  }, [status]);  
   useMount(() => {
     getLoanRejectReason()
       .then(data => {
@@ -529,9 +532,10 @@ const DrawerFooter = ({
             <Text>Please choose status where you want to push back.</Text>
             <Select
               clearable
-              onChange={(e) => setPushbackRemarks(e)}
+              onChange={(e) => {
+                setPushbackRemarks(e)}}
               value={pushbackRemarks}
-              data={loanStatusList}
+              data={previousStatuses}
               styles={{ dropdown: { zIndex: 99999, boxShadow: 'rgba(0, 0, 0, 0.15) 0px 5px 15px 0px' } }}
               comboboxProps={{ offset: 2 }}
             />

@@ -132,7 +132,6 @@ const DisbursementReqestTable = ({ title, onRowClick, filterQry, currentUser }) 
           rowData={disbursementApprovalDataQuery?.data}
           column={column}
           title={title}
-          count={disbursementApprovalDataQuery?.data?.length}
           excelDownload
           onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursement_approval')}
           loading={disbursementApprovalDataQuery?.isLoading}

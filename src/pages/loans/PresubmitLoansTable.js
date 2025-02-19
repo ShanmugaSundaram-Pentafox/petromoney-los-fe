@@ -224,6 +224,7 @@ const PresubmitLoansTable = ({ currentUser }) => {
         column={column}
         rowData={getPreSubmitLoansQuery?.data}
         title={'Pre Submit queue'}
+        count={getPreSubmitLoansQuery?.data?.length}
         excelDownload
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'pre_submit')}
         loading={getPreSubmitLoansQuery?.isLoading}

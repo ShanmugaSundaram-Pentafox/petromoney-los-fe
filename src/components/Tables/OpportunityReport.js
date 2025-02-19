@@ -246,13 +246,13 @@ const OpportunityReport = () => {
           <Table.Tbody>
             {(rowData)?.map((item, index) => (
               <Table.Tr key={index}>
-                <Table.Td>{item?.name}</Table.Td>
-                <Table.Td>{item?.IOCL}</Table.Td>
-                <Table.Td>{item?.HPCL}</Table.Td>
-                <Table.Td>{item?.BPCL}</Table.Td>
-                <Table.Td>{item?.opportunities}</Table.Td>
-                <Table.Td>{item?.converted_dealers_count}</Table.Td>
-                <Table.Td>{item?.average_ticket_count}</Table.Td>
+                <Table.Td>{item?.name ?? '-'}</Table.Td>
+                <Table.Td>{item?.IOCL ?? '-'}</Table.Td>
+                <Table.Td>{item?.HPCL ?? '-'}</Table.Td>
+                <Table.Td>{item?.BPCL ?? '-'}</Table.Td>
+                <Table.Td>{item?.opportunities ?? '-'}</Table.Td>
+                <Table.Td>{item?.converted_dealers_count ?? '-'}</Table.Td>
+                <Table.Td>{item?.average_ticket_count ?? '-'}</Table.Td>
               </Table.Tr>
             ))}
           </Table.Tbody>
@@ -261,22 +261,22 @@ const OpportunityReport = () => {
               <strong>Total</strong>
             </Table.Td>
             <Table.Td>
-              <strong>{total?.total_IOCL}</strong>
+              <strong>{total?.total_IOCL ?? '-'}</strong>
             </Table.Td>
             <Table.Td>
-              <strong>{total?.total_HPCL}</strong>
+              <strong>{total?.total_HPCL ?? '-'}</strong>
             </Table.Td>
             <Table.Td>
-              <strong>{total?.total_BPCL}</strong>
+              <strong>{total?.total_BPCL ?? '-'}</strong>
             </Table.Td>
             <Table.Td>
-              <strong>{total?.total_opportunities}</strong>
+              <strong>{total?.total_opportunities ?? '-'}</strong>
             </Table.Td>
             <Table.Td>
-              <strong>{total?.total_converted_dealers_count}</strong>
+              <strong>{total?.total_converted_dealers_count ?? '-'}</strong>
             </Table.Td>
             <Table.Td>
-              <strong>{total?.total_average_ticket_count}</strong>
+              <strong>{total?.total_average_ticket_count ?? '-'}</strong>
             </Table.Td>
           </Table.Tfoot>
         </Table>

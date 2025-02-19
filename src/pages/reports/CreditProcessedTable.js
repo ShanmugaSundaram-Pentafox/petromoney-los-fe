@@ -15,6 +15,7 @@ import {
 } from '../../services/users.service';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
 import { Paper } from '@mantine/core';
+import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 
 const CreditProcessedTable = ({ currentUser }) => {
   const [rowData, setRowData] = useState();
@@ -38,23 +39,12 @@ const CreditProcessedTable = ({ currentUser }) => {
       .then(({ message }) => {
         queryClient.invalidateQueries(['view-credit-report'])
         setDownloadLoading(false)
-        enqueueSnackbar(message, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'success',
-        });
+        displayNotification({message: message,variant: 'success'})
+        
       })
       .catch((err) => {
         setDownloadLoading(false)
-        enqueueSnackbar(err, {
-          anchorOrigin: {
-            vertical: 'top',
-            horizontal: 'right',
-          },
-          variant: 'error',
-        });
+        displayNotification({ message: err, variant: 'error' })
       })
   }
 
@@ -167,6 +157,8 @@ const CreditProcessedTable = ({ currentUser }) => {
           column={column}
           loading={searchLoading}
           title={'Processed'}
+          // downloadQuery={{ query: handleDownload, isLoading: downloadLoading }}
+          // excelDownload
         />
       </Paper>
       <Drawer

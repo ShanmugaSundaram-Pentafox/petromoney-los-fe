@@ -142,7 +142,6 @@ const ApprovalReqestTable = ({ title, onRowClick, filterQry, currentUser, chartD
         column={column}
         rowData={getLoanDetailsQuery?.data}
         title={title}
-        count={getLoanDetailsQuery?.data?.length}
         showStatusTab={chartData}
         onRowClick={(e) => onRowClick(e.dealership_id, e, 'loan_approval')}
         loading={loading}

@@ -1,11 +1,12 @@
 // import { useMount } from 'react-use';
-import { Grid, Box } from '@material-ui/core';
 // import { getAllWithheldLoans } from '../../services/withheld.services';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import ResolvedTable from './ResolvedTable';
 import UnresolvedTable from './UnResolvedTable';
 import usePageTitle from '../../hooks/usePageTitle';
+import { Tabs } from '@mantine/core';
+import { makeStyles } from '@material-ui/styles';
 
 
 const PaperWrapper = styled.div`
@@ -23,28 +24,34 @@ background-color: #f1f1f1;
   }
 `;
 
+const useStyles = makeStyles(theme => ({
+  tab:{
+    border:'1px solid #d3d3d3'
+  }
+}))
+
 const BlacklistTable = ({ currentUser }) => {
   const [selectedTab, setSelectedTab] = useState('unresolved');
   usePageTitle('Withheld loan', true)
+  const classes = useStyles();
 
 
   return (
     <>
-      <PaperWrapper>
-        <Box borderRadius={4} bgcolor="background.paper">
-          <Grid container>
-            <Grid onClick={() => { setSelectedTab('unresolved') }} style={{ textAlign: 'center', padding: 16, borderRight: '1px dashed gray' }} className={selectedTab === 'unresolved' ? ' ' : 'active'} item md={6}>
-              <div>Unresolved</div>
-            </Grid>
-            <Grid onClick={() => { setSelectedTab('resolved') }} className={selectedTab === 'resolved' ? ' ' : 'active'} style={{ textAlign: 'center', padding: 16 }} item md={6}>
-              <div>Resolved</div>
-            </Grid>
-          </Grid>
-        </Box>
-      </PaperWrapper>
-      {
-        selectedTab === 'unresolved' ? <UnresolvedTable currentUser={currentUser} /> : <ResolvedTable />
-      }
+      <Tabs value={selectedTab} onChange={setSelectedTab} variant="pills"  >
+        <Tabs.List grow >
+          <Tabs.Tab value="unresolved" p={'sm'} className={classes.tab}>
+            Unresolved
+          </Tabs.Tab>
+          <Tabs.Tab value="resolved" className={classes.tab}>
+            Resolved
+          </Tabs.Tab>
+        </Tabs.List>
+        <Tabs.Panel value='unresolved' mt={'md'}>
+          <UnresolvedTable currentUser={currentUser} />        </Tabs.Panel>
+        <Tabs.Panel value='resolved' mt={'md'}>
+          <ResolvedTable />        </Tabs.Panel>
+      </Tabs>
     </>
   )
 }

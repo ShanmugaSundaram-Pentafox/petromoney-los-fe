@@ -160,11 +160,11 @@ const RenewalFilter = ({ filterQry, setChartData, type, setTotalLoans, filterTyp
               return matchingItem ? { name: item?.status, count: matchingItem?.record_count } : { name: item?.status, count: 0 };
             });
             let result = [...cdata]
-            result?.splice((cdata?.indexOf(cdata?.find(i => i?.name === 'approved')) + 1), 0, { name: 'Disb. Approval', count: res.find((el) => el.status === 'disbursement_approval')?.record_count })
+            result?.splice((cdata?.indexOf(cdata?.find(i => i?.name === 'approved')) + 1), 0, { name: 'Disb. Approval', count: res.find((el) => el.status === 'disbursement_approval')?.record_count || 0})
             setChartData(result);
             let s = 0;
-            for (let i = 0; i < cdata.length; i++) {
-              s += cdata[i].record_count;
+            for (let i = 0; i < result.length; i++) {
+              s += result[i].count;
             }
             setTotalLoans(s)
           })

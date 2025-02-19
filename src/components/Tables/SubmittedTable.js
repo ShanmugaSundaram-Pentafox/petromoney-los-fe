@@ -157,7 +157,7 @@ const SubmittedTable = ({ onRowClick, filterQry, currentUser, chartData }) => {
       <DataTableViewer
         column={column}
         rowData={getLoanDetailsQuery?.data}
-        title={'Dashboard'}
+        title={'Submitted Applications'}
         // count={loans?.length}
         // showStatusTab={chartData}
         allowSorting={true}

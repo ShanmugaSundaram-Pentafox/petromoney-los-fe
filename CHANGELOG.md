@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.43.4](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.43.3...v2.43.4) (2025-02-19)
+
+
+### Bug Fixes
+
+* callrequestpage loading bug ([7edf339](https://bitbucket.org/gmfvl/petromoney-fe/commit/7edf339ee7fd91ae3bcc890ff8881d3882b53506))
+* credit info opening on clicking cancel in change type ([e0fb048](https://bitbucket.org/gmfvl/petromoney-fe/commit/e0fb048da72bf2201cb6c2cb95e0ae80383f0929))
+* pushback list in dashboard ([e60e420](https://bitbucket.org/gmfvl/petromoney-fe/commit/e60e420b45e145ad8c17a830ba174a3e6c70a744))
+* qa bugs ([d5e8fd9](https://bitbucket.org/gmfvl/petromoney-fe/commit/d5e8fd9f3a16996b4375be9960f31dcb55264fbf))
+* sanction letter send button loading added ([0d2b6a9](https://bitbucket.org/gmfvl/petromoney-fe/commit/0d2b6a92e65f0ae71631dbb8dee88a4fadd45a75))
+
 ### [2.43.3](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.43.2...v2.43.3) (2025-02-01)
 
 

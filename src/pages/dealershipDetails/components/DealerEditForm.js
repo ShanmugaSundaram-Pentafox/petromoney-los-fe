@@ -689,6 +689,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 onUpload={() => docUpload('Profile')}
                 onDelete={() => onDocDelete('profile')}
                 disabled={!values?.profile_image_url}
+                tooltip='View Profile'
               />
               <DocAttachment
                 action={true}
@@ -697,6 +698,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 onUpload={() => docUpload('PAN')}
                 onDelete={() => onDocDelete('pan')}
                 disabled={!values?.pan_file_url}
+                tooltip='View PAN'
               />
               <DocAttachment
                 action={true}
@@ -705,6 +707,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 onUpload={() => docUpload('AADHAR')}
                 onDelete={() => onDocDelete('aadhar')}
                 disabled={!values?.aadhar_file_url}
+                tooltip='View Aadhaar'
               />
             </Flex>
 

@@ -288,7 +288,7 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
     <>
       <Modal
         opened={opened || false}
-        onClose={() => { onClose(); setPdfUrl(); setLoansData(); setDateValue(new Date()) }}
+        onClose={() => { !hideSend && onClose(); setPdfUrl(); setLoansData(); setDateValue(new Date()) }}
         title={
           <Group gap={10}>
             {
@@ -369,8 +369,8 @@ const SignRequestLayout = ({ onClose, opened = false, title, type, dealershipId,
             }
           </div>
           {
-            !loading && loansData?.document_id && !reinitiate ? null : hideSend ? null : (
-              <Button variant="contained" onClick={sendInvitees} color="primary" disabled={pdfLoading}>
+            !loading && loansData?.document_id && !reinitiate ? null : (
+              <Button variant="contained" loading={hideSend} onClick={sendInvitees} color="primary" disabled={pdfLoading}>
                 Send
               </Button>
             )

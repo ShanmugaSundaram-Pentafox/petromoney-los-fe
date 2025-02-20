@@ -164,6 +164,7 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
         setPage={setPage}
         loading={getReOnboardingDataQuery?.isLoading}
         totalNoOfPages={getReOnboardingPaginationQuery?.data?.total_number_of_pages}
+        totalNoOfRecords={getReOnboardingPaginationQuery?.data?.total_number_of_records}
         filter={false}
         downloadQuery={{ query: reOnboardingDownloadQuery?.refetch, isLoading: reOnboardingDownloadQuery?.isFetching }}
         excelDownload

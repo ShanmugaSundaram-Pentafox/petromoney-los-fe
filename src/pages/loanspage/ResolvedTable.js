@@ -7,6 +7,7 @@ import moment from 'moment';
 import { getSignedUrl } from '../../services/common.service';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 import { useDebouncedState } from '@mantine/hooks';
+import { Paper } from '@mantine/core';
 
 const ResolvedTable = () => {
   const [page, setPage] = useState(1)
@@ -29,7 +30,7 @@ const ResolvedTable = () => {
       key: 'region',
       header: 'Region',
     }, {
-      key: 'with_held_by',
+      key: 'action',
       header: 'Withheld By',
       cell: ({ row }) => {
         return (
@@ -41,7 +42,7 @@ const ResolvedTable = () => {
         )
       },
     }, {
-      key: 'resolved_by',
+      key: 'action',
       header: 'Resolved By',
       cell: ({ row }) => {
         return (
@@ -53,7 +54,7 @@ const ResolvedTable = () => {
         )
       },
     }, {
-      key: 'resolved_date',
+      key: 'action',
       header: 'WithHeld Date',
       cell: ({ row }) => {
         return (
@@ -65,7 +66,7 @@ const ResolvedTable = () => {
         )
       },
     }, {
-      key: 'resolved_date',
+      key: 'action',
       header: 'Resolved Date',
       cell: ({ row }) => {
         return (
@@ -96,7 +97,7 @@ const ResolvedTable = () => {
         )
       },
     }, {
-      key: 'remarks',
+      key: 'action',
       header: 'Remarks',
       cell: ({ row }) => {
         return (
@@ -140,7 +141,7 @@ const ResolvedTable = () => {
   }
 
   return (
-    <>
+    <Paper>
       <Grid item md={12}>
         <DataTableViewer
           useAPIPagination
@@ -158,7 +159,7 @@ const ResolvedTable = () => {
           totalNoOfRecords={resolvedData?.total_records}
         />
       </Grid>
-    </>
+    </Paper>
   )
 }
 export default ResolvedTable;

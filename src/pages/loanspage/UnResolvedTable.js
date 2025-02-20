@@ -8,17 +8,17 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from 'react-query';
 import AddBlackListForm from './AddBlackListForm';
-import Button from '../../components/CommonComponents/Button/Button';
 import { TextEditor } from '../../components/TextEditor/TextEditor';
 import { action_id, resources_id } from '../../config/accessControl';
 import { deleteRemarks, getWithheldLoansData, resolveRemarks } from '../../services/withheld.services';
 import CheckAllowed from '../rbac/CheckAllowed';
 import DataTableViewer from '../../components/ReactTable/DataTableViewer';
-import { Group, Text } from '@mantine/core';
+import { Button, Group, Paper, Text } from '@mantine/core';
 import moment from 'moment';
 import { getSignedUrl } from '../../services/common.service';
 import { displayNotification } from '../../components/CommonComponents/Notification/displayNotification';
 import { useDebouncedState } from '@mantine/hooks';
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -135,7 +135,7 @@ const UnresolvedTable = ({ currentUser }) => {
       key: 'region',
       header: 'Region',
     }, {
-      key: 'with_held_by',
+      key: 'action',
       header: 'Withheld By',
       cell: ({ row }) => {
         return (
@@ -147,7 +147,7 @@ const UnresolvedTable = ({ currentUser }) => {
         )
       },
     }, {
-      key: 'with_held_date',
+      key: 'action',
       header: 'Withheld Date',
       cell: ({ row }) => {
         return (
@@ -237,7 +237,7 @@ const UnresolvedTable = ({ currentUser }) => {
   }
 
   return (
-    <>
+    <Paper>
       <Grid item md={12}>
         <DataTableViewer
           useAPIPagination
@@ -247,15 +247,15 @@ const UnresolvedTable = ({ currentUser }) => {
           loading={isFetching}
           showAction={<CheckAllowed currentUser={currentUser} resource={resources_id?.withheld} action={action_id?.withheld?.create}>
             <Button
-              color="primary"
-              variant="contained"
+              size='xs'
               onClick={() => setOpenModal(true)}
+              leftSection={<PlusIcon className='w-4 h-4' />}
             >
               Add
             </Button>
           </CheckAllowed>
           }
-          title={'Unresolved withheld loans'}
+          title={'Unresolved Withheld Loans'}
           noDataText='No un-resolved loans found'
           downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
           excelDownload
@@ -318,7 +318,7 @@ const UnresolvedTable = ({ currentUser }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Paper>
   )
 }
 export default UnresolvedTable;

@@ -222,7 +222,6 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser }) => {
         excelDownload={true}
         title={title}
         allowSorting={true}
-        count={getLoansDetailsQuery?.data?.length}
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'approved')}
         loading={getLoansDetailsQuery?.isLoading}
       />

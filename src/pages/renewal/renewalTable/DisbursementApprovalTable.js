@@ -173,6 +173,7 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }
         page={page}
         setPage={setPage}
         totalNoOfPages={pageDetailsQuery?.data?.total_number_of_pages}
+        totalNoOfRecords={pageDetailsQuery?.data?.total_number_of_records}
         filter={false}
         downloadQuery={{ query: renewalDownloadQuery?.refetch, isLoading: renewalDownloadQuery?.isFetching }}
         excelDownload

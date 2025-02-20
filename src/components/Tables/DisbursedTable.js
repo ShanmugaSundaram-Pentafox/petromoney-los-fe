@@ -122,7 +122,6 @@ const DisbursedTable = ({ title, onRowClick, filterQry }) => {
         column={column}
         rowData={getLoanDetailsQuery?.data || []}
         title={title}
-        count={getLoanDetailsQuery?.data?.length}
         excelDownload={true}
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'disbursed')}
         loading={getLoanDetailsQuery?.isLoading}

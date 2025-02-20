@@ -65,6 +65,7 @@ const GuarantorsTable = ({
   const [openChangeTypeDialog, setopenChangeTypeDialog] = useState(false)
   const [updatedApplicantType, setUpdatedApplicantType] = useState();
   const [openFilePreview, setOpenFilePreview] = useState({ open: false });
+  const [openCreditInfo, setOpenCreditInfo] = useState(false);
 
   const deleteApplicant = (values) => {
     const obj = { ...values, is_active: values.is_active == 1 ? 0 : 1 };
@@ -222,7 +223,10 @@ const GuarantorsTable = ({
                         <Button
                           variant="outline"
                           size="xs"
-                          onClick={() => setRowData(row)}
+                          onClick={() => {
+                            setRowData(row)
+                            setOpenCreditInfo(true)
+                          }}
                         >
                           Credit Info
                         </Button>
@@ -307,7 +311,8 @@ const GuarantorsTable = ({
             <Button size='xs' style={{ backgroundColor: 'rgb(62, 175, 118)', color: 'white', marginLeft: 16 }} onClick={() => saveApplicantTypeUpdate(rowData)}>Update</Button>
           </div>
         </Dialog>
-        <RightSideDrawer anchor="right" opened={rowData && !openChangeTypeDialog} variant="temporary" onClose={() => setRowData()} >
+        <RightSideDrawer anchor="right" opened={rowData && openCreditInfo} variant="temporary" onClose={() => setRowData()} title={`Credit Information (${rowData?.pan || '-'})`}
+        >
           <div className={classes.sidePanelWrapper}>
             {
               <CreditInfoSideWrapper

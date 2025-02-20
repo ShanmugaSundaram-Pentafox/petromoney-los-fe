@@ -128,7 +128,6 @@ const ReviewerTable = ({ title, onRowClick, filterQry }) => {
         rowData={getLoanDetailsQuery?.data}
         column={column}
         title={title}
-        count={getLoanDetailsQuery?.data?.length}
         excelDownload
         loading={getLoanDetailsQuery?.isLoading}
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'loan_review')}

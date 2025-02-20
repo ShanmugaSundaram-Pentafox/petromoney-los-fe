@@ -90,8 +90,9 @@ const RejectedTable = ({ title, onRowClick, filterQry }) => {
         page={page}
         setPage={setPage}
         totalNoOfPages={getEnhancementPaginationQuery?.data?.total_number_of_pages}
+        totalNoOfRecords={getEnhancementPaginationQuery?.data?.total_number_of_records}
         filter={false}
-        columnsFilter={false}
+        columnsFilter
         loading={getEnhancementDataQuery?.isLoading}
         excelDownload
         downloadQuery={{ query: enhancementDownloadQuery?.refetch, isLoading: enhancementDownloadQuery?.isFetching }}

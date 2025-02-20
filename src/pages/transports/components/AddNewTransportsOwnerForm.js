@@ -841,46 +841,44 @@ const AddNewTransportsOwnerForm = ({
       <Flex
         h="64"
         align="center"
-        justify="end"
+        justify="space-between"
         className="bg-white shrink-0 px-4 z-[9]"
         style={{
           borderTop: '1px solid #eaeaea',
         }}
       >
-        <Flex gap="sm">
-          <Button
-            colorScheme="secondary"
-            variant="outline"
-            size="md"
-            onClick={handleClose}
-            disabled={loading}
-          >
-            Go back
-          </Button>
+        <Button
+          colorScheme="secondary"
+          variant="outline"
+          size="md"
+          onClick={handleClose}
+          disabled={loading}
+        >
+          Go back
+        </Button>
 
-          {!readOnly ? (
+        {!readOnly ? (
+          <Button
+            colorScheme="green"
+            variant="filled"
+            size="md"
+            onClick={loading ? () => null : handleSubmit}
+            loading={loading}
+          >
+            Save
+          </Button>
+        ) : (
+          <CheckAllowed currentUser={currentUser} resource={resources_id?.transporters} action={action_id?.transporters?.editOwner}>
             <Button
-              colorScheme="green"
               variant="filled"
               size="md"
-              onClick={loading ? () => null : handleSubmit}
+              onClick={loading ? () => null : handleEdit}
               loading={loading}
             >
-              Save
+              Edit
             </Button>
-          ) : (
-            <CheckAllowed currentUser={currentUser} resource={resources_id?.transporters} action={action_id?.transporters?.editOwner}>
-              <Button
-                variant="filled"
-                size="md"
-                onClick={loading ? () => null : handleEdit}
-                loading={loading}
-              >
-                Edit
-              </Button>
-            </CheckAllowed>
-          )}
-        </Flex>
+          </CheckAllowed>
+        )}
       </Flex>
     </>
   );

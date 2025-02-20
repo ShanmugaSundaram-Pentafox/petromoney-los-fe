@@ -13,6 +13,7 @@ import { action_id, resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import CheckAllowed from '../../rbac/CheckAllowed';
 import AddNewTransportsOwnerForm from '../../transports/components/AddNewTransportsOwnerForm';
+import { IconPlus } from '@tabler/icons-react';
 
 const useStyles = makeStyles((theme) => ({
   sidePanelTitle: {
@@ -126,6 +127,8 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
 
         <CheckAllowed currentUser={currentUser} resource={resources_id?.transporters} action={action_id.transporters.addOwner}>
           <Button
+            leftSection={<IconPlus size={18} />}
+            size='xs'
             onClick={() => {
               setOpenModal(true)
               setRowData({})
@@ -148,11 +151,11 @@ const DealershipTransport = ({ id, currentUser, titleAlign }) => {
         }}
         title="Owner Information"
       >
-        <AddNewTransportsOwnerForm 
-          dealer_id={id} 
-          rowData={rowData} 
-          isAdd={formType} 
-          callback={handleEdit} 
+        <AddNewTransportsOwnerForm
+          dealer_id={id}
+          rowData={rowData}
+          isAdd={formType}
+          callback={handleEdit}
           currentUser={currentUser} editable={editable}
         />
       </RightSideDrawer>

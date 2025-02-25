@@ -182,11 +182,11 @@ const DisbursementApprovalTable = ({ title, onRowClick, filterQry, currentUser }
 
       <DDMSModal opened={Boolean(docModal?.modal)} currentUser={currentUser} onClose={() => setDocModal({})} modalObj={docModal} queryKey={'enhancement-data-disbursement_approval'} />
 
-      <Modal opened={openDialog} onClose={() => setOpenDialog(true)} size={'lg'}>
-        <Text>Ready to sync data with LMS?</Text>
-        <Group justify='flex-end'>
-          <Button variant='outline' onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button color='green' onClick={() => syncData()}>Yes</Button>
+      <Modal opened={openDialog} onClose={() => setOpenDialog(false)} size={'md'} title={'Sync'} styles={(theme) => ({ title: { fontWeight: '500' } })}>
+        <Text>Are you ready to sync data with LMS?</Text>
+        <Group justify='flex-end' mt={'md'} gap={'10px'}>
+          <Button variant='outline' onClick={() => setOpenDialog(false)} size='xs'>Cancel</Button>
+          <Button color='green' onClick={() => syncData()} size='xs'>Yes</Button>
         </Group>
       </Modal>
     </div>

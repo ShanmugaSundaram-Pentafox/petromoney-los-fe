@@ -17,10 +17,13 @@ import LoansTable from '../dashboard/components/LoansTable';
 import { RightSideDrawer } from '../../components/Mantine/RightSideDrawer/RightSideDrawer';
 import LoanStats from '../dashboard/components/LoanStats';
 import { Grid } from '@mantine/core';
+import DashboardFilter from '../dashboard/components/DashboardFilter';
 
 
 const FuelLoans = ({ currentUser }) => {
   const [chartData, setChartData] = useState([{}, {}, {}, {}, {}, {}]);
+  const [totalLoans, setTotalLoans] = useState()
+  const [loading, setLoading] = useState(false);
   const [showPanel, setShowPanel] = useState({
     status: false,
     data: ''
@@ -81,11 +84,23 @@ const FuelLoans = ({ currentUser }) => {
   return (
     <>
       <Grid gutter={0}>
+        <Grid.Col>
+          <DashboardFilter
+            filterQry={setFilterQry}
+            setChartData={setChartData}
+            setTotalLoans={setTotalLoans}
+            filterType='Dashboard'
+            filters={['zone', 'region', 'product', 'period']}
+            setLoading={setLoading}
+          />
+        </Grid.Col>
         <Grid.Col mt={'xs'}>
           <LoanStats
             selectedStatsCard={selectedStatsCard}
             handleClick={handleClick}
             chartData={chartData}
+            totalLoans={totalLoans}
+            loading={loading}
           />
         </Grid.Col>
       </Grid>

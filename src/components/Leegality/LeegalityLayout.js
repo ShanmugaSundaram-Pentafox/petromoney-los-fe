@@ -266,7 +266,7 @@ const LeegalityLayout = ({ docId, dealershipId, currentUser, setActiveState }) =
                           >
                             Resend Notification
                           </Button>
-                        ) : null}
+                        ) : <Box></Box>}
                         {/* <Button variant="outlined" color="secondary" size="small">Details</Button> */}
                         <Menu shadow="md" withArrow width={150} styles={{ dropdown: { zIndex: 9999, position: 'absolute' }, itemLabel: { fontSize: 14, color: 'gray' } }}>
                           <Menu.Target>

@@ -30,6 +30,7 @@ import { validateId } from '../../../services/dealerships.service';
 import { deleteTransportOwnerProfileDoc } from '../../../services/transports.service';
 import { compareObject } from '../../../utils/compareObject.util';
 import CheckAllowed from '../../rbac/CheckAllowed';
+import { IconChevronLeft } from '@tabler/icons-react';
 
 const AddNewTransportsOwnerForm = ({
   handleNext,
@@ -789,6 +790,7 @@ const AddNewTransportsOwnerForm = ({
               <Title order={4} my="lg">Attachments</Title>
               <Flex gap="xs" mb="lg">
                 <DocAttachment
+                  tooltip={'View Profile'}
                   action={true}
                   imgUrl={values?.profile_image_url}
                   docName='Profile'
@@ -797,17 +799,19 @@ const AddNewTransportsOwnerForm = ({
                   disabled={!values?.profile_image_url}
                 />
                 <DocAttachment
+                  tooltip={'View PAN'}
                   action={true}
                   imgUrl={values?.pan_file_url}
-                  docName='PAN Card'
+                  docName='PAN'
                   onUpload={() => docUpload('PAN')}
                   onDelete={() => onDocDelete({ pan_file_url: '' })}
                   disabled={!values?.pan_file_url}
                 />
                 <DocAttachment
+                  tooltip={'View Aadhaar Front'}
                   action={true}
                   imgUrl={values?.aadhar_f_file_url}
-                  docName='Aadhar Front'
+                  docName='Aadhaar Front'
                   onUpload={() => docUpload('Front')}
                   onDelete={() => onDocDelete({ aadhar_f_file_url: '' })}
                   disabled={!values?.aadhar_f_file_url}
@@ -815,7 +819,8 @@ const AddNewTransportsOwnerForm = ({
                 <DocAttachment
                   action={true}
                   imgUrl={values?.aadhar_b_file_url}
-                  docName='Aadhar Back'
+                  tooltip={'View Aadhaar Back'}
+                  docName='Aadhaar Back'
                   onUpload={() => docUpload('Back')}
                   onDelete={() => onDocDelete({ aadhar_b_file_url: '' })}
                   disabled={!values?.aadhar_b_file_url}
@@ -850,18 +855,19 @@ const AddNewTransportsOwnerForm = ({
         <Button
           colorScheme="secondary"
           variant="outline"
-          size="md"
+          size="sm"
           onClick={handleClose}
           disabled={loading}
+          leftSection={<IconChevronLeft size={14} />}
         >
           Go back
         </Button>
 
         {!readOnly ? (
-          <Button
+          <Button 
             colorScheme="green"
             variant="filled"
-            size="md"
+            size="sm"
             onClick={loading ? () => null : handleSubmit}
             loading={loading}
           >

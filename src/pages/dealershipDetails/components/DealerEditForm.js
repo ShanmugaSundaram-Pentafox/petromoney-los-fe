@@ -694,7 +694,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
               <DocAttachment
                 action={true}
                 imgUrl={values?.pan_file_url}
-                docName='PAN Card'
+                docName='PAN'
                 onUpload={() => docUpload('PAN')}
                 onDelete={() => onDocDelete('pan')}
                 disabled={!values?.pan_file_url}

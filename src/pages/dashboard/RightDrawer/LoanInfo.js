@@ -81,7 +81,7 @@ const LoanInfo = ({
               {viewable && (
                 <Table.Th className={classes.tablerowheader}>Amount Approved</Table.Th>
               )}
-              {['disbursed', 'disbursement_approval'].includes(status) ? (
+              {['disbursed'].includes(status) ? (
                 <Table.Th className={classes.tablerowheader}>Disbursement Amount</Table.Th>
               ) : null}
             </Table.Tr>
@@ -211,7 +211,7 @@ const LoanInfo = ({
                 </Table.Td>
               }
 
-              {['disbursement_approval', 'disbursed']?.includes(status) ? (
+              {['disbursed']?.includes(status) ? (
                 <Table.Td align='right'>
                   <Currency value={row?.amount_disbursed} />
                 </Table.Td>

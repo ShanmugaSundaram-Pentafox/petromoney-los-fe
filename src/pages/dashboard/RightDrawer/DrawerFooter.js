@@ -70,7 +70,7 @@ const DrawerFooter = ({
   const previousStatuses = useMemo(() => {
     const currentIndex = loanStatusList.findIndex(item => item.value === status);
     return currentIndex > 0 ? loanStatusList.slice(0, currentIndex) : loanStatusList;
-  }, [status]);  
+  }, [status]);
   useMount(() => {
     getLoanRejectReason()
       .then(data => {
@@ -536,7 +536,8 @@ const DrawerFooter = ({
             <Select
               clearable
               onChange={(e) => {
-                setPushbackRemarks(e)}}
+                setPushbackRemarks(e)
+              }}
               value={pushbackRemarks}
               data={previousStatuses}
               styles={{ dropdown: { zIndex: 99999, boxShadow: 'rgba(0, 0, 0, 0.15) 0px 5px 15px 0px' } }}

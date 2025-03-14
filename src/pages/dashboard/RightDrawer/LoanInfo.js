@@ -1,14 +1,14 @@
-import { Box, Group, Select, Table } from '@mantine/core';
+import { Box, Group, NumberInput, Select, Table } from '@mantine/core';
 import { makeStyles } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 import { ViewData } from '../../../components/CommonComponents/FilePreview';
 import Currency from '../../../components/Number/Currency';
-import TextInput from '../../../components/TextInput/TextInput';
 import UserCan from '../../../components/UserCan/UserCan';
 import { resources_id } from '../../../config/accessControl';
 import { rulesList } from '../../../config/userRules';
 import { getProductsMaster } from '../../../services/common.service';
 import { isAllowed } from '../../../utils/cerbos';
+import { IconCurrencyRupee } from '@tabler/icons-react';
 
 
 const useStyles = makeStyles(theme => ({
@@ -129,15 +129,16 @@ const LoanInfo = ({
                         role={currentUser.role_name}
                         perform={rulesList.loan_approval}
                         yes={() => (
-                          <TextInput
-                            width={85}
-                            money
-                            number
-                            fullWidth={false}
+                          <NumberInput
+                            step={0}
+                            w={130}
+                            leftSection={<IconCurrencyRupee size={16} />}
+                            hideControls
                             defaultValue={newInfo?.new_loan_amount}
+                            allowDecimal={false}
                             onChange={e => {
                               updateNewLoanInfo({
-                                loan_amount: e.target.value
+                                loan_amount: e
                               })
                             }}
                           />
@@ -160,16 +161,17 @@ const LoanInfo = ({
                         role={currentUser.role_name}
                         perform={rulesList.loan_approval}
                         yes={() => (
-                          <TextInput
-                            width={85}
-                            money
-                            number
-                            fullWidth={false}
+                          <NumberInput
+                            step={0}
+                            w={130}
+                            leftSection={<IconCurrencyRupee size={16} />}
+                            hideControls
                             defaultValue={row?.amount_requested}
+                            allowDecimal={false}
                             onChange={e => {
                               updateNewLoanInfo({
                                 ...newInfo,
-                                amount_requested: e.target.value
+                                amount_requested: e
                               })
                             }}
                           />
@@ -188,16 +190,17 @@ const LoanInfo = ({
                     role={currentUser.role_name}
                     perform={rulesList.loan_approval}
                     yes={() => (
-                      <TextInput
-                        width={85}
-                        money
-                        number
-                        fullWidth={false}
+                      <NumberInput
+                        step={0}
+                        w={130}
+                        leftSection={<IconCurrencyRupee size={16} />}
+                        hideControls
                         defaultValue={row?.amount_requested}
+                        allowDecimal={false}
                         onChange={e => {
                           updateNewLoanInfo({
                             ...newInfo,
-                            amount_approved: e.target.value
+                            amount_approved: e
                           })
                         }}
                       />

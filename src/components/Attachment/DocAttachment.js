@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Flex } from '@mantine/core';
+import { ActionIcon, Box, Flex, Text } from '@mantine/core';
 import { IconCircleCheck, IconFileTypePdf, IconPhoto, IconTrash, IconUpload } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import FilePreview from '../CommonComponents/FilePreview';
@@ -20,6 +20,7 @@ export const DocAttachment = ({
   return (
     <>
       <Flex direction="column" gap="xs">
+        <Text ta="center" size='lg'>{docName}</Text>
         <Tooltip label={tooltip} withArrow>
           <Box
             className="group relative w-28 h-28 bg-white flex justify-center items-center rounded-lg border border-dashed border-gray-300 hover:border-gray-400 overflow-hidden"

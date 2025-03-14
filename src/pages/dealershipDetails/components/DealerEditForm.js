@@ -302,7 +302,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 // InputProps={ValidateProps(panValidateData)}
                 />
 
-                {!values?.pan_verified || values?.pan !== data?.pan ? (
+                {(!values?.pan_verified || values?.pan !== data?.pan) && values?.pan && /^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/.test() ?  (
                   <Box
                     component="span"
                     className="cursor-pointer"
@@ -324,7 +324,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                   onChange={onChange}
                 // InputProps={ValidateProps(aadharValidateData)}
                 />
-                {!values?.aadhar_verified || values?.aadhar !== data?.aadhar ? (
+                {(!values?.aadhar_verified || values?.aadhar !== data?.aadhar) && values?.aadhar && /^(\d{12})$|^(\d{16})$/.test(values?.aadhar) ? (
                   <Box
                     component="span"
                     className="cursor-pointer"
@@ -689,14 +689,16 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 onUpload={() => docUpload('Profile')}
                 onDelete={() => onDocDelete('profile')}
                 disabled={!values?.profile_image_url}
+                tooltip='View Profile'
               />
               <DocAttachment
                 action={true}
                 imgUrl={values?.pan_file_url}
-                docName='PAN Card'
+                docName='PAN'
                 onUpload={() => docUpload('PAN')}
                 onDelete={() => onDocDelete('pan')}
                 disabled={!values?.pan_file_url}
+                tooltip='View PAN'
               />
               <DocAttachment
                 action={true}
@@ -705,6 +707,7 @@ const DealerEditForm = ({ modelType, data, dealersList, handleDate, deleteFile, 
                 onUpload={() => docUpload('AADHAR')}
                 onDelete={() => onDocDelete('aadhar')}
                 disabled={!values?.aadhar_file_url}
+                tooltip='View Aadhaar'
               />
             </Flex>
 

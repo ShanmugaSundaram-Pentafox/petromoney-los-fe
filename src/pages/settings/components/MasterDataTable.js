@@ -1209,6 +1209,7 @@ function Contain({ title, setStateBtn, regionForm, assetForm, callback }) {
                   variant='outlined'
                   onChange={handleStateAdd}
                 >
+                  <option value="" disabled selected>Choose Region</option>
                   {
                     states?.map((item, i) => <option key={i} value={item.id}>{item.name}</option>)
                   }

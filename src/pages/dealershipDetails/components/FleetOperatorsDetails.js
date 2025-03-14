@@ -36,37 +36,38 @@ const FleetOperatorsDetails = ({ id, currentUser, titleAlign }) => {
 
         <CheckAllowed currentUser={currentUser} resource={resources_id?.fleetOperator} action={action_id?.fleetOperator?.add}>
           <Button
-            onClick={() => setOpenModal(true)}
             leftSection={<IconPlus size={18} />}
+            size='xs'
+            onClick={() => setOpenModal(true)}
           >
             Add Fleet Operator
           </Button>
         </CheckAllowed>
       </Flex>
-    
+
       <FleetOperatorsTable id={id} dealersClickRow={handleClick} />
 
       <RightSideDrawer
         opened={openModal}
         size="lg"
         onClose={handleEdit}
-        title="Fleet Operator Information" 
+        title="Fleet Operator Information"
       >
         {!edit ? (
-          <AddNewFleetOperatorForm 
-            dealer_id={id} 
-            isEdit='Edit' 
-            callback={handleEdit} 
-            currentUser={currentUser} 
-            editable={editable} 
+          <AddNewFleetOperatorForm
+            dealer_id={id}
+            isEdit='Edit'
+            callback={handleEdit}
+            currentUser={currentUser}
+            editable={editable}
           />
         ) : (
-          <AddNewFleetOperatorForm 
-            data={data} 
-            dealer_id={id} 
-            callback={handleEdit} 
-            currentUser={currentUser} 
-            editable={editable} 
+          <AddNewFleetOperatorForm
+            data={data}
+            dealer_id={id}
+            callback={handleEdit}
+            currentUser={currentUser}
+            editable={editable}
           />
         )}
       </RightSideDrawer>

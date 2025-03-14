@@ -187,7 +187,7 @@ const DealerEditSideWrapper = ({
     validateOnChange: false,
     validateOnBlur: true,
     onSubmit: (values) => {
-      setShowDealerEditForm({...showDealerEditForm, loading: true})
+      setShowDealerEditForm({ ...showDealerEditForm, loading: true })
       setLoading(true);
       if (isAdd === 'Add') {
         validateId('pan', values?.pan)
@@ -234,7 +234,7 @@ const DealerEditSideWrapper = ({
             },
             variant: 'success',
           });
-          setShowDealerEditForm({...showDealerEditForm, loading: false})
+          setShowDealerEditForm({ ...showDealerEditForm, loading: false })
           onClose()
           queryClient.invalidateQueries(['dealership-applicants', id])
         })
@@ -247,7 +247,7 @@ const DealerEditSideWrapper = ({
             },
             variant: 'error',
           });
-          setShowDealerEditForm({...showDealerEditForm, loading: false})
+          setShowDealerEditForm({ ...showDealerEditForm, loading: false })
         })
     },
   });
@@ -336,6 +336,7 @@ const DealerEditSideWrapper = ({
         {!readOnly ? (
           <Flex style={{ width: '100%' }} align={'center'} justify={'space-between'}>
             <Button
+              size="sm"
               colorScheme="secondary"
               variant="outline"
               leftSection={<IconChevronLeft size={14} />}
@@ -348,7 +349,7 @@ const DealerEditSideWrapper = ({
             <Button
               colorScheme="green"
               variant="filled"
-              size="md"
+              size="sm"
               onClick={loading ? () => null : readOnly ? handleEdit : handleSubmit}
               disabled={loading}
               loading={loading}

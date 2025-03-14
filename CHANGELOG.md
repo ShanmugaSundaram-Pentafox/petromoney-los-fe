@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.43.5](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.43.4...v2.43.5) (2025-03-14)
+
+
+### Bug Fixes
+
+* ui bugs ([6e52fbf](https://bitbucket.org/gmfvl/petromoney-fe/commit/6e52fbf81cc533e9a573bf45bdc19395fc105063))
+
 ### [2.43.4](https://bitbucket.org/gmfvl/petromoney-fe/compare/v2.43.3...v2.43.4) (2025-02-19)
 
 

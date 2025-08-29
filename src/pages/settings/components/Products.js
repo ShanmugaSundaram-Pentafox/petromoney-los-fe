@@ -162,7 +162,7 @@ const Products = ({ title, callback, currentUser }) => {
       is_emi_product: Yup.string().required('Select EMI option'),
     }),
     onSubmit: values => {
-      let data = { ...values, roi: values.interest, is_emi_product: values.is_emi_product === 'yes' ? true : false }
+      let data = { ...values, roi: values.interest, is_emi_product: values.is_emi_product === 'yes' ? 1 : 0 }
       delete data['interest']
       if (action === 'update') {
         updateProduct(data)

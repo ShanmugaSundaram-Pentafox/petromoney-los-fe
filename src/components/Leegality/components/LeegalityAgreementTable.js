@@ -242,7 +242,7 @@ const LeegalityAgreementTable = ({ loanAmount, dealership, dealers, applicants, 
                   </Table.Tr>
                   <Table.Tr>
                     <Table.Td>Loan Cycle</Table.Td>
-                    <Table.Td>{product?.tenure} { product?.is_emi_product ? 'days' : 'Months' }</Table.Td>
+                    <Table.Td>{product?.tenure} { product?.is_emi_product ? 'Months' : 'days' }</Table.Td>
                   </Table.Tr>
                   <Table.Tr>
                     <Table.Td>Interest Rate</Table.Td>

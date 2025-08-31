@@ -13,7 +13,7 @@ import { action_id, resources_id } from '../../../config/accessControl';
 import { getProductsMaster, updateProductbyId, insertNewProduct, getEntities } from '../../../services/common.service';
 import { isAllowed } from '../../../utils/cerbos';
 import CheckAllowed from '../../rbac/CheckAllowed';
-import { Flex } from '@mantine/core';
+import { Flex, SegmentedControl } from '@mantine/core';
 import { Button } from '../../../components/Mantine/Button/Button';
 
 
@@ -151,7 +151,7 @@ const Products = ({ title, callback, currentUser }) => {
   const { values, errors, handleChange, handleSubmit, setValues, setFieldValue } = useFormik({
     validateOnChange: false,
     validateOnBlur: false,
-    initialValues: {},
+    initialValues: { is_emi_product: 'no', },
     validationSchema: Yup.object().shape({
       product_name: Yup.string().nullable().required('Enter Product Name'),
       interest: Yup.number().nullable().required('Enter Rate of Interest').max(100, 'ROI Should be less than 100%'),
@@ -159,9 +159,10 @@ const Products = ({ title, callback, currentUser }) => {
       product_type_id: Yup.number().nullable().required('Select Entity'),
       processing_fee: Yup.number().nullable().required('Enter Processing Fee').max(50, 'Processing Fee Should be less than 50%'),
       tenure: Yup.number().nullable().required('Enter Tenure').max(365, 'Tenure Should be less than 365 days'),
+      is_emi_product: Yup.string().required('Select EMI option'),
     }),
     onSubmit: values => {
-      let data = { ...values, roi: values.interest }
+      let data = { ...values, roi: values.interest, is_emi_product: values.is_emi_product === 'yes' ? 1 : 0 }
       delete data['interest']
       if (action === 'update') {
         updateProduct(data)
@@ -172,7 +173,7 @@ const Products = ({ title, callback, currentUser }) => {
   });
 
   const EditItem = (data) => {
-    setValues({ ...data })
+    setValues({ ...data, is_emi_product: data.is_emi_product ? 'yes' : 'no' })
     setAction('update')
     setAddNewProduct(true)
   }
@@ -274,11 +275,23 @@ const Products = ({ title, callback, currentUser }) => {
                     helperText={errors.tenure}
                   />
                 </Grid>
+                <Grid item md={6}>
+                  <label>Is EMI Product</label>
+                  <SegmentedControl ml={10} color={'blue'} size='sm'
+                    name='is_emi_product'
+                    value={values.is_emi_product || 'no'}
+                    onChange={(value) => setFieldValue('is_emi_product', value)}
+                    data={[
+                      { label: 'Yes', value: 'yes' },
+                      { label: 'No', value: 'no' },
+                    ]}
+                  />
+                </Grid>
+                <Grid item style={{ display: 'flex', justifyContent: 'flex-end', }}>
+                  <Button variant="outlined" size="medium" onClick={() => { setAddNewProduct(false); setValues({}); }}>Back</Button>
+                  <Button color="secondary" size="medium" variant="contained" style={{ marginLeft: 6 }} onClick={handleSubmit}>Save</Button>
+                </Grid>
               </Grid>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 15 }}>
-                <Button variant="outlined" size="medium" onClick={() => { setAddNewProduct(false); setValues({}); }}>Back</Button>
-                <Button color="secondary" size="medium" variant="contained" style={{ marginLeft: 6 }} onClick={handleSubmit}>Save</Button>
-              </div>
             </div>
           ) : (
             <div className={classes.stepperRoot}>

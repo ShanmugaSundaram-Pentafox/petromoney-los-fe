@@ -8,6 +8,7 @@ import {
   PasswordInput,
   PinInput,
   Group,
+  Stack,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import React, { useState } from 'react';
@@ -36,6 +37,11 @@ const showOtpLogin = () => {
     return false
   }
 }
+
+const INPUT_HEIGHT = 52;
+const RADIUS = 8;
+const BORDER_COLOR = '#E5E7EB';
+const PRIMARY_RED = '#CF3E36';
 
 const LoginForm = ({ setCurrentUser }) => {
   const form = useForm({
@@ -159,159 +165,164 @@ const LoginForm = ({ setCurrentUser }) => {
   }
 
   return (
-    <Box className={classes.login_card}>
-      <Box className={classes.logo_container}>
-        <img alt='Logo' src='/images/logo-white.png' className={classes.logo} />
+    <Box className={classes} style={{ width: '400px' }}>
+      <Box mb={36}>
+        <img alt='Logo' src='/images/logo-white.png' height={43} width={140} />
       </Box>
       <Box style={{ marginBottom: '2rem' }}>
-        <Title order={2}>Login</Title>
-        <Text variant='h3' style={{ color: 'rgb(0,0,0,0.4)' }}>
+        <Title order={2} mb={16} fz={32} fw={600}>Log in</Title>
+        <Text variant='h3' fz={20} fw={400} mb={32}>
           {!forgetPass ? 'Please login to your account' : 'Please enter your mobile number to request a password reset.'}
         </Text>
       </Box>
       <form onSubmit={form.onSubmit(onSubmit)}>
-        <TextInput
-          id='mobile'
-          label='Mobile Number'
-          type='number'
-          // size='xs'
-          // error={errors?.mobile?.message}
-          leftSection={<IconPhone size={16} />}
-          {...form.getInputProps('mobile')}
-        />
-        {
-          loginWithOTP ? (
-            isShowOTP ? (
-              <>
-                <Box>
-                  <Text style={{ fontSize: 13 }} fw={600} c={'rgb(73, 80, 87)'} mb={4}>Enter OTP</Text>
-                  <Group justify='space-between' style={{ flexWrap: 'nowrap' }} gap={6}>
-                    <PinInput
-                      label={'OTP'}
-                      type={'number'}
-                      gap={4}
-                      {...form.getInputProps('otp')}
-                    />
-                    {/* {isShowOTP && <label className={classes.resend} onClick={sendOTP}>Resend OTP</label>} */}
-                    {isShowOTP &&
-                      <Button variant='white' color='gray' onClick={sendOTP} fullWidth>Resend OTP</Button>
+        <Stack gap={32}>
+          <TextInput
+            id='mobile'
+            label='Mobile Number'
+            type='number'
+            // size='xs'
+            // error={errors?.mobile?.message}
+            leftSection={<IconPhone size={16} />}
+            leftSectionWidth={44}
+            styles={textInputStyles}
+            {...form.getInputProps('mobile')}
+          />
+          {
+            loginWithOTP ? (
+              isShowOTP ? (
+                <>
+                  <Box>
+                    <Text style={{ fontSize: 13 }} fw={600} c={'rgb(73, 80, 87)'} mb={4}>Enter OTP</Text>
+                    <Group justify='space-between' style={{ flexWrap: 'nowrap' }} gap={6}>
+                      <PinInput
+                        label={'OTP'}
+                        type={'number'}
+                        gap={4}
+                        {...form.getInputProps('otp')}
+                      />
+                      {/* {isShowOTP && <label className={classes.resend} onClick={sendOTP}>Resend OTP</label>} */}
+                      {isShowOTP &&
+                        <Button variant='white' color='gray' onClick={sendOTP} fullWidth>Resend OTP</Button>
+                      }
+                    </Group>
+                  </Box>
+                  {
+                    forgetPass &&
+                      <>
+                        <PasswordInput
+                          id='new_password'
+                          variant='filled'
+                          label='New Password'
+                          // size='xs'
+                          // error={errors?.password?.message}
+                          leftSection={<IconLock size={16} />}
+                          {...form.getInputProps('new_password')}
+                        />
+                        <PasswordInput
+                          styles={passwordInputStyles}
+                          id='confirm_password'
+                          variant='filled'
+                          label='Confirm Password'
+                          // size='xs'
+                          // error={errors?.password?.message}
+                          leftSection={<IconLock size={16} />}
+                          {...form.getInputProps('confirm_password')}
+                        />
+                      </>
+                  }
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'column' }}>
+                    {/* <div style={{ display: 'flex', flexDirection: 'column' }}> */}
+                    <Button
+                      type="submit"
+                      fullWidth
+                      my={10}
+                      color={!forgetPass ? 'green' : 'red'}
+                    >
+                      {
+                        !forgetPass ? 'Login' : 'Reset Password'
+                      }
+                    </Button>
+                    {forgetPass && <label className={classes.returnLabel} style={{ cursor: 'pointer' }}>Return to <span style={{ color: '#1E88E5' }} onClick={goBackLogin}>Login Page</span></label>}
+                    {
+                      showOtpLogin() || forgetPass ? null : (
+                        <label className={classes.label} style={{ cursor: 'pointer' }} onClick={() => {
+                          setLoginWithOTP(false)
+                          // setOtpLogin(false)
+                          form.setFieldValue('otp', undefined)
+                        }}>Login with password</label>
+                      )
                     }
-                  </Group>
-                </Box>
-                {
-                  forgetPass &&
-                    <>
-                      <PasswordInput
-                        id='new_password'
-                        variant='filled'
-                        label='New Password'
-                        // size='xs'
-                        // error={errors?.password?.message}
-                        leftSection={<IconLock size={16} />}
-                        {...form.getInputProps('new_password')}
-                      />
-                      <PasswordInput
-                        id='confirm_password'
-                        variant='filled'
-                        label='Confirm Password'
-                        // size='xs'
-                        // error={errors?.password?.message}
-                        leftSection={<IconLock size={16} />}
-                        {...form.getInputProps('confirm_password')}
-                      />
-                    </>
-                }
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: 'column' }}>
-                  {/* <div style={{ display: 'flex', flexDirection: 'column' }}> */}
+                    {/* </div> */}
+                  </div>
+                </>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                   <Button
+                    fullWidth
+                    onClick={generateOTP}
+                    styles={loginButtonStyles}
+                    mt={10}
+                  >
+                    Send OTP
+                  </Button>
+
+                  {
+                    !forgetPass ?
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 10 }}>
+                        {
+                          showOtpLogin() ? null : (
+                            <label className={classes.label} style={{ cursor: 'pointer' }} onClick={() => {
+                              setLoginWithOTP(false)
+                              // setOtpLogin(false)
+                              form.setFieldValue('otp', undefined)
+                            }}>Login with password</label>
+                          )
+                        }
+                        <label className={classes.forgetLabel} style={{ cursor: 'pointer' }} onClick={() => {
+                          setLoginWithOTP(true)
+                          setForgetPass(true)
+                        }}>Forgot Password ?</label>
+                      </div> :
+                      <label className={classes.returnLabel}>Return to <span style={{ color: '#1E88E5' }} onClick={goBackLogin}>Login Page</span></label>
+                  }
+                </div>
+              )
+            ) : (
+              <>
+                <PasswordInput
+                  id='password'
+                  variant='filled'
+                  label='Password'
+                  // size='xs'
+                  // error={errors?.password?.message}
+                  leftSection={<IconLock size={16} />}
+                  styles={passwordInputStyles}
+                  {...form.getInputProps('password')}
+                />
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <Button
+                    my={10}
                     type="submit"
                     fullWidth
-                    my={10}
-                    color={!forgetPass ? 'green' : 'red'}
+                    styles={loginButtonStyles}
                   >
-                    {
-                      !forgetPass ? 'Login' : 'Reset Password'
-                    }
+                    Login
                   </Button>
-                  {forgetPass && <label className={classes.returnLabel} style={{ cursor: 'pointer' }}>Return to <span style={{ color: '#1E88E5' }} onClick={goBackLogin}>Login Page</span></label>}
-                  {
-                    showOtpLogin() || forgetPass ? null : (
-                      <label className={classes.label} style={{ cursor: 'pointer' }} onClick={() => {
-                        setLoginWithOTP(false)
-                        // setOtpLogin(false)
-                        form.setFieldValue('otp', undefined)
-                      }}>Login with password</label>
-                    )
-                  }
-                  {/* </div> */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <label className={classes.label} style={{ cursor: 'pointer' }} onClick={() => {
+                      setLoginWithOTP(true)
+                      form.setFieldValue('password', undefined)
+                    }}>Login with OTP</label>
+                    <label className={classes.forgetLabel} style={{ cursor: 'pointer' }} onClick={() => {
+                      setLoginWithOTP(!loginWithOTP)
+                      setForgetPass(true)
+                    }}>Forget Password ?</label>
+                  </div>
                 </div>
               </>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <Button
-                  fullWidth
-                  onClick={generateOTP}
-                  color={'green'}
-                  mt={10}
-                >
-                  Send OTP
-                </Button>
-
-                {
-                  !forgetPass ?
-                    <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginTop: 10 }}>
-                      {
-                        showOtpLogin() ? null : (
-                          <label className={classes.label} style={{ cursor: 'pointer' }} onClick={() => {
-                            setLoginWithOTP(false)
-                            // setOtpLogin(false)
-                            form.setFieldValue('otp', undefined)
-                          }}>Login with password</label>
-                        )
-                      }
-                      <label className={classes.forgetLabel} style={{ cursor: 'pointer' }} onClick={() => {
-                        setLoginWithOTP(true)
-                        setForgetPass(true)
-                      }}>Forgot Password ?</label>
-                    </div> :
-                    <label className={classes.returnLabel}>Return to <span style={{ color: '#1E88E5' }} onClick={goBackLogin}>Login Page</span></label>
-                }
-              </div>
-            )
-          ) : (
-            <>
-              <PasswordInput
-                id='password'
-                variant='filled'
-                label='Password'
-                // size='xs'
-                // error={errors?.password?.message}
-                leftSection={<IconLock size={16} />}
-                {...form.getInputProps('password')}
-              />
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <Button
-                  my={10}
-                  type="submit"
-                  fullWidth
-                  color='green'
-                >
-                  Login
-                </Button>
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <label className={classes.label} style={{ cursor: 'pointer' }} onClick={() => {
-                    setLoginWithOTP(true)
-                    form.setFieldValue('password', undefined)
-                  }}>Login with OTP</label>
-                  <label className={classes.forgetLabel} style={{ cursor: 'pointer' }} onClick={() => {
-                    setLoginWithOTP(!loginWithOTP)
-                    setForgetPass(true)
-                  }}>Forget Password ?</label>
-                </div>
-              </div>
-            </>
-          )}
-        {/* <PasswordInput
+            )}
+          {/* <PasswordInput
           id='password'
           variant='filled'
           label='Password'
@@ -320,7 +331,7 @@ const LoginForm = ({ setCurrentUser }) => {
           leftSection={<IconLock size={16} />}
           {...form.getInputProps('password')}
         /> */}
-        {/* <Button
+          {/* <Button
           variant='filled'
           // loading={loading}
           mt={14}
@@ -331,6 +342,7 @@ const LoginForm = ({ setCurrentUser }) => {
         >
           Login
         </Button> */}
+        </Stack>
       </form>
       {apiStatus.type && (
         <Box mt='md'>
@@ -348,3 +360,111 @@ const mapDispatchToProps = dispatch => ({
 })
 
 export default connect(null, mapDispatchToProps)(LoginForm);
+
+
+const textInputStyles = {
+  root: {
+    position: 'relative',
+  },
+
+  label: {
+    position: 'absolute',
+    top: -8,
+    left: 14,
+    padding: '0 6px',
+    fontSize: 13,
+    backgroundColor: '#fff',
+    color: '#8A8A8A',
+    zIndex: 2,
+  },
+
+  input: {
+    height: INPUT_HEIGHT,
+    borderRadius: RADIUS,
+    border: `1px solid ${BORDER_COLOR}`,
+    fontSize: 15,
+
+    /* 🔑 FIX */
+    paddingLeft: 44,          // space for icon
+    paddingRight: 14,
+    lineHeight: `${INPUT_HEIGHT}px`,
+    backgroundColor: '#fff',
+
+    '&:focus': {
+      borderColor: PRIMARY_RED,
+    },
+  },
+};
+
+
+const passwordInputStyles = {
+  root: {
+    position: 'relative',
+  },
+
+  label: {
+    position: 'absolute',
+    top: -8,
+    left: 14,
+    padding: '0 6px',
+    fontSize: 13,
+    backgroundColor: '#fff',
+    color: '#8A8A8A',
+    zIndex: 2,
+  },
+
+  input: {
+    height: INPUT_HEIGHT,
+    borderRadius: RADIUS,
+    border: `1px solid ${BORDER_COLOR}`,
+    fontSize: 15,
+    paddingTop: 0,
+    paddingBottom: 0,
+    paddingLeft: 14,
+    paddingRight: 44,
+    lineHeight: `${INPUT_HEIGHT}px`,
+    backgroundColor: '#fff',
+
+    '&:focus': {
+      borderColor: '#CF3E36',
+    },
+  },
+
+  innerInput: {
+    height: INPUT_HEIGHT,
+    lineHeight: `${INPUT_HEIGHT}px`,
+  },
+
+  visibilityToggle: {
+    height: INPUT_HEIGHT,
+    width: 44,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#9CA3AF',
+    backgroundColor: 'transparent',
+
+    /* 🔑 THIS fixes the hover issue */
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+
+    '&:active': {
+      backgroundColor: 'transparent',
+    },
+  },
+};
+
+const loginButtonStyles = {
+  root: {
+    height: INPUT_HEIGHT,
+    borderRadius: RADIUS,
+    backgroundColor: PRIMARY_RED,
+    fontSize: 16,
+    fontWeight: 500,
+
+    '&:hover': {
+      backgroundColor: '#B93730',
+    },
+  },
+};

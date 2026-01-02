@@ -9,7 +9,6 @@ const LoginNew = () => {
     <Box className={classes.root}>
       <Box className={classes.text_content}>
         <Title className={classes.title_text}>LOS</Title>
-        <Text className={classes.sub_text}>Financing Made Simple</Text>
         <Text size='xs' className={classes.ver_text}>
           <strong>v{packageJson.version}</strong>
         </Text>

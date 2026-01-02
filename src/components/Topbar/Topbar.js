@@ -1,4 +1,4 @@
-import { Badge, Box, Burger, Flex, Group, Image, Menu, Text, Title } from '@mantine/core';
+import { Badge, Box, Burger, Flex, Group, Image, Menu, Text } from '@mantine/core';
 // import { makeStyles } from '@material-ui/styles';
 // import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -115,15 +115,16 @@ const Topbar = (props) => {
 
         <Group gap={10} className='items-center' ml={4}>
           <Image
-            w={40}
-            h={40}
-            src="/images/logo.png"
+            w={140}
+            h={30}
+            ml={0}
+            src="/images/logo-white.png"
             mx="auto"
           />
-          <Title order={3} sx={{ marginLeft: 12 }}>
-            <span className='text-red-500'>Petro</span>
-            <span className='text-green-800'>money</span>
-          </Title>
+          {/* <Title order={3} sx={{ marginLeft: 12 }}>
+            <span className='text-red-500'>Penta</span>
+            <span className='text-green-800'>fox</span>
+          </Title> */}
         </Group>
 
         {/* {match?.path?.toLowerCase() == '/passbook' && (

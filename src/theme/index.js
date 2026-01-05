@@ -5,7 +5,7 @@ import palette from './palette';
 import typography from './typography';
 
 const theme = createTheme({
-  themeName: 'Petromoney',
+  // themeName: 'Petromoney',
   palette,
   typography,
   overrides,

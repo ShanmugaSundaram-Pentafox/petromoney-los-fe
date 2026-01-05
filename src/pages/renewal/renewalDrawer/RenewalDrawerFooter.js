@@ -122,13 +122,13 @@ const RenewalDrawerFooter = ({
         }}>
         <Flex gap='xs'>
           {
-            ['review', 'approval', 'approved', 'rejected'].includes(status) && (
-              <Button variant='outline' size='xs'
-                onClick={() => setOpenDrawer(true)}
-              >
-                View Remarks
-              </Button>
-            )
+            // ['review', 'approval', 'approved', 'rejected'].includes(status) && (
+            //   <Button variant='outline' size='xs'
+            //     onClick={() => setOpenDrawer(true)}
+            //   >
+            //     View Remarks
+            //   </Button>
+            // )
           }
           {
             ['rejected'].includes(status) && (

@@ -42,11 +42,11 @@ const UsersTable = ({ title, withRole, currentUser, apiFilter, setApiFilter, use
       key: 'mobile',
       header: 'Mobile Number',
       enableColumnFilter: false,
-    }, {
-      key: 'email',
-      header: 'Email',
-      enableColumnFilter: false,
-    }, {
+      // }, {
+      //   key: 'email',
+      //   header: 'Email',
+      //   enableColumnFilter: false,
+      // }, {
       key: 'role_name',
       header: 'Role',
     },

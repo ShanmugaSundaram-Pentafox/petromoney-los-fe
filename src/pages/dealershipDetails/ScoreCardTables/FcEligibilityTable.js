@@ -310,7 +310,7 @@ export const eligibilityFuelCredit = [
   { item: 'P', label: 'Score Impact on Fuel Credit Exposure %', key: 'score_impact_on_fuel_credit_exposure_percent', input: null },
   { item: 'Q', label: 'Max Fuel Credit Exposure Possible post Score Impact', key: 'max_fuel_credit_exposure_possible_post_score_impact', input: null },
   { item: 'R', label: 'Max Exposure Cap as per policy (Rs)', key: 'max_exposure_cap_as_per_policy', input: null },
-  { item: 'S', label: 'Exisiting PetroMoney Exposures', key: 'exisiting_petromoney_exposures', input: null },
+  { item: 'S', label: 'Exisiting Pentafox Exposures', key: 'exisiting_pentafox_exposures', input: null },
   { item: 'T', label: 'Max Loan Possible (After applying policy caps) (Rs)', key: 'max_loan_possible_after_applying_policy_caps', input: null },
   { item: 'U', label: 'Fuel Credit Amount Applied for (Rs)', key: 'fuel_credit_amount_applied', input: null },
   { item: 'V', label: 'Maximum Fuel Credit Limit Based on KL Sales', key: 'maximum_fuel_credit_limit_based_on_kl_sales', input: null },

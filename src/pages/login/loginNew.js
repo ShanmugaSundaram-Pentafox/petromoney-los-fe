@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Text, Title, Group } from '@mantine/core';
+import { Box } from '@mantine/core';
 import {
   IconCheck,
   IconFileText,
@@ -20,7 +20,8 @@ export default function Login() {
     <Box
       style={{
         display: 'flex',
-        minHeight: '100vh',
+        height: '100vh',
+        overflow: 'hidden',
       }}
     >
       {/* LEFT PANEL */}
@@ -40,6 +41,24 @@ export default function Login() {
       <Box
         style={{
           width: '50%',
+          height: '100%',
+        }}
+      >
+        <img
+          src="/images/lms_right.png"
+          alt="right panel"
+          style={{
+            width: '100%',
+            height: '100%', // inherit from parent
+            objectFit: 'cover',
+            display: 'block',
+          }}
+        />
+      </Box>
+
+      {/* <Box
+        style={{
+          width: '50%',
           display: 'flex',
           alignItems: 'center',
           color: '#ffffff',
@@ -47,14 +66,12 @@ export default function Login() {
             'linear-gradient(135deg, #7A0F0F 0%, #C41E1E 45%, #E03131 70%, #8B0C0C 100%)',
         }}
       >
-        {/* CONTENT COLUMN */}
         <Box
           style={{
             marginLeft: 72,
             marginRight: 72,
           }}
         >
-          {/* HEADER */}
           <Title
             order={1}
             fw={500}
@@ -78,8 +95,6 @@ export default function Login() {
             Manage loan applications, approvals, and disbursements from a
             single platform.
           </Text>
-
-          {/* FEATURES */}
           <Box style={{ marginBottom: 96 }}>
             {FEATURES.map(({ icon: Icon, label }) => (
               <Group key={label} spacing={18} mb={26}>
@@ -104,8 +119,6 @@ export default function Login() {
               </Group>
             ))}
           </Box>
-
-          {/* FOOTER COPY */}
           <Title order={3} fz={24} fw={500} mb={10}>
             One Platform. Complete Control.
           </Title>
@@ -118,7 +131,7 @@ export default function Login() {
             Accurate. Secure. Operationally efficient.
           </Text>
         </Box>
-      </Box>
+      </Box> */}
     </Box>
   );
 }

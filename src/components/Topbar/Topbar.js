@@ -12,7 +12,7 @@ import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import { permissionCheck } from '../UserCan/UserCan';
 import { format } from 'date-fns';
-import { IconSelector } from '@tabler/icons-react';
+import { IconSelector,IconExternalLink  } from '@tabler/icons-react';
 import CheckAllowed from '../../pages/rbac/CheckAllowed';
 import { action_id, resources_id } from '../../config/accessControl';
 
@@ -180,11 +180,11 @@ const Topbar = (props) => {
                   </Group>
                 </Box>
               </Menu.Target>
-              {/* <Menu.Dropdown>
+              <Menu.Dropdown>
                 <Menu.Label>Our Other Services</Menu.Label>
-                <Menu.Item onClick={() => window.open('https://lms.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='blue'>LMS</Badge></Menu.Item>
-                <Menu.Item onClick={() => window.open('https://ddms.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='green'>DDMS</Badge></Menu.Item>
-              </Menu.Dropdown> */}
+                <Menu.Item onClick={() => window.open('https://lms.pentafox.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='blue'>LMS</Badge></Menu.Item>
+                {/* <Menu.Item onClick={() => window.open('https://ddms.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='green'>DDMS</Badge></Menu.Item> */}
+              </Menu.Dropdown>
             </Menu>
           </CheckAllowed>
           <Box

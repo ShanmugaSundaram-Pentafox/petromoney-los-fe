@@ -20,11 +20,11 @@ const DisbursedDrawer = ({ id, selectedLoanData, status, currentUser, readOnly, 
         <WorkingSheetDrawer id={id} />
         <LoanInfo viewable={true} status={status} currentUser={currentUser} editable={editable} data={selectedLoanData} />
         <>
-          <DrawerRemarks label={'Recommendation'} loanData={loanData?.review_remarks} readOnly={readOnly} />
+          {/* <DrawerRemarks label={'Recommendation'} loanData={loanData?.review_remarks} readOnly={readOnly} />
           <DrawerRemarks label={'Reviewer recommendation'} loanData={loanData?.approval_remarks} readOnly={readOnly} />
           <DrawerRemarks label={'Approver recommendation'} loanData={loanData?.remarks} readOnly={readOnly} />
           <DrawerRemarks label={'Disbursement recommendation'} loanData={loanData?.disbursement_recommendation_remarks} readOnly={readOnly} />
-          <DrawerRemarks label={'Disbursement approved recommendation'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} />
+          <DrawerRemarks label={'Disbursement approved recommendation'} loanData={loanData?.disbursement_approval_remarks} readOnly={readOnly} /> */}
           {/* {loanData?.pushback_remarks && <DrawerRemarks label={'Push back Remarks'} loanData={loanData?.pushback_remarks} readOnly={readOnly} />} */}
         </>
         {

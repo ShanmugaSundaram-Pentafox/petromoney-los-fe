@@ -8,12 +8,16 @@ import { useDebouncedState } from '@mantine/hooks';
 import { getSignedUrl } from '../../../services/common.service';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 import { decrypt } from '../../../services/crypto.service';
+import { Button, Modal } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
+import OnboardDealershipForm from '../../onboardDealership/OnboardDealershipForm';
 
 const DealershipsTable = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useDebouncedState('', 500);
   const [apiFilter, setApiFilter] = useState({});
   const [downloadLoading, setDownloadLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const apiFilterHeader = [
     { key: 'region_id', label: 'region', value: 'id', filterLabel: 'Region', apiUrl: 'regions/los', data: null, type: 'select' }
   ];
@@ -112,6 +116,15 @@ const DealershipsTable = () => {
 
   return (
     <div>
+      <div style={{ marginBottom: '16px', display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+        <Button
+          leftIcon={<IconPlus size={18} />}
+          onClick={() => setOpenModal(true)}
+          color="blue"
+        >
+          Onboard Dealership
+        </Button>
+      </div>
       <DataTableViewer
         allowSorting={true}
         rowData={dealershipsData?.data}
@@ -131,6 +144,15 @@ const DealershipsTable = () => {
         apiSearch={setSearch}
         downloadQuery={{ query: downloadReport, isLoading: downloadLoading }}
       />
+      <Modal
+        opened={openModal}
+        onClose={() => setOpenModal(false)}
+        title="Onboard Dealership"
+        size="lg"
+        centered
+      >
+        <OnboardDealershipForm onSuccess={() => setOpenModal(false)} />
+      </Modal>
     </div>
   )
 }

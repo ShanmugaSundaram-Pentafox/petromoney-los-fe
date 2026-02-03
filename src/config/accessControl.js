@@ -23,6 +23,7 @@ export const resources_id = {
   transporters: 'transporters',
   fleetOperator: 'fleet_operator',
   PdcModule: 'pdc_moudule',
+  onboardDealership: 'onboard_dealership',
 }
 
 export const action_id = {
@@ -44,6 +45,7 @@ export const action_id = {
     reportLoan_overdue: 'report:loan_overdue',
     reportOpportunity: 'report:opportunity',
     dealerships: 'dealerships',
+    onboardDealership: 'onboard_dealership',
     pre_submit: 'pre_submit',
     users: 'users',
     call_request: 'call_request',
@@ -271,5 +273,10 @@ export const action_id = {
     createCheque: 'cheque_create',
     addTransit: 'transit_add',
     addDpn: 'dpn_add',
+  },
+  onboardDealership: {
+    create: 'onboard:create',
+    edit: 'onboard:edit',
+    view: 'onboard:view',
   }
 }

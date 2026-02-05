@@ -138,3 +138,40 @@ export const validateUDYAM = (udyam) => {
       });
   });
 };
+
+export const checkMobileNumber = (mobile) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`dealership/check-mobile/${mobile}`, {
+      method: 'POST'
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const verifyAadhaar = (aadhar, name) => {
+  return new Promise((resolve, reject) => {
+    apiCall('dealership/verify-aadhar', {
+      method: 'POST',
+      body: { aadhar, name }
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS' && data?.[0]?.is_verified) {
+          resolve(data[0]);
+        } else {
+          reject(message || 'Aadhaar verification failed');
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};

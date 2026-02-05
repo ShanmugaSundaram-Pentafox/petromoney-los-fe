@@ -29,6 +29,7 @@ export const URL = {
   regionMapAdd: 'region-map-add/',
   passReset: 'passReset',
   guarantor: 'guarantors',
+  onboardDealership: 'dealership/onboard',
   ifscApiUrl: 'https://ifsc.razorpay.com/',
   cerbos: 'user/access'
 }

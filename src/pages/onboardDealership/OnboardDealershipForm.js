@@ -10,20 +10,21 @@ import {
   Grid,
   Typography,
   CircularProgress,
-  Link as MuiLink,
-  Card,
-  CardContent
+  Link as MuiLink
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useQuery } from 'react-query';
 import { useSnackbar } from 'notistack';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+import { store } from '../../store';
+import { selectCurrentUser } from '../../store/user/user.selector';
 import { getOmcList, getAllRegions } from '../../services/common.service';
 import {
-  createOnboardDealership,
   validateGST,
-  validatePAN
+  validatePAN,
+  checkMobileNumber,
+  verifyAadhaar
 } from '../../services/onboardDealership.service';
 
 const useStyles = makeStyles((theme) => ({
@@ -122,33 +123,44 @@ const useStyles = makeStyles((theme) => ({
   detailsCard: {
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
-    backgroundColor: '#f8f9fa',
-    border: '1px solid #e0e0e0'
+    backgroundColor: '#ffffff',
+    border: '1px solid #e0e0e0',
+    borderRadius: 8,
+    padding: theme.spacing(2)
   },
   detailsTitle: {
     fontWeight: 600,
-    fontSize: 16,
+    fontSize: 18,
     color: '#222244',
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2.5)
   },
   detailRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: 'grid',
+    gridTemplateColumns: '40% 60%',
+    alignItems: 'flex-start',
+    paddingTop: theme.spacing(1.5),
     paddingBottom: theme.spacing(1.5),
-    borderBottom: '1px solid #e0e0e0',
+    borderBottom: '1px solid #f0f0f0',
+    gap: theme.spacing(2),
     '&:last-child': {
       borderBottom: 'none'
+    },
+    '&:first-child': {
+      paddingTop: 0
     }
   },
   detailLabel: {
     fontWeight: 500,
     color: '#666',
-    fontSize: '0.95rem'
+    fontSize: '0.95rem',
+    lineHeight: 1.4
   },
   detailValue: {
     color: '#222244',
     fontSize: '0.95rem',
-    fontWeight: 500
+    fontWeight: 500,
+    lineHeight: 1.4,
+    wordBreak: 'break-word'
   },
   uploadSection: {
     marginTop: theme.spacing(3),
@@ -195,6 +207,26 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: '#1d4ed8'
     }
   },
+  verifyButton: {
+    backgroundColor: '#16a34a',
+    color: '#fff',
+    padding: theme.spacing(1.25, 3),
+    '&:hover': {
+      backgroundColor: '#15803d'
+    },
+    '&:disabled': {
+      backgroundColor: '#ccc',
+      color: '#999'
+    }
+  },
+  verifySection: {
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(2),
+    backgroundColor: '#f0fdf4',
+    borderRadius: 4,
+    border: '1px solid #bbf7d0',
+    textAlign: 'center'
+  },
   loadingContainer: {
     display: 'flex',
     justifyContent: 'center',
@@ -209,14 +241,19 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
   const [validationStatus, setValidationStatus] = useState({
     gst: null,
     pan: null,
+    mobile: null,
+    aadhaar: null
   });
   const [isValidating, setIsValidating] = useState({
     gst: false,
     pan: false,
+    mobile: false,
+    aadhaar: false
   });
   const [uploadedFiles, setUploadedFiles] = useState({
     gst_document: null,
-    pan_document: null
+    pan_document: null,
+    aadhaar_document: null
   });
   const [gstData, setGstData] = useState(null);
 
@@ -227,14 +264,14 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
     { staleTime: 1000 * 60 * 5 }
   );
 
-  // Fetch regions
+  // Fetch regions (fallback when GST does not provide regions)
   const { data: regions = [], isLoading: regionsLoading } = useQuery(
     'regions',
     () => getAllRegions('0'),
     { staleTime: 1000 * 60 * 5 }
   );
 
-  const handleValidateGST = async (gst, setFieldError) => {
+  const handleValidateGST = async (gst, setFieldError, setFieldValue) => {
     if (!gst) return;
     setIsValidating(prev => ({ ...prev, gst: true }));
     try {
@@ -242,6 +279,8 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
       setValidationStatus(prev => ({ ...prev, gst: 'valid' }));
       // Store GST data for auto-population
       setGstData(result?.data || result);
+      // Reset region selection when GST is re-validated
+      setFieldValue('omc_region', '');
       enqueueSnackbar('GST validated successfully', { variant: 'success' });
     } catch (error) {
       setValidationStatus(prev => ({ ...prev, gst: 'invalid' }));
@@ -268,6 +307,39 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
     }
   };
 
+  const handleCheckMobile = async (mobile, setFieldError) => {
+    if (!mobile || mobile.length !== 10) {
+      enqueueSnackbar('Mobile number must be 10 digits', { variant: 'error' });
+      return;
+    }
+    setIsValidating(prev => ({ ...prev, mobile: true }));
+    try {
+      const result = await checkMobileNumber(mobile);
+      setValidationStatus(prev => ({ ...prev, mobile: 'valid' }));
+      enqueueSnackbar('Mobile number verified successfully', { variant: 'success' });
+    } catch (error) {
+      setValidationStatus(prev => ({ ...prev, mobile: 'invalid' }));
+      enqueueSnackbar(error?.message || 'Mobile number already exists in applicants', { variant: 'error' });
+    } finally {
+      setIsValidating(prev => ({ ...prev, mobile: false }));
+    }
+  };
+
+  const handleVerifyAadhaar = async (aadhaar, setFieldError, values) => {
+    setIsValidating(prev => ({ ...prev, aadhaar: true }));
+    try {
+      const result = await verifyAadhaar(aadhaar, values?.first_name || '');
+      setValidationStatus(prev => ({ ...prev, aadhaar: 'valid' }));
+      enqueueSnackbar('Aadhaar verified successfully', { variant: 'success' });
+    } catch (error) {
+      setValidationStatus(prev => ({ ...prev, aadhaar: 'invalid' }));
+      setFieldError('aadhaar_number', error?.message || 'Invalid Aadhaar number');
+      enqueueSnackbar(error?.message || 'Invalid Aadhaar number', { variant: 'error' });
+    } finally {
+      setIsValidating(prev => ({ ...prev, aadhaar: false }));
+    }
+  };
+
   const handleFileUpload = (fieldName, file) => {
     if (file) {
       setUploadedFiles(prev => ({
@@ -280,32 +352,66 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      // Prepare form data with files
+      // Create FormData for file uploads
       const formData = new FormData();
-      Object.keys(values).forEach(key => {
-        formData.append(key, values[key]);
-      });
-
+      
+      // Add all text fields with proper mapping
+      formData.append('dealership_id', values.dealership_id);
+      formData.append('omc', values.omc_id);
+      formData.append('pan', values.pan);
+      formData.append('gst', values.gst);
+      formData.append('mobile', values.mobile_no);
+      formData.append('region', values.omc_region);
+      formData.append('first_name', values.first_name);
+      formData.append('last_name', values.last_name);
+      formData.append('aadhaar_number', values.aadhaar_number);
+      formData.append('email', values.email);
+      
+      // Add GST data fields
       if (gstData) {
+        formData.append('name', gstData.name || gstData.legal_business_name);
+        formData.append('business_type', gstData.business_type || '');
+        formData.append('state', gstData.state_name || '');
+        formData.append('address', gstData.address || '');
+        formData.append('pincode', gstData.pincode || '');
         if (gstData.state_id) formData.append('state_id', gstData.state_id);
-        if (gstData.state_name) formData.append('state_name', gstData.state_name);
-        if (gstData.address) formData.append('address', gstData.address);
-        if (gstData.pincode) formData.append('pincode', gstData.pincode);
-        if (gstData.business_type) formData.append('business_type', gstData.business_type);
         if (gstData.legal_business_name) formData.append('legal_business_name', gstData.legal_business_name);
-        if (gstData.name) formData.append('name', gstData.name);
+        if (gstData.district) formData.append('district', gstData.district);
       }
 
-      if (uploadedFiles.gst_document) {
-        formData.append('gst_document', uploadedFiles.gst_document);
-      }
+      // Add files with backend expected field names
       if (uploadedFiles.pan_document) {
         formData.append('pan_document', uploadedFiles.pan_document);
       }
+      if (uploadedFiles.gst_document) {
+        formData.append('gst_document', uploadedFiles.gst_document);
+      }
+      if (uploadedFiles.aadhaar_document) {
+        formData.append('aadhaar_document', uploadedFiles.aadhaar_document);
+      }
 
-      await createOnboardDealership(formData);
-      enqueueSnackbar('Dealership onboarded successfully', { variant: 'success' });
-      if (onSuccess) onSuccess();
+      // Get auth token
+      const credentials = selectCurrentUser(store.getState());
+      const headers = {};
+      if (credentials && credentials.token) {
+        headers.Authorization = 'Bearer ' + credentials.token;
+      }
+
+      // Use direct fetch for FormData (apiCall doesn't support it properly)
+      const response = await fetch(`${process.env.REACT_APP_API_BASE}dealership/onboard`, {
+        method: 'POST',
+        headers,
+        body: formData,
+        credentials: 'include'
+      });
+
+      const result = await response.json();
+      if (result.status === 'SUCCESS') {
+        enqueueSnackbar('Dealership onboarded successfully', { variant: 'success' });
+        if (onSuccess) onSuccess();
+      } else {
+        throw new Error(result.message || 'Failed to onboard dealership');
+      }
     } catch (error) {
       enqueueSnackbar(error?.message || 'Failed to onboard dealership', { variant: 'error' });
     } finally {
@@ -335,8 +441,10 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
             gst: '',
             dealership_id: '',
             mobile_no: '',
-            omc_region: '',
-          }}
+            omc_region: '',            first_name: '',
+            last_name: '',
+            aadhaar_number: '',
+            email: ''          }}
           validationSchema={Yup.object().shape({
             omc_id: Yup.string().required('Please select OMC'),
             pan: Yup.string().required('PAN is required').matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, 'Invalid PAN format'),
@@ -344,10 +452,19 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
             dealership_id: Yup.string().required('Dealership ID is required'),
             mobile_no: Yup.string().required('Mobile No is required').matches(/^[0-9]{10}$/, 'Mobile number must be 10 digits'),
             omc_region: Yup.string().required('Please select OMC Region'),
+            first_name: Yup.string().required('First Name is required'),
+            last_name: Yup.string().required('Last Name is required'),
+            aadhaar_number: Yup.string().required('Aadhaar number is required').matches(/^[0-9]{12}$/, 'Aadhaar must be 12 digits'),
+            email: Yup.string().required('Email is required').email('Invalid email format')
           })}
           onSubmit={handleSubmit}
         >
-          {({ values, errors, touched, setFieldValue, setFieldError, isSubmitting, dirty }) => (
+          {({ values, errors, touched, setFieldValue, setFieldError, isSubmitting }) => {
+            const regionOptions = gstData?.regions?.length ? gstData.regions : regions;
+            const showGstDetails = values.omc_region && validationStatus.pan === 'valid' && validationStatus.gst === 'valid' && validationStatus.mobile === 'valid' && gstData;
+            const showVerifiedDetails = validationStatus.pan === 'valid' && validationStatus.gst === 'valid' && validationStatus.mobile === 'valid';
+
+            return (
             <Form>
               {/* Step 1: Basic Input Fields */}
               <Box className={classes.formSection}>
@@ -406,23 +523,24 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
                       className={classes.textField}
                       error={touched.pan && !!errors.pan}
                       placeholder="E.g., AAAAA0000A"
+                      disabled={validationStatus.pan === 'valid' || isValidating.pan}
                     />
                     {values.pan && (
                       <Box style={{ marginTop: 6 }}>
-                        <MuiLink
-                          className={classes.verificationLink}
-                          onClick={() => handleValidatePAN(values.pan, setFieldError)}
-                        >
-                          {isValidating.pan ? (
-                            <>
-                              <CircularProgress size={12} style={{ marginRight: 4, display: 'inline-block' }} /> Validating
-                            </>
-                          ) : validationStatus.pan === 'valid' ? (
-                            '✓ Verified'
-                          ) : (
-                            'Verify PAN'
-                          )}
-                        </MuiLink>
+                        {validationStatus.pan !== 'valid' && (
+                          <MuiLink
+                            className={classes.verificationLink}
+                            onClick={() => handleValidatePAN(values.pan, setFieldError)}
+                          >
+                            {isValidating.pan ? (
+                              <>
+                                <CircularProgress size={12} style={{ marginRight: 4, display: 'inline-block' }} /> Validating
+                              </>
+                            ) : (
+                              'Verify PAN'
+                            )}
+                          </MuiLink>
+                        )}
                         {validationStatus.pan === 'valid' && (
                           <Typography className={classes.successText}>✓ PAN verified successfully</Typography>
                         )}
@@ -442,23 +560,24 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
                       className={classes.textField}
                       error={touched.gst && !!errors.gst}
                       placeholder="Enter GST Number"
+                      disabled={validationStatus.gst === 'valid' || isValidating.gst}
                     />
                     {values.gst && (
                       <Box style={{ marginTop: 6 }}>
-                        <MuiLink
-                          className={classes.verificationLink}
-                          onClick={() => handleValidateGST(values.gst, setFieldError)}
-                        >
-                          {isValidating.gst ? (
-                            <>
-                              <CircularProgress size={12} style={{ marginRight: 4, display: 'inline-block' }} /> Validating
-                            </>
-                          ) : validationStatus.gst === 'valid' ? (
-                            '✓ Verified'
-                          ) : (
-                            'Verify GST'
-                          )}
-                        </MuiLink>
+                        {validationStatus.gst !== 'valid' && (
+                          <MuiLink
+                            className={classes.verificationLink}
+                            onClick={() => handleValidateGST(values.gst, setFieldError, setFieldValue)}
+                          >
+                            {isValidating.gst ? (
+                              <>
+                                <CircularProgress size={12} style={{ marginRight: 4, display: 'inline-block' }} /> Validating
+                              </>
+                            ) : (
+                              'Verify GST'
+                            )}
+                          </MuiLink>
+                        )}
                         {validationStatus.gst === 'valid' && (
                           <Typography className={classes.successText}>✓ GST verified successfully</Typography>
                         )}
@@ -479,7 +598,29 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
                       error={touched.mobile_no && !!errors.mobile_no}
                       helperText={touched.mobile_no && errors.mobile_no}
                       placeholder="Enter 10 digit mobile number"
+                      disabled={validationStatus.mobile === 'valid' || isValidating.mobile}
                     />
+                    {values.mobile_no && (
+                      <Box style={{ marginTop: 6 }}>
+                        {validationStatus.mobile !== 'valid' && (
+                          <MuiLink
+                            className={classes.verificationLink}
+                            onClick={() => handleCheckMobile(values.mobile_no, setFieldError)}
+                          >
+                            {isValidating.mobile ? (
+                              <>
+                                <CircularProgress size={12} style={{ marginRight: 4, display: 'inline-block' }} /> Validating
+                              </>
+                            ) : (
+                              'Verify Mobile'
+                            )}
+                          </MuiLink>
+                        )}
+                        {validationStatus.mobile === 'valid' && (
+                          <Typography className={classes.successText}>✓ Mobile verified successfully</Typography>
+                        )}
+                      </Box>
+                    )}
                   </Grid>
 
                   <Grid item xs={12} md={6}>
@@ -493,11 +634,12 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
                       variant="outlined"
                       className={classes.selectField}
                       error={touched.omc_region && !!errors.omc_region}
+                      disabled={validationStatus.gst !== 'valid' || !gstData?.regions?.length}
                     >
                       <MenuItem value="" disabled>
                         Select OMC Region
                       </MenuItem>
-                      {regions.map((region) => (
+                      {regionOptions.map((region) => (
                         <MenuItem key={region.id} value={region.id}>
                           {region.name}
                         </MenuItem>
@@ -510,8 +652,8 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
                 </Grid>
               </Box>
 
-              {/* Auto-populated fields from GST - Display only after GST validation */}
-              {validationStatus.gst === 'valid' && gstData && (
+              {/* Auto-populated fields from GST - Display only after all selections */}
+              {showGstDetails && (
                 <Box className={classes.formSection}>
                   <Typography className={classes.sectionTitle} style={{ marginTop: 24 }}>Details from GST</Typography>
                   <Grid container spacing={2}>
@@ -527,21 +669,6 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
                         alignItems: 'center'
                       }}>
                         <Typography>{gstData?.state_name || '-'}</Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={12} md={6}>
-                      <Typography style={{ marginBottom: 8, fontWeight: 500 }}>District</Typography>
-                      <Box style={{
-                        padding: '10px 12px',
-                        backgroundColor: '#f5f5f5',
-                        borderRadius: 4,
-                        border: '1px solid #ddd',
-                        minHeight: 40,
-                        display: 'flex',
-                        alignItems: 'center'
-                      }}>
-                        <Typography>{gstData?.district || '-'}</Typography>
                       </Box>
                     </Grid>
 
@@ -607,13 +734,12 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
               )}
 
               {/* Step 2: Verification Details */}
-              {validationStatus.pan === 'valid' && validationStatus.gst === 'valid' && (
-                <Card className={classes.detailsCard}>
-                  <CardContent>
-                    <Typography className={classes.detailsTitle}>
-                      Please verify your details
-                    </Typography>
-                    <Box>
+              {showVerifiedDetails && (
+                <Box className={classes.detailsCard}>
+                  <Typography className={classes.detailsTitle}>
+                    Please verify your details
+                  </Typography>
+                  <Box>
                       <Box className={classes.detailRow}>
                         <Typography className={classes.detailLabel}>1. Dealership ID</Typography>
                         <Typography className={classes.detailValue}>{values.dealership_id || '-'}</Typography>
@@ -651,16 +777,15 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
                       <Box className={classes.detailRow}>
                         <Typography className={classes.detailLabel}>9. Region</Typography>
                         <Typography className={classes.detailValue}>
-                          {regions.find(r => r.id === values.omc_region)?.name || '-'}
+                          {regionOptions.find(r => r.id === values.omc_region)?.name || '-'}
                         </Typography>
                       </Box>
                     </Box>
-                  </CardContent>
-                </Card>
+                </Box>
               )}
 
               {/* Step 3: Document Uploads */}
-              {validationStatus.pan === 'valid' && validationStatus.gst === 'valid' && (
+              {showGstDetails && (
                 <Box className={classes.uploadSection}>
                   <Typography className={classes.uploadTitle}>Attachments</Typography>
                   <Box className={classes.uploadContainer}>
@@ -721,20 +846,140 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
                 </Box>
               )}
 
+              {/* Main Applicant Details Input Section */}
+              {showVerifiedDetails && (
+                <Box className={classes.formSection}>
+                  <Typography className={classes.sectionTitle}>Main Applicant Details</Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <Typography style={{ marginBottom: 8, fontWeight: 500 }}>First Name</Typography>
+                      <TextField
+                        fullWidth
+                        name="first_name"
+                        value={values.first_name}
+                        onChange={(e) => setFieldValue('first_name', e.target.value)}
+                        variant="outlined"
+                        size="small"
+                        className={classes.textField}
+                        error={touched.first_name && !!errors.first_name}
+                        helperText={touched.first_name && errors.first_name}
+                        placeholder="Enter first name"
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                      <Typography style={{ marginBottom: 8, fontWeight: 500 }}>Last Name</Typography>
+                      <TextField
+                        fullWidth
+                        name="last_name"
+                        value={values.last_name}
+                        onChange={(e) => setFieldValue('last_name', e.target.value)}
+                        variant="outlined"
+                        size="small"
+                        className={classes.textField}
+                        error={touched.last_name && !!errors.last_name}
+                        helperText={touched.last_name && errors.last_name}
+                        placeholder="Enter last name"
+                      />
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                      <Typography style={{ marginBottom: 8, fontWeight: 500 }}>Aadhaar Number</Typography>
+                      <TextField
+                        fullWidth
+                        name="aadhaar_number"
+                        value={values.aadhaar_number}
+                        onChange={(e) => setFieldValue('aadhaar_number', e.target.value)}
+                        variant="outlined"
+                        size="small"
+                        className={classes.textField}
+                        error={touched.aadhaar_number && !!errors.aadhaar_number}
+                        placeholder="Enter 12 digit aadhaar"
+                        disabled={validationStatus.aadhaar === 'valid' || isValidating.aadhaar}
+                      />
+                      {values.aadhaar_number && (
+                        <Box style={{ marginTop: 6 }}>
+                          {validationStatus.aadhaar !== 'valid' && (
+                            <MuiLink
+                              className={classes.verificationLink}
+                              onClick={() => handleVerifyAadhaar(values.aadhaar_number, setFieldError, values)}
+                            >
+                              {isValidating.aadhaar ? (
+                                <>
+                                  <CircularProgress size={12} style={{ marginRight: 4, display: 'inline-block' }} /> Validating
+                                </>
+                              ) : (
+                                'Verify Aadhaar'
+                              )}
+                            </MuiLink>
+                          )}
+                          {validationStatus.aadhaar === 'valid' && (
+                            <Typography className={classes.successText}>✓ Aadhaar verified successfully</Typography>
+                          )}
+                        </Box>
+                      )}
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                      <Typography style={{ marginBottom: 8, fontWeight: 500 }}>Email ID</Typography>
+                      <TextField
+                        fullWidth
+                        name="email"
+                        value={values.email}
+                        onChange={(e) => setFieldValue('email', e.target.value)}
+                        variant="outlined"
+                        size="small"
+                        className={classes.textField}
+                        error={touched.email && !!errors.email}
+                        placeholder="Enter email address"
+                      />
+                    </Grid>
+                  </Grid>
+                </Box>
+              )}
+
+              {/* Aadhaar Document Upload */}
+              {showVerifiedDetails && (
+                <Box className={classes.uploadSection}>
+                  <Typography className={classes.uploadTitle}>Aadhaar Document</Typography>
+                  <Box className={classes.uploadContainer}>
+                    <Box className={classes.uploadBox}>
+                      <Typography className={classes.uploadBoxLabel}>Upload Aadhaar</Typography>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        style={{ display: 'none' }}
+                        id="aadhaar-upload"
+                        onChange={(e) => handleFileUpload('aadhaar_document', e.target.files?.[0])}
+                      />
+                      <label htmlFor="aadhaar-upload" style={{ display: 'block' }}>
+                        <Button
+                          component="span"
+                          variant="outlined"
+                          color="primary"
+                          className={classes.uploadButton}
+                          style={{ marginTop: 8 }}
+                        >
+                          Upload
+                        </Button>
+                      </label>
+                      {uploadedFiles.aadhaar_document && (
+                        <Typography style={{ fontSize: 12, marginTop: 8, color: '#388e3c' }}>
+                          ✓ {uploadedFiles.aadhaar_document.name}
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                </Box>
+              )}
+
               {/* Action Buttons */}
               <Box className={classes.buttonGroup}>
-                <Button
-                  variant="outlined"
-                  className={classes.cancelButton}
-                  onClick={() => window.history.back()}
-                >
-                  Go back
-                </Button>
                 <Button
                   type="submit"
                   variant="contained"
                   className={classes.saveButton}
-                  disabled={isSubmitting || validationStatus.pan !== 'valid' || validationStatus.gst !== 'valid'}
+                  disabled={isSubmitting || validationStatus.pan !== 'valid' || validationStatus.gst !== 'valid' || validationStatus.mobile !== 'valid' || validationStatus.aadhaar !== 'valid' || !values.omc_region || !values.first_name || !values.last_name || !values.email}
                 >
                   {isSubmitting ? (
                     <>
@@ -746,7 +991,8 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
                 </Button>
               </Box>
             </Form>
-          )}
+            );
+          }}
         </Formik>
       </Paper>
     </Container>

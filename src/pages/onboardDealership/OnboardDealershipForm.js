@@ -238,6 +238,7 @@ const useStyles = makeStyles((theme) => ({
 const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const MAX_UPLOAD_BYTES = 1024 * 1024;
   const [validationStatus, setValidationStatus] = useState({
     gst: null,
     pan: null,
@@ -342,11 +343,32 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
 
   const handleFileUpload = (fieldName, file) => {
     if (file) {
+      // Calculate total size of all uploaded files (excluding the one being replaced)
+      const currentTotalSize = Object.entries(uploadedFiles).reduce((total, [key, uploadedFile]) => {
+        if (key !== fieldName && uploadedFile) {
+          return total + uploadedFile.size;
+        }
+        return total;
+      }, 0);
+      
+      const newTotalSize = currentTotalSize + file.size;
+      
+      if (newTotalSize > MAX_UPLOAD_BYTES) {
+        const remainingKB = Math.floor((MAX_UPLOAD_BYTES - currentTotalSize) / 1024);
+        enqueueSnackbar(`Total file size exceeds 1 MB. You have ${remainingKB} KB remaining.`, { variant: 'error' });
+        return;
+      }
+      
+      const fileLabels = {
+        gst_document: 'GST',
+        pan_document: 'PAN',
+        aadhaar_document: 'Aadhaar'
+      };
       setUploadedFiles(prev => ({
         ...prev,
         [fieldName]: file
       }));
-      enqueueSnackbar(`${fieldName === 'gst_document' ? 'GST' : 'PAN'} document uploaded`, { variant: 'success' });
+      enqueueSnackbar(`${fileLabels[fieldName] || 'Document'} document uploaded`, { variant: 'success' });
     }
   };
 
@@ -788,6 +810,9 @@ const OnboardDealershipForm = ({ onSuccess, initialValues = null }) => {
               {showGstDetails && (
                 <Box className={classes.uploadSection}>
                   <Typography className={classes.uploadTitle}>Attachments</Typography>
+                  <Typography style={{ fontSize: 12, color: '#666', marginBottom: 12 }}>
+                    Total size of all documents must be under 1 MB
+                  </Typography>
                   <Box className={classes.uploadContainer}>
                     <Box className={classes.uploadBox}>
                       <Typography className={classes.uploadBoxLabel}>GST Document</Typography>

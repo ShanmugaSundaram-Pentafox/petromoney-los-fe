@@ -164,8 +164,8 @@ export const verifyAadhaar = (aadhar, name) => {
       body: { aadhar, name }
     })
       .then(({ status, data, message }) => {
-        if (status === 'SUCCESS' && data?.[0]?.is_verified) {
-          resolve(data[0]);
+        if (status === 'SUCCESS' && data?.is_verified) {
+          resolve(data);
         } else {
           reject(message || 'Aadhaar verification failed');
         }

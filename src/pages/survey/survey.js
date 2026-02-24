@@ -294,7 +294,7 @@ const Survey = (props) => {
         </div>
         <div className={classes.paper}>
           <Typography className={classes.title} component="h1" variant="h2">
-            Pentafox - Insurance Survey
+            Digiops - Insurance Survey
           </Typography>
           <Snackbar open={apiStatus.show} autoHideDuration={4000} onClose={() => setApiStatus({ show: false })}>
             <Alert severity={apiStatus.type}>{apiStatus.message}</Alert>

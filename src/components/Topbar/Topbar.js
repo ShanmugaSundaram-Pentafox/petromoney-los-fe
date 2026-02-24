@@ -183,7 +183,7 @@ const Topbar = (props) => {
               <Menu.Dropdown>
                 <Menu.Label>Our Other Services</Menu.Label>
                 <Menu.Item onClick={() => window.open('https://lms.pentafox.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='blue'>LMS</Badge></Menu.Item>
-                {/* <Menu.Item onClick={() => window.open('https://ddms.petromoney.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='green'>DDMS</Badge></Menu.Item> */}
+                <Menu.Item onClick={() => window.open('https://dms.pentafox.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='green'>DDMS</Badge></Menu.Item>
               </Menu.Dropdown>
             </Menu>
           </CheckAllowed>

@@ -39,12 +39,12 @@ function ConfigurationsMaster({ currentUser }) {
           </Box>
         </div>
 
-        <div>
+        {/* <div>
           <Box className={classes.content} onClick={() => setOpenConfig('external_api')}>
             <AccessIcon width={40} className={classes.icons} />
             <Text size="xs" fw="bold" ta="center">External APIs</Text>
           </Box>
-        </div>
+        </div> */}
       </SimpleGrid>
 
       <RightSideDrawer

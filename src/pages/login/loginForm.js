@@ -41,7 +41,7 @@ const showOtpLogin = () => {
 const INPUT_HEIGHT = 52;
 const RADIUS = 8;
 const BORDER_COLOR = '#E5E7EB';
-const PRIMARY_RED = '#CF3E36';
+const PRIMARY_RED = '#059b0d';
 
 const LoginForm = ({ setCurrentUser }) => {
   const form = useForm({
@@ -464,7 +464,7 @@ const loginButtonStyles = {
     fontWeight: 500,
 
     '&:hover': {
-      backgroundColor: '#B93730',
+      backgroundColor: '#059b0d',
     },
   },
 };

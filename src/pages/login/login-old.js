@@ -139,7 +139,7 @@ const Login = ({ setCurrentUser }) => {
               color="primary"
               className={classes.submit}
             >
-              Login
+              Log
             </Button>
             <Grid container>
               <Grid item xs>

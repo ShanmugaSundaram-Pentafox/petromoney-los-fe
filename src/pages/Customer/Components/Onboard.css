@@ -1,0 +1,23 @@
+/* tab base */
+.custom-tab {
+  position: relative;
+  font-weight: 500;
+}
+
+/* active tab color */
+.custom-tab[data-active] {
+  color: var(--mantine-color-blue-7);
+  background-color: var(--mantine-color-blue-0);
+}
+
+/*underline fix */
+.custom-tab[data-active]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  background-color: var(--mantine-color-blue-6);
+  border-radius: 2px;
+}

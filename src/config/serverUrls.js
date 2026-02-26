@@ -31,5 +31,6 @@ export const URL = {
   guarantor: 'guarantors',
   onboardDealership: 'dealership/onboard',
   ifscApiUrl: 'https://ifsc.razorpay.com/',
-  cerbos: 'user/access'
-}
+  cerbos: 'user/access',
+  customer: 'los-poc/main-applicants'
+};

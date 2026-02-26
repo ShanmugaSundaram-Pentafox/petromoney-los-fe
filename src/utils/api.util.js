@@ -21,12 +21,13 @@ const apiCall = async (route, options = {}) => {
 
 
   // avoided content-type in header of GET Method to get the clear error log from BE.
-  let headerObject = method == 'GET' ? {
-    'Access-Control-Allow-Credentials': 'no-cors'
-  } : {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Credentials': 'no-cors'
+  let headerObject = {
+    'Access-Control-Allow-Credentials': 'no-cors',
   };
+
+  if (method !== 'GET' && !(body instanceof FormData)) {
+    headerObject['Content-Type'] = 'application/json';
+  }
 
   if (customHeader && !isEmpty(customHeader)) {
     headerObject = {
@@ -52,7 +53,11 @@ const apiCall = async (route, options = {}) => {
   };
 
   if (method !== 'GET') {
-    requestDetails.body = JSON.stringify(body);
+    if (body instanceof FormData) {
+      requestDetails.body = body;
+    } else {
+      requestDetails.body = JSON.stringify(body);
+    }
   }
 
   const serverURL = customDomain ? customDomain : apiServer;

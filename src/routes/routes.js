@@ -45,6 +45,8 @@ import OnboardDealership from '../pages/onboardDealership';
 import { selectCurrentUser } from '../store/user/user.selector';
 import { isAllowed } from '../utils/cerbos';
 import LoginNew from '../pages/login/loginNew';
+import Customer from '../pages/Customer/Customer';
+import CustomerOnBoardMain from '../pages/Customer/Components/CustomerOnBoardMain';
 
 const Routes = ({ currentUser }) => {
   return (<>
@@ -57,6 +59,8 @@ const Routes = ({ currentUser }) => {
         allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.dashboard)}
       />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.dealerships)} exact path="/dealership" component={Dealership} />
+      <ProtectedRoute allow exact path="/customers" component={Customer} />
+      <ProtectedRoute allow exact path="/customers/onboard" component={CustomerOnBoardMain}/>
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.onboardDealership, action_id.onboardDealership.create)} exact path="/onboard-dealership" component={OnboardDealership} />
       <ProtectedRoute allow={isAllowed(currentUser?.permissions, resources_id.navigation, action_id.navigation.loans)} exact path="/loans" component={Loans} />
       <ProtectedRoute allow exact path="/dealership/:id?" component={DealershipDetails} />

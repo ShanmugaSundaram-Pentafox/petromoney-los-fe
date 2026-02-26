@@ -168,7 +168,10 @@ const SidebarNav = props => {
               leftSection={link.icon}
               p={0}
               onClick={() => history.push(link.href)}
-              active={location.pathname === link.href}
+              active={
+                location.pathname === link.href ||
+                location.pathname.startsWith(link.href + '/')
+              }
               childrenOffset={22}
             >
               {link.links?.map((subLinks, index) => {

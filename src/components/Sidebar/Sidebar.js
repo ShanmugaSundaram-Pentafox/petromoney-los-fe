@@ -1,4 +1,32 @@
-import { IconAlignBoxBottomCenter, IconArrowAutofitRight, IconArrowCapsule, IconArrowIteration, IconArrowLoopRight, IconBooks, IconCertificateOff, IconChecklist, IconClipboardText, IconCoins, IconDashboard, IconFileAnalytics, IconFileLambda, IconFileStack, IconGasStation, IconLayersSubtract, IconList, IconPhone, IconReorder, IconRepeat, IconReport, IconScooterElectric, IconSettings, IconTir, IconUserCircle, IconUsers } from '@tabler/icons-react';
+import {
+  IconAlignBoxBottomCenter,
+  IconArrowAutofitRight,
+  IconArrowCapsule,
+  IconArrowIteration,
+  IconArrowLoopRight,
+  IconBooks,
+  IconCertificateOff,
+  IconChecklist,
+  IconClipboardText,
+  IconCoins,
+  IconDashboard,
+  IconFileAnalytics,
+  IconFileLambda,
+  IconFileStack,
+  IconGasStation,
+  IconLayersSubtract,
+  IconList,
+  IconPhone,
+  IconReorder,
+  IconRepeat,
+  IconReport,
+  IconScooterElectric,
+  IconSettings,
+  IconTir,
+  IconUserCircle,
+  IconUsers,
+  IconUserPlus,
+} from '@tabler/icons-react';
 import { ScrollArea, Text } from '@mantine/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
@@ -157,6 +185,12 @@ const Sidebar = props => {
       name: 'Dealerships',
       href: '/dealership',
       icon: <IconUsers strokeWidth="2px" size={18} />
+    },
+    {
+      id: action_id?.navigation.dealerships,
+      name: 'Customers',
+      href: '/customers',
+      icon: <IconUserPlus strokeWidth="2px" size={18} />
     },
     {
       id: action_id?.navigation.profileDealer,

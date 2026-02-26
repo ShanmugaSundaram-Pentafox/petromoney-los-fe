@@ -267,19 +267,23 @@ const DataTableViewer = ({
             : ( */}
           <Box mr={'sm'}>
             <Box style={{ display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center' }}>
-              <TextInput
-                placeholder="Search"
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  apiSearch && apiSearch(e.target.value)
-                  useAPIPagination && setPage(1)
-                }}
-                value={search}
-                mx={0}
-                size='xs'
-                icon={<IconSearch size={16} />}
-                rightSection={<IconX size={12} color={'#ccc'} style={{ cursor: 'pointer' }} onClick={() => { setSearch(''); apiSearch && apiSearch() }} />}
-              />
+              
+              {apiSearch && (
+                <TextInput
+                  placeholder="Search"
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    apiSearch && apiSearch(e.target.value)
+                    useAPIPagination && setPage(1)
+                  }}
+                  value={search}
+                  mx={0}
+                  size='xs'
+                  icon={<IconSearch size={16} />}
+                  rightSection={<IconX size={12} color={'#ccc'} style={{ cursor: 'pointer' }} onClick={() => { setSearch(''); apiSearch && apiSearch() }} />}
+                />
+              )}
+
               {columnsFilter
                 ? <Tooltip
                   label={<Text size={'xs'}>Manage Columns</Text>}

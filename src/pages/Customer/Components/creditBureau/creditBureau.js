@@ -1,25 +1,26 @@
 import React from 'react';
-import { Tabs, Loader, Button, Stack, Alert } from '@mantine/core';
+import { Tabs, Loader, Button, Stack, Alert, Text } from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
+
 import CibilDashboard from './CIBIL';
 import {
   useFetchCreditReport,
   useGenerateCreditReport,
 } from './useCreditBureau';
 import CustomerOnboardStorage from '../../../../store/CustomerOnboardStorage';
-import { IconAlertCircle } from '@tabler/icons-react';
 
-/* Helpers */
+/* ------------------ Helpers ------------------ */
 const buildApplicantTabs = (data) => {
   if (!data) return [];
 
   const tabs = [];
 
-  if (data.primaryApplicant) {
+  if (data.primaryApplicant?.applicant_id) {
     tabs.push({
       key: `app-${data.primaryApplicant.applicant_id}`,
       label: 'Primary Applicant',
       applicantId: data.primaryApplicant.applicant_id,
-      name: data.primaryApplicant.full_name,
+      name: data.primaryApplicant.full_name || 'Primary Applicant',
     });
   }
 
@@ -30,27 +31,28 @@ const buildApplicantTabs = (data) => {
       key: `app-${co.applicant_id}`,
       label: `Co-Applicant ${index + 1}`,
       applicantId: co.applicant_id,
-      name: co.full_name,
+      name: co.full_name || `Co-Applicant ${index + 1}`,
     });
   });
 
   return tabs;
 };
 
+/* ------------------ Component ------------------ */
 const CreditBureau = () => {
   const storageData = CustomerOnboardStorage.get();
 
   const formattedData = {
-    dealershipId: storageData?.dealership_id || null,
+    dealershipId: storageData?.dealership_id,
 
     primaryApplicant: {
-      applicant_id: storageData?.applicant?.applicant_id || null,
+      applicant_id: storageData?.applicant?.applicant_id,
       full_name: storageData?.applicant?.full_name || '',
     },
 
     coApplicant:
       storageData?.co_applicants?.map((co) => ({
-        applicant_id: co?.applicant_id || null,
+        applicant_id: co?.applicant_id,
         full_name: co?.full_name || '',
       })) || [],
   };
@@ -60,19 +62,33 @@ const CreditBureau = () => {
     coApplicant: [{ applicant_id: 30 }, { applicant_id: 41 }],
   };
 
-  const tabs = React.useMemo(() => buildApplicantTabs(formattedData), []);
-  console.log(tabs, '---TAB--->', formattedData);
-  const [activeTabKey, setActiveTabKey] = React.useState(tabs[0]?.key);
+  const tabs = React.useMemo(
+    () => buildApplicantTabs(formattedData),
+    [storageData]
+  );
+
+  const [activeTabKey, setActiveTabKey] = React.useState(null);
   const [reports, setReports] = React.useState({});
+
+  const fetchReportMutation = useFetchCreditReport();
+  const generateReportMutation = useGenerateCreditReport();
+
+  /* ------------------ Sync Active Tab ------------------ */
+  React.useEffect(() => {
+    if (!tabs.length) {
+      setActiveTabKey(null);
+      return;
+    }
+
+    const exists = tabs.some((t) => t.key === activeTabKey);
+    if (!exists) {
+      setActiveTabKey(tabs[0].key);
+    }
+  }, [tabs]);
 
   const activeTab = tabs.find((t) => t.key === activeTabKey);
 
-  /* Hooks */
-  const fetchReportMutation = useFetchCreditReport();
-  const generateReportMutation = useGenerateCreditReport();
-  // const getCibiFileMutation = useGetCibiFile(2);
-
-  /* Fetch report */
+  /* ------------------ Fetch Report ------------------ */
   const fetchReport = (applicantId) => {
     fetchReportMutation.mutate(
       { dealershipId: formattedData.dealershipId, applicantId },
@@ -87,7 +103,7 @@ const CreditBureau = () => {
     );
   };
 
-  /* Generate report */
+  /* ------------------ Generate Report ------------------ */
   const generateReport = (applicantId) => {
     generateReportMutation.mutate(
       { dealershipId: formattedData.dealershipId, applicantId },
@@ -102,13 +118,18 @@ const CreditBureau = () => {
     );
   };
 
-  /* Auto fetch on tab change */
+  /* ------------------ Auto Fetch on Tab Change ------------------ */
   React.useEffect(() => {
-    if (!activeTab) return;
-    fetchReport(activeTab.applicantId);
+    if (!activeTab?.applicantId) return;
+
+    // avoid refetch if already cached
+    if (!reports[activeTab.applicantId]) {
+      fetchReport(activeTab.applicantId);
+    }
   }, [activeTab?.applicantId]);
-  
-  if (tabs[0]?.applicantId === null) {
+
+  /* ------------------ No Applicants Guard ------------------ */
+  if (!tabs[0]?.applicantId) {
     return (
       <Alert
         icon={<IconAlertCircle size={18} />}
@@ -120,48 +141,64 @@ const CreditBureau = () => {
         credit report.
       </Alert>
     );
-  } else {
-    return (
-      <Tabs value={activeTabKey} onChange={setActiveTabKey} mt="md">
-        <Tabs.List>
-          {tabs.map((tab) => (
-            <Tabs.Tab key={tab.key} value={tab.key}>
-              {tab.label}
-            </Tabs.Tab>
-          ))}
-        </Tabs.List>
-
-        {tabs.map((tab) => {
-          const report = reports[tab.applicantId];
-
-          return (
-            <Tabs.Panel key={tab.key} value={tab.key} pt="md">
-              {fetchReportMutation.isLoading && activeTabKey === tab.key ? (
-                <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-                  <Loader type="dots" />
-                </div>
-              ) : report ? (
-                <CibilDashboard
-                  cibildData={report}
-                  applicantId={activeTab.applicantId}
-                  onRefetchCIBIL={generateReport}
-                />
-              ) : (
-                <Stack>
-                  <Button
-                    loading={generateReportMutation.isLoading}
-                    onClick={() => generateReport(tab.applicantId)}
-                  >
-                    Generate Credit Report
-                  </Button>
-                </Stack>
-              )}
-            </Tabs.Panel>
-          );
-        })}
-      </Tabs>
-    );
   }
+
+  /* ------------------ UI ------------------ */
+  return (
+    <Tabs value={activeTabKey} onChange={setActiveTabKey} mt="md">
+      <Tabs.List>
+        {tabs.map((tab) => (
+          <Tabs.Tab key={tab.key} value={tab.key}>
+            <Text>
+              {tab.name}{' '}
+              <Text span size="xs" c="dimmed">
+                ({tab.label})
+              </Text>
+            </Text>
+          </Tabs.Tab>
+        ))}
+      </Tabs.List>
+
+      {tabs.map((tab) => {
+        const report = reports[tab.applicantId];
+        const isActive = activeTabKey === tab.key;
+
+        return (
+          <Tabs.Panel key={tab.key} value={tab.key} pt="md">
+            {/* Loading */}
+            {fetchReportMutation.isLoading && isActive ? (
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  padding: '2rem',
+                }}
+              >
+                <Loader type="dots" />
+              </div>
+            ) : report ? (
+              /* Dashboard */
+              <CibilDashboard
+                cibildData={report}
+                applicantId={tab.applicantId}
+                onRefetchCIBIL={generateReport}
+              />
+            ) : (
+              /* Generate Button */
+              <Stack>
+                <Button
+                  loading={generateReportMutation.isLoading && isActive}
+                  onClick={() => generateReport(tab.applicantId)}
+                >
+                  Generate Credit Report
+                </Button>
+              </Stack>
+            )}
+          </Tabs.Panel>
+        );
+      })}
+    </Tabs>
+  );
 };
 
 export default CreditBureau;

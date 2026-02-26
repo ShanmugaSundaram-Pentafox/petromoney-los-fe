@@ -46,6 +46,7 @@ import {
   OCCUPATION,
   PHONE_TYPE,
   ADDRESS_CAT,
+  upper,
 } from './utils';
 
 // ─── ENQUIRIES TAB ────────────────────────────────────────────────────────────
@@ -446,7 +447,7 @@ export function IdentityTab({ report }) {
                 label: 'Date of Birth',
                 value: person.birthDate ? fmtDateLong(person.birthDate) : '—',
               },
-              { label: 'Gender', value: genderValue },
+              { label: 'Gender', value: upper(person.gender) },
               { label: 'Index', value: person.index },
             ].map(({ label, value }) => (
               <Box key={label}>
@@ -797,15 +798,19 @@ export function LOSTab({ data, report }) {
   const activeAccs = accs.filter(isActive);
   const totalBal = activeAccs.reduce((s, a) => s + getBalance(a), 0);
   const totalEMI = activeAccs.reduce((s, a) => s + getEMI(a), 0);
-  const secBal = activeAccs
-    .filter((a) => !getAccountTypeString(a).includes('credit card'))
-    .reduce((s, a) => s + getBalance(a), 0);
-  const unsBal = activeAccs
-    .filter((a) => getAccountTypeString(a).includes('credit card'))
-    .reduce((s, a) => s + getBalance(a), 0);
-  const ccLimit = activeAccs
-    .filter((a) => getAccountTypeString(a).includes('credit card'))
-    .reduce((s, a) => s + getHighCredit(a), 0);
+  const accType = (a) => {
+    const raw = a?.accountType;
+    if (!raw) return '';
+    if (typeof raw === 'string') return raw.toLowerCase();
+    if (typeof raw === 'object') {
+      return (raw.description || raw.code || '').toLowerCase();
+    }
+    return String(raw).toLowerCase();
+  };
+  const isCC = (a) => accType(a).includes('credit card');
+  const secBal = activeAccs.filter((a) => !isCC(a)).reduce((s, a) => s + getBalance(a), 0);
+  const unsBal = activeAccs.filter(isCC).reduce((s, a) => s + getBalance(a), 0);
+  const ccLimit = activeAccs.filter(isCC).reduce((s, a) => s + getHighCredit(a), 0);
   const ccUtil = ccLimit > 0 ? (unsBal / ccLimit) * 100 : 0;
   const oldest = [...accs]
     .filter((a) => a.dateOpened)

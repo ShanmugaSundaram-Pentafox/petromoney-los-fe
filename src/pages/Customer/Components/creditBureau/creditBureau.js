@@ -1,9 +1,12 @@
 import React from 'react';
-import { Tabs, Loader, Button, Stack } from '@mantine/core';
+import { Tabs, Loader, Button, Stack, Alert } from '@mantine/core';
 import CibilDashboard from './CIBIL';
-import { useFetchCreditReport, useGenerateCreditReport } from './useCreditBureau';
+import {
+  useFetchCreditReport,
+  useGenerateCreditReport,
+} from './useCreditBureau';
 import CustomerOnboardStorage from '../../../../store/CustomerOnboardStorage';
-
+import { IconAlertCircle } from '@tabler/icons-react';
 
 /* Helpers */
 const buildApplicantTabs = (data) => {
@@ -17,6 +20,7 @@ const buildApplicantTabs = (data) => {
       key: `app-${data.primaryApplicant.applicant_id}`,
       label: `${data.primaryApplicant.full_name || ''} (Primary Applicant)`,
       applicantId: data.primaryApplicant.applicant_id,
+      name: data.primaryApplicant.full_name,
     });
   }
 
@@ -27,6 +31,7 @@ const buildApplicantTabs = (data) => {
       key: `app-${co.applicant_id}`,
       label: `${co.full_name || ''} (Co-Applicant ${index + 1})`,
       applicantId: co.applicant_id,
+      name: co.full_name,
     });
   });
 
@@ -66,6 +71,7 @@ const CreditBureau = () => {
   /* Hooks */
   const fetchReportMutation = useFetchCreditReport();
   const generateReportMutation = useGenerateCreditReport();
+  // const getCibiFileMutation = useGetCibiFile(2);
 
   /* Fetch report */
   const fetchReport = (applicantId) => {
@@ -102,41 +108,61 @@ const CreditBureau = () => {
     if (!activeTab) return;
     fetchReport(activeTab.applicantId);
   }, [activeTab?.applicantId]);
+  
+  if (tabs[0]?.applicantId === null) {
+    return (
+      <Alert
+        icon={<IconAlertCircle size={18} />}
+        title="No Applicants Found"
+        color="red"
+        mt="md"
+      >
+        Please add a primary applicant or co-applicant before generating a
+        credit report.
+      </Alert>
+    );
+  } else {
+    return (
+      <Tabs value={activeTabKey} onChange={setActiveTabKey} mt="md">
+        <Tabs.List>
+          {tabs.map((tab) => (
+            <Tabs.Tab key={tab.key} value={tab.key}>
+              {tab.label}
+            </Tabs.Tab>
+          ))}
+        </Tabs.List>
 
-  return (
-    <Tabs value={activeTabKey} onChange={setActiveTabKey} mt="md">
-      <Tabs.List>
-        {tabs.map((tab) => (
-          <Tabs.Tab key={tab.key} value={tab.key}>
-            {tab.label}
-          </Tabs.Tab>
-        ))}
-      </Tabs.List>
+        {tabs.map((tab) => {
+          const report = reports[tab.applicantId];
 
-      {tabs.map((tab) => {
-        const report = reports[tab.applicantId];
-
-        return (
-          <Tabs.Panel key={tab.key} value={tab.key} pt="md">
-            {fetchReportMutation.isLoading && activeTabKey === tab.key ? (
-              <Loader type="dots" />
-            ) : report ? (
-              <CibilDashboard cibildData={report} />
-            ) : (
-              <Stack>
-                <Button
-                  loading={generateReportMutation.isLoading}
-                  onClick={() => generateReport(tab.applicantId)}
-                >
-                  Generate Credit Report
-                </Button>
-              </Stack>
-            )}
-          </Tabs.Panel>
-        );
-      })}
-    </Tabs>
-  );
+          return (
+            <Tabs.Panel key={tab.key} value={tab.key} pt="md">
+              {fetchReportMutation.isLoading && activeTabKey === tab.key ? (
+                <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+                  <Loader type="dots" />
+                </div>
+              ) : report ? (
+                <CibilDashboard
+                  cibildData={report}
+                  applicantId={activeTab.applicantId}
+                  onRefetchCIBIL={generateReport}
+                />
+              ) : (
+                <Stack>
+                  <Button
+                    loading={generateReportMutation.isLoading}
+                    onClick={() => generateReport(tab.applicantId)}
+                  >
+                    Generate Credit Report
+                  </Button>
+                </Stack>
+              )}
+            </Tabs.Panel>
+          );
+        })}
+      </Tabs>
+    );
+  }
 };
 
 export default CreditBureau;

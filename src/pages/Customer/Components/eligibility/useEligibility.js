@@ -1,11 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import {
-  calculateEligibilityScore,
-  createLoanInfo,
-  forwardLoanForApproval,
-  getLoanInfo,
-} from '../../../../services/customerOnboarding.service';
+import { calculateEligibilityScore, createLoanInfo, forwardLoanForApproval, getLoanInfo, updateLoanInfo } from '../../../../services/customerOnboarding.service';
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
+
 
 export const useLoan = (dealershipId) =>
   useQuery(['loan', dealershipId], () => getLoanInfo(dealershipId), {
@@ -41,13 +37,10 @@ export const useEligibility = (dealershipId, applicantId) =>
   });
 
 export const useForwardLoan = () => {
-  const qc = useQueryClient();
-
   return useMutation(
     ({ loanId, remarks }) => forwardLoanForApproval(loanId, remarks),
     {
       onSuccess: () => {
-        qc.invalidateQueries('loan');
         displayNotification({
           message: 'Loan forwarded successfully',
           variant: 'success',
@@ -68,6 +61,7 @@ export const useCreateLoan = (dealershipId) => {
 
   return useMutation((payload) => createLoanInfo(dealershipId, payload), {
     onSuccess: () => {
+      qc.invalidateQueries('loan');
       displayNotification({
         message: 'Loan created successfully',
         variant: 'success',
@@ -76,6 +70,26 @@ export const useCreateLoan = (dealershipId) => {
     onError: (message) => {
       displayNotification({
         message: `Error creating loan: ${message}`,
+        variant: 'error',
+      });
+    },
+  });
+};
+
+export const useUpdateLoan = (dealershipId) => {
+  const qc = useQueryClient();
+
+  return useMutation((payload) => updateLoanInfo(dealershipId, payload), {
+    onSuccess: () => {
+      qc.invalidateQueries(['loan', dealershipId]);
+      displayNotification({
+        message: 'Loan updated successfully',
+        variant: 'success',
+      });
+    },
+    onError: (message) => {
+      displayNotification({
+        message: `Error updating loan: ${message}`,
         variant: 'error',
       });
     },

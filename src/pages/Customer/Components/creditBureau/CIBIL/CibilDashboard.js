@@ -111,3 +111,141 @@ export function CibilDashboard({ cibildData }) {
 }
 
 export default CibilDashboard;
+// import React, { useState, useMemo } from 'react';
+// import { Tabs, Box, Badge, Center, Text } from '@mantine/core';
+// import {
+//   IconLayoutDashboard,
+//   IconBuildingBank,
+//   IconSearch,
+//   IconId,
+//   IconShield,
+// } from '@tabler/icons-react';
+// import '@mantine/core/styles.css';
+
+// import { CibilHeader } from './CibilHeader';
+// import { OverviewTab } from './OverviewTab';
+// import { AccountsTab } from './AccountsTab';
+// import { EnquiriesTab, IdentityTab, LOSTab } from './OtherTabs';
+
+// export function CibilDashboard({ cibildData }) {
+//   const [tab, setTab] = useState('overview');
+
+//   // ─ SAFE DATA EXTRACTION ─────────────────────────────────────────────
+//   const { data, report } = useMemo(() => {
+//     const d = cibildData?.data ?? cibildData ?? {};
+//     const r = d?.credit_report?.[0] ?? {};
+//     return { data: d || {}, report: r || {} };
+//   }, [cibildData]);
+
+//   // ─ SAFE ARRAYS ───────────────────────────────────────────
+//   const accounts = report?.accounts ?? [];
+//   const enquiries = report?.enquiries ?? [];
+//   const ids = report?.ids ?? [];
+//   const addresses = report?.addresses ?? [];
+//   const emails = report?.emails ?? [];
+//   const phones = report?.telephones ?? [];
+
+//   const hasAccounts = accounts.length > 0;
+//   const hasEnquiries = enquiries.length > 0;
+//   const hasIdentity =
+//     ids.length > 0 ||
+//     addresses.length > 0 ||
+//     emails.length > 0 ||
+//     phones.length > 0;
+
+//   const hasAnyData =
+//     hasAccounts || hasEnquiries || hasIdentity || Object.keys(report).length > 0;
+
+//   return (
+//     <Box
+//       style={{
+//         minHeight: '100vh',
+//         background: 'var(--mantine-color-gray-0)',
+//       }}
+//     >
+//       {/* ── HEADER (always visible, safe props) ── */}
+//       <CibilHeader data={data || {}} report={report || {}} />
+
+//       {!hasAnyData ? (
+//         <Center py="xl">
+//           <Text c="dimmed">No CIBIL data available</Text>
+//         </Center>
+//       ) : (
+//         <Tabs value={tab} onChange={setTab}>
+//           {/* ── TAB LIST ── */}
+//           <Tabs.List mb="lg">
+//             <Tabs.Tab
+//               value="overview"
+//               leftSection={<IconLayoutDashboard size={14} />}
+//             >
+//               Overview
+//             </Tabs.Tab>
+
+//             {hasAccounts && (
+//               <Tabs.Tab
+//                 value="accounts"
+//                 leftSection={<IconBuildingBank size={14} />}
+//               >
+//                 Accounts
+//                 <Badge size="xs" variant="light" color="blue" ml={6}>
+//                   {accounts.length}
+//                 </Badge>
+//               </Tabs.Tab>
+//             )}
+
+//             {hasEnquiries && (
+//               <Tabs.Tab
+//                 value="enquiries"
+//                 leftSection={<IconSearch size={14} />}
+//               >
+//                 Enquiries
+//                 <Badge size="xs" variant="light" color="violet" ml={6}>
+//                   {enquiries.length}
+//                 </Badge>
+//               </Tabs.Tab>
+//             )}
+
+//             {hasIdentity && (
+//               <Tabs.Tab value="identity" leftSection={<IconId size={14} />}>
+//                 Identity
+//               </Tabs.Tab>
+//             )}
+
+//             <Tabs.Tab value="los" leftSection={<IconShield size={14} />}>
+//               LOS Decision
+//             </Tabs.Tab>
+//           </Tabs.List>
+
+//           {/* ── PANELS ── */}
+//           <Tabs.Panel value="overview">
+//             <OverviewTab data={data || {}} report={report || {}} />
+//           </Tabs.Panel>
+
+//           {hasAccounts && (
+//             <Tabs.Panel value="accounts">
+//               <AccountsTab report={report || {}} />
+//             </Tabs.Panel>
+//           )}
+
+//           {hasEnquiries && (
+//             <Tabs.Panel value="enquiries">
+//               <EnquiriesTab report={report || {}} />
+//             </Tabs.Panel>
+//           )}
+
+//           {hasIdentity && (
+//             <Tabs.Panel value="identity">
+//               <IdentityTab report={report || {}} />
+//             </Tabs.Panel>
+//           )}
+
+//           <Tabs.Panel value="los">
+//             <LOSTab data={data || {}} report={report || {}} />
+//           </Tabs.Panel>
+//         </Tabs>
+//       )}
+//     </Box>
+//   );
+// }
+
+// export default CibilDashboard;

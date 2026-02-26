@@ -16,13 +16,15 @@ import {
 import { useForm, yupResolver } from '@mantine/form';
 import * as yup from 'yup';
 import { IconCheck, IconSend } from '@tabler/icons-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   useCreateLoan,
   useEligibility,
   useForwardLoan,
   useLoan,
+  useUpdateLoan,
 } from './useEligibility';
+import CustomerOnboardStorage from '../../../../store/CustomerOnboardStorage';
 
 const schema = yup.object({
   loan_types: yup.string().required('Loan type is required'),
@@ -56,6 +58,22 @@ const Info = ({ label, value }) => (
 );
 
 export const Eligibility = () => {
+  const storageData = CustomerOnboardStorage.get();
+
+  const formattedData = {
+    dealershipId: storageData?.dealership_id || null,
+
+    primaryApplicant: {
+      applicant_id: storageData?.applicant?.applicant_id || null,
+      full_name: storageData?.applicant?.full_name || '',
+    },
+
+    coApplicant:
+      storageData?.co_applicants?.map((co) => ({
+        applicant_id: co?.applicant_id || null,
+        full_name: co?.full_name || '',
+      })) || [],
+  };
   const dummyData = {
     dealershipId: 30,
     primaryApplicant: {
@@ -68,14 +86,16 @@ export const Eligibility = () => {
     ],
   };
   const [remarks, setRemarks] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
 
-  const loanQuery = useLoan(dummyData?.dealershipId);
+  const loanQuery = useLoan(formattedData?.dealershipId);
   const eligibilityMutation = useEligibility(
-    dummyData?.dealershipId,
-    dummyData?.primaryApplicant.applicant_id
+    formattedData?.dealershipId,
+    formattedData?.primaryApplicant.applicant_id
   );
   const forwardMutation = useForwardLoan();
-  const createLoanMutation = useCreateLoan(dummyData?.dealershipId);
+  const createLoanMutation = useCreateLoan(formattedData?.dealershipId);
+  const updateLoanMutation = useUpdateLoan(formattedData?.dealershipId);
 
   const form = useForm({
     initialValues: {
@@ -97,9 +117,30 @@ export const Eligibility = () => {
     form.reset();
   };
 
+  const updateLoan = async (values) => {
+    await updateLoanMutation.mutateAsync({
+      ...values,
+      requested_amount: Number(values.requested_amount),
+      tenure: Number(values.tenure),
+    });
+
+    setIsEditing(false);
+  };
+
   const loan = loanQuery.data;
   const data = eligibilityMutation.data;
   const metrics = data?.credit_metrics;
+
+  useEffect(() => {
+    if (loan && isEditing) {
+      form.setValues({
+        loan_types: loan.loan_types,
+        requested_amount: loan.requested_amount,
+        tenure: loan.tenure,
+        loan_purpose: loan.loan_purpose,
+      });
+    }
+  }, [loan, isEditing]);
 
   const flags = data
     ? [
@@ -164,17 +205,91 @@ export const Eligibility = () => {
       )}
 
       {/* ================= Loan Snapshot ================= */}
-      {loan && (
+      {loan && !isEditing && (
         <Card withBorder radius="md">
-          <SimpleGrid cols={4}>
-            <Info label="Loan Type" value={loan.loan_types} />
-            <Info
-              label="Requested Amount"
-              value={`₹${loan.requested_amount?.toLocaleString()}`}
+          <Stack>
+            <Group justify="space-between">
+              <Text fw={700}>Loan Details</Text>
+
+              <Button
+                size="xs"
+                variant="light"
+                onClick={() => setIsEditing(true)}
+              >
+                Edit
+              </Button>
+            </Group>
+
+            <SimpleGrid cols={4}>
+              <Info label="Loan Type" value={loan.loan_types} />
+              <Info
+                label="Requested Amount"
+                value={`₹${loan.requested_amount?.toLocaleString()}`}
+              />
+              <Info label="Tenure" value={`${loan.tenure} months`} />
+              <Info label="Purpose" value={loan.loan_purpose} />
+            </SimpleGrid>
+          </Stack>
+        </Card>
+      )}
+
+      {loan && isEditing && (
+        <Card withBorder radius="md">
+          <Stack>
+            <Group justify="space-between">
+              <Text fw={700}>Edit Loan</Text>
+
+              <Button
+                size="xs"
+                variant="subtle"
+                color="gray"
+                onClick={() => setIsEditing(false)}
+              >
+                Cancel
+              </Button>
+            </Group>
+
+            <SimpleGrid cols={3}>
+              <Select
+                label="Loan Type"
+                data={[
+                  'Home Loan',
+                  'Land Loan',
+                  'Working Capital',
+                  'Business Loan',
+                ]}
+                {...form.getInputProps('loan_types')}
+              />
+
+              <NumberInput
+                label="Requested Amount (₹)"
+                {...form.getInputProps('requested_amount')}
+              />
+
+              <NumberInput
+                label="Tenure (Months)"
+                {...form.getInputProps('tenure')}
+              />
+            </SimpleGrid>
+
+            <TextInput
+              label="Purpose"
+              {...form.getInputProps('loan_purpose')}
             />
-            <Info label="Tenure" value={`${loan.tenure} months`} />
-            <Info label="Purpose" value={loan.loan_purpose} />
-          </SimpleGrid>
+
+            <Group justify="flex-end">
+              <Button variant="light" onClick={() => setIsEditing(false)}>
+                Cancel
+              </Button>
+
+              <Button
+                loading={updateLoanMutation.isLoading}
+                onClick={form.onSubmit(updateLoan)}
+              >
+                Update Loan
+              </Button>
+            </Group>
+          </Stack>
         </Card>
       )}
 

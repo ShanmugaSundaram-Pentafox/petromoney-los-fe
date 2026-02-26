@@ -467,6 +467,22 @@ export const generateCreditReport = (dealershipId, applicantId) => {
   });
 };
 
+export const getCibilFile = (fileId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/cibil-file/${fileId}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
 export const getLoanInfo = (dealershipId) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/dealership/${dealershipId}/loans`)
@@ -478,10 +494,24 @@ export const getLoanInfo = (dealershipId) => {
   });
 };
 
-export const createLoanInfo = (dealershipId, payload) => {
+export const updateLoanInfo = (dealershipId, payload) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/dealership/${dealershipId}/loans`, {
       method: 'POST',
+      body: payload,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') resolve(data);
+        else reject(message);
+      })
+      .catch((e) => reject(e.message));
+  });
+};
+
+export const createLoanInfo = (dealershipId, payload) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/dealership/${dealershipId}/loans`, {
+      method: 'PUT',
       body: payload,
     })
       .then(({ status, data, message }) => {
@@ -508,7 +538,7 @@ export const calculateEligibilityScore = (dealershipId, applicantId) => {
 export const forwardLoanForApproval = (loanId, remarks) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/loans/${loanId}/status`, {
-      method: 'POST',
+      method: 'PUT',
       body: {
         action: 'forward',
         remarks,
@@ -521,4 +551,3 @@ export const forwardLoanForApproval = (loanId, remarks) => {
       .catch((e) => reject(e.message));
   });
 };
-

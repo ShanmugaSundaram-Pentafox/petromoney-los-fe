@@ -169,7 +169,7 @@ export function CibilHeader({ data, report }) {
               <IconUser size={26} />
             </ThemeIcon>
             <Stack gap={4}>
-              <Flex gap="md" >
+              <Flex gap="md">
                 <Text size="xl" fw={800} lh={1.2}>
                   {data.full_name || person.name || 'Unknown'}
                 </Text>
@@ -274,33 +274,6 @@ export function CibilHeader({ data, report }) {
 
           {/* Center: Score gauge */}
           <ScoreGradientBar score={score} scoreObj={scoreObj} />
-
-          {/* Right: LOS decision */}
-          {/* <Paper withBorder p="md" radius="md" style={{ minWidth: 190, borderColor: `var(--mantine-color-${riskColor}-4)`, background: `var(--mantine-color-${riskColor}-0)` }}>
-            <Text size="xs" c="dimmed" fw={700} tt="uppercase" mb={6} style={{ letterSpacing: '0.08em' }}>LOS Decision</Text>
-            <Badge color={riskColor} size="xl" radius="sm" variant="filled" display="block" ta="center" fw={800} style={{ fontSize: 13 }}>
-              {los.decision}
-            </Badge>
-            <Divider my={10} />
-            <Stack gap={4}>
-              <Group justify="space-between">
-                <Text size="xs" c="dimmed">Risk Level</Text>
-                <Badge color={riskColor} size="xs" variant="light">{los.riskLevel.toUpperCase()}</Badge>
-              </Group>
-              <Group justify="space-between">
-                <Text size="xs" c="dimmed">Pay Track</Text>
-                <Badge color={los.pillarPay === 'PASS' ? 'green' : los.pillarPay === 'REVIEW' ? 'orange' : 'red'} size="xs" variant="light">{los.pillarPay}</Badge>
-              </Group>
-              <Group justify="space-between">
-                <Text size="xs" c="dimmed">Leverage</Text>
-                <Badge color={los.pillarLev === 'PASS' ? 'green' : los.pillarLev === 'REVIEW' ? 'orange' : 'red'} size="xs" variant="light">{los.pillarLev}</Badge>
-              </Group>
-              <Group justify="space-between">
-                <Text size="xs" c="dimmed">Enquiries</Text>
-                <Badge color={los.pillarEnq === 'PASS' ? 'green' : los.pillarEnq === 'REVIEW' ? 'orange' : 'red'} size="xs" variant="light">{los.pillarEnq}</Badge>
-              </Group>
-            </Stack>
-          </Paper> */}
         </Stack>
       </Paper>
 

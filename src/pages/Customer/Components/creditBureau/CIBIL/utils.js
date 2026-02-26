@@ -153,6 +153,17 @@ export const computeLOS = (score, accounts = [], enquiries = []) => {
   };
 };
 
+export const safeStr = (v, fallback = '') => {
+  if (v == null) return fallback;
+  if (typeof v === 'string') return v;
+  if (typeof v === 'number') return String(v);
+  if (typeof v === 'object') return v.description || v.code || fallback;
+  return fallback;
+};
+
+export const lower = (v) => safeStr(v).toLowerCase();
+export const upper = (v) => safeStr(v, '—').toUpperCase();
+
 // ─── Lookup Maps ──────────────────────────────────────────────────────────────
 
 export const REASON_CODE_MAP = {

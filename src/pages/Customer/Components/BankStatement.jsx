@@ -1,3 +1,4 @@
+/* eslint-disable no-duplicate-imports */
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -6,10 +7,8 @@ import {
   Title,
   Button,
   Badge,
-  Container,
   Text,
   Stepper,
-  ThemeIcon,
   CopyButton,
   Tooltip,
   ActionIcon,
@@ -20,7 +19,6 @@ import {
   Divider,
   Progress,
   Paper,
-  Table,
   ScrollArea,
   Center,
 } from '@mantine/core';
@@ -33,8 +31,7 @@ import {
   IconCurrencyDollar,
   IconLink,
   IconTrendingDown,
-  IconTrendingUp,
-  IconX,
+  IconTrendingUp
 } from '@tabler/icons-react';
 import { IconCircleCheck } from '@tabler/icons-react';
 import {
@@ -51,6 +48,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { IconWallet } from '@tabler/icons-react';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
+import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
 
 const getStatusColor = (status) => {
   const value = status?.toLowerCase();
@@ -171,13 +169,13 @@ const DonutChart = ({
   );
 };
 
-export default function BankStatementAnalysis({ viewMode = false }) {
+export default function BankStatementAnalysis() {
   const [active, setActive] = useState(0);
   const queryClient = useQueryClient();
   const [url, setUrl] = useState('');
-  const [step, setStep] = useState('data');
+  const [step, setStep] = useState('create');
   const [consentId, setConsentId] = useState('');
-  // const viewMode = false;
+  const viewMode = true;
   const customerId = '741812125';
 
   const {
@@ -216,7 +214,7 @@ export default function BankStatementAnalysis({ viewMode = false }) {
   const { data: bsaStatus, refetch: refetchStatus } = useQuery({
     queryKey: ['bsa-statusss', consentId],
     queryFn: () => getBsaStatus(consentId),
-    // enabled: false,
+    enabled: !!consentId && step === 'bank',
     retry: false,
     onSuccess: (data) => {
       if (data?.report_status === 'COMPLETED') {

@@ -12,14 +12,11 @@ import {
 import { notifications } from '@mantine/notifications';
 import { IconBriefcase, IconCheck } from '@tabler/icons-react';
 import { saveEmploymentDetails } from '../../../services/customerOnboarding.service';
-import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
 
-function CoEmploymentDetails({ onEmploymentSaved }) {
+function CoApplicantEmploymentDetails({ onEmploymentSaved }) {
   const [loading, setLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-
-  const onboardData = CustomerOnboardStorage.get();
 
   const [formData, setFormData] = useState({
     employmentType: 'SENP',
@@ -32,8 +29,8 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
   });
 
   const employmentTypes = [
-    { value: 'Self Employed Professional (SEP)', label: 'Self Employed Professional (SEP)' },
-    { value: 'Self Employed Non-Professional (SENP)', label: 'Self Employed Non-Professional (SENP)' }
+    { value: 'SEP', label: 'Self Employed Professional (SEP)' },
+    { value: 'SENP', label: 'Self Employed Non-Professional (SENP)' }
   ];
 
   // Handle Input Change
@@ -74,7 +71,8 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
     try {
       setLoading(true);
 
-      const applicantId = onboardData?.applicant?.applicant_id || null;
+      // const applicantId = localStorage.getItem('applicant_id');
+      const applicantId = 30;
       if (!applicantId) {
         notifications.show({
           title: 'Error',
@@ -104,7 +102,7 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
         color: 'green',
         icon: <IconCheck size={18} />
       });
-      onEmploymentSaved();
+onEmploymentSaved();
     } catch (error) {
       notifications.show({
         title: 'Error',
@@ -131,7 +129,6 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
         <Grid.Col span={4}>
           <Select
             label="Employment Type"
-            placeholder="Select employment type"
             data={employmentTypes}
             value={formData.employmentType}
             onChange={(value) => handleChange('employmentType', value)}
@@ -222,4 +219,4 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
   );
 }
 
-export default CoEmploymentDetails;
+export default CoApplicantEmploymentDetails;

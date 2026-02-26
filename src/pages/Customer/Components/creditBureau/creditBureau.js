@@ -7,6 +7,7 @@ import CustomerOnboardStorage from '../../../../store/CustomerOnboardStorage';
 
 /* Helpers */
 const buildApplicantTabs = (data) => {
+  console.log('formattedData:', data);
   if (!data) return [];
 
   const tabs = [];
@@ -14,7 +15,7 @@ const buildApplicantTabs = (data) => {
   if (data.primaryApplicant) {
     tabs.push({
       key: `app-${data.primaryApplicant.applicant_id}`,
-      label: 'Primary Applicant',
+      label: `${data.primaryApplicant.full_name || ''} (Primary Applicant)`,
       applicantId: data.primaryApplicant.applicant_id,
     });
   }
@@ -24,7 +25,7 @@ const buildApplicantTabs = (data) => {
 
     tabs.push({
       key: `app-${co.applicant_id}`,
-      label: `Co-Applicant ${index + 1}`,
+      label: `${co.full_name || ''} (Co-Applicant ${index + 1})`,
       applicantId: co.applicant_id,
     });
   });
@@ -53,7 +54,7 @@ const CreditBureau = () => {
   // const dummyData = {
   //   dealershipId: 30,
   //   primaryApplicant: { applicant_id: 35 },
-  //   coApplicant: [{ applicant_id: 30 }, { applicant_id: 41 }],
+  //   coApplicant: [{ applicant_id: 30 }],
   // };
 
   const tabs = React.useMemo(() => buildApplicantTabs(formattedData), []);

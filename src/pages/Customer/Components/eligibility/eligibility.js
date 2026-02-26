@@ -59,7 +59,7 @@ export const Eligibility = () => {
   const dummyData = {
     dealershipId: 30,
     primaryApplicant: {
-      name: 'Shaik',
+      name: 'Kannan',
       applicant_id: 35,
     },
     coApplicant: [

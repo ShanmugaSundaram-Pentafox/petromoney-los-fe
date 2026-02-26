@@ -24,11 +24,7 @@ function CustomerOnBoardMain() {
   const [activeTab, setActiveTab] = React.useState('basic');
   const [loadedTabs, setLoadedTabs] = React.useState(['basic']);
 
-  const { applicant_id, loan_id, isExisting } = location.state || {};
-
-  console.log('Applicant ID:', applicant_id);
-  console.log('Loan ID:', loan_id);
-  console.log('Is Existing:', isExisting);
+  const { applicant_id, isExisting } = location.state || {};
 
   const handleTabChange = (value) => {
     setActiveTab(value);
@@ -79,12 +75,12 @@ function CustomerOnBoardMain() {
 
         <Box mt="lg">
           <Tabs.Panel value="basic">
-            {loadedTabs.includes('basic') && <CustomerDetails />}
+            {loadedTabs.includes('basic') && <CustomerDetails viewMode={isExisting} applicantId={applicant_id} />}
           </Tabs.Panel>
 
           <Tabs.Panel value="coapplicant">
             {loadedTabs.includes('coapplicant') && (
-              <CoApplicants viewMode={isExisting} />
+              <CoApplicants viewMode={isExisting} applicantId={applicant_id} />
             )}
           </Tabs.Panel>
 

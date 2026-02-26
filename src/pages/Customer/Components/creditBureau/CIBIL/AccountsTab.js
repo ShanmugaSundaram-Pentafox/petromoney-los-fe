@@ -39,7 +39,7 @@ function AccountCard({ acc }) {
       {/* Header */}
       <Group p="sm" justify="space-between" style={{ background: 'var(--mantine-color-gray-0)', borderBottom: '1px solid var(--mantine-color-gray-2)' }} wrap="nowrap">
         <Box style={{ minWidth: 0 }}>
-          <Text fw={700} size="sm" lineClamp={1}>{acc.accountTypeNormalized || acc.accountType || '—'}</Text>
+          <Text fw={700} size="sm" lineClamp={1}>{String(acc.accountTypeNormalized ?? acc.accountType ?? '—')}</Text>
           <Text size="xs" c="dimmed" style={{ fontFamily: 'monospace' }}>{acc.memberShortName} · #{String(acc.accountNumber).substring(0, 22)}</Text>
         </Box>
         <Group gap={6} wrap="nowrap" style={{ flexShrink: 0 }}>
@@ -160,7 +160,7 @@ export function AccountsTab({ report }) {
                   <Table.Tr key={i}>
                     <Table.Td><Text size="xs" c="dimmed" style={{ fontFamily: 'monospace' }}>{acc.index ?? i}</Text></Table.Td>
                     <Table.Td>{statusTag(acc)}</Table.Td>
-                    <Table.Td><Text size="xs" fw={600} lineClamp={2} maw={150}>{acc.accountTypeNormalized || acc.accountType}</Text></Table.Td>
+                    <Table.Td><Text size="xs" fw={600} lineClamp={2} maw={150}>{String(acc.accountTypeNormalized ?? acc.accountType ?? '—')}</Text></Table.Td>
                     <Table.Td><Text size="xs" fw={600}>{acc.memberShortName}</Text></Table.Td>
                     <Table.Td><Text size="xs" style={{ fontFamily: 'monospace' }}>{fmtDate(acc.dateOpened)}</Text></Table.Td>
                     <Table.Td><Text size="xs" style={{ fontFamily: 'monospace' }}>{isActive(acc) ? '—' : fmtDate(acc.dateClosed)}</Text></Table.Td>

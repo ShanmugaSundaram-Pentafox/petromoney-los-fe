@@ -35,15 +35,17 @@ import {
     aadhaarVerfiy,
     mobileVerfiy,
     validateKYCLinkage,
-    saveCustomerDetails
+    saveCustomerDetails,
+    getCustomerDetails
 } from "../../../services/customerOnboarding.service";
 import AddressCard from "./AddressCard"
 import EmploymentDetails from "./EmploymentDetails";
 import CustomerOnboardStorage from "../../../store/CustomerOnboardStorage";
 
-function CustomerDetails() {
+function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
     const [showCustomerDetails, setShowCustomerDetails] = useState(false);
     const [customerData, setCustomerData] = useState(null);
+    const [applicant_id, setApplicant_id] = useState();
     const [addressList, setAddressList] = useState([]);
 
     // LOCAL STATE for selected addresses (NOT in Redux)
@@ -78,11 +80,14 @@ function CustomerDetails() {
         mobileVerified: false
     });
 
+    const [viewMode, setViewMode] = useState(viewModeProp);
     const allFilled = form.name && form.mobile && form.pan && form.aadhaar;
     const allVerified = verifyStatus.panVerified && verifyStatus.aadhaarVerified && verifyStatus.mobileVerified;
-
+  
     // Track if form fields have been edited after fetch
-    const [formEdited, setFormEdited] = useState(false);
+const [formEdited, setFormEdited] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editSnapshot, setEditSnapshot] = useState(null);
 
     useEffect(() => {
 
@@ -123,6 +128,10 @@ function CustomerDetails() {
 
     }, [form.mobile, form.pan, form.aadhaar]);
 
+    useEffect(() => {
+        setViewMode(viewModeProp);
+    }, [viewModeProp]);
+
     const handleFieldChange = (field, value) => {
         setForm(prev => ({ ...prev, [field]: value }));
         setFetched(false);
@@ -159,9 +168,9 @@ function CustomerDetails() {
             setFetched(false);
             setHasApiError(false);
             setFormEdited(false);
-            setSelectedAddresses({ permanent: null, communication: null }); // Reset local selections
+            setSelectedAddresses({ permanent: null, communication: null });
 
-            // Reset all data and messages
+            // reset local verification state/messages
             setPanData(null);
             setAadhaarData(null);
             setMobileData(null);
@@ -174,135 +183,161 @@ function CustomerDetails() {
                 mobileVerified: false
             });
 
-            let hasError = false;
+            let mobileRes, panRes, aadhaarRes;
+            try {
+                mobileRes = await mobileVerfiy({ mobile: form.mobile });
+            } catch (e) {
+                mobileRes = { __error: e };
+            }
+            try {
+                panRes = await panVerfiy({ pan: form.pan });
+            } catch (e) {
+                panRes = { __error: e };
+            }
+            try {
+                aadhaarRes = await aadhaarVerfiy({ aadhar: form.aadhaar });
+            } catch (e) {
+                aadhaarRes = { __error: e };
+            }
             let successfulCalls = 0;
+            let hasError = false;
 
-            // ================= MOBILE CALL =================
-            try {
-                const mobileRes = await mobileVerfiy({ mobile: form.mobile });
+            // normalize helper
+            const isSuccess = (res) => res && !res.__error && (res.status === "SUCCESS" || res.data);
 
-                if (mobileRes?.status === "SUCCESS" && mobileRes?.data) {
-                    setMobileData(mobileRes);
-                    setMobileMsg(mobileRes?.message || "Mobile verified successfully");
-                    setVerifyStatus(prev => ({ ...prev, mobileVerified: true }));
-                    successfulCalls++;
-                } else {
-                    setMobileMsg(mobileRes?.message || "Mobile verification failed");
-                    hasError = true;
-                }
-            } catch (err) {
-                setMobileMsg(err?.response?.data?.message || "Mobile verification failed");
-                hasError = true;
-            }
-
-            // ================= PAN CALL =================
-            try {
-                const panRes = await panVerfiy({ pan: form.pan });
-
-                if (panRes?.status === "SUCCESS" && panRes?.data) {
-                    setPanData(panRes);
-                    setPanMsg(panRes?.message || "PAN verified successfully");
-                    setVerifyStatus(prev => ({ ...prev, panVerified: true }));
-                    successfulCalls++;
-                } else {
-                    setPanMsg(panRes?.message || "Invalid PAN number");
-                    hasError = true;
-                }
-            } catch (err) {
-                setPanMsg(err?.response?.data?.message || "Invalid PAN number");
-                hasError = true;
-            }
-
-            // ================= AADHAAR CALL =================
-            try {
-                const aadhaarRes = await aadhaarVerfiy({ aadhar: form.aadhaar });
-
-                if (aadhaarRes?.status === "SUCCESS" && aadhaarRes?.data) {
-                    setAadhaarData(aadhaarRes);
-                    setAadhaarMsg(aadhaarRes?.message || "Aadhaar verified successfully");
-                    setVerifyStatus(prev => ({ ...prev, aadhaarVerified: true }));
-                    successfulCalls++;
-                } else {
-                    setAadhaarMsg(aadhaarRes?.message || "Invalid Aadhaar number");
-                    hasError = true;
-                }
-            } catch (err) {
-                setAadhaarMsg(err?.response?.data?.message || "Invalid Aadhaar number");
-                hasError = true;
-            }
-
-            if (successfulCalls > 0) {
-                setFetched(true);
-                setHasApiError(hasError);
-
-                // Show preview if addresses available
-                try {
-                    const mobileAddresses = mobileData?.data?.data?.address_details || mobileData?.data?.address_details || [];
-                    const panAddrStr = panData?.data?.data?.details?.address || panData?.data?.details?.address || null;
-                    const panPostal = panData?.data?.data?.details?.zip || panData?.data?.details?.zip || '';
-                    const panState = panData?.data?.data?.details?.state || panData?.data?.details?.state || '';
-
-                    let prefillAddresses = [];
-                    if (Array.isArray(mobileAddresses) && mobileAddresses.length) {
-                        prefillAddresses.push(...mobileAddresses.map(a => ({ ...a, source: a.source || 'Mobile' })));
-                    }
-                    if (panAddrStr) {
-                        prefillAddresses.push({
-                            address: panAddrStr,
-                            postal: panPostal,
-                            state: panState,
-                            reported_date: null,
-                            type: 'PAN',
-                            source: 'PAN'
-                        });
-                    }
-
-                    // Deduplicate by address string
-                    const seen = new Set();
-                    prefillAddresses = prefillAddresses.filter(a => {
-                        const key = (a.address || '').trim();
-                        if (!key) return false;
-                        if (seen.has(key)) return false;
-                        seen.add(key);
-                        return true;
-                    });
-
-                    if (prefillAddresses.length > 0) {
-                        const previewCustomer = {
-                            full_name: mobileData?.data?.data?.full_name || panData?.data?.data?.details?.full_name || form.name,
-                            mobile: form.mobile,
-                            pan: form.pan,
-                            aadhar: form.aadhaar,
-                            dob: mobileData?.data?.data?.date_of_birth || panData?.data?.data?.details?.date_of_birth || '',
-                            age: mobileData?.data?.data?.age || '',
-                            gender: mobileData?.data?.data?.gender || panData?.data?.data?.details?.gender || '',
-                            email: mobileData?.data?.data?.email_details?.[0]?.email_address || panData?.data?.data?.details?.email || '',
-                            address_list: prefillAddresses
-                        };
-
-                        setCustomerData({ ...previewCustomer, mobile_details: mobileData, pan_details: panData });
-                        setShowCustomerDetails(true);
-                        setAddressList(prefillAddresses);
-                    }
-                } catch (e) {
-                    // console.log("Preview error:", e);
-                }
-
-                notifications.show({
-                    title: "Success",
-                    message: `${successfulCalls} verification(s) completed successfully`,
-                    color: "green",
-                });
+            // MOBILE
+            if (isSuccess(mobileRes)) {
+                setMobileData(mobileRes);
+                setMobileMsg(mobileRes?.message || "Mobile verified");
+                setVerifyStatus(prev => ({ ...prev, mobileVerified: true }));
+                successfulCalls++;
             } else {
+                hasError = true;
+                setMobileMsg(mobileRes?.message || mobileRes?.__error?.message || "Mobile verification failed");
+            }
+
+            // PAN
+            if (isSuccess(panRes)) {
+                setPanData(panRes);
+                setPanMsg(panRes?.message || "PAN verified");
+                setVerifyStatus(prev => ({ ...prev, panVerified: true }));
+                successfulCalls++;
+            } else {
+                hasError = true;
+                setPanMsg(panRes?.message || panRes?.__error?.message || "PAN verification failed");
+            }
+
+            // AADHAAR
+            if (isSuccess(aadhaarRes)) {
+                setAadhaarData(aadhaarRes);
+                setAadhaarMsg(aadhaarRes?.message || "Aadhaar verified");
+                setVerifyStatus(prev => ({ ...prev, aadhaarVerified: true }));
+                successfulCalls++;
+            } else {
+                hasError = true;
+                setAadhaarMsg(aadhaarRes?.message || aadhaarRes?.__error?.message || "Aadhaar verification failed");
+            }
+
+            if (successfulCalls === 0) {
                 setHasApiError(true);
                 notifications.show({
                     title: "Error",
                     message: "All verifications failed. Please check your inputs.",
                     color: "red",
                 });
+                return;
             }
 
+            const mobileObj = (mobileRes && !mobileRes.__error) ? (mobileRes.data?.data || mobileRes.data || mobileRes) : {};
+            const panObj = (panRes && !panRes.__error) ? (panRes.data?.data?.details || panRes.data?.details || panRes.data || panRes) : {};
+            const aadhaarObj = (aadhaarRes && !aadhaarRes.__error) ? (aadhaarRes.data?.data?.details || aadhaarRes.data?.details || aadhaarRes.data || aadhaarRes) : {};
+
+            const addresses = [];
+            const mobileAddresses = mobileObj?.address_details || mobileObj?.data?.address_details || [];
+            if (Array.isArray(mobileAddresses) && mobileAddresses.length) {
+                mobileAddresses.forEach(a => {
+                    if (a?.address) addresses.push({ ...a, source: a.source || "Mobile", fromApi: true });
+                });
+            }
+
+            const panAddressStr = panObj?.address || panObj?.street_name || null;
+            const panPostal = panObj?.zip || panObj?.postal || "";
+            const panState = panObj?.state || "";
+            if (panAddressStr) {
+                addresses.push({
+                    address: panAddressStr,
+                    city: panObj?.city || "",
+                    state: panState,
+                    postal: panPostal,
+                    type: "PAN",
+                    source: "PAN",
+                    fromApi: true
+                });
+            }
+
+            const aadhaarAddressStr = aadhaarObj?.address || aadhaarObj?.addr || null;
+            if (aadhaarAddressStr) {
+                addresses.push({
+                    address: aadhaarAddressStr,
+                    city: aadhaarObj?.city || "",
+                    state: aadhaarObj?.state || "",
+                    postal: aadhaarObj?.postal || "",
+                    type: "AADHAAR",
+                    source: "Aadhaar",
+                    fromApi: true
+                });
+            }
+
+            const seen = new Set();
+            const deduped = addresses.filter(a => {
+                const key = (a.address || "").trim();
+                if (!key) return false;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+
+            const previewCustomer = {
+                full_name:
+                    mobileObj?.full_name ||
+                        mobileObj?.data?.full_name ||
+                        panObj?.full_name ||
+                        panObj?.first_name ? `${panObj.first_name || ""}${panObj.last_name ? " " + panObj.last_name : ""}`.trim() :
+                        form.name,
+                mobile: form.mobile,
+                pan: form.pan,
+                aadhar: form.aadhaar,
+                dob:
+                    mobileObj?.date_of_birth ||
+                    mobileObj?.data?.date_of_birth ||
+                    panObj?.date_of_birth ||
+                    aadhaarObj?.dob ||
+                    "",
+                age:
+                    mobileObj?.age || mobileObj?.data?.age || aadhaarObj?.age || "",
+                gender:
+                    mobileObj?.gender || mobileObj?.data?.gender || panObj?.gender || panObj?.data?.gender || aadhaarObj?.gender || "",
+                email:
+                    mobileObj?.email_details?.[0]?.email_address ||
+                    mobileObj?.data?.email_details?.[0]?.email_address ||
+                    panObj?.email ||
+                    panObj?.data?.email ||
+                    ""
+            };
+
+            setCustomerData({ ...previewCustomer, mobile_details: mobileRes, pan_details: panRes, aadhaar_details: aadhaarRes });
+            setAddressList(deduped);
+            setFetched(true);
+            setHasApiError(hasError);
+
+            notifications.show({
+                title: "Success",
+                message: `${successfulCalls} verification(s) completed successfully`,
+                color: "green",
+            });
+
         } catch (err) {
+            console.error("Fetch Error:", err);
             setHasApiError(true);
             notifications.show({
                 title: "Error",
@@ -328,6 +363,10 @@ function CustomerDetails() {
 
         try {
             setValidationLoading(true);
+
+            setShowCustomerDetails(false);
+            setAddressList([]);
+
             const response = await validateKYCLinkage(
                 form.mobile,
                 form.aadhaar,
@@ -338,23 +377,80 @@ function CustomerDetails() {
             );
 
             if (response?.status === "SUCCESS") {
-                const data = response.data;
+                const data = response.data || {};
 
-                const rawAddresses =
+                let addresses = [];
+
+                let mobileAddr =
                     data?.mobile_details?.data?.data?.address_details ||
                     data?.mobile_details?.data?.address_details ||
                     mobileData?.data?.data?.address_details ||
                     mobileData?.data?.address_details ||
-                    data?.address_list ||
-                    data?.address_details ||
                     [];
 
-                // Add fromApi: true to all addresses
-                const addresses = rawAddresses.map((addr) => ({
-                    ...addr,
-                    fromApi: true
-                }));
+                if (!Array.isArray(mobileAddr)) {
+                    mobileAddr = mobileAddr ? [mobileAddr] : [];
+                }
 
+                mobileAddr.forEach(a => {
+                    if (a?.address) {
+                        addresses.push({
+                            address: a.address || "",
+                            city: a.city || "",
+                            state: a.state || "",
+                            postal: a.postal || "",
+                            fromApi: true
+                        });
+                    }
+                });
+
+                const panAddress =
+                    data?.pan_details?.data?.details?.address ||
+                    panData?.data?.data?.details?.address ||
+                    panData?.data?.details?.address ||
+                    panData?.data?.address;
+
+                if (panAddress) {
+                    addresses.push({
+                        address: panAddress,
+                        city:
+                            data?.pan_details?.data?.details?.city ||
+                            panData?.data?.data?.details?.city ||
+                            "",
+                        state:
+                            data?.pan_details?.data?.details?.state ||
+                            panData?.data?.data?.details?.state ||
+                            "",
+                        postal:
+                            data?.pan_details?.data?.details?.zip ||
+                            panData?.data?.data?.details?.zip ||
+                            "",
+                        fromApi: true
+                    });
+                }
+
+                const aadhaarAddress =
+                    data?.aadhaar_details?.data?.details?.address ||
+                    aadhaarData?.data?.data?.details?.address ||
+                    aadhaarData?.data?.details?.address ||
+                    aadhaarData?.data?.address;
+
+                if (aadhaarAddress) {
+                    addresses.push({
+                        address: aadhaarAddress,
+                        city: "",
+                        state:
+                            data?.aadhaar_details?.data?.details?.state ||
+                            aadhaarData?.data?.data?.details?.state ||
+                            "",
+                        postal: "",
+                        fromApi: true
+                    });
+                }
+
+                addresses = addresses.filter(a => a.address);
+
+                // Build normalized customer including dob, age, gender, email so UI shows immediately
                 const normalizedCustomer = {
                     full_name:
                         data?.pan_details?.data?.details?.full_name ||
@@ -366,41 +462,42 @@ function CustomerDetails() {
                     pan: form.pan,
                     aadhar: form.aadhaar,
                     dob:
-                        data?.pan_details?.data?.details?.date_of_birth ||
                         data?.mobile_details?.data?.date_of_birth ||
-                        mobileData?.data?.data?.date_of_birth ||
+                        data?.pan_details?.data?.details?.date_of_birth ||
+                        mobileData?.data?.date_of_birth ||
                         panData?.data?.data?.details?.date_of_birth ||
+                        aadhaarData?.data?.data?.details?.dob ||
                         "",
                     age:
                         data?.mobile_details?.data?.age ||
-                        mobileData?.data?.data?.age ||
+                        mobileData?.data?.age ||
+                        aadhaarData?.data?.data?.details?.age_range ||
                         "",
                     gender:
-                        data?.pan_details?.data?.details?.gender ||
                         data?.mobile_details?.data?.gender ||
-                        panData?.data?.data?.details?.gender ||
-                        mobileData?.data?.data?.gender ||
+                        mobileData?.data?.gender ||
+                        panData?.data?.gender ||
+                        aadhaarData?.data?.data?.details?.gender ||
                         "",
                     email:
-                        data?.pan_details?.data?.details?.email ||
                         data?.mobile_details?.data?.email_details?.[0]?.email_address ||
-                        mobileData?.data?.data?.email_details?.[0]?.email_address ||
+                        mobileData?.data?.email_details?.[0]?.email_address ||
+                        data?.pan_details?.data?.details?.email ||
                         panData?.data?.data?.details?.email ||
                         "",
                     address_list: addresses
                 };
 
-                setCustomerData({
-                    ...normalizedCustomer,
-                    pan_details: panData || data?.pan_details,
-                    mobile_details: mobileData || data?.mobile_details,
-                    aadhaar_details: aadhaarData || data?.aadhaar_details,
-                    address_list: addresses
-                });
+                // Update local detail objects if response provides them so panels render immediately
+                if (data?.mobile_details) setMobileData(data.mobile_details);
+                if (data?.pan_details) setPanData(data.pan_details);
+                if (data?.aadhaar_details) setAadhaarData(data.aadhaar_details);
 
-                setShowCustomerDetails(true);
+                // Set customer data directly (don't merge with possibly null prev)
+                setCustomerData(normalizedCustomer);
                 setAddressList(addresses);
-                setSelectedAddresses({ permanent: null, communication: null }); // Reset local selections
+                setSelectedAddresses({ permanent: null, communication: null });
+                setShowCustomerDetails(true);
 
                 notifications.show({
                     title: "Success",
@@ -415,9 +512,10 @@ function CustomerDetails() {
                 });
             }
         } catch (err) {
+            console.log(err);
             notifications.show({
                 title: "Error",
-                message: err?.message || "KYC validation failed",
+                message: "KYC validation failed",
                 color: "red",
             });
         } finally {
@@ -443,9 +541,6 @@ function CustomerDetails() {
         }
     };
 
-    const hasAnyData = mobileData || panData || aadhaarData;
-
-    // ================= SAVE CUSTOMER DETAILS =================
     const handleSaveCustomerDetails = async () => {
 
         if (!selectedAddresses.permanent && !selectedAddresses.communication) {
@@ -503,6 +598,8 @@ function CustomerDetails() {
                 const applicantId = response?.data?.applicant_id;
                 const dealershipId = response?.data?.dealership_id;
 
+                setApplicant_id(applicantId);
+
                 CustomerOnboardStorage.update({
                     dealership_id: dealershipId,
                 });
@@ -527,7 +624,7 @@ function CustomerDetails() {
                     message: "Customer saved successfully",
                     color: "green",
                 });
-
+setIsEditing(false)
             } else {
                 notifications.show({
                     title: "Error",
@@ -539,6 +636,27 @@ function CustomerDetails() {
             setValidationLoading(false);
         }
     };
+const handleStartEdit = () => {
+    // snapshot current state so user can cancel
+    setEditSnapshot({
+      form: { ...form },
+      addressList: [...addressList],
+      selectedAddresses: { ...selectedAddresses },
+      customerData: customerData ? { ...customerData } : null
+    });
+    setIsEditing(true);
+  };
+ 
+  const handleCancelEdit = () => {
+    if (editSnapshot) {
+      setForm(editSnapshot.form || { name: "", mobile: "", aadhaar: "", pan: "" });
+      setAddressList(editSnapshot.addressList || []);
+      setSelectedAddresses(editSnapshot.selectedAddresses || { permanent: null, communication: null });
+      setCustomerData(editSnapshot.customerData || null);
+    }
+    setIsEditing(false);
+    setEditSnapshot(null);
+  };
 
     const handleAddressSelect = (type, index) => {
         const selectedAddress = addressList[index];
@@ -569,7 +687,6 @@ function CustomerDetails() {
         });
     };
 
-    // Address edit handler
     const handleAddressEdit = (index, editedAddress) => {
         const prevAddress = addressList[index];
 
@@ -603,9 +720,137 @@ function CustomerDetails() {
         });
     };
 
+    const hasAnyData = mobileData || panData || aadhaarData;
+
+    const fetchCustomerById = async (id) => {
+        try {
+            setLoading(true);
+
+            const result = await getCustomerDetails(id);
+
+            if (result?.status === "SUCCESS") {
+                const data = result.data;
+
+                setForm({
+                    name: data.full_name || "",
+                    mobile: data.mobile?.toString() || "",
+                    aadhaar: data.aadhar || "",
+                    pan: data.pan || ""
+                });
+
+                setVerifyStatus({
+                    panVerified: !!data.pan_details?.is_verified,
+                    aadhaarVerified: !!data.aadhar_details?.is_verified,
+                    mobileVerified: !!data.mobile_details?.is_verified
+                });
+
+                setPanData({
+                    data: {
+                        details: data.pan_details?.details || {},
+                        is_verified: data.pan_details?.is_verified,
+                        pan: data.pan
+                    }
+                });
+
+                setAadhaarData({
+                    data: {
+                        details: data.aadhar_details?.details || {},
+                        is_verified: data.aadhar_details?.is_verified,
+                        aadhar: data.aadhar
+                    }
+                });
+
+                setMobileData({
+                    data: {
+                        ...data.mobile_details?.details,
+                        address_details: data.mobile_details?.details?.address_details || [],
+                        email_details: data.mobile_details?.details?.email_details || [],
+                        phone_details: data.mobile_details?.details?.phone_details || []
+                    },
+                    is_verified: data.mobile_details?.is_verified
+                });
+
+                setCustomerData({
+                    full_name: data.full_name,
+                    mobile: data.mobile,
+                    pan: data.pan,
+                    aadhar: data.aadhar,
+                    dob: data.dob,
+                    gender: data.gender,
+                    age: data.age,
+                    email:
+                        data.mobile_details?.details?.email_details?.[0]?.email_address || ""
+                });
+
+                let addressListFromApi = [];
+                const mobileAddrs = data.mobile_details?.details?.address_details;
+                if (Array.isArray(mobileAddrs) && mobileAddrs.length) {
+                    addressListFromApi = mobileAddrs.map((addr) => ({
+                        address: addr.address,
+                        city: data.city || "",
+                        state: addr.state,
+                        postal: addr.postal,
+                        fromApi: true
+                    }));
+                } else if (data.address) {
+                    addressListFromApi = [{
+                        address: data.address,
+                        city: data.city || "",
+                        state: data.state || "",
+                        postal: data.postal || "",
+                        fromApi: true,
+                        source: 'Stored'
+                    }];
+                }
+
+                setAddressList(addressListFromApi);
+
+                if (data.is_communication_address === 1 && addressListFromApi.length) {
+                    setSelectedAddresses({ permanent: null, communication: addressListFromApi[0] });
+                } else if (data.is_permanent_address === 1 && addressListFromApi.length) {
+                    setSelectedAddresses({ permanent: addressListFromApi[0], communication: null });
+                }
+
+                setFetched(true);
+                setHasApiError(false);
+                setShowCustomerDetails(true);
+
+                CustomerOnboardStorage.update({
+                    dealership_id: data.dealership_id,
+                });
+
+                CustomerOnboardStorage.updateApplicant({
+                    applicant_id: applicantId,
+                    full_name: data.full_name,
+                    mobile: data.mobile,
+                    pan: data.pan,
+                    aadhaar: data.aadhar,
+                    address: data.address,
+                    city: data.city,
+                    state: data.state,
+                    dob: data.dob,
+                    gender: data.gender,
+                    age: data.age,
+                    email:
+                        data.mobile_details?.details?.email_details?.[0]?.email_address || ""
+                });
+            }
+
+        } catch (err) {
+            console.error("View Fetch Error:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (viewMode && applicantId) {
+            fetchCustomerById(applicantId);
+        }
+    }, [viewMode, applicantId]);
+
     return (
         <>
-            {/* ===== TOP CARD ===== */}
             <Card withBorder radius="md" mb="lg">
                 <Group justify="space-between" mb="md">
                     <Text fw={700} size="lg">Primary Applicant</Text>
@@ -634,6 +879,7 @@ function CustomerDetails() {
                             placeholder="Enter full name"
                             value={form.name}
                             onChange={(e) => handleFieldChange("name", e.target.value)}
+                            disabled={viewMode}
                         />
                     </Grid.Col>
 
@@ -646,6 +892,7 @@ function CustomerDetails() {
                             onChange={(e) =>
                                 handleFieldChange("mobile", e.target.value.replace(/\D/g, ""))
                             }
+                            disabled={viewMode}
                         />
                         {mobileMsg && (
                             <Text size="sm" mt={5} c={verifyStatus.mobileVerified ? "green" : "red"}>
@@ -664,6 +911,7 @@ function CustomerDetails() {
                             onChange={(e) =>
                                 handleFieldChange("pan", e.target.value.toUpperCase())
                             }
+                            disabled={viewMode}
                         />
                         {panMsg && (
                             <Text size="sm" mt={5} c={verifyStatus.panVerified ? "green" : "red"}>
@@ -682,6 +930,7 @@ function CustomerDetails() {
                             onChange={(e) =>
                                 handleFieldChange("aadhaar", e.target.value.replace(/\D/g, ""))
                             }
+                            disabled={viewMode}
                         />
                         {aadhaarMsg && (
                             <Text size="sm" mt={5} c={verifyStatus.aadhaarVerified ? "green" : "red"}>
@@ -697,7 +946,7 @@ function CustomerDetails() {
                         leftSection={<IconSearch size={16} />}
                         onClick={handleFetch}
                         loading={loading}
-                        disabled={!allFilled || loading || (fetched && !formEdited)}
+                        disabled={!allFilled || loading || (fetched && !formEdited) || viewMode}
                     >
                         {fetched && !formEdited ? "Fetched" : "Fetch Details"}
                     </Button>
@@ -796,7 +1045,7 @@ function CustomerDetails() {
                                         )}
 
                                         {/* Email Details */}
-                                        {mobileData?.data?.data?.email_details?.length > 0 ? (
+                                        {mobileData?.data?.email_details?.length > 0 ? (
                                             <>
                                                 <Divider my="sm" label="Email Details" labelPosition="center" />
                                                 <Table mb="md">
@@ -807,7 +1056,7 @@ function CustomerDetails() {
                                                         </Table.Tr>
                                                     </Table.Thead>
                                                     <Table.Tbody>
-                                                        {mobileData.data.data.email_details.map((email, index) => (
+                                                        {mobileData?.data?.email_details.map((email, index) => (
                                                             <Table.Tr key={index}>
                                                                 <Table.Td>
                                                                     <Group gap="xs">
@@ -828,7 +1077,7 @@ function CustomerDetails() {
                                         )}
 
                                         {/* Phone Details */}
-                                        {mobileData?.data?.data?.phone_details?.length > 0 ? (
+                                        {mobileData?.data?.phone_details?.length > 0 ? (
                                             <>
                                                 <Divider my="sm" label="Phone Details" labelPosition="center" />
                                                 <Table mb="md">
@@ -840,7 +1089,7 @@ function CustomerDetails() {
                                                         </Table.Tr>
                                                     </Table.Thead>
                                                     <Table.Tbody>
-                                                        {mobileData.data.data.phone_details.map((phone, index) => (
+                                                        {mobileData?.data?.phone_details.map((phone, index) => (
                                                             <Table.Tr key={index}>
                                                                 <Table.Td>{phone.number}</Table.Td>
                                                                 <Table.Td>
@@ -863,11 +1112,11 @@ function CustomerDetails() {
                                         )}
 
                                         {/* Address Details - Array Display */}
-                                        {mobileData?.data?.data?.address_details?.length > 0 ? (
+                                        {mobileData?.data?.address_details?.length > 0 ? (
                                             <>
                                                 <Divider my="sm" label="Address Details" labelPosition="center" />
                                                 <Accordion variant="separated">
-                                                    {mobileData.data.data.address_details.map((addr, index) => (
+                                                    {mobileData?.data?.address_details.map((addr, index) => (
                                                         <Accordion.Item key={index} value={`addr-${index}`}>
                                                             <Accordion.Control>
                                                                 <Group>
@@ -1082,7 +1331,7 @@ function CustomerDetails() {
                             leftSection={<IconCheck size={20} />}
                             onClick={handleValidateKYC}
                             loading={validationLoading}
-                            disabled={validationLoading}
+                            disabled={validationLoading || viewMode}
                             styles={{
                                 root: {
                                     minWidth: '30px',
@@ -1101,7 +1350,19 @@ function CustomerDetails() {
                 <Card withBorder radius="md" mt="xl" p="lg">
                     <Group justify="space-between" mb="md">
                         <Text fw={700} size="lg">Customer Basic Details</Text>
-                        <Badge color="blue" size="lg">Verified</Badge>
+                        <Group>
+                    <Badge color="blue" size="lg">Verified</Badge>
+                    {viewMode && !isEditing && (
+                      <Button size="xs" variant="light" onClick={handleStartEdit} style={{ marginLeft: 8 }}>
+                        Edit
+                      </Button>
+                    )}
+                    {isEditing && (
+                      <Button size="xs" color="red" variant="light" onClick={handleCancelEdit} style={{ marginLeft: 8 }}>
+                        Cancel
+                      </Button>
+                    )}
+                </Group>
                     </Group>
 
                     <Grid mb="xl">
@@ -1109,13 +1370,14 @@ function CustomerDetails() {
                             <Text size="sm" c="dimmed">Full Name</Text>
                             <Text fw={500}>
                                 <TextInput
-                                    value={customerData?.full_name ?? ""}
+                                    value={form?.name || ""}
                                     onChange={(e) =>
-                                        setCustomerData(prev => ({
-                                            ...(prev || {}),
-                                            full_name: e.target.value
+                                        setForm(prev => ({
+                                            ...prev,
+                                            name: e.target.value
                                         }))
                                     }
+                                    disabled={viewMode && !isEditing}
                                 />
                             </Text>
                         </Grid.Col>
@@ -1129,7 +1391,7 @@ function CustomerDetails() {
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Age</Text>
-                            <Text fw={500}>{customerData.age || '-'}</Text>
+                            <Text fw={500}>{customerData?.age || '-'}</Text>
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Gender</Text>
@@ -1174,36 +1436,37 @@ function CustomerDetails() {
                                         }
                                     ])
                                 }
+                                disabled={viewMode && !isEditing}
                             >
                                 + Manual
                             </Button>
                         </Group>
-                        {addressList.map((addr, index) => (
-                            <AddressCard
-                                key={index}
-                                address={addr}
-                                index={index}
-                                source={addr.source || addr.type || "Manual"}
-                                isSelected={{
-                                    permanent: selectedAddresses.permanent === addr,
-                                    communication: selectedAddresses.communication === addr
-                                }}
-                                onSelect={(type) => handleAddressSelect(type, index)}
-                                onDelete={() => {
-                                    setAddressList(prev => {
-                                        const newList = prev.filter((_, i) => i !== index);
-                                        setSelectedAddresses({
-                                            permanent: null,
-                                            communication: null
-                                        });
-
-                                        return newList;
-                                    });
-                                }}
-                                onEdit={(editedAddr) => handleAddressEdit(index, editedAddr)}
-                                isEditable={!addr.fromApi}
-                            />
-                        ))}
+                       {addressList.map((addr, index) => (
+                  <AddressCard
+                    key={index}
+                    address={addr}
+                    index={index}
+                    source={addr.source || addr.type || "Manual"}
+                    isSelected={{
+                      permanent: selectedAddresses.permanent === addr,
+                      communication: selectedAddresses.communication === addr
+                    }}
+                    onSelect={!viewMode || isEditing ? (type) => handleAddressSelect(type, index) : undefined}
+                    onDelete={!viewMode || isEditing ? () => {
+                      setAddressList(prev => {
+                        const newList = prev.filter((_, i) => i !== index);
+                        setSelectedAddresses({
+                          permanent: null,
+                          communication: null
+                        });
+ 
+                        return newList;
+                      });
+                    } : undefined}
+                    onEdit={!viewMode || isEditing ? (editedAddr) => handleAddressEdit(index, editedAddr) : undefined}
+                    isEditable={(!viewMode || isEditing) && !addr.fromApi}
+                  />
+                ))}
 
                     </Stack>
 
@@ -1218,21 +1481,29 @@ function CustomerDetails() {
                             </Alert>
                         )}
 
-                        <Group justify="flex-end">
-                            <Button
-                                size="md"
-                                color="blue"
-                                onClick={handleSaveCustomerDetails}
-                                loading={validationLoading}
-                                disabled={validationLoading || (!selectedAddresses.permanent && !selectedAddresses.communication)}
-                            >
-                                Save Customer Details
-                            </Button>
-                        </Group>
+<Group justify="flex-end">
+                  {isEditing && (
+                    <Button size="sm" variant="outline" color="gray" onClick={handleCancelEdit} style={{ marginRight: 8 }}>
+                      Cancel
+                    </Button>
+                  )}
+                  <Button
+                    size="md"
+                    color="blue"
+                    onClick={handleSaveCustomerDetails}
+                    loading={validationLoading}
+                    disabled={validationLoading || (!selectedAddresses.permanent && !selectedAddresses.communication) || (viewMode && !isEditing)}
+                  >
+                    Save Customer Details
+                  </Button>
+                </Group>
                     </Box>
                 </Card>
             )}
-            <EmploymentDetails />
+            <EmploymentDetails
+                viewMode={viewModeProp}
+                applicantId={applicantId ?? applicant_id}
+            />
         </>
     );
 }

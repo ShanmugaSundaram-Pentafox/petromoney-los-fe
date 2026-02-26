@@ -21,12 +21,14 @@ import {
   IconUpload,
   IconCheck,
   IconEye,
+  IconRefresh,
 } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { getDocumentChecklist, getUploadedDocuments, uploadDocument } from "../../../services/customerOnboarding.service";
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog";
 import { displayNotification } from "../../../components/CommonComponents/Notification/displayNotification";
 import styled from 'styled-components';
+import CustomerOnboardStorage from "../../../store/CustomerOnboardStorage";
 
 /* -------------------- Allowed Types -------------------- */
 const allowedTypes = [
@@ -223,10 +225,12 @@ const DocumentCard = ({
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
 
-  const dealershipId = 30; // static for now
-  const applicantId = 35; // static for now
+  const onboardData = CustomerOnboardStorage.get();
 
-  const { data, isLoading: documentChecklistLoading } = useQuery(
+  const dealershipId = onboardData?.dealership_id || 30;
+  const applicantId = onboardData?.applicant?.applicant_id ||  30;
+
+  const { data, isLoading: documentChecklistLoading, refetch: refetchDocumentChecklist, isFetching: documentChecklistFetching } = useQuery(
     ["document-checklist"],
     getDocumentChecklist,
     {
@@ -240,7 +244,7 @@ const Documents = () => {
     }
   );
 
-  const { data: uploadedDocsData, isLoading: uploadedDocsLoading } = useQuery(
+  const { data: uploadedDocsData, isLoading: uploadedDocsLoading, refetch: refetchUploadedDocs, isFetching: uploadedDocsFetching } = useQuery(
     ["uploaded-documents", dealershipId],
     () => getUploadedDocuments(dealershipId),
     {
@@ -279,6 +283,18 @@ const Documents = () => {
     { label: "Pending", value: pendingCount, color: "gray" },
   ];
 
+  const handleReload = async () => {
+    try {
+      await refetchDocumentChecklist();
+      await refetchUploadedDocs();
+    } catch (err) {
+      displayNotification({
+        variant: 'error',
+        message: 'Failed to refresh data',
+      });
+    }
+  };
+
   return (
     <Container size="xl" py="lg">
       {documentChecklistLoading || uploadedDocsLoading ? (
@@ -294,6 +310,19 @@ const Documents = () => {
         </div>
       ) : (
         <>
+
+          <Group justify="flex-end" mb="md">
+            <ActionIcon
+              variant="light"
+              color="blue"
+              size="lg"
+              onClick={handleReload}
+              loading={uploadedDocsFetching || documentChecklistFetching}
+            >
+              <IconRefresh size={18} />
+            </ActionIcon>
+          </Group>
+
           <Group mb="lg">
             <ThemeIcon size="lg" variant="light" color="blue">
               <IconFileText size={20} />

@@ -44,17 +44,30 @@ export function OverviewTab({ data, report }) {
   const totalEMI   = activeAccs.reduce((s, a) => s + getEMI(a), 0);
   const totalHC    = activeAccs.reduce((s, a) => s + getHighCredit(a), 0);
 
+  const getAccountTypeSafe = (a) => {
+    const value =
+      a.accountTypeNormalized?.description ??
+      a.accountTypeNormalized ??
+      a.accountType ??
+      'Other';
+
+    if (typeof value === 'string') return value;
+    if (typeof value === 'object')
+      return value.description || value.name || 'Other';
+    return String(value);
+  };
+
   // Credit mix by type
   const mixMap = {};
   activeAccs.forEach(a => {
-    const k = (a.accountTypeNormalized || a.accountType || 'Other').substring(0, 32);
+    const k = getAccountTypeSafe(a).substring(0, 32);
     mixMap[k] = (mixMap[k] || 0) + getBalance(a);
   });
 
   // Account type distribution (all)
   const typeMap = {};
   accs.forEach(a => {
-    const t = (a.accountTypeNormalized || a.accountType || 'Other').substring(0, 32);
+    const t = getAccountTypeSafe(a).substring(0, 32);
     typeMap[t] = (typeMap[t] || 0) + 1;
   });
 

@@ -1,33 +1,8 @@
 import {
-  IconAlignBoxBottomCenter,
-  IconArrowAutofitRight,
-  IconArrowCapsule,
-  IconArrowIteration,
-  IconArrowLoopRight,
-  IconBooks,
-  IconCertificateOff,
-  IconChecklist,
-  IconClipboardText,
-  IconCoins,
   IconDashboard,
-  IconFileAnalytics,
-  IconFileLambda,
-  IconFileStack,
-  IconGasStation,
-  IconLayersSubtract,
-  IconList,
-  IconPhone,
-  IconReorder,
-  IconRepeat,
-  IconReport,
-  IconScooterElectric,
-  IconSettings,
-  IconTir,
-  IconUserCircle,
-  IconUsers,
   IconUserPlus,
 } from '@tabler/icons-react';
-import { ScrollArea, Text } from '@mantine/core';
+import { ScrollArea } from '@mantine/core';
 import { makeStyles } from '@material-ui/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -103,156 +78,156 @@ const Sidebar = props => {
       href: '/',
       icon: <IconDashboard strokeWidth="2px" size={18} />
     },
-    {
-      id: action_id?.navigation.dashboardDealer,
-      name: 'Dashboard',
-      href: '/reports',
-      icon: <IconDashboard strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.pre_submit,
-      name: 'Pre Submit',
-      href: '/pre-submit',
-      icon: <IconLayersSubtract strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.enhancement,
-      name: 'Enhancement',
-      href: '/enhancement',
-      icon: <IconClipboardText strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.renewal,
-      name: 'Renewal',
-      href: '/renewal',
-      icon: <IconArrowAutofitRight strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.renewal,
-      name: 'Re-onboarding',
-      href: '/re-onboarding',
-      icon: <IconArrowLoopRight strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.credit_reload,
-      name: 'Credit Reload',
-      // href: '/reports/credit/reload',
-      icon: <IconRepeat strokeWidth="2px" size={18} />,
-      links: [
-        {
-          name: 'New',
-          href: '/credit/reload/new/reports',
-          icon: <IconArrowIteration strokeWidth="2px" size={18} />,
-        },
-        {
-          name: 'Processed',
-          href: '/credit/reload/processed/reports',
-          icon: <IconArrowCapsule strokeWidth="2px" size={18} />,
-        }
-      ]
-    },
-    {
-      id: action_id?.navigation.noc,
-      name: 'NOC Letter',
-      href: '/noc',
-      icon: <IconCertificateOff strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.withheld,
-      name: 'Withheld',
-      href: '/withheld',
-      icon: <IconAlignBoxBottomCenter strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.loans,
-      name: 'Loans',
-      icon: <IconCoins strokeWidth="2px" size={18} />,
-      links: [
-        {
-          name: 'Fuel Loans',
-          href: '/loans',
-          icon: <IconGasStation strokeWidth="2px" size={18} />,
-        },
-        {
-          name: 'Vehicle Loans',
-          href: '/vehicle-loan',
-          icon: <IconScooterElectric strokeWidth="2px" size={18} />,
-        }
-      ]
-    },
-    {
-      id: action_id?.navigation.dealerships,
-      name: 'Dealerships',
-      href: '/dealership',
-      icon: <IconUsers strokeWidth="2px" size={18} />
-    },
+    // {
+    //   id: action_id?.navigation.dashboardDealer,
+    //   name: 'Dashboard',
+    //   href: '/reports',
+    //   icon: <IconDashboard strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.pre_submit,
+    //   name: 'Pre Submit',
+    //   href: '/pre-submit',
+    //   icon: <IconLayersSubtract strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.enhancement,
+    //   name: 'Enhancement',
+    //   href: '/enhancement',
+    //   icon: <IconClipboardText strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.renewal,
+    //   name: 'Renewal',
+    //   href: '/renewal',
+    //   icon: <IconArrowAutofitRight strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.renewal,
+    //   name: 'Re-onboarding',
+    //   href: '/re-onboarding',
+    //   icon: <IconArrowLoopRight strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.credit_reload,
+    //   name: 'Credit Reload',
+    //   // href: '/reports/credit/reload',
+    //   icon: <IconRepeat strokeWidth="2px" size={18} />,
+    //   links: [
+    //     {
+    //       name: 'New',
+    //       href: '/credit/reload/new/reports',
+    //       icon: <IconArrowIteration strokeWidth="2px" size={18} />,
+    //     },
+    //     {
+    //       name: 'Processed',
+    //       href: '/credit/reload/processed/reports',
+    //       icon: <IconArrowCapsule strokeWidth="2px" size={18} />,
+    //     }
+    //   ]
+    // },
+    // {
+    //   id: action_id?.navigation.noc,
+    //   name: 'NOC Letter',
+    //   href: '/noc',
+    //   icon: <IconCertificateOff strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.withheld,
+    //   name: 'Withheld',
+    //   href: '/withheld',
+    //   icon: <IconAlignBoxBottomCenter strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.loans,
+    //   name: 'Loans',
+    //   icon: <IconCoins strokeWidth="2px" size={18} />,
+    //   links: [
+    //     {
+    //       name: 'Fuel Loans',
+    //       href: '/loans',
+    //       icon: <IconGasStation strokeWidth="2px" size={18} />,
+    //     },
+    //     {
+    //       name: 'Vehicle Loans',
+    //       href: '/vehicle-loan',
+    //       icon: <IconScooterElectric strokeWidth="2px" size={18} />,
+    //     }
+    //   ]
+    // },
+    // {
+    //   id: action_id?.navigation.dealerships,
+    //   name: 'Dealerships',
+    //   href: '/dealership',
+    //   icon: <IconUsers strokeWidth="2px" size={18} />
+    // },
     {
       id: action_id?.navigation.dealerships,
       name: 'Customers',
       href: '/customers',
       icon: <IconUserPlus strokeWidth="2px" size={18} />
     },
-    {
-      id: action_id?.navigation.profileDealer,
-      name: 'Profile',
-      href: `/dealership/${currentUser.dealership_id}`,
-      icon: <IconUserCircle strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.profileTransports,
-      name: 'Profile',
-      href: '/transports-field',
-      icon: <IconUserCircle strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.collection_remarks,
-      name: 'Collection Remarks',
-      href: '/reports/remarks',
-      icon: <IconFileStack strokeWidth="2px" size={18} />
-    },
+    // {
+    //   id: action_id?.navigation.profileDealer,
+    //   name: 'Profile',
+    //   href: `/dealership/${currentUser.dealership_id}`,
+    //   icon: <IconUserCircle strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.profileTransports,
+    //   name: 'Profile',
+    //   href: '/transports-field',
+    //   icon: <IconUserCircle strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.collection_remarks,
+    //   name: 'Collection Remarks',
+    //   href: '/reports/remarks',
+    //   icon: <IconFileStack strokeWidth="2px" size={18} />
+    // },
 
-    {
-      id: action_id?.navigation.dealer_referral,
-      name: 'Dealer Referral',
-      href: '/referral',
-      icon: <IconReorder strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id.navigation.profileDealer,
-      name: 'Passbook',
-      href: '/passbook',
-      icon: <IconBooks strokeWidth="2px" size={18} />,
-      links: [
-        {
-          name: 'Dealer Passbook',
-          href: '/passbook',
-          icon: <IconList strokeWidth="2px" size={18} />
-        },
-        {
-          name: 'Transport Passbook',
-          href: '/transport/fastag/details',
-          icon: <IconTir strokeWidth="2px" size={18} />
-        }
-      ]
-    },
-    {
-      id: action_id?.navigation.account_statement,
-      name: 'Account Statement',
-      href: '/statements',
-      icon: <IconChecklist strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.profileTransports,
-      name: 'FASTag Passbook',
-      href: '/transport/fastag/details',
-      icon: <IconList strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.call_request,
-      name: 'Call Request',
-      href: '/customer/callback',
-      icon: <IconPhone strokeWidth="2px" size={18} />
-    },
+    // {
+    //   id: action_id?.navigation.dealer_referral,
+    //   name: 'Dealer Referral',
+    //   href: '/referral',
+    //   icon: <IconReorder strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id.navigation.profileDealer,
+    //   name: 'Passbook',
+    //   href: '/passbook',
+    //   icon: <IconBooks strokeWidth="2px" size={18} />,
+    //   links: [
+    //     {
+    //       name: 'Dealer Passbook',
+    //       href: '/passbook',
+    //       icon: <IconList strokeWidth="2px" size={18} />
+    //     },
+    //     {
+    //       name: 'Transport Passbook',
+    //       href: '/transport/fastag/details',
+    //       icon: <IconTir strokeWidth="2px" size={18} />
+    //     }
+    //   ]
+    // },
+    // {
+    //   id: action_id?.navigation.account_statement,
+    //   name: 'Account Statement',
+    //   href: '/statements',
+    //   icon: <IconChecklist strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.profileTransports,
+    //   name: 'FASTag Passbook',
+    //   href: '/transport/fastag/details',
+    //   icon: <IconList strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.call_request,
+    //   name: 'Call Request',
+    //   href: '/customer/callback',
+    //   icon: <IconPhone strokeWidth="2px" size={18} />
+    // },
     // {
     //   id: action_id?.navigation.transports,
     //   name: 'Transports',
@@ -270,41 +245,41 @@ const Sidebar = props => {
     //     }
     //   ]
     // },
-    {
-      id: action_id?.navigation.report,
-      name: 'Report',
-      // href: '/reports',
-      icon: <IconReport strokeWidth="2px" size={18} />,
-      links: [
-        {
-          name: 'Opportunity Report',
-          href: '/reports/opportunities',
-          icon: <IconFileAnalytics strokeWidth="2px" size={18} />
-        },
-        // {
-        //   name: 'DPD Report',
-        //   href: '/report/dpd',
-        //   icon: <IconFileDescription strokeWidth="2px" size={18} />
-        // },
-        {
-          name: 'PDC Report',
-          href: '/report/pdc',
-          icon: <IconFileLambda strokeWidth="2px" size={18} />
-        },
-      ]
-    },
-    {
-      id: action_id?.navigation.users,
-      name: 'Users',
-      href: '/users',
-      icon: <IconUserCircle strokeWidth="2px" size={18} />
-    },
-    {
-      id: action_id?.navigation.settings,
-      name: 'Settings',
-      href: '/settings',
-      icon: <IconSettings strokeWidth="2px" size={18} />
-    },
+    // {
+    //   id: action_id?.navigation.report,
+    //   name: 'Report',
+    //   // href: '/reports',
+    //   icon: <IconReport strokeWidth="2px" size={18} />,
+    //   links: [
+    //     {
+    //       name: 'Opportunity Report',
+    //       href: '/reports/opportunities',
+    //       icon: <IconFileAnalytics strokeWidth="2px" size={18} />
+    //     },
+    //     // {
+    //     //   name: 'DPD Report',
+    //     //   href: '/report/dpd',
+    //     //   icon: <IconFileDescription strokeWidth="2px" size={18} />
+    //     // },
+    //     {
+    //       name: 'PDC Report',
+    //       href: '/report/pdc',
+    //       icon: <IconFileLambda strokeWidth="2px" size={18} />
+    //     },
+    //   ]
+    // },
+    // {
+    //   id: action_id?.navigation.users,
+    //   name: 'Users',
+    //   href: '/users',
+    //   icon: <IconUserCircle strokeWidth="2px" size={18} />
+    // },
+    // {
+    //   id: action_id?.navigation.settings,
+    //   name: 'Settings',
+    //   href: '/settings',
+    //   icon: <IconSettings strokeWidth="2px" size={18} />
+    // },
   ]
 
   let pages = []
@@ -316,88 +291,18 @@ const Sidebar = props => {
 
   return (
     <>
-      {/* <Drawer
-        anchor="left"
-        classes={{ paper: classes.drawer }}
-        onClose={onClose}
-        open={open}
-        variant={variant}
-      >
-        <div
-          {...rest}
-          className={clsx(classes.root, className)}
-        >
-          <Image
-            w="auto"
-            h={88}
-            src="/images/logo.png"
-            mx="auto"
-            mb="md"
-          />
-
-          {/* <Divider light className={classes.divider} />
-          <div>
-            <List>
-              <ListItem
-                className={classes.item}
-                disableGutters
-              >
-                <Button
-                  activeClassName={classes.active}
-                  className={classes.button}
-                >
-                  <div className={classes.icon}>
-                    <PersonOutlineRoundedIcon />
-                  </div>
-                  {currentUser.role_name}
-                </Button>
-              </ListItem>
-            </List>
-          </div> *
-
-          <SidebarNav
-            className={classes.nav}
-            pages={pages}
-            currentUser={currentUser}
-          />
-          
-          <Text c="blue.4" fz="xs" py="md" tt="uppercase" ta="center">version {packageJSON.version}</Text>
-        </div>
-      </Drawer> */}
-
       <ScrollArea>
         <div
           {...rest}
           className={clsx(classes.root, className)}
         >
-
-          {/* <Divider light className={classes.divider} />
-          <div>
-            <List>
-              <ListItem
-                className={classes.item}
-                disableGutters
-              >
-                <Button
-                  activeClassName={classes.active}
-                  className={classes.button}
-                >
-                  <div className={classes.icon}>
-                    <PersonOutlineRoundedIcon />
-                  </div>
-                  {currentUser.role_name}
-                </Button>
-              </ListItem>
-            </List>
-          </div> */}
-
           <SidebarNav
             className={classes.nav}
             navLinks={pages}
             currentUser={currentUser}
           />
 
-          <Text c="blue.4" fz="xs" py="md" tt="uppercase" ta="center">version {packageJSON.version}</Text>
+          {/* <Text c="blue.4" fz="xs" py="md" tt="uppercase" ta="center">version {packageJSON.version}</Text> */}
         </div>
       </ScrollArea>
     </>

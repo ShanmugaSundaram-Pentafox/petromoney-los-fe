@@ -34,6 +34,7 @@ import {
 } from '../../../services/customerOnboarding.service';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 import { Modal } from '../../../components/Mantine/Modal/Modal';
+import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
 
 const formatToINR = (value) => {
   if (!value) return '';
@@ -43,8 +44,12 @@ const formatToINR = (value) => {
 
 const AssetsAndLiability = () => {
   const queryClient = useQueryClient();
-  const dealershipId = 30; // static for now
-  const applicantId = 35; // static for now
+
+  const onboardData = CustomerOnboardStorage.get();
+
+  const dealershipId = onboardData?.dealership_id || 30;
+  const applicantId = onboardData?.applicant?.applicant_id || 30;
+
   const [assets, setAssets] = useState([]);
   const [liabilities, setLiabilities] = useState([]);
 
@@ -52,7 +57,7 @@ const AssetsAndLiability = () => {
   const [selectedAssetToDelete, setSelectedAssetToDelete] = useState(null);
   const [selectedIndexToDelete, setSelectedIndexToDelete] = useState(null);
 
-  const { data: assetsData, isLoading: assetsLoading, refetch: refetchAssets } = useQuery(
+  const { data: assetsData, isLoading: assetsLoading, refetch: refetchAssets, isFetching: assetsFetching } = useQuery(
     ['assets'],
     getAssets,
     {
@@ -67,7 +72,7 @@ const AssetsAndLiability = () => {
     }
   );
 
-  const { data: applicantAssetsData, isLoading: applicantAssetsLoading, refetch: refetchApplicantAssets } =
+  const { data: applicantAssetsData, isLoading: applicantAssetsLoading, refetch: refetchApplicantAssets, isFetching: applicantAssetsFetching } =
     useQuery(
       ['applicant-assets', dealershipId, applicantId],
       () => getApplicantAssets({ dealershipId, applicantId }),
@@ -87,7 +92,7 @@ const AssetsAndLiability = () => {
     return assetsData?.data || [];
   }, [assetsData]);
 
-  const { data: liabilitiesData, isLoading: liabilitiesLoading, refetch: refetchLiabilities } = useQuery(
+  const { data: liabilitiesData, isLoading: liabilitiesLoading, refetch: refetchLiabilities, isFetching: liabilitiesFetching } = useQuery(
     ['liabilities', dealershipId, applicantId],
     () => getLiabilities({ dealershipId, applicantId }),
     {
@@ -303,7 +308,7 @@ const AssetsAndLiability = () => {
               color="blue"
               size="lg"
               onClick={handleReload}
-              loading={assetsLoading || applicantAssetsLoading || liabilitiesLoading}
+              loading={assetsFetching || applicantAssetsFetching || liabilitiesFetching}
             >
               <IconRefresh size={18} />
             </ActionIcon>

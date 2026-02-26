@@ -1,4 +1,4 @@
-import { Badge, Box, Burger, Flex, Group, Image, Menu, Text } from '@mantine/core';
+import { Box, Burger, Flex, Group, Image, Text } from '@mantine/core';
 // import { makeStyles } from '@material-ui/styles';
 // import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -12,9 +12,6 @@ import LoginUserInfo from '../CommonComponents/LoginUserInfo';
 import NotificationSidebar from '../CommonComponents/NotificationSidebar';
 import { permissionCheck } from '../UserCan/UserCan';
 import { format } from 'date-fns';
-import { IconSelector,IconExternalLink  } from '@tabler/icons-react';
-import CheckAllowed from '../../pages/rbac/CheckAllowed';
-import { action_id, resources_id } from '../../config/accessControl';
 
 // const useStyles = makeStyles(theme => {
 //   return ({
@@ -161,7 +158,7 @@ const Topbar = (props) => {
         )} */}
 
         <Flex gap='sm' align='center' ml='auto'>
-          <CheckAllowed currentUser={user} resource={resources_id?.dashboard} action={action_id?.dashboard.dashboardSwitch}>
+          {/* <CheckAllowed currentUser={user} resource={resources_id?.dashboard} action={action_id?.dashboard.dashboardSwitch}>
             <Menu
               width={150}
               withArrow
@@ -186,7 +183,7 @@ const Topbar = (props) => {
                 <Menu.Item onClick={() => window.open('https://dms.pentafox.in/', '_self')}><Badge leftSection={<IconExternalLink style={{ width: 14, height: 14 }} />} variant='light' color='green'>DDMS</Badge></Menu.Item>
               </Menu.Dropdown>
             </Menu>
-          </CheckAllowed>
+          </CheckAllowed> */}
           <Box
             style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', columnGap: '5px', width: 260 }}
           >

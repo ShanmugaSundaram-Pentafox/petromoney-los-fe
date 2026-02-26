@@ -1,21 +1,16 @@
 /* eslint-disable quotes */
-import apiCall from "../utils/api.util";
+import apiCall from '../utils/api.util';
 import moment from 'moment';
 import { URL } from '../config/serverUrls';
 
-export const uploadDocument = ({
-  dealershipId,
-  docId,
-  applicantId,
-  file,
-}) => {
+export const uploadDocument = ({ dealershipId, docId, applicantId, file }) => {
   return new Promise((resolve, reject) => {
     const formData = new FormData();
-    formData.append("applicant_id", applicantId);
-    formData.append("file", file);
+    formData.append('applicant_id', applicantId);
+    formData.append('file', file);
 
     apiCall(`los-poc/dealership/${dealershipId}/doc/${docId}`, {
-      method: "POST",
+      method: 'POST',
       body: formData,
     })
       .then((response) => resolve(response))
@@ -25,8 +20,8 @@ export const uploadDocument = ({
 
 export const getDocumentChecklist = () => {
   return new Promise((resolve, reject) => {
-    apiCall("los-poc/document-checklist", {
-      method: "GET",
+    apiCall('los-poc/document-checklist', {
+      method: 'GET',
     })
       .then((data) => {
         resolve(data);
@@ -40,7 +35,7 @@ export const getDocumentChecklist = () => {
 export const getUploadedDocuments = (dealershipId) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/dealership/${dealershipId}/documents`, {
-      method: "GET",
+      method: 'GET',
     })
       .then((response) => {
         resolve(response?.data || []);
@@ -53,8 +48,8 @@ export const getUploadedDocuments = (dealershipId) => {
 
 export const getAssets = () => {
   return new Promise((resolve, reject) => {
-    apiCall("asset", {
-      method: "GET",
+    apiCall('asset', {
+      method: 'GET',
     })
       .then((data) => {
         resolve(data);
@@ -62,6 +57,22 @@ export const getAssets = () => {
       .catch((err) => {
         reject(err.message);
       });
+  });
+};
+
+export const getEmploymentDetails = (applicant_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/applicant/${applicant_id}/employment`, {
+      method: 'GET',
+    })
+      .then((response) => {
+        if (response.status === 'SUCCESS') {
+          resolve(response);
+        } else {
+          reject(response.message);
+        }
+      })
+      .catch((e) => reject(e.message));
   });
 };
 
@@ -114,7 +125,7 @@ export const deleteAsset = ({ dealershipId, applicantId, assetId }) => {
     apiCall(
       `los-poc/dealership/${dealershipId}/applicant/${applicantId}/asset/${assetId}`,
       {
-        method: "DELETE",
+        method: 'DELETE',
       }
     )
       .then((response) => resolve(response))
@@ -122,17 +133,28 @@ export const deleteAsset = ({ dealershipId, applicantId, assetId }) => {
   });
 };
 
-export const getAllCustomers = ({ search, dateObj, download = false, page = 1, apiFilter = {} }) => {
-  let qry = []
+export const getAllCustomers = ({
+  search,
+  dateObj,
+  download = false,
+  page = 1,
+  apiFilter = {},
+}) => {
+  let qry = [];
   let apiUrl = URL.customer;
-  if (page) qry.push(`page=${page}`)
-  if (search) qry.push(`search=${search}`)
-  if (download) qry.push('download=yes')
-  if (dateObj?.from) qry.push(`from_date=${moment(dateObj?.from).format('YYYY-MM-DD')}&to_date=${moment(dateObj?.to).format('YYYY-MM-DD')}`)
+  if (page) qry.push(`page=${page}`);
+  if (search) qry.push(`search=${search}`);
+  if (download) qry.push('download=yes');
+  if (dateObj?.from)
+    qry.push(
+      `from_date=${moment(dateObj?.from).format('YYYY-MM-DD')}&to_date=${moment(
+        dateObj?.to
+      ).format('YYYY-MM-DD')}`
+    );
   Object.entries(apiFilter).forEach(([key, value]) => {
     if (value) qry.push(`${key}=${value}`);
   });
-  if (qry.length) apiUrl += '?' + qry.join('&')
+  if (qry.length) apiUrl += '?' + qry.join('&');
   return new Promise((resolve, reject) => {
     apiCall(apiUrl)
       .then((res) => {
@@ -145,6 +167,22 @@ export const getAllCustomers = ({ search, dateObj, download = false, page = 1, a
       .catch((e) => {
         reject(e?.message);
       });
+  });
+};
+
+export const getCustomerDetails = (applicant_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/customer-details/${applicant_id}`, {
+      method: 'GET',
+    })
+      .then((response) => {
+        if (response.status === 'SUCCESS') {
+          resolve(response);
+        } else {
+          reject(response.message);
+        }
+      })
+      .catch((e) => reject(e.message));
   });
 };
 
@@ -206,6 +244,7 @@ export const initiateBsa = (body) => {
 };
 //Get Bank Details
 export const getBsaStatus = (consent_id) => {
+  console.log('Getting BSA status for consent_id:', consent_id);
   return new Promise((resolve, reject) => {
     apiCall(`bsa_report/${consent_id}/status`, { method: 'GET' })
       .then(({ status, data, message }) => {
@@ -254,7 +293,7 @@ export const mobileVerfiy = (body) => {
   return new Promise((resolve, reject) => {
     apiCall('los-poc/mobile-to-prefill', {
       method: 'POST',
-      body
+      body,
     })
       .then((res) => {
         if (res.status === 'SUCCESS') {
@@ -273,7 +312,7 @@ export const panVerfiy = (body) => {
   return new Promise((resolve, reject) => {
     apiCall('los-poc/verify-pan', {
       method: 'POST',
-      body
+      body,
     })
       .then((res) => {
         if (res.status === 'SUCCESS') {
@@ -292,7 +331,7 @@ export const aadhaarVerfiy = (body) => {
   return new Promise((resolve, reject) => {
     apiCall('los-poc/verify-aadhar', {
       method: 'POST',
-      body
+      body,
     })
       .then((res) => {
         if (res.status === 'SUCCESS') {
@@ -307,56 +346,120 @@ export const aadhaarVerfiy = (body) => {
   });
 };
 
-export const validateKYCLinkage = (mobile, aadhar, pan, mobileData, panData, aadhaarData) => {
+export const validateKYCLinkage = (
+  mobile,
+  aadhar,
+  pan,
+  mobileData,
+  panData,
+  aadhaarData
+) => {
   const requestBody = {
     mobile: mobile,
     aadhar: aadhar,
     pan: pan,
     mobile_details: {
       data: {
-        identity_details: mobileData?.data?.data?.identity_details || mobileData?.data?.identity_details || {},
-        full_name: mobileData?.data?.data?.full_name || mobileData?.data?.full_name || "",
-        mobile: mobileData?.data?.data?.mobile || mobileData?.data?.mobile || "",
-        date_of_birth: mobileData?.data?.data?.date_of_birth || mobileData?.data?.date_of_birth || "",
-        gender: mobileData?.data?.data?.gender || mobileData?.data?.gender || "",
-        age: mobileData?.data?.data?.age || mobileData?.data?.age || ""
-      }
+        identity_details:
+          mobileData?.data?.data?.identity_details ||
+          mobileData?.data?.identity_details ||
+          {},
+        full_name:
+          mobileData?.data?.data?.full_name ||
+          mobileData?.data?.full_name ||
+          '',
+        mobile:
+          mobileData?.data?.data?.mobile || mobileData?.data?.mobile || '',
+        date_of_birth:
+          mobileData?.data?.data?.date_of_birth ||
+          mobileData?.data?.date_of_birth ||
+          '',
+        gender:
+          mobileData?.data?.data?.gender || mobileData?.data?.gender || '',
+        age: mobileData?.data?.data?.age || mobileData?.data?.age || '',
+      },
     },
     pan_details: {
       data: {
         details: {
-          masked_aadhaar: panData?.data?.data?.details?.masked_aadhaar || panData?.data?.details?.masked_aadhaar || "",
-          full_name: panData?.data?.data?.details?.full_name || panData?.data?.details?.full_name || "",
-          pan_number: panData?.data?.data?.pan || panData?.data?.pan || "",
-          aadhaar_linked: panData?.data?.data?.details?.aadhaar_linked || panData?.data?.details?.aadhaar_linked || false,
-          phone_number: panData?.data?.data?.details?.phone_number || panData?.data?.details?.phone_number || "",
-          address: panData?.data?.data?.details?.address || panData?.data?.details?.address || "",
-          city: panData?.data?.data?.details?.city || panData?.data?.details?.city || "",
-          state: panData?.data?.data?.details?.state || panData?.data?.details?.state || "",
-          date_of_birth: panData?.data?.data?.details?.date_of_birth || panData?.data?.details?.date_of_birth || "",
-          gender: panData?.data?.data?.details?.gender || panData?.data?.details?.gender || ""
-        }
-      }
+          masked_aadhaar:
+            panData?.data?.data?.details?.masked_aadhaar ||
+            panData?.data?.details?.masked_aadhaar ||
+            '',
+          full_name:
+            panData?.data?.data?.details?.full_name ||
+            panData?.data?.details?.full_name ||
+            '',
+          pan_number: panData?.data?.data?.pan || panData?.data?.pan || '',
+          aadhaar_linked:
+            panData?.data?.data?.details?.aadhaar_linked ||
+            panData?.data?.details?.aadhaar_linked ||
+            false,
+          phone_number:
+            panData?.data?.data?.details?.phone_number ||
+            panData?.data?.details?.phone_number ||
+            '',
+          address:
+            panData?.data?.data?.details?.address ||
+            panData?.data?.details?.address ||
+            '',
+          city:
+            panData?.data?.data?.details?.city ||
+            panData?.data?.details?.city ||
+            '',
+          state:
+            panData?.data?.data?.details?.state ||
+            panData?.data?.details?.state ||
+            '',
+          date_of_birth:
+            panData?.data?.data?.details?.date_of_birth ||
+            panData?.data?.details?.date_of_birth ||
+            '',
+          gender:
+            panData?.data?.data?.details?.gender ||
+            panData?.data?.details?.gender ||
+            '',
+        },
+      },
     },
     aadhar_details: {
       data: {
         details: {
-          last_digits_of_mobile: aadhaarData?.data?.data?.details?.last_digits_of_mobile || aadhaarData?.data?.details?.last_digits_of_mobile || "",
-          aadhaar_number: aadhaarData?.data?.data?.aadhar || aadhaarData?.data?.aadhar || "",
-          age_range: aadhaarData?.data?.data?.details?.age_range || aadhaarData?.data?.details?.age_range || "",
-          gender: aadhaarData?.data?.data?.details?.gender || aadhaarData?.data?.details?.gender || "",
-          is_mobile: aadhaarData?.data?.data?.details?.is_mobile || aadhaarData?.data?.details?.is_mobile || false,
-          state: aadhaarData?.data?.data?.details?.state || aadhaarData?.data?.details?.state || "",
-          remarks: aadhaarData?.data?.data?.details?.remarks || aadhaarData?.data?.details?.remarks || ""
-        }
-      }
-    }
+          last_digits_of_mobile:
+            aadhaarData?.data?.data?.details?.last_digits_of_mobile ||
+            aadhaarData?.data?.details?.last_digits_of_mobile ||
+            '',
+          aadhaar_number:
+            aadhaarData?.data?.data?.aadhar || aadhaarData?.data?.aadhar || '',
+          age_range:
+            aadhaarData?.data?.data?.details?.age_range ||
+            aadhaarData?.data?.details?.age_range ||
+            '',
+          gender:
+            aadhaarData?.data?.data?.details?.gender ||
+            aadhaarData?.data?.details?.gender ||
+            '',
+          is_mobile:
+            aadhaarData?.data?.data?.details?.is_mobile ||
+            aadhaarData?.data?.details?.is_mobile ||
+            false,
+          state:
+            aadhaarData?.data?.data?.details?.state ||
+            aadhaarData?.data?.details?.state ||
+            '',
+          remarks:
+            aadhaarData?.data?.data?.details?.remarks ||
+            aadhaarData?.data?.details?.remarks ||
+            '',
+        },
+      },
+    },
   };
 
   return new Promise((resolve, reject) => {
-    apiCall("los-poc/validate-kyc-linkage", {
+    apiCall('los-poc/validate-kyc-linkage', {
       method: 'POST',
-      body: requestBody
+      body: requestBody,
     })
       .then((response) => {
         if (response.status === 'SUCCESS') {
@@ -371,11 +474,11 @@ export const validateKYCLinkage = (mobile, aadhar, pan, mobileData, panData, aad
   });
 };
 
-export const saveCustomerDetails   = (body) => {
+export const saveCustomerDetails = (body) => {
   return new Promise((resolve, reject) => {
-    apiCall("los-poc/customer-details", {
+    apiCall('los-poc/customer-details', {
       method: 'POST',
-      body
+      body,
     })
       .then((response) => {
         if (response.status === 'SUCCESS') {
@@ -390,11 +493,11 @@ export const saveCustomerDetails   = (body) => {
   });
 };
 
-export const saveEmploymentDetails   = (body,applicant_id) => {
+export const saveEmploymentDetails = (body, applicant_id) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/applicant/${applicant_id}/employment`, {
       method: 'PUT',
-      body
+      body,
     })
       .then((response) => {
         if (response.status === 'SUCCESS') {
@@ -409,11 +512,11 @@ export const saveEmploymentDetails   = (body,applicant_id) => {
   });
 };
 
-export const saveCoApplicantDetails   = (body,delarership_id) => {
+export const saveCoApplicantDetails = (body, delarership_id) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/dealership/${delarership_id}/coapplicant`, {
       method: 'POST',
-      body
+      body,
     })
       .then((response) => {
         if (response.status === 'SUCCESS') {
@@ -508,7 +611,7 @@ export const calculateEligibilityScore = (dealershipId, applicantId) => {
 export const forwardLoanForApproval = (loanId, remarks) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/loans/${loanId}/status`, {
-      method: 'POST',
+      method: 'PUT',
       body: {
         action: 'forward',
         remarks,
@@ -522,3 +625,32 @@ export const forwardLoanForApproval = (loanId, remarks) => {
   });
 };
 
+export const getCoapplicantDetails = (applicant_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/customer-details/${applicant_id}`, {
+      method: 'GET',
+    })
+      .then((response) => {
+        if (response.status === 'SUCCESS') {
+          resolve(response);
+        } else {
+          reject(response.message);
+        }
+      })
+      .catch((e) => reject(e.message));
+  });
+};
+
+export const getCoApplicantsByDealership = (dealershipId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/dealership/${dealershipId}/coapplicants`)
+      .then(({ status, data, message }) => {
+        if (status === "SUCCESS") {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => reject(e.message));
+  });
+};

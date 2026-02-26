@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+/* eslint-disable max-len */
+/* eslint-disable react/jsx-indent-props */
+/* eslint-disable react/jsx-indent */
+/* eslint-disable quotes */
+/* eslint-disable no-console */
+/* eslint-disable indent */
+import React, { useState, useEffect } from "react";
 import {
     Container,
     Title,
     Button,
     Paper,
     Group,
-    Select,
+    Autocomplete,
     TextInput,
     Grid,
     Badge,
@@ -17,7 +23,10 @@ import {
     Divider,
     Stack,
     Skeleton,
-    Table
+    Table,
+    Accordion,
+    Loader,
+    Center
 } from "@mantine/core";
 import {
     IconPlus,
@@ -37,34 +46,27 @@ import {
     aadhaarVerfiy,
     mobileVerfiy,
     validateKYCLinkage,
-    saveCoApplicantDetails
+    saveCoApplicantDetails,
+    getCoapplicantDetails,
+    getCoApplicantsByDealership
 } from "../../../services/customerOnboarding.service";
 import AddressCard from "./AddressCard";
-import CoEmploymentDetails from "./CoEmploymentDetails";
+import CoApplicantEmploymentDetails from "./CoApplicantEmploymentDetails";
 import CustomerOnboardStorage from "../../../store/CustomerOnboardStorage";
 
-const CoApplicants = () => {
+const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
     const [coApplicants, setCoApplicants] = useState([]);
     const [expandedIndex, setExpandedIndex] = useState(null);
-    const [showEmployment, setShowEmployment] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const [viewIndex, setViewIndex] = useState(null);
-    const [viewData, setViewData] = useState(null);
-    const [loadingView, setLoadingView] = useState(false);
-    const [editMode, setEditMode] = useState(false);
-    const [isAddingNew, setIsAddingNew] = useState(false);
+    const relationshipOptions = ["Father", "Mother", "Brother", "Sister", "Spouse", "Business Partner", "Friend", "Other"];
+
     const addCoApplicant = () => {
         const newId = Date.now();
         setCoApplicants([
             ...coApplicants,
             {
                 id: newId,
-                relationship: "",
-                fullName: "",
-                mobile: "",
-                aadhaar: "",
-                pan: "",
-                status: "Pending",
                 showCustomerDetails: false,
                 customerData: null,
                 addressList: [],
@@ -74,6 +76,7 @@ const CoApplicants = () => {
                 },
                 form: {
                     name: "",
+                    relationship: "",
                     mobile: "",
                     aadhaar: "",
                     pan: ""
@@ -102,7 +105,7 @@ const CoApplicants = () => {
                 allVerified: false,
                 saved: false,
                 employmentSaved: false,
-                isNew: true,
+                accordionValue: ["mobile", "pan", "aadhaar"]
             },
         ]);
         setExpandedIndex(coApplicants.length);
@@ -110,9 +113,10 @@ const CoApplicants = () => {
 
     const handleChange = (index, field, value) => {
         const updated = [...coApplicants];
-        updated[index][field] = value;
 
-        if (field === 'fullName') {
+        if (field === 'relationship') {
+            updated[index].form.relationship = value;
+        } else if (field === 'name') {
             updated[index].form.name = value;
         } else if (field === 'mobile') {
             updated[index].form.mobile = value;
@@ -207,14 +211,13 @@ const CoApplicants = () => {
             };
             setCoApplicants(updated);
 
-            let hasError = false;
+            let mobileRes, panRes, aadhaarRes;
             let successfulCalls = 0;
+            let hasError = false;
 
             // Mobile Verification
             try {
-                const mobileRes = await mobileVerfiy({ mobile });
-                console.log(`Co-Applicant ${index + 1} Mobile Response:`, mobileRes);
-
+                mobileRes = await mobileVerfiy({ mobile });
                 if (mobileRes?.status === "SUCCESS" && mobileRes?.data) {
                     updated[index].verificationData.mobileData = mobileRes;
                     updated[index].messages.mobileMsg = mobileRes?.message || "Mobile verified successfully";
@@ -225,16 +228,13 @@ const CoApplicants = () => {
                     hasError = true;
                 }
             } catch (err) {
-                console.error(`Co-Applicant ${index + 1} Mobile Error:`, err);
                 updated[index].messages.mobileMsg = err?.response?.data?.message || "Mobile verification failed";
                 hasError = true;
             }
 
             // PAN Verification
             try {
-                const panRes = await panVerfiy({ pan });
-                console.log(`Co-Applicant ${index + 1} PAN Response:`, panRes);
-
+                panRes = await panVerfiy({ pan });
                 if (panRes?.status === "SUCCESS" && panRes?.data) {
                     updated[index].verificationData.panData = panRes;
                     updated[index].messages.panMsg = panRes?.message || "PAN verified successfully";
@@ -245,16 +245,13 @@ const CoApplicants = () => {
                     hasError = true;
                 }
             } catch (err) {
-                console.error(`Co-Applicant ${index + 1} PAN Error:`, err);
                 updated[index].messages.panMsg = err?.response?.data?.message || "Invalid PAN number";
                 hasError = true;
             }
 
             // Aadhaar Verification
             try {
-                const aadhaarRes = await aadhaarVerfiy({ aadhar: aadhaar });
-                console.log(`Co-Applicant ${index + 1} Aadhaar Response:`, aadhaarRes);
-
+                aadhaarRes = await aadhaarVerfiy({ aadhar: aadhaar });
                 if (aadhaarRes?.status === "SUCCESS" && aadhaarRes?.data) {
                     updated[index].verificationData.aadhaarData = aadhaarRes;
                     updated[index].messages.aadhaarMsg = aadhaarRes?.message || "Aadhaar verified successfully";
@@ -265,7 +262,6 @@ const CoApplicants = () => {
                     hasError = true;
                 }
             } catch (err) {
-                console.error(`Co-Applicant ${index + 1} Aadhaar Error:`, err);
                 updated[index].messages.aadhaarMsg = err?.response?.data?.message || "Invalid Aadhaar number";
                 hasError = true;
             }
@@ -277,57 +273,97 @@ const CoApplicants = () => {
                 updated[index].fetched = true;
                 updated[index].hasApiError = hasError;
 
+                // Build address list from verifications
                 try {
                     const mobileData = updated[index].verificationData.mobileData;
                     const panData = updated[index].verificationData.panData;
+                    const aadhaarData = updated[index].verificationData.aadhaarData;
 
-                    const mobileAddresses = mobileData?.data?.data?.address_details || mobileData?.data?.address_details || [];
-                    const panAddrStr = panData?.data?.data?.details?.address || panData?.data?.details?.address || null;
-                    const panPostal = panData?.data?.data?.details?.zip || panData?.data?.details?.zip || '';
-                    const panState = panData?.data?.data?.details?.state || panData?.data?.details?.state || '';
+                    const mobileObj = mobileData?.data?.data || mobileData?.data || {};
+                    const panObj = panData?.data?.data?.details || panData?.data?.details || {};
+                    const aadhaarObj = aadhaarData?.data?.data?.details || aadhaarData?.data?.details || {};
 
-                    let prefillAddresses = [];
+                    const addresses = [];
+
+                    // Mobile addresses
+                    const mobileAddresses = mobileObj?.address_details || [];
                     if (Array.isArray(mobileAddresses) && mobileAddresses.length) {
-                        prefillAddresses.push(...mobileAddresses.map(a => ({ ...a, source: a.source || 'Mobile', fromApi: true })));
+                        mobileAddresses.forEach(a => {
+                            if (a?.address) addresses.push({ ...a, source: a.source || "Mobile", fromApi: true });
+                        });
                     }
-                    if (panAddrStr) {
-                        prefillAddresses.push({
-                            address: panAddrStr,
-                            postal: panPostal,
+
+                    // PAN address
+                    const panAddressStr = panObj?.address || panObj?.street_name || null;
+                    const panPostal = panObj?.zip || panObj?.postal || "";
+                    const panState = panObj?.state || "";
+                    if (panAddressStr) {
+                        addresses.push({
+                            address: panAddressStr,
+                            city: panObj?.city || "",
                             state: panState,
-                            reported_date: null,
-                            type: 'PAN',
-                            source: 'PAN',
+                            postal: panPostal,
+                            type: "PAN",
+                            source: "PAN",
                             fromApi: true
                         });
                     }
 
+                    // Aadhaar address
+                    const aadhaarAddressStr = aadhaarObj?.address || aadhaarObj?.addr || null;
+                    if (aadhaarAddressStr) {
+                        addresses.push({
+                            address: aadhaarAddressStr,
+                            city: aadhaarObj?.city || "",
+                            state: aadhaarObj?.state || "",
+                            postal: aadhaarObj?.postal || "",
+                            type: "AADHAAR",
+                            source: "Aadhaar",
+                            fromApi: true
+                        });
+                    }
+
+                    // Deduplicate addresses
                     const seen = new Set();
-                    prefillAddresses = prefillAddresses.filter(a => {
-                        const key = (a.address || '').trim();
+                    const deduped = addresses.filter(a => {
+                        const key = (a.address || "").trim();
                         if (!key) return false;
                         if (seen.has(key)) return false;
                         seen.add(key);
                         return true;
                     });
 
-                    if (prefillAddresses.length > 0) {
-                        const previewCustomer = {
-                            full_name: mobileData?.data?.data?.full_name || panData?.data?.data?.details?.full_name || name,
-                            mobile: mobile,
-                            pan: pan,
-                            aadhar: aadhaar,
-                            dob: mobileData?.data?.data?.date_of_birth || panData?.data?.data?.details?.date_of_birth || '',
-                            age: mobileData?.data?.data?.age || '',
-                            gender: mobileData?.data?.data?.gender || panData?.data?.data?.details?.gender || '',
-                            email: mobileData?.data?.data?.email_details?.[0]?.email_address || panData?.data?.data?.details?.email || '',
-                            address_list: prefillAddresses
-                        };
+                    const previewCustomer = {
+                        full_name:
+                            mobileObj?.full_name ||
+                            panObj?.full_name ||
+                            name,
+                        mobile: mobile,
+                        pan: pan,
+                        aadhar: aadhaar,
+                        dob:
+                            mobileObj?.date_of_birth ||
+                            panObj?.date_of_birth ||
+                            aadhaarObj?.dob ||
+                            "",
+                        age:
+                            mobileObj?.age ||
+                            aadhaarObj?.age_range ||
+                            "",
+                        gender:
+                            mobileObj?.gender ||
+                            panObj?.gender ||
+                            aadhaarObj?.gender ||
+                            "",
+                        email:
+                            mobileObj?.email_details?.[0]?.email_address ||
+                            panObj?.email ||
+                            ""
+                    };
 
-                        updated[index].customerData = previewCustomer;
-                        updated[index].addressList = prefillAddresses;
+                    updated[index].customerData = previewCustomer;
+                    updated[index].addressList = deduped;
 
-                    }
                 } catch (e) {
                     console.log("Preview error:", e);
                 }
@@ -349,7 +385,7 @@ const CoApplicants = () => {
             setCoApplicants(updated);
 
         } catch (err) {
-            console.error(`Co-Applicant ${index + 1} General Error:`, err);
+            console.error(`Co-Applicant ${index + 1} Error:`, err);
             const updated = [...coApplicants];
             updated[index].hasApiError = true;
             setCoApplicants(updated);
@@ -395,22 +431,80 @@ const CoApplicants = () => {
             );
 
             if (response?.status === "SUCCESS") {
-                const data = response.data;
+                const data = response.data || {};
 
-                const rawAddresses =
+                let addresses = [];
+
+                // Mobile addresses
+                let mobileAddr =
                     data?.mobile_details?.data?.data?.address_details ||
                     data?.mobile_details?.data?.address_details ||
                     mobileData?.data?.data?.address_details ||
                     mobileData?.data?.address_details ||
-                    data?.address_list ||
-                    data?.address_details ||
                     [];
 
-                const addresses = rawAddresses.map((addr) => ({
-                    ...addr,
-                    fromApi: true,
-                    source: addr.source || addr.type || 'API'
-                }));
+                if (!Array.isArray(mobileAddr)) {
+                    mobileAddr = mobileAddr ? [mobileAddr] : [];
+                }
+
+                mobileAddr.forEach(a => {
+                    if (a?.address) {
+                        addresses.push({
+                            address: a.address || "",
+                            city: a.city || "",
+                            state: a.state || "",
+                            postal: a.postal || "",
+                            fromApi: true,
+                            source: "Mobile"
+                        });
+                    }
+                });
+
+                // PAN address
+                const panAddress =
+                    data?.pan_details?.data?.details?.address ||
+                    panData?.data?.data?.details?.address ||
+                    panData?.data?.details?.address;
+
+                if (panAddress) {
+                    addresses.push({
+                        address: panAddress,
+                        city: data?.pan_details?.data?.details?.city || panData?.data?.data?.details?.city || "",
+                        state: data?.pan_details?.data?.details?.state || panData?.data?.data?.details?.state || "",
+                        postal: data?.pan_details?.data?.details?.zip || panData?.data?.data?.details?.zip || "",
+                        fromApi: true,
+                        source: "PAN"
+                    });
+                }
+
+                // Aadhaar address
+                const aadhaarAddress =
+                    data?.aadhaar_details?.data?.details?.address ||
+                    aadhaarData?.data?.data?.details?.address ||
+                    aadhaarData?.data?.details?.address;
+
+                if (aadhaarAddress) {
+                    addresses.push({
+                        address: aadhaarAddress,
+                        city: "",
+                        state: data?.aadhaar_details?.data?.details?.state || aadhaarData?.data?.data?.details?.state || "",
+                        postal: "",
+                        fromApi: true,
+                        source: "Aadhaar"
+                    });
+                }
+
+                addresses = addresses.filter(a => a.address);
+
+                // Deduplicate
+                const seen = new Set();
+                addresses = addresses.filter(a => {
+                    const key = (a.address || "").trim();
+                    if (!key) return false;
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                });
 
                 const normalizedCustomer = {
                     full_name:
@@ -423,39 +517,41 @@ const CoApplicants = () => {
                     pan: pan,
                     aadhar: aadhaar,
                     dob:
-                        data?.pan_details?.data?.details?.date_of_birth ||
                         data?.mobile_details?.data?.date_of_birth ||
-                        mobileData?.data?.data?.date_of_birth ||
+                        data?.pan_details?.data?.details?.date_of_birth ||
+                        mobileData?.data?.date_of_birth ||
                         panData?.data?.data?.details?.date_of_birth ||
+                        aadhaarData?.data?.data?.details?.dob ||
                         "",
                     age:
                         data?.mobile_details?.data?.age ||
-                        mobileData?.data?.data?.age ||
+                        mobileData?.data?.age ||
+                        aadhaarData?.data?.data?.details?.age_range ||
                         "",
                     gender:
-                        data?.pan_details?.data?.details?.gender ||
                         data?.mobile_details?.data?.gender ||
-                        panData?.data?.data?.details?.gender ||
-                        mobileData?.data?.data?.gender ||
+                        mobileData?.data?.gender ||
+                        panData?.data?.gender ||
+                        aadhaarData?.data?.data?.details?.gender ||
                         "",
                     email:
-                        data?.pan_details?.data?.details?.email ||
                         data?.mobile_details?.data?.email_details?.[0]?.email_address ||
-                        mobileData?.data?.data?.email_details?.[0]?.email_address ||
+                        mobileData?.data?.email_details?.[0]?.email_address ||
+                        data?.pan_details?.data?.details?.email ||
                         panData?.data?.data?.details?.email ||
                         "",
                     address_list: addresses
                 };
 
+                // Update verification data
+                if (data?.mobile_details) updated[index].verificationData.mobileData = data.mobile_details;
+                if (data?.pan_details) updated[index].verificationData.panData = data.pan_details;
+                if (data?.aadhaar_details) updated[index].verificationData.aadhaarData = data.aadhaar_details;
+
                 updated[index].customerData = normalizedCustomer;
                 updated[index].showCustomerDetails = true;
                 updated[index].addressList = addresses;
                 updated[index].selectedAddresses = { permanent: null, communication: null };
-                updated[index].validationResult = {
-                    success: true,
-                    message: response.message,
-                    data: response.data
-                };
 
                 notifications.show({
                     title: "Success",
@@ -463,12 +559,6 @@ const CoApplicants = () => {
                     color: "green",
                 });
             } else {
-                updated[index].validationResult = {
-                    success: false,
-                    message: response?.message,
-                    data: response?.data || null
-                };
-
                 notifications.show({
                     title: "Error",
                     message: response?.message || "KYC validation failed",
@@ -511,42 +601,29 @@ const CoApplicants = () => {
             setCoApplicants(updated);
 
             let selectedAddr = null;
-            let isPermanent = false;
-            let isCommunication = false;
+            let isPermanent = "0";
+            let isCommunication = "0";
 
             if (selectedAddresses.permanent) {
                 selectedAddr = selectedAddresses.permanent;
-                isPermanent = true;
+                isPermanent = "1";
             }
 
             if (selectedAddresses.communication) {
                 selectedAddr = selectedAddresses.communication;
-                isCommunication = true;
+                isCommunication = "1";
             }
 
-            // Get mobile details in the correct format
-            const mobileDetails = verificationData.mobileData?.data?.data || verificationData.mobileData?.data || {};
+            const mobileDetails =
+                verificationData.mobileData?.data?.data ||
+                verificationData.mobileData?.data || {};
 
-            // Format mobile details with address_details array
-            const formattedMobileDetails = {
-                ...mobileDetails,
-                address_details: mobileDetails.address_details ||
-                    (selectedAddr ? [{
-                        address_line_1: selectedAddr.address?.split(',')[0] || selectedAddr.address || "",
-                        address_line_2: selectedAddr.address?.split(',').slice(1).join(',').trim() || "",
-                        city: selectedAddr.city || "",
-                        postal_code: selectedAddr.postal || "",
-                        state: selectedAddr.state || "",
-                        country: "INDIA"
-                    }] : [])
-            };
-
-            // Get PAN details
-            const panDetails = verificationData.panData?.data?.data?.details ||
+            const panDetails =
+                verificationData.panData?.data?.data?.details ||
                 verificationData.panData?.data?.details || {};
 
-            // Get Aadhaar details
-            const aadhaarDetails = verificationData.aadhaarData?.data?.data?.details ||
+            const aadhaarDetails =
+                verificationData.aadhaarData?.data?.data?.details ||
                 verificationData.aadhaarData?.data?.details || {};
 
             const payload = {
@@ -555,6 +632,7 @@ const CoApplicants = () => {
                 dob: customerData?.dob || "",
                 age: customerData?.age ? parseInt(customerData.age) : 0,
                 gender: customerData?.gender || "",
+                relationships: form.relationship,
                 category: "CO-APPLICANT",
                 address: selectedAddr?.address || "",
                 city: selectedAddr?.city || "",
@@ -562,74 +640,47 @@ const CoApplicants = () => {
                 is_communication_address: isCommunication,
                 is_permanent_address: isPermanent,
                 aadhar: form.aadhaar,
-                aadhar_details: {
-                    aadhaar_number: aadhaarDetails.aadhaar_number || aadhaarDetails.masked_aadhaar || form.aadhaar,
-                    age_range: aadhaarDetails.age_range || "",
-                    gender: aadhaarDetails.gender || customerData?.gender || "",
-                    is_mobile: aadhaarDetails.is_mobile || false,
-                    last_digits_of_mobile: aadhaarDetails.last_digits_of_mobile || 0,
-                    remarks: aadhaarDetails.remarks || "success",
-                    state: aadhaarDetails.state || selectedAddr?.state || ""
-                },
                 pan: form.pan,
-                pan_details: {
-                    aadhaar_linked: panDetails.aadhaar_linked || false,
-                    masked_aadhaar: panDetails.masked_aadhaar || "",
-                    address: panDetails.address || selectedAddr?.address || "",
-                    city: panDetails.city || selectedAddr?.city || "",
-                    country: panDetails.country || "INDIA",
-                    date_of_birth: panDetails.date_of_birth || customerData?.dob || "",
-                    email: panDetails.email || customerData?.email || "",
-                    first_name: panDetails.first_name || (customerData?.full_name?.split(' ')[0] || ""),
-                    full_name: panDetails.full_name || customerData?.full_name || form.name,
-                    gender: panDetails.gender || customerData?.gender || "",
-                    last_name: panDetails.last_name || (customerData?.full_name?.split(' ').slice(1).join(' ') || ""),
-                    pan_number: panDetails.pan_number || panDetails.pan || form.pan,
-                    phone_number: panDetails.phone_number || "",
-                    state: panDetails.state || selectedAddr?.state || "",
-                    street_name: panDetails.street_name || selectedAddr?.address?.split(',')[0] || "",
-                    zip: panDetails.zip || selectedAddr?.postal || ""
-                },
-                mobile_details: formattedMobileDetails
+                mobile_details: mobileDetails,
+                pan_details: panDetails,
+                aadhar_details: aadhaarDetails
             };
 
             const dealershipId = CustomerOnboardStorage.get()?.dealership_id;
+
             const response = await saveCoApplicantDetails(payload, dealershipId);
 
             if (response?.status === "SUCCESS") {
+                const applicantId = response?.data?.id || response?.data?.customer_id || response?.data?.applicant_id;
 
-                // Save co-applicant in local storage
-                CustomerOnboardStorage.updateCoApplicant(index, {
-                    applicant_id: response?.data?.coapplicant_id || null,
-                    full_name: payload.full_name,
-                    mobile: payload.mobile,
-                    pan: payload.pan,
-                    aadhaar: payload.aadhar,
-                    dob: payload.dob,
-                    gender: payload.gender,
-                    age: payload.age,
-                    address: payload.address,
-                    city: payload.city,
-                    state: payload.state,
-                });
+                if (applicantId) {
+                    CustomerOnboardStorage.updateCoApplicant(index, {
+                        applicant_id: response?.data?.coapplicant_id || null,
+                        full_name: payload.full_name,
+                        mobile: payload.mobile,
+                        pan: payload.pan,
+                        aadhaar: payload.aadhar,
+                        dob: payload.dob,
+                        gender: payload.gender,
+                        age: payload.age,
+                        address: payload.address,
+                        city: payload.city,
+                        state: payload.state,
+                    });
+                }
 
-                updated[index].status = "Verified";
+
+
                 updated[index].saved = true;
                 updated[index].showCustomerDetails = false;
-
-                // ✅ ADD THIS
-                setViewIndex(index);
-                setViewData(response.data);   // or payload if API doesn't return data
-
-                const allSaved = updated.every(app => app.status === "Verified" || app.saved);
-                setShowEmployment(allSaved && updated.length > 0);
-                setExpandedIndex(null);
 
                 notifications.show({
                     title: "Success",
                     message: "Co-applicant saved successfully",
                     color: "green",
                 });
+
+                setExpandedIndex(null);
             } else {
                 notifications.show({
                     title: "Error",
@@ -641,7 +692,7 @@ const CoApplicants = () => {
             setCoApplicants(updated);
 
         } catch (err) {
-            console.error("Save Error:", err);
+            console.log("Save Error:", err);
             notifications.show({
                 title: "Error",
                 message: "Failed to save co-applicant",
@@ -749,156 +800,149 @@ const CoApplicants = () => {
     const handleEmploymentSaved = (index) => {
         setCoApplicants(prev => {
             const updated = [...prev];
-
             updated[index].employmentSaved = true;
-            updated[index].isNew = false;
-
             updated[index].showCustomerDetails = false;
-            updated[index].validationLoading = false;
-            updated[index].loading = false;
-
             return updated;
         });
     };
-    const handleViewDetails = async (applicantId, index) => {
+
+    const loadCoApplicants = async () => {
+        if (!viewMode || !parentApplicantId) return;
+
         try {
-            setLoadingView(true);
-            setViewIndex(index);
+            setLoading(true);
 
-            const res = await fetch(`/los-poc/customer-details/${applicantId}`);
-            const data = await res.json();
+            const response = await getCoApplicantsByDealership(parentApplicantId);
 
-            if (data?.status === "SUCCESS") {
-                setViewData(data.data);
-                setEditMode(false);
-            } else {
-                notifications.show({
-                    title: "Error",
-                    message: "Failed to fetch details",
-                    color: "red",
-                });
+            // ✅ Extract correct array
+            const applicants = response?.coapplicants || [];
+
+            if (!applicants.length) {
+                setCoApplicants([]);
+                return;
             }
+
+            const formattedApplicants = applicants.map((app) => {
+                // Build address list from mobile_details if available
+                const mobileAddresses =
+                    app.mobile_details?.details?.address_details || [];
+
+                const addressList =
+                    mobileAddresses.length > 0
+                        ? mobileAddresses.map((addr) => ({
+                            address: addr.address,
+                            city: "",
+                            state: addr.state,
+                            postal: addr.postal,
+                            source: addr.type || "Mobile",
+                            fromApi: true,
+                        }))
+                        : app.address
+                            ? [
+                                {
+                                    address: app.address,
+                                    city: app.city,
+                                    state: app.state,
+                                    postal: "",
+                                    source: "Saved",
+                                    fromApi: true,
+                                },
+                            ]
+                            : [];
+
+                return {
+                    id: app.applicant_id, // ✅ use correct id
+
+                    showCustomerDetails: false,
+                    saved: true,
+                    employmentSaved: true,
+
+                    allVerified: true,
+
+                    form: {
+                        name: app.full_name || "",
+                        relationship: app.relationships || "",
+                        mobile: app.mobile?.toString() || "",
+                        aadhaar: app.aadhar || "",
+                        pan: app.pan || "",
+                    },
+
+                    customerData: {
+                        full_name: app.full_name,
+                        mobile: app.mobile?.toString(),
+                        pan: app.pan,
+                        aadhar: app.aadhar,
+                        dob: app.dob,
+                        age: app.age,
+                        gender: app.gender,
+                        email:
+                            app.mobile_details?.details?.email_details?.[0]
+                                ?.email_address || "",
+                    },
+
+                    addressList,
+
+                    selectedAddresses: {
+                        permanent:
+                            app.is_permanent_address === 1
+                                ? addressList[0] || null
+                                : null,
+
+                        communication:
+                            app.is_communication_address === 1
+                                ? addressList[0] || null
+                                : null,
+                    },
+
+                    verifyStatus: {
+                        panVerified: app.pan_details?.is_verified === 1,
+                        aadhaarVerified: app.aadhar_details?.is_verified === 1,
+                        mobileVerified: app.mobile_details?.is_verified === 1,
+                    },
+
+                    verificationData: {
+                        mobileData: app.mobile_details || null,
+                        panData: app.pan_details || null,
+                        aadhaarData: app.aadhar_details || null,
+                    },
+                };
+            });
+
+            setCoApplicants(formattedApplicants);
         } catch (err) {
-            notifications.show({
-                title: "Error",
-                message: "API error",
-                color: "red",
-            });
+            console.error("Error loading co-applicants:", err);
+            setCoApplicants([]);
         } finally {
-            setLoadingView(false);
-        }
-    };
-    const handleUpdateCustomer = async (index) => {
-        try {
-            const applicant = coApplicants[index];
-            const { form, verificationData } = applicant;
-
-            const panDetails =
-                verificationData.panData?.data?.data?.details ||
-                verificationData.panData?.data?.details || {};
-
-            const aadhaarDetails =
-                verificationData.aadhaarData?.data?.data?.details ||
-                verificationData.aadhaarData?.data?.details || {};
-
-            const mobileDetails =
-                verificationData.mobileData?.data?.data ||
-                verificationData.mobileData?.data || {};
-
-            // 🔥 USE EDITED DATA FROM viewData
-            const editedName = viewData.full_name;
-            const editedAddress = viewData.address;
-            const editedCity = viewData.city || "";
-            const editedState = viewData.state || "";
-
-            const payload = {
-                full_name: editedName, // ✅ changed
-                mobile: form.mobile,
-                dob: viewData.dob || "",
-                age: viewData.age ? parseInt(viewData.age) : 0,
-                gender: viewData.gender || "",
-                category: "CO-APPLICANT",
-
-                address: editedAddress, // ✅ changed
-                city: editedCity,       // ✅ changed
-                state: editedState,     // ✅ changed
-
-                is_communication_address: true,
-                is_permanent_address: false,
-
-                aadhar: form.aadhaar,
-                aadhar_details: {
-                    aadhaar_number:
-                        aadhaarDetails.aadhaar_number ||
-                        aadhaarDetails.masked_aadhaar ||
-                        form.aadhaar,
-                    age_range: aadhaarDetails.age_range || "",
-                    gender: aadhaarDetails.gender || viewData.gender || "",
-                    is_mobile: aadhaarDetails.is_mobile || false,
-                    last_digits_of_mobile:
-                        aadhaarDetails.last_digits_of_mobile || 0,
-                    remarks: aadhaarDetails.remarks || "success",
-                    state: aadhaarDetails.state || editedState
-                },
-
-                pan: form.pan,
-                pan_details: {
-                    ...panDetails,
-
-                    // ✅ override only changed fields
-                    full_name: editedName,
-                    address: editedAddress,
-                    city: editedCity,
-                    state: editedState,
-                },
-
-                mobile_details: mobileDetails
-            };
-
-            const dealershipId = 30;
-
-            const response = await saveCoApplicantDetails(payload, dealershipId);
-
-            if (response?.status === "SUCCESS") {
-                notifications.show({
-                    title: "Success",
-                    message: "Customer updated successfully",
-                    color: "green",
-                });
-
-                setEditMode(false);
-
-            } else {
-                notifications.show({
-                    title: "Error",
-                    message: response?.message || "Update failed",
-                    color: "red",
-                });
-            }
-
-        } catch (error) {
-            notifications.show({
-                title: "Error",
-                message: "Failed to update customer",
-                color: "red",
-            });
+            setLoading(false);
         }
     };
 
-    const verifiedCoApplicants = coApplicants.filter(app => app.status === "Verified" || app.saved);
+    useEffect(() => {
+        loadCoApplicants();
+    }, [viewMode, parentApplicantId]);
+
+    if (loading) {
+        return (
+            <Center style={{ height: "60vh" }}>
+                <Loader size="lg" />
+            </Center>
+        );
+    }
+
     return (
         <Container size="xl" py="lg">
             <Group justify="space-between" mb="lg">
                 <Title order={3}>Co-Applicants ({coApplicants.length})</Title>
-                <Button leftSection={<IconPlus size={18} />} onClick={addCoApplicant}>
-                    Add Co-Applicant
-                </Button>
+                {!viewMode && (
+                    <Button leftSection={<IconPlus size={18} />} onClick={addCoApplicant}>
+                        Add Co-Applicant
+                    </Button>
+                )}
             </Group>
 
             {coApplicants.map((item, index) => (
                 <Paper key={item.id} withBorder radius="md" mb="md">
-                    {/* Header Section - Always Visible */}
-
+                    {/* Header Section */}
                     <Group justify="space-between" p="md" style={{ background: "#f9fafb" }}>
                         <Group gap="xs">
                             <Text fw={600}>Co-Applicant {index + 1}</Text>
@@ -907,12 +951,14 @@ const CoApplicants = () => {
 
                         <Group>
                             <Badge
-                                color={item.allVerified ? "green" : item.verifyStatus?.panVerified || item.verifyStatus?.aadhaarVerified || item.verifyStatus?.mobileVerified ? "yellow" : "gray"}
+                                color={item.allVerified ? "green" :
+                                    item.verifyStatus?.panVerified || item.verifyStatus?.aadhaarVerified || item.verifyStatus?.mobileVerified ? "yellow" : "gray"}
                                 variant="light"
                             >
-                                {item.allVerified ? "Verified" : item.status}
+                                {item.allVerified ? "Fully Verified" :
+                                    item.verifyStatus?.panVerified || item.verifyStatus?.aadhaarVerified || item.verifyStatus?.mobileVerified ? "Partially Verified" : "Not Verified"}
                             </Badge>
-                            {!item.saved && (
+                            {!item.saved && !viewMode && (
                                 <ActionIcon color="red" variant="subtle" onClick={() => removeCoApplicant(index)}>
                                     <IconTrash size={18} />
                                 </ActionIcon>
@@ -920,19 +966,29 @@ const CoApplicants = () => {
                         </Group>
                     </Group>
 
-                    {/* Content Section - Always Visible when not saved */}
-                    {!(item.saved && item.employmentSaved) && (
+                    {/* Content Section */}
+                    {!item.employmentSaved && !viewMode && (
                         <Box p="md">
-                            {/* Basic Details Section - Fixed at top with proper padding */}
+                            {/* Basic Details Section */}
                             <Card withBorder radius="md" mb="lg" p="lg">
                                 <Text fw={700} size="lg" mb="md">Basic Details</Text>
                                 <Grid gutter="md">
                                     <Grid.Col span={4}>
+                                        <Autocomplete
+                                            label="Relationship"
+                                            placeholder="Select relationship"
+                                            data={relationshipOptions}
+                                            value={item.form.relationship}
+                                            onChange={(value) => handleChange(index, "relationship", value)}
+                                            required
+                                        />
+                                    </Grid.Col>
+                                    <Grid.Col span={4}>
                                         <TextInput
                                             label="Full Name"
                                             placeholder="Enter full name"
-                                            value={item.fullName}
-                                            onChange={(e) => handleChange(index, "fullName", e.target.value)}
+                                            value={item.form.name}
+                                            onChange={(e) => handleChange(index, "name", e.target.value)}
                                             required
                                         />
                                     </Grid.Col>
@@ -941,7 +997,7 @@ const CoApplicants = () => {
                                             label="Mobile"
                                             placeholder="10-digit mobile"
                                             maxLength={10}
-                                            value={item.mobile}
+                                            value={item.form.mobile}
                                             onChange={(e) => handleChange(index, "mobile", e.target.value.replace(/\D/g, ""))}
                                             required
                                         />
@@ -956,7 +1012,7 @@ const CoApplicants = () => {
                                             label="PAN"
                                             placeholder="ABCPL1234D"
                                             maxLength={10}
-                                            value={item.pan}
+                                            value={item.form.pan}
                                             onChange={(e) => handleChange(index, "pan", e.target.value.toUpperCase())}
                                             required
                                         />
@@ -971,7 +1027,7 @@ const CoApplicants = () => {
                                             label="Aadhaar"
                                             placeholder="12-digit Aadhaar"
                                             maxLength={12}
-                                            value={item.aadhaar}
+                                            value={item.form.aadhaar}
                                             onChange={(e) => handleChange(index, "aadhaar", e.target.value.replace(/\D/g, ""))}
                                             required
                                         />
@@ -990,15 +1046,8 @@ const CoApplicants = () => {
                                         loading={item.loading}
                                         disabled={!item.allFilled || item.loading || (item.fetched && !item.formEdited)}
                                     >
-                                        {item.fetched && !item.formEdited ? "Fetched" : "Fetch & Verify KYC"}
+                                        {item.fetched && !item.formEdited ? "Fetched" : "Fetch Details"}
                                     </Button>
-
-                                    <Badge
-                                        size="lg"
-                                        color={item.allVerified ? "green" : item.verifyStatus?.panVerified || item.verifyStatus?.aadhaarVerified || item.verifyStatus?.mobileVerified ? "yellow" : "red"}
-                                    >
-                                        {item.allVerified ? "Fully Verified" : item.verifyStatus?.panVerified || item.verifyStatus?.aadhaarVerified || item.verifyStatus?.mobileVerified ? "Partially Verified" : "Not Verified"}
-                                    </Badge>
                                 </Group>
                             </Card>
 
@@ -1017,308 +1066,298 @@ const CoApplicants = () => {
                             )}
 
                             {/* Error Alert */}
-                            {!item.loading && item.hasApiError && !item.verificationData?.mobileData && !item.verificationData?.panData && (
+                            {!item.loading && item.hasApiError && !item.verificationData?.mobileData && (
                                 <Alert icon={<IconAlertCircle size={16} />} title="Verification Failed" color="red" mb="lg">
                                     All verifications failed. Please check your inputs and try again.
                                 </Alert>
                             )}
 
-                            {/* Verification Details Section - Always visible in box format */}
+                            {/* Accordion for Verification Details */}
                             {!item.loading && (item.verificationData?.mobileData || item.verificationData?.panData || item.verificationData?.aadhaarData) && (
-                                <Box mb="lg">
-                                    {/* Mobile Details */}
+                                <Accordion defaultValue={item.accordionValue} multiple mb="lg">
+                                    {/* Mobile Details Accordion */}
                                     {item.verificationData?.mobileData && (
-                                        <Card withBorder radius="md" mb="md" p="lg">
-                                            <Group mb="md">
-                                                <IconPhone size={20} />
-                                                <Text fw={600}>Mobile Details</Text>
-                                                <Badge color="green">Verified</Badge>
-                                            </Group>
+                                        <Accordion.Item value="mobile">
+                                            <Accordion.Control>
+                                                <Group>
+                                                    <IconPhone size={20} />
+                                                    <Text fw={600}>Mobile Details</Text>
+                                                    <Badge color="green">Verified</Badge>
+                                                </Group>
+                                            </Accordion.Control>
+                                            <Accordion.Panel>
+                                                <Card withBorder mb="lg">
+                                                    <Grid mb="md">
+                                                        <Grid.Col span={3}>
+                                                            <Text size="sm" c="dimmed">Full Name</Text>
+                                                            <Text fw={500}>{item.verificationData.mobileData?.data?.data?.full_name || item.verificationData.mobileData?.data?.full_name || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={3}>
+                                                            <Text size="sm" c="dimmed">Mobile</Text>
+                                                            <Text fw={500}>{item.verificationData.mobileData?.data?.data?.mobile || item.verificationData.mobileData?.data?.mobile || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={3}>
+                                                            <Text size="sm" c="dimmed">DOB</Text>
+                                                            <Text fw={500}>{formatDate(item.verificationData.mobileData?.data?.data?.date_of_birth || item.verificationData.mobileData?.data?.date_of_birth) || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={3}>
+                                                            <Text size="sm" c="dimmed">Age</Text>
+                                                            <Text fw={500}>{item.verificationData.mobileData?.data?.data?.age || item.verificationData.mobileData?.data?.age || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={3}>
+                                                            <Text size="sm" c="dimmed">Gender</Text>
+                                                            <Text fw={500}>{item.verificationData.mobileData?.data?.data?.gender || item.verificationData.mobileData?.data?.gender || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={3}>
+                                                            <Text size="sm" c="dimmed">Total Income</Text>
+                                                            <Text fw={500}>₹ {item.verificationData.mobileData?.data?.data?.total_income || item.verificationData.mobileData?.data?.total_income || "-"}</Text>
+                                                        </Grid.Col>
+                                                    </Grid>
+                                                    {item.verificationData.mobileData?.data?.identity_details && (
+                                                        <>
+                                                            <Divider my="sm" label="Identity Details" labelPosition="center" />
+                                                            <Grid mb="md">
+                                                                {Object.entries(item.verificationData.mobileData?.data?.identity_details || {}).map(([key, value]) => (
+                                                                    value && (
+                                                                        <Grid.Col span={3} key={key}>
+                                                                            <Text size="sm" c="dimmed">{key.replace(/_/g, ' ').toUpperCase()}</Text>
+                                                                            <Text fw={500}>{value}</Text>
+                                                                        </Grid.Col>
+                                                                    )
+                                                                ))}
+                                                            </Grid>
+                                                        </>
+                                                    )}
+                                                    {/* Email Details */}
+                                                    {item.verificationData.mobileData?.data?.email_details?.length > 0 ? (
+                                                        <>
+                                                            <Divider my="sm" label="Email Details" labelPosition="center" />
+                                                            <Table mb="md">
+                                                                <Table.Thead>
+                                                                    <Table.Tr>
+                                                                        <Table.Th>Email Address</Table.Th>
+                                                                        <Table.Th>Reported Date</Table.Th>
+                                                                    </Table.Tr>
+                                                                </Table.Thead>
+                                                                <Table.Tbody>
+                                                                    {item.verificationData.mobileData?.data?.email_details.map((email, idx) => (
+                                                                        <Table.Tr key={idx}>
+                                                                            <Table.Td>
+                                                                                <Group gap="xs">
+                                                                                    <IconMail size={16} />
+                                                                                    <Text>{email.email_address}</Text>
+                                                                                </Group>
+                                                                            </Table.Td>
+                                                                            <Table.Td>{formatDate(email.reported_date)}</Table.Td>
+                                                                        </Table.Tr>
+                                                                    ))}
+                                                                </Table.Tbody>
+                                                            </Table>
+                                                        </>
+                                                    ) : (
+                                                        <Alert color="blue" title="No Email Details" mb="md" icon={<IconMail size={16} />}>
+                                                            No email details available for this mobile number.
+                                                        </Alert>
+                                                    )}
 
-                                            <Card withBorder p="md">
-                                                <Grid>
-                                                    <Grid.Col span={3}>
-                                                        <Text size="sm" c="dimmed">Full Name</Text>
-                                                        <Text fw={500}>{item.verificationData.mobileData?.data?.data?.full_name || item.verificationData.mobileData?.data?.full_name || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={3}>
-                                                        <Text size="sm" c="dimmed">Mobile</Text>
-                                                        <Text fw={500}>{item.verificationData.mobileData?.data?.data?.mobile || item.verificationData.mobileData?.data?.mobile || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={3}>
-                                                        <Text size="sm" c="dimmed">DOB</Text>
-                                                        <Text fw={500}>{formatDate(item.verificationData.mobileData?.data?.data?.date_of_birth || item.verificationData.mobileData?.data?.date_of_birth) || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={3}>
-                                                        <Text size="sm" c="dimmed">Age</Text>
-                                                        <Text fw={500}>{item.verificationData.mobileData?.data?.data?.age || item.verificationData.mobileData?.data?.age || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={3}>
-                                                        <Text size="sm" c="dimmed">Gender</Text>
-                                                        <Text fw={500}>{item.verificationData.mobileData?.data?.data?.gender || item.verificationData.mobileData?.data?.gender || "-"}</Text>
-                                                    </Grid.Col>
-                                                </Grid>
-
-                                                {item.verificationData.mobileData?.data?.data?.identity_details && (
-                                                    <>
-                                                        <Divider my="sm" label="Identity Details" labelPosition="center" />
-                                                        <Grid mb="md">
-                                                            {Object.entries(item.verificationData.mobileData.data.data.identity_details).map(([key, value]) => (
-                                                                value && (
-                                                                    <Grid.Col span={3} key={key}>
-                                                                        <Text size="sm" c="dimmed">{key.replace(/_/g, ' ').toUpperCase()}</Text>
-                                                                        <Text fw={500}>{value}</Text>
-                                                                    </Grid.Col>
-                                                                )
-                                                            ))}
-                                                        </Grid>
-                                                    </>
-                                                )}
-
-                                                {/* Email Details */}
-                                                {item.verificationData.mobileData?.data?.data?.email_details?.length > 0 ? (
-                                                    <>
-                                                        <Divider my="sm" label="Email Details" labelPosition="center" />
-                                                        <Table mb="md">
-                                                            <Table.Thead>
-                                                                <Table.Tr>
-                                                                    <Table.Th>Email Address</Table.Th>
-                                                                    <Table.Th>Reported Date</Table.Th>
-                                                                </Table.Tr>
-                                                            </Table.Thead>
-                                                            <Table.Tbody>
-                                                                {item.verificationData.mobileData.data.data.email_details.map((email, idx) => (
-                                                                    <Table.Tr key={idx}>
-                                                                        <Table.Td>
-                                                                            <Group gap="xs">
-                                                                                <IconMail size={16} />
-                                                                                <Text>{email.email_address}</Text>
+                                                    {/* Address Details */}
+                                                    {item.verificationData.mobileData?.data?.address_details?.length > 0 ? (
+                                                        <>
+                                                            <Divider my="sm" label="Address Details" labelPosition="center" />
+                                                            <Accordion variant="separated">
+                                                                {item.verificationData.mobileData?.data?.address_details.map((addr, idx) => (
+                                                                    <Accordion.Item key={idx} value={`addr-${idx}`}>
+                                                                        <Accordion.Control>
+                                                                            <Group>
+                                                                                <IconMapPin size={16} />
+                                                                                <Text size="sm">
+                                                                                    Address {idx + 1}
+                                                                                    {addr.type && (
+                                                                                        <Badge size="sm" ml="xs" color={getAddressTypeColor(addr.type)}>
+                                                                                            {addr.type}
+                                                                                        </Badge>
+                                                                                    )}
+                                                                                </Text>
                                                                             </Group>
-                                                                        </Table.Td>
-                                                                        <Table.Td>{formatDate(email.reported_date)}</Table.Td>
-                                                                    </Table.Tr>
+                                                                        </Accordion.Control>
+                                                                        <Accordion.Panel>
+                                                                            <Card withBorder p="sm">
+                                                                                <Grid>
+                                                                                    <Grid.Col span={8}>
+                                                                                        <Text size="sm" c="dimmed">Address</Text>
+                                                                                        <Text>{addr.address || "-"}</Text>
+                                                                                    </Grid.Col>
+                                                                                    <Grid.Col span={2}>
+                                                                                        <Text size="sm" c="dimmed">Postal Code</Text>
+                                                                                        <Text>{addr.postal || "-"}</Text>
+                                                                                    </Grid.Col>
+                                                                                    <Grid.Col span={2}>
+                                                                                        <Text size="sm" c="dimmed">State</Text>
+                                                                                        <Text>{addr.state || "-"}</Text>
+                                                                                    </Grid.Col>
+                                                                                    <Grid.Col span={3}>
+                                                                                        <Text size="sm" c="dimmed">Reported Date</Text>
+                                                                                        <Text>{formatDate(addr.reported_date)}</Text>
+                                                                                    </Grid.Col>
+                                                                                </Grid>
+                                                                            </Card>
+                                                                        </Accordion.Panel>
+                                                                    </Accordion.Item>
                                                                 ))}
-                                                            </Table.Tbody>
-                                                        </Table>
-                                                    </>
-                                                ) : (
-                                                    <Alert color="blue" title="No Email Details" mb="md" icon={<IconMail size={16} />}>
-                                                        No email details available for this mobile number.
-                                                    </Alert>
-                                                )}
-
-                                                {/* Phone Details */}
-                                                {item.verificationData.mobileData?.data?.data?.phone_details?.length > 0 ? (
-                                                    <>
-                                                        <Divider my="sm" label="Phone Details" labelPosition="center" />
-                                                        <Table mb="md">
-                                                            <Table.Thead>
-                                                                <Table.Tr>
-                                                                    <Table.Th>Phone Number</Table.Th>
-                                                                    <Table.Th>Type</Table.Th>
-                                                                    <Table.Th>Reported Date</Table.Th>
-                                                                </Table.Tr>
-                                                            </Table.Thead>
-                                                            <Table.Tbody>
-                                                                {item.verificationData.mobileData.data.data.phone_details.map((phone, idx) => (
-                                                                    <Table.Tr key={idx}>
-                                                                        <Table.Td>{phone.number}</Table.Td>
-                                                                        <Table.Td>
-                                                                            <Badge size="sm">
-                                                                                {phone.type_code === 'M' ? 'Mobile' :
-                                                                                    phone.type_code === 'H' ? 'Home' :
-                                                                                        phone.type_code === 'W' ? 'Work' : phone.type_code}
-                                                                            </Badge>
-                                                                        </Table.Td>
-                                                                        <Table.Td>{formatDate(phone.reported_date)}</Table.Td>
-                                                                    </Table.Tr>
-                                                                ))}
-                                                            </Table.Tbody>
-                                                        </Table>
-                                                    </>
-                                                ) : (
-                                                    <Alert color="blue" title="No Phone Details" mb="md" icon={<IconPhone size={16} />}>
-                                                        No phone details available for this mobile number.
-                                                    </Alert>
-                                                )}
-
-                                                {/* Address Details - Array Display */}
-                                                {item.verificationData.mobileData?.data?.data?.address_details?.length > 0 ? (
-                                                    <>
-                                                        <Divider my="sm" label="Address Details" labelPosition="center" />
-                                                        <Stack>
-                                                            {item.verificationData.mobileData.data.data.address_details.map((addr, idx) => (
-                                                                <Card key={idx} withBorder p="sm">
-                                                                    <Group mb="xs">
-                                                                        <IconMapPin size={16} />
-                                                                        <Text size="sm">
-                                                                            Address {idx + 1}
-                                                                            {addr.type && (
-                                                                                <Badge size="sm" ml="xs" color={getAddressTypeColor(addr.type)}>
-                                                                                    {addr.type}
-                                                                                </Badge>
-                                                                            )}
-                                                                        </Text>
-                                                                    </Group>
-                                                                    <Grid>
-                                                                        <Grid.Col span={8}>
-                                                                            <Text size="sm" c="dimmed">Address</Text>
-                                                                            <Text>{addr.address || "-"}</Text>
-                                                                        </Grid.Col>
-                                                                        <Grid.Col span={2}>
-                                                                            <Text size="sm" c="dimmed">Postal Code</Text>
-                                                                            <Text>{addr.postal || "-"}</Text>
-                                                                        </Grid.Col>
-                                                                        <Grid.Col span={2}>
-                                                                            <Text size="sm" c="dimmed">State</Text>
-                                                                            <Text>{addr.state || "-"}</Text>
-                                                                        </Grid.Col>
-                                                                        <Grid.Col span={3}>
-                                                                            <Text size="sm" c="dimmed">Reported Date</Text>
-                                                                            <Text>{formatDate(addr.reported_date)}</Text>
-                                                                        </Grid.Col>
-                                                                    </Grid>
-                                                                </Card>
-                                                            ))}
-                                                        </Stack>
-                                                    </>
-                                                ) : (
-                                                    <Alert color="blue" title="No Address Details" icon={<IconMapPin size={16} />}>
-                                                        No address details available for this mobile number.
-                                                    </Alert>
-                                                )}
-                                            </Card>
-                                        </Card>
+                                                            </Accordion>
+                                                        </>
+                                                    ) : (
+                                                        <Alert color="blue" title="No Address Details" icon={<IconMapPin size={16} />}>
+                                                            No address details available for this mobile number.
+                                                        </Alert>
+                                                    )}
+                                                </Card>
+                                            </Accordion.Panel>
+                                        </Accordion.Item>
                                     )}
 
-                                    {/* PAN Details */}
+                                    {/* PAN Details Accordion */}
                                     {item.verificationData?.panData && (
-                                        <Card withBorder radius="md" mb="md" p="lg">
-                                            <Group mb="md">
-                                                <IconId size={20} />
-                                                <Text fw={600}>PAN Details</Text>
-                                                <Badge color="green">Verified</Badge>
-                                            </Group>
-
-                                            <Card withBorder p="md">
-                                                <Grid>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">PAN Number</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.pan || item.verificationData.panData?.data?.pan || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Full Name</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.full_name || item.verificationData.panData?.data?.details?.full_name || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Date of Birth</Text>
-                                                        <Text fw={500}>{formatDate(item.verificationData.panData?.data?.data?.details?.date_of_birth || item.verificationData.panData?.data?.details?.date_of_birth) || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Gender</Text>
-                                                        <Text fw={500}>
-                                                            {item.verificationData.panData?.data?.data?.details?.gender === 'M' ? 'Male' :
-                                                                item.verificationData.panData?.data?.data?.details?.gender === 'F' ? 'Female' :
-                                                                    item.verificationData.panData?.data?.details?.gender || '-'}
-                                                        </Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Email</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.email || item.verificationData.panData?.data?.details?.email || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Phone Number</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.phone_number || item.verificationData.panData?.data?.details?.phone_number || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Aadhaar Linked</Text>
-                                                        <Text fw={500}>
-                                                            {(item.verificationData.panData?.data?.data?.details?.aadhaar_linked || item.verificationData.panData?.data?.details?.aadhaar_linked) ? "Yes" : "No"}
-                                                        </Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Masked Aadhaar</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.masked_aadhaar || item.verificationData.panData?.data?.details?.masked_aadhaar || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={8}>
-                                                        <Text size="sm" c="dimmed">Address</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.address || item.verificationData.panData?.data?.details?.address || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Street</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.street_name || item.verificationData.panData?.data?.details?.street_name || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">City</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.city || item.verificationData.panData?.data?.details?.city || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">State</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.state || item.verificationData.panData?.data?.details?.state || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Zip Code</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.zip || item.verificationData.panData?.data?.details?.zip || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Country</Text>
-                                                        <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.country || item.verificationData.panData?.data?.details?.country || "-"}</Text>
-                                                    </Grid.Col>
-                                                </Grid>
-                                            </Card>
-                                        </Card>
+                                        <Accordion.Item value="pan">
+                                            <Accordion.Control>
+                                                <Group>
+                                                    <IconId size={20} />
+                                                    <Text fw={600}>PAN Details</Text>
+                                                    <Badge color="green">Verified</Badge>
+                                                </Group>
+                                            </Accordion.Control>
+                                            <Accordion.Panel>
+                                                <Card withBorder mb="lg">
+                                                    <Grid>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">PAN Number</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.pan || item.verificationData.panData?.data?.pan || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Full Name</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.full_name || item.verificationData.panData?.data?.details?.full_name || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">PAN Number</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.pan || item.verificationData.panData?.data?.pan || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Full Name</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.full_name || item.verificationData.panData?.data?.details?.full_name || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Date of Birth</Text>
+                                                            <Text fw={500}>{formatDate(item.verificationData.panData?.data?.data?.details?.date_of_birth || item.verificationData.panData?.data?.details?.date_of_birth) || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Gender</Text>
+                                                            <Text fw={500}>
+                                                                {item.verificationData.panData?.data?.data?.details?.gender === 'M' ? 'Male' :
+                                                                    item.verificationData.panData?.data?.data?.details?.gender === 'F' ? 'Female' :
+                                                                        item.verificationData.panData?.data?.details?.gender || '-'}
+                                                            </Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Email</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.email || item.verificationData.panData?.data?.details?.email || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Phone Number</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.phone_number || item.verificationData.panData?.data?.details?.phone_number || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Aadhaar Linked</Text>
+                                                            <Text fw={500}>
+                                                                {(item.verificationData.panData?.data?.data?.details?.aadhaar_linked || item.verificationData.panData?.data?.details?.aadhaar_linked) ? "Yes" : "No"}
+                                                            </Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Masked Aadhaar</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.masked_aadhaar || item.verificationData.panData?.data?.details?.masked_aadhaar || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={8}>
+                                                            <Text size="sm" c="dimmed">Address</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.address || item.verificationData.panData?.data?.details?.address || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Street</Text>
+                                                            <Text fw={500}> {item.verificationData.panData?.data?.data?.details?.street_name || item.verificationData.panData?.data?.details?.street_name || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">City</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.city || item.verificationData.panData?.data?.details?.city || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">State</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.state || item.verificationData.panData?.data?.details?.state || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Zip Code</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.zip || item.verificationData.panData?.data?.details?.zip || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Country</Text>
+                                                            <Text fw={500}>{item.verificationData.panData?.data?.data?.details?.country || item.verificationData.panData?.data?.details?.country || "-"}</Text>
+                                                        </Grid.Col>
+                                                    </Grid>
+                                                </Card>
+                                            </Accordion.Panel>
+                                        </Accordion.Item>
                                     )}
 
-                                    {/* Aadhaar Details */}
+                                    {/* Aadhaar Details Accordion */}
                                     {item.verificationData?.aadhaarData && (
-                                        <Card withBorder radius="md" mb="md" p="lg">
-                                            <Group mb="md">
-                                                <IconFileText size={20} />
-                                                <Text fw={600}>Aadhaar Details</Text>
-                                                <Badge color="green">Verified</Badge>
-                                            </Group>
-
-                                            <Card withBorder p="md">
-                                                <Grid>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Aadhaar Number</Text>
-                                                        <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.aadhar || item.verificationData.aadhaarData?.data?.aadhar || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Age Range</Text>
-                                                        <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.details?.age_range || item.verificationData.aadhaarData?.data?.details?.age_range || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Gender</Text>
-                                                        <Text fw={500}>
-                                                            {item.verificationData.aadhaarData?.data?.data?.details?.gender === 'M' ? 'Male' :
-                                                                item.verificationData.aadhaarData?.data?.data?.details?.gender === 'F' ? 'Female' :
-                                                                    item.verificationData.aadhaarData?.data?.details?.gender || '-'}
-                                                        </Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Is Mobile Verified</Text>
-                                                        <Text fw={500}>
-                                                            {(item.verificationData.aadhaarData?.data?.data?.details?.is_mobile || item.verificationData.aadhaarData?.data?.details?.is_mobile) ? "Yes" : "No"}
-                                                        </Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">Last Digits of Mobile</Text>
-                                                        <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.details?.last_digits_of_mobile || item.verificationData.aadhaarData?.data?.details?.last_digits_of_mobile || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={4}>
-                                                        <Text size="sm" c="dimmed">State</Text>
-                                                        <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.details?.state || item.verificationData.aadhaarData?.data?.details?.state || "-"}</Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span={12}>
-                                                        <Text size="sm" c="dimmed">Remarks</Text>
-                                                        <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.details?.remarks || item.verificationData.aadhaarData?.data?.details?.remarks || "-"}</Text>
-                                                    </Grid.Col>
-                                                </Grid>
-                                            </Card>
-                                        </Card>
+                                        <Accordion.Item value="aadhaar">
+                                            <Accordion.Control>
+                                                <Group>
+                                                    <IconFileText size={20} />
+                                                    <Text fw={600}>Aadhaar Details</Text>
+                                                    <Badge color="green">Verified</Badge>
+                                                </Group>
+                                            </Accordion.Control>
+                                            <Accordion.Panel>
+                                                <Card withBorder mb="lg">
+                                                    <Grid>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Aadhaar Number</Text>
+                                                            <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.aadhar || item.verificationData.aadhaarData?.data?.aadhar || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Age Range</Text>
+                                                            <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.details?.age_range || item.verificationData.aadhaarData?.data?.details?.age_range || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Gender</Text>
+                                                            <Text fw={500}>
+                                                                {item.verificationData.aadhaarData?.data?.data?.details?.gender === 'M' ? 'Male' :
+                                                                    item.verificationData.aadhaarData?.data?.data?.details?.gender === 'F' ? 'Female' :
+                                                                        item.verificationData.aadhaarData?.data?.details?.gender || '-'}
+                                                            </Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Is Mobile Verified</Text>
+                                                            <Text fw={500}>
+                                                                {(item.verificationData.aadhaarData?.data?.data?.details?.is_mobile || item.verificationData.aadhaarData?.data?.details?.is_mobile) ? "Yes" : "No"}
+                                                            </Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">Last Digits of Mobile</Text>
+                                                            <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.details?.last_digits_of_mobile || item.verificationData.aadhaarData?.data?.details?.last_digits_of_mobile || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={4}>
+                                                            <Text size="sm" c="dimmed">State</Text>
+                                                            <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.details?.state || item.verificationData.aadhaarData?.data?.details?.state || "-"}</Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col span={12}>
+                                                            <Text size="sm" c="dimmed">Remarks</Text>
+                                                            <Text fw={500}>{item.verificationData.aadhaarData?.data?.data?.details?.remarks || item.verificationData.aadhaarData?.data?.details?.remarks || "-"}</Text>
+                                                        </Grid.Col>
+                                                    </Grid>
+                                                </Card>
+                                            </Accordion.Panel>
+                                        </Accordion.Item>
                                     )}
-                                </Box>
+                                </Accordion>
                             )}
 
                             {/* Validation Alert */}
@@ -1353,7 +1392,7 @@ const CoApplicants = () => {
                             {item.showCustomerDetails && item.customerData && (
                                 <Card withBorder radius="md" mt="xl" p="lg">
                                     <Group justify="space-between" mb="md">
-                                        <Text fw={700} size="lg">Co-Applicant {index + 1} Details</Text>
+                                        <Text fw={700} size="lg">Co-Applicant {index + 1} Basic Details</Text>
                                         <Badge color="blue" size="lg">Verified</Badge>
                                     </Group>
 
@@ -1453,78 +1492,64 @@ const CoApplicants = () => {
                                     </Box>
                                 </Card>
                             )}
+                            {!viewMode && !item.employmentSaved && (
+                                <CoApplicantEmploymentDetails
+                                    coApplicants={[item]}
+                                    onEmploymentSaved={() => handleEmploymentSaved(index)}
+                                />
+                            )}
                         </Box>
                     )}
 
-                    {/* SHOW employment ONLY when customer saved but employment not saved */}
-                    {item.saved && !item.employmentSaved && (
-                        <Box p="md" style={{ borderTop: '1px solid #dee2e6' }}>
-                            <CoEmploymentDetails
-                                coApplicants={[item]}
-                                onEmploymentSaved={() => handleEmploymentSaved(index)}
-                            />
-                        </Box>
-                    )}
-                    {/* Show summary when both saved */}
-                    {item.saved && item.employmentSaved && !item.isNew && (
+
+                    {/* View Mode - Summary */}
+                    {item.saved && item.employmentSaved && (
                         <Box p="md">
                             <Card withBorder radius="md">
-                                <Group justify="space-between" mb="md">
-                                    <Text fw={700}>Coapplicant Details</Text>
-
-                                    <Group>
-                                        <Button size="xs" onClick={() => setEditMode(!editMode)}>
-                                            {editMode ? "Cancel" : "Edit"}
-                                        </Button>
-                                    </Group>
-                                </Group>
-
+                                <Text fw={700} mb="md">Co-applicant Details</Text>
                                 <Grid>
                                     <Grid.Col span={4}>
-                                        <Text size="sm">Full Name</Text>
-                                        <TextInput
-                                            value={viewData.full_name || ""}
-                                            readOnly={!editMode}
-                                            onChange={(e) => {
-                                                setViewData({ ...viewData, full_name: e.target.value })
-                                            }}
-                                        />
+                                        <Text size="sm" c="dimmed">Relationship</Text>
+                                        <Text>{item.form.relationship || '-'}</Text>
                                     </Grid.Col>
-
                                     <Grid.Col span={4}>
-                                        <Text size="sm">Mobile</Text>
-                                        <TextInput value={viewData.mobile} readOnly />
+                                        <Text size="sm" c="dimmed">Full Name</Text>
+                                        <Text>{item.customerData?.full_name || item.form.name}</Text>
                                     </Grid.Col>
-
                                     <Grid.Col span={4}>
-                                        <Text size="sm">PAN</Text>
-                                        <TextInput value={viewData.pan} readOnly />
+                                        <Text size="sm" c="dimmed">Mobile</Text>
+                                        <Text>{item.form.mobile}</Text>
                                     </Grid.Col>
-
+                                    <Grid.Col span={4}>
+                                        <Text size="sm" c="dimmed">PAN</Text>
+                                        <Text>{item.form.pan}</Text>
+                                    </Grid.Col>
+                                    <Grid.Col span={4}>
+                                        <Text size="sm" c="dimmed">Aadhaar</Text>
+                                        <Text>{item.form.aadhaar}</Text>
+                                    </Grid.Col>
                                     <Grid.Col span={12}>
-                                        <Text size="sm">Address</Text>
-                                        <TextInput
-                                            value={viewData.address || ""}
-                                            readOnly={!editMode}
-                                            onChange={(e) => {
-                                                setViewData({ ...viewData, address: e.target.value })
-                                            }}
-                                        />
+                                        <Text size="sm" c="dimmed">Address</Text>
+                                        <Text>{item.addressList[0]?.address || '-'}</Text>
                                     </Grid.Col>
                                 </Grid>
-
-                                {editMode && (
-                                    <Group justify="flex-end" mt="md">
-                                        <Button onClick={() => handleUpdateCustomer(viewIndex)}>
-                                            Update
-                                        </Button>
-                                    </Group>
-                                )}
                             </Card>
                         </Box>
                     )}
                 </Paper>
             ))}
+
+            {coApplicants.length === 0 && !viewMode && (
+                <Card withBorder p="xl" style={{ textAlign: 'center' }}>
+                    <Text c="dimmed" mb="md">No co-applicants added yet</Text>
+                </Card>
+            )}
+
+            {coApplicants.length === 0 && viewMode && (
+                <Card withBorder p="xl" style={{ textAlign: 'center' }}>
+                    <Text c="dimmed">No co-applicants found</Text>
+                </Card>
+            )}
         </Container>
     );
 };

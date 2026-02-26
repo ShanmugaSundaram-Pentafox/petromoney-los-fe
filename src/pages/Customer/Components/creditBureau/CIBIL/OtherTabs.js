@@ -405,6 +405,21 @@ export function IdentityTab({ report }) {
     '06': IconMapPin, // Generic location
   };
 
+  const rawGender = person.gender;
+
+  let genderValue = '—';
+
+  if (typeof rawGender === 'string') {
+    genderValue = rawGender.toUpperCase();
+  } else if (typeof rawGender === 'object' && rawGender !== null) {
+    genderValue =
+      rawGender.description?.toUpperCase() ||
+      rawGender.code?.toUpperCase() ||
+      '—';
+  } else if (rawGender != null) {
+    genderValue = String(rawGender).toUpperCase();
+  }
+
   return (
     <Stack gap="lg">
       {/* Personal Info */}
@@ -431,7 +446,7 @@ export function IdentityTab({ report }) {
                 label: 'Date of Birth',
                 value: person.birthDate ? fmtDateLong(person.birthDate) : '—',
               },
-              { label: 'Gender', value: (person.gender || '—').toUpperCase() },
+              { label: 'Gender', value: genderValue },
               { label: 'Index', value: person.index },
             ].map(({ label, value }) => (
               <Box key={label}>
@@ -761,6 +776,20 @@ function Pillar({ icon, label, status }) {
 }
 
 export function LOSTab({ data, report }) {
+  const getAccountTypeString = (a) => {
+    const raw =
+      a.accountTypeNormalized?.description ??
+      a.accountTypeNormalized ??
+      a.accountType ??
+      '';
+
+    if (typeof raw === 'string') return raw.toLowerCase();
+    if (typeof raw === 'object' && raw !== null)
+      return (raw.description || raw.name || '').toLowerCase();
+
+    return String(raw).toLowerCase();
+  };
+
   const accs = report.accounts || [];
   const score = data.cibil_score ?? (report.scores || [])[0]?.score ?? 0;
   const los = computeLOS(score, accs, report.enquiries || []);
@@ -769,13 +798,13 @@ export function LOSTab({ data, report }) {
   const totalBal = activeAccs.reduce((s, a) => s + getBalance(a), 0);
   const totalEMI = activeAccs.reduce((s, a) => s + getEMI(a), 0);
   const secBal = activeAccs
-    .filter((a) => !a.accountType.toLowerCase().includes('credit card'))
+    .filter((a) => !getAccountTypeString(a).includes('credit card'))
     .reduce((s, a) => s + getBalance(a), 0);
   const unsBal = activeAccs
-    .filter((a) => a.accountType.toLowerCase().includes('credit card'))
+    .filter((a) => getAccountTypeString(a).includes('credit card'))
     .reduce((s, a) => s + getBalance(a), 0);
   const ccLimit = activeAccs
-    .filter((a) => a.accountType.toLowerCase().includes('credit card'))
+    .filter((a) => getAccountTypeString(a).includes('credit card'))
     .reduce((s, a) => s + getHighCredit(a), 0);
   const ccUtil = ccLimit > 0 ? (unsBal / ccLimit) * 100 : 0;
   const oldest = [...accs]

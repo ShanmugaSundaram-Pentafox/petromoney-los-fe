@@ -158,6 +158,21 @@ export function CibilHeader({ data, report }) {
       <IconGenderMale size={14} />
     );
 
+  const rawGender = data.gender ?? person.gender;
+
+  let genderLabel = null;
+
+  if (typeof rawGender === 'string') {
+    genderLabel = rawGender.toUpperCase();
+  } else if (typeof rawGender === 'object' && rawGender !== null) {
+    genderLabel =
+      rawGender.description?.toUpperCase() ||
+      rawGender.code?.toUpperCase() ||
+      null;
+  } else if (rawGender != null) {
+    genderLabel = String(rawGender).toUpperCase();
+  }
+
   return (
     <Stack gap="md" mb="xl">
       {/* ── TOP HEADER ───────────────────────────────────────── */}
@@ -169,7 +184,7 @@ export function CibilHeader({ data, report }) {
               <IconUser size={26} />
             </ThemeIcon>
             <Stack gap={4}>
-              <Flex gap="md" >
+              <Flex gap="md">
                 <Text size="xl" fw={800} lh={1.2}>
                   {data.full_name || person.name || 'Unknown'}
                 </Text>
@@ -179,14 +194,14 @@ export function CibilHeader({ data, report }) {
                       DOB: {fmtDateLong(person.birthDate)}
                     </Badge>
                   )}
-                  {(data.gender || person.gender) && (
+                  {genderLabel && (
                     <Badge
                       variant="outline"
                       size="xs"
                       color="gray"
                       leftSection={genderIcon}
                     >
-                      {(data.gender || person.gender).toUpperCase()}
+                      {genderLabel}
                     </Badge>
                   )}
                   {scoreObj.scoreCardName && (

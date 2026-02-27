@@ -140,6 +140,7 @@ if (viewMode && !isEditing) return;
       const res = await saveEmploymentDetails(payload, id);
 
       setIsSaved(true);
+setIsEditing(false);
 
       notifications.show({
         title: "Success",

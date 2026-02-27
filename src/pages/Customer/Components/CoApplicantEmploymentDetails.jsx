@@ -12,14 +12,17 @@ import {
 import { notifications } from '@mantine/notifications';
 import { IconBriefcase, IconCheck } from '@tabler/icons-react';
 import { saveEmploymentDetails } from '../../../services/customerOnboarding.service';
+import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
 
 function CoApplicantEmploymentDetails({ onEmploymentSaved }) {
   const [loading, setLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+ 
+  const onboardData = CustomerOnboardStorage.get();
 
   const [formData, setFormData] = useState({
-    employmentType: 'SENP',
+    employmentType: '',
     yearsInBusiness: '',
     businessName: '',
     monthlyIncome: '',
@@ -28,9 +31,9 @@ function CoApplicantEmploymentDetails({ onEmploymentSaved }) {
     itrFiled: false
   });
 
-  const employmentTypes = [
-    { value: 'SEP', label: 'Self Employed Professional (SEP)' },
-    { value: 'SENP', label: 'Self Employed Non-Professional (SENP)' }
+const employmentTypes = [
+    { value: "Self Employed Professional (SEP)", label: "Self Employed Professional (SEP)" },
+    { value: "Self Employed Non-Professional (SENP)", label: "Self Employed Non-Professional (SENP)" }
   ];
 
   // Handle Input Change
@@ -71,8 +74,8 @@ function CoApplicantEmploymentDetails({ onEmploymentSaved }) {
     try {
       setLoading(true);
 
-      // const applicantId = localStorage.getItem('applicant_id');
-      const applicantId = 30;
+       const applicantId = onboardData?.applicant?.applicant_id || null;
+    
       if (!applicantId) {
         notifications.show({
           title: 'Error',
@@ -129,9 +132,11 @@ onEmploymentSaved();
         <Grid.Col span={4}>
           <Select
             label="Employment Type"
+            placeholder='Select type'
             data={employmentTypes}
             value={formData.employmentType}
             onChange={(value) => handleChange('employmentType', value)}
+            required
           />
         </Grid.Col>
 
@@ -143,6 +148,7 @@ onEmploymentSaved();
             onChange={(e) =>
               handleChange('businessName', e.target.value)
             }
+            required
           />
         </Grid.Col>
 
@@ -154,6 +160,7 @@ onEmploymentSaved();
             onChange={(e) =>
               handleChange('businessType', e.target.value)
             }
+            required
           />
         </Grid.Col>
 
@@ -166,6 +173,7 @@ onEmploymentSaved();
               handleChange('yearsInBusiness', e.target.value)
             }
             inputMode="numeric"
+            required
           />
         </Grid.Col>
 
@@ -178,6 +186,7 @@ onEmploymentSaved();
               handleChange('monthlyIncome', e.target.value)
             }
             inputMode="numeric"
+            required
           />
         </Grid.Col>
 
@@ -190,6 +199,7 @@ onEmploymentSaved();
               handleChange('annualIncome', e.target.value)
             }
             inputMode="numeric"
+            required
           />
         </Grid.Col>
       </Grid>

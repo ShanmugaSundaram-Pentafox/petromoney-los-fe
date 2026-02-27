@@ -57,7 +57,7 @@ const Info = ({ label, value }) => (
   </Stack>
 );
 
-export const Eligibility = () => {
+export const Eligibility = ({ viewMode = false }) => {
   const storageData = CustomerOnboardStorage.get();
 
   const formattedData = {
@@ -85,7 +85,7 @@ export const Eligibility = () => {
   //     { applicant_id: 41, name: 'Doe' },
   //   ],
   // };
-  
+
   const [remarks, setRemarks] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
@@ -145,9 +145,9 @@ export const Eligibility = () => {
 
   const flags = data
     ? [
-        metrics?.overdue_accounts === 0 && 'No overdue accounts',
-        metrics?.highest_dpd === 0 && 'Perfect repayment history',
-        data.cibil_score > 750 && 'Strong credit score',
+      metrics?.overdue_accounts === 0 && 'No overdue accounts',
+      metrics?.highest_dpd === 0 && 'Perfect repayment history',
+      data.cibil_score > 750 && 'Strong credit score',
     ].filter(Boolean)
     : [];
 
@@ -388,6 +388,7 @@ export const Eligibility = () => {
             color={getStatusColor(data.eligibility.status)}
             onClick={() => forwardMutation.mutate({ loanId: loan.id, remarks })}
             loading={forwardMutation.isLoading}
+            disabled={viewMode}
           >
             Submit for Approval
           </Button>

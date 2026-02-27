@@ -18,11 +18,12 @@ import {
 
 function EmploymentDetails({ viewMode = false, applicantId }) {
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
   const [formData, setFormData] = useState({
-    employmentType: "Self Employed Non-Professional (SENP)",
+    employmentType: "",
     yearsInBusiness: "",
     businessName: "",
     monthlyIncome: "",
@@ -38,8 +39,7 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
 
   // Handle Change
   const handleChange = (field, value) => {
-    if (viewMode) return;
-
+if (viewMode && !isEditing) return;
     let newValue = value;
 
     if (
@@ -60,7 +60,7 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
 
   // Validate Form (Only Edit Mode)
   useEffect(() => {
-    if (viewMode) return;
+    if (viewMode && !isEditing) return;
 
     const isValid =
       formData.employmentType &&
@@ -71,7 +71,7 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
       formData.annualIncome;
 
     setIsFormValid(isValid);
-  }, [formData, viewMode]);
+  }, [formData, viewMode,isEditing]);
 
 
   // Fetch Employment (View Mode)
@@ -167,18 +167,32 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
             Employment Details
           </Text>
         </Group>
+
+        {viewMode && !isEditing && (
+          <Button size="xs" variant="light" onClick={() => setIsEditing(true)}>
+            Edit
+          </Button>
+        )}
+
+        {isEditing && (
+          <Button size="xs" color="gray" variant="light" onClick={() => setIsEditing(false)}>
+            Cancel
+          </Button>
+        )}
       </Group>
 
       <Grid>
         <Grid.Col span={4}>
           <Select
             label="Employment Type"
+            placeholder="Select type"
             data={employmentTypes}
             value={formData.employmentType}
             onChange={(value) =>
               handleChange("employmentType", value)
             }
-            disabled={viewMode}
+            disabled={viewMode && !isEditing}
+            required
           />
         </Grid.Col>
 
@@ -190,7 +204,8 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
             onChange={(e) =>
               handleChange("businessName", e.target.value)
             }
-            disabled={viewMode}
+            disabled={viewMode && !isEditing}
+            required
           />
         </Grid.Col>
 
@@ -202,7 +217,8 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
             onChange={(e) =>
               handleChange("businessType", e.target.value)
             }
-            disabled={viewMode}
+            disabled={viewMode && !isEditing}
+            required
           />
         </Grid.Col>
 
@@ -215,7 +231,8 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
               handleChange("yearsInBusiness", e.target.value)
             }
             inputMode="numeric"
-            disabled={viewMode}
+            disabled={viewMode && !isEditing}
+            required
           />
         </Grid.Col>
 
@@ -228,7 +245,8 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
               handleChange("monthlyIncome", e.target.value)
             }
             inputMode="numeric"
-            disabled={viewMode}
+            disabled={viewMode && !isEditing}
+            required
           />
         </Grid.Col>
 
@@ -240,8 +258,10 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
             onChange={(e) =>
               handleChange("annualIncome", e.target.value)
             }
+
             inputMode="numeric"
-            disabled={viewMode}
+            disabled={viewMode && !isEditing}
+            required
           />
         </Grid.Col>
       </Grid>
@@ -256,12 +276,13 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
               event.currentTarget.checked
             )
           }
-          disabled={viewMode}
+          disabled={viewMode && !isEditing}
+          required
         />
       </Group>
 
       {/* Hide Save Button in View Mode */}
-      {!viewMode && isFormValid && (
+      {((!viewMode) || (viewMode && isEditing)) && isFormValid && (
         <Group justify="flex-end" mt="md">
           <Button
             onClick={handleSubmit}

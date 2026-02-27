@@ -59,7 +59,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
     const [expandedIndex, setExpandedIndex] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const relationshipOptions = ["Father", "Mother", "Brother", "Sister", "Spouse", "Business Partner", "Friend", "Other"];
+    const relationshipOptions = ["Father", "Mother", "Business Partner", "Friend", "Other"];
 
     const addCoApplicant = () => {
         const newId = Date.now();
@@ -105,6 +105,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                 allVerified: false,
                 saved: false,
                 employmentSaved: false,
+                isEditing: false,
                 accordionValue: ["mobile", "pan", "aadhaar"]
             },
         ]);
@@ -668,12 +669,9 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                         state: payload.state,
                     });
                 }
-
-
-
                 updated[index].saved = true;
                 updated[index].showCustomerDetails = false;
-
+                updated[index].isEditing = false;
                 notifications.show({
                     title: "Success",
                     message: "Co-applicant saved successfully",
@@ -932,7 +930,8 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
     return (
         <Container size="xl" py="lg">
             <Group justify="space-between" mb="lg">
-                <Title order={3}>Co-Applicants ({coApplicants.length})</Title>
+                {/* <Title order={3}>Co-Applicants ({coApplicants.length})</Title> */}
+                <Title order={3}>Co-Applicant Details</Title>
                 {!viewMode && (
                     <Button leftSection={<IconPlus size={18} />} onClick={addCoApplicant}>
                         Add Co-Applicant
@@ -945,7 +944,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                     {/* Header Section */}
                     <Group justify="space-between" p="md" style={{ background: "#f9fafb" }}>
                         <Group gap="xs">
-                            <Text fw={600}>Co-Applicant {index + 1}</Text>
+                            <Text fw={600}>Basic Information Form {index + 1}</Text>
                             {item.saved && <Badge color="green" size="sm" ml="xs">Saved</Badge>}
                         </Group>
 
@@ -1506,7 +1505,31 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                     {item.saved && item.employmentSaved && (
                         <Box p="md">
                             <Card withBorder radius="md">
-                                <Text fw={700} mb="md">Co-applicant Details</Text>
+                                <Group justify="space-between" mb="md">
+                                    <Text fw={700}>Co-applicant Details</Text>
+
+                                    {!item.isEditing ? (
+                                        <Button
+                                            size="xs"
+                                            variant="light"
+                                            onClick={() => {
+                                                const updated = [...coApplicants];
+                                                updated[index].isEditing = true;
+                                                setCoApplicants(updated);
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            size="xs"
+                                            color="blue"
+                                            onClick={() => handleSaveCoApplicant(index)}
+                                        >
+                                            Save
+                                        </Button>
+                                    )}
+                                </Group>
                                 <Grid>
                                     <Grid.Col span={4}>
                                         <Text size="sm" c="dimmed">Relationship</Text>
@@ -1514,7 +1537,18 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                     </Grid.Col>
                                     <Grid.Col span={4}>
                                         <Text size="sm" c="dimmed">Full Name</Text>
-                                        <Text>{item.customerData?.full_name || item.form.name}</Text>
+                                        <Text>{item.isEditing ? (
+                                            <TextInput
+                                                value={item.customerData?.full_name || ""}
+                                                onChange={(e) => {
+                                                    const updated = [...coApplicants];
+                                                    updated[index].customerData.full_name = e.target.value;
+                                                    setCoApplicants(updated);
+                                                }}
+                                            />
+                                        ) : (
+                                            <Text>{item.customerData?.full_name || item.form.name}</Text>
+                                        )}</Text>
                                     </Grid.Col>
                                     <Grid.Col span={4}>
                                         <Text size="sm" c="dimmed">Mobile</Text>
@@ -1530,7 +1564,18 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                     </Grid.Col>
                                     <Grid.Col span={12}>
                                         <Text size="sm" c="dimmed">Address</Text>
-                                        <Text>{item.addressList[0]?.address || '-'}</Text>
+                                        <Text>{item.isEditing ? (
+                                            <TextInput
+                                                value={item.addressList[0]?.address || ""}
+                                                onChange={(e) => {
+                                                    const updated = [...coApplicants];
+                                                    updated[index].addressList[0].address = e.target.value;
+                                                    setCoApplicants(updated);
+                                                }}
+                                            />
+                                        ) : (
+                                            <Text>{item.addressList[0]?.address || '-'}</Text>
+                                        )}</Text>
                                     </Grid.Col>
                                 </Grid>
                             </Card>

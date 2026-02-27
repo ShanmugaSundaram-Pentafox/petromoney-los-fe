@@ -47,7 +47,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
     const [customerData, setCustomerData] = useState(null);
     const [applicant_id, setApplicant_id] = useState();
     const [addressList, setAddressList] = useState([]);
-
+   
     // LOCAL STATE for selected addresses (NOT in Redux)
     const [selectedAddresses, setSelectedAddresses] = useState({
         permanent: null,
@@ -83,11 +83,11 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
     const [viewMode, setViewMode] = useState(viewModeProp);
     const allFilled = form.name && form.mobile && form.pan && form.aadhaar;
     const allVerified = verifyStatus.panVerified && verifyStatus.aadhaarVerified && verifyStatus.mobileVerified;
-  
+
     // Track if form fields have been edited after fetch
-const [formEdited, setFormEdited] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editSnapshot, setEditSnapshot] = useState(null);
+    const [formEdited, setFormEdited] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editSnapshot, setEditSnapshot] = useState(null);
 
     useEffect(() => {
 
@@ -572,7 +572,7 @@ const [formEdited, setFormEdited] = useState(false);
 
             // ================= FINAL PAYLOAD =================
             const payload = {
-                full_name: customerData?.full_name || form.name,
+                full_name: customerData?.full_name && form.name,
                 mobile: form.mobile,
                 address: selectedAddr?.address || "",
                 city: selectedAddr?.city || "",
@@ -624,7 +624,7 @@ const [formEdited, setFormEdited] = useState(false);
                     message: "Customer saved successfully",
                     color: "green",
                 });
-setIsEditing(false)
+                setIsEditing(false)
             } else {
                 notifications.show({
                     title: "Error",
@@ -636,27 +636,27 @@ setIsEditing(false)
             setValidationLoading(false);
         }
     };
-const handleStartEdit = () => {
-    // snapshot current state so user can cancel
-    setEditSnapshot({
-      form: { ...form },
-      addressList: [...addressList],
-      selectedAddresses: { ...selectedAddresses },
-      customerData: customerData ? { ...customerData } : null
-    });
-    setIsEditing(true);
-  };
- 
-  const handleCancelEdit = () => {
-    if (editSnapshot) {
-      setForm(editSnapshot.form || { name: "", mobile: "", aadhaar: "", pan: "" });
-      setAddressList(editSnapshot.addressList || []);
-      setSelectedAddresses(editSnapshot.selectedAddresses || { permanent: null, communication: null });
-      setCustomerData(editSnapshot.customerData || null);
-    }
-    setIsEditing(false);
-    setEditSnapshot(null);
-  };
+    const handleStartEdit = () => {
+        // snapshot current state so user can cancel
+        setEditSnapshot({
+            form: { ...form },
+            addressList: [...addressList],
+            selectedAddresses: { ...selectedAddresses },
+            customerData: customerData ? { ...customerData } : null
+        });
+        setIsEditing(true);
+    };
+
+    const handleCancelEdit = () => {
+        if (editSnapshot) {
+            setForm(editSnapshot.form || { name: "", mobile: "", aadhaar: "", pan: "" });
+            setAddressList(editSnapshot.addressList || []);
+            setSelectedAddresses(editSnapshot.selectedAddresses || { permanent: null, communication: null });
+            setCustomerData(editSnapshot.customerData || null);
+        }
+        setIsEditing(false);
+        setEditSnapshot(null);
+    };
 
     const handleAddressSelect = (type, index) => {
         const selectedAddress = addressList[index];
@@ -880,6 +880,7 @@ const handleStartEdit = () => {
                             value={form.name}
                             onChange={(e) => handleFieldChange("name", e.target.value)}
                             disabled={viewMode}
+                              required
                         />
                     </Grid.Col>
 
@@ -893,6 +894,7 @@ const handleStartEdit = () => {
                                 handleFieldChange("mobile", e.target.value.replace(/\D/g, ""))
                             }
                             disabled={viewMode}
+                              required
                         />
                         {mobileMsg && (
                             <Text size="sm" mt={5} c={verifyStatus.mobileVerified ? "green" : "red"}>
@@ -912,6 +914,7 @@ const handleStartEdit = () => {
                                 handleFieldChange("pan", e.target.value.toUpperCase())
                             }
                             disabled={viewMode}
+                              required
                         />
                         {panMsg && (
                             <Text size="sm" mt={5} c={verifyStatus.panVerified ? "green" : "red"}>
@@ -931,6 +934,7 @@ const handleStartEdit = () => {
                                 handleFieldChange("aadhaar", e.target.value.replace(/\D/g, ""))
                             }
                             disabled={viewMode}
+                              required
                         />
                         {aadhaarMsg && (
                             <Text size="sm" mt={5} c={verifyStatus.aadhaarVerified ? "green" : "red"}>
@@ -1351,18 +1355,18 @@ const handleStartEdit = () => {
                     <Group justify="space-between" mb="md">
                         <Text fw={700} size="lg">Customer Basic Details</Text>
                         <Group>
-                    <Badge color="blue" size="lg">Verified</Badge>
-                    {viewMode && !isEditing && (
-                      <Button size="xs" variant="light" onClick={handleStartEdit} style={{ marginLeft: 8 }}>
-                        Edit
-                      </Button>
-                    )}
-                    {isEditing && (
-                      <Button size="xs" color="red" variant="light" onClick={handleCancelEdit} style={{ marginLeft: 8 }}>
-                        Cancel
-                      </Button>
-                    )}
-                </Group>
+                            <Badge color="blue" size="lg">Verified</Badge>
+                            {viewMode && !isEditing && (
+                                <Button size="xs" variant="light" onClick={handleStartEdit} style={{ marginLeft: 8 }}>
+                                    Edit
+                                </Button>
+                            )}
+                            {isEditing && (
+                                <Button size="xs" color="red" variant="light" onClick={handleCancelEdit} style={{ marginLeft: 8 }}>
+                                    Cancel
+                                </Button>
+                            )}
+                        </Group>
                     </Group>
 
                     <Grid mb="xl">
@@ -1438,35 +1442,35 @@ const handleStartEdit = () => {
                                 }
                                 disabled={viewMode && !isEditing}
                             >
-                                + Manual
+                                + Add Manual Address
                             </Button>
                         </Group>
-                       {addressList.map((addr, index) => (
-                  <AddressCard
-                    key={index}
-                    address={addr}
-                    index={index}
-                    source={addr.source || addr.type || "Manual"}
-                    isSelected={{
-                      permanent: selectedAddresses.permanent === addr,
-                      communication: selectedAddresses.communication === addr
-                    }}
-                    onSelect={!viewMode || isEditing ? (type) => handleAddressSelect(type, index) : undefined}
-                    onDelete={!viewMode || isEditing ? () => {
-                      setAddressList(prev => {
-                        const newList = prev.filter((_, i) => i !== index);
-                        setSelectedAddresses({
-                          permanent: null,
-                          communication: null
-                        });
- 
-                        return newList;
-                      });
-                    } : undefined}
-                    onEdit={!viewMode || isEditing ? (editedAddr) => handleAddressEdit(index, editedAddr) : undefined}
-                    isEditable={(!viewMode || isEditing) && !addr.fromApi}
-                  />
-                ))}
+                        {addressList.map((addr, index) => (
+                            <AddressCard
+                                key={index}
+                                address={addr}
+                                index={index}
+                                source={addr.source || addr.type || "Manual"}
+                                isSelected={{
+                                    permanent: selectedAddresses.permanent === addr,
+                                    communication: selectedAddresses.communication === addr
+                                }}
+                                onSelect={!viewMode || isEditing ? (type) => handleAddressSelect(type, index) : undefined}
+                                onDelete={!viewMode || isEditing ? () => {
+                                    setAddressList(prev => {
+                                        const newList = prev.filter((_, i) => i !== index);
+                                        setSelectedAddresses({
+                                            permanent: null,
+                                            communication: null
+                                        });
+
+                                        return newList;
+                                    });
+                                } : undefined}
+                                onEdit={!viewMode || isEditing ? (editedAddr) => handleAddressEdit(index, editedAddr) : undefined}
+                                isEditable={(!viewMode || isEditing) && !addr.fromApi}
+                            />
+                        ))}
 
                     </Stack>
 
@@ -1481,22 +1485,22 @@ const handleStartEdit = () => {
                             </Alert>
                         )}
 
-<Group justify="flex-end">
-                  {isEditing && (
-                    <Button size="sm" variant="outline" color="gray" onClick={handleCancelEdit} style={{ marginRight: 8 }}>
-                      Cancel
-                    </Button>
-                  )}
-                  <Button
-                    size="md"
-                    color="blue"
-                    onClick={handleSaveCustomerDetails}
-                    loading={validationLoading}
-                    disabled={validationLoading || (!selectedAddresses.permanent && !selectedAddresses.communication) || (viewMode && !isEditing)}
-                  >
-                    Save Customer Details
-                  </Button>
-                </Group>
+                        <Group justify="flex-end">
+                            {isEditing && (
+                                <Button size="sm" variant="outline" color="gray" onClick={handleCancelEdit} style={{ marginRight: 8 }}>
+                                    Cancel
+                                </Button>
+                            )}
+                            <Button
+                                size="md"
+                                color="blue"
+                                onClick={handleSaveCustomerDetails}
+                                loading={validationLoading}
+                                disabled={validationLoading || (!selectedAddresses.permanent && !selectedAddresses.communication) || (viewMode && !isEditing)}
+                            >
+                                Save Customer Details
+                            </Button>
+                        </Group>
                     </Box>
                 </Card>
             )}

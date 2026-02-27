@@ -149,6 +149,8 @@ function AddressCard({
                 label="Postal Code"
                 value={editedAddress.postal || ''}
                 onChange={(e) => handleChange('postal', e.target.value)}
+                inputMode='numeric'
+
               />
             </Grid.Col>
             <Grid.Col span={6}>

@@ -169,14 +169,17 @@ const DonutChart = ({
   );
 };
 
-export default function BankStatementAnalysis() {
+export default function BankStatementAnalysis({ viewMode = false }) {
   const [active, setActive] = useState(0);
   const queryClient = useQueryClient();
   const [url, setUrl] = useState('');
   const [step, setStep] = useState('create');
   const [consentId, setConsentId] = useState('');
-  const viewMode = true;
-  const customerId = '741812125';
+  const onboardData = CustomerOnboardStorage.get();
+
+  const applicantId = onboardData?.applicant?.applicant_id || 30;
+  const applicantNumber = onboardData?.applicant?.mobile || '7418121259';
+  const customerId = applicantId;
 
   const {
     data: consentStatusData,
@@ -415,8 +418,8 @@ export default function BankStatementAnalysis() {
 
   const handleCreateConsent = () => {
     createConsentMutation.mutate({
-      customer_id: '741812125',
-      mobile: '7418121259',
+      customer_id: customerId,
+      mobile: applicantNumber,
     });
   };
   const handleInitiateBsa = () => {

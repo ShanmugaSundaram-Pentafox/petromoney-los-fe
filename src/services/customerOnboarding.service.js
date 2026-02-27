@@ -600,7 +600,7 @@ export const getLoanInfo = (dealershipId) => {
 export const updateLoanInfo = (dealershipId, payload) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/dealership/${dealershipId}/loans`, {
-      method: 'POST',
+      method: 'PUT',
       body: payload,
     })
       .then(({ status, data, message }) => {
@@ -614,7 +614,7 @@ export const updateLoanInfo = (dealershipId, payload) => {
 export const createLoanInfo = (dealershipId, payload) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/dealership/${dealershipId}/loans`, {
-      method: 'PUT',
+      method: 'POST',
       body: payload,
     })
       .then(({ status, data, message }) => {

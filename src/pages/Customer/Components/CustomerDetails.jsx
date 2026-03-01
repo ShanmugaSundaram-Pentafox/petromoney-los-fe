@@ -17,7 +17,8 @@ import {
     Accordion,
     Divider,
     Stack,
-    Box
+    Box,
+    Loader, Center
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
@@ -47,7 +48,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
     const [customerData, setCustomerData] = useState(null);
     const [applicant_id, setApplicant_id] = useState();
     const [addressList, setAddressList] = useState([]);
-   
+
     // LOCAL STATE for selected addresses (NOT in Redux)
     const [selectedAddresses, setSelectedAddresses] = useState({
         permanent: null,
@@ -848,7 +849,13 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
             fetchCustomerById(applicantId);
         }
     }, [viewMode, applicantId]);
-
+    if (viewMode && loading) {
+        return (
+            <Center style={{ height: "60vh" }}>
+                <Loader size="lg" />
+            </Center>
+        );
+    }
     return (
         <>
             <Card withBorder radius="md" mb="lg">
@@ -880,7 +887,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                             value={form.name}
                             onChange={(e) => handleFieldChange("name", e.target.value)}
                             disabled={viewMode}
-                              required
+                            required
                         />
                     </Grid.Col>
 
@@ -894,7 +901,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                 handleFieldChange("mobile", e.target.value.replace(/\D/g, ""))
                             }
                             disabled={viewMode}
-                              required
+                            required
                         />
                         {mobileMsg && (
                             <Text size="sm" mt={5} c={verifyStatus.mobileVerified ? "green" : "red"}>
@@ -914,7 +921,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                 handleFieldChange("pan", e.target.value.toUpperCase())
                             }
                             disabled={viewMode}
-                              required
+                            required
                         />
                         {panMsg && (
                             <Text size="sm" mt={5} c={verifyStatus.panVerified ? "green" : "red"}>
@@ -934,7 +941,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                 handleFieldChange("aadhaar", e.target.value.replace(/\D/g, ""))
                             }
                             disabled={viewMode}
-                              required
+                            required
                         />
                         {aadhaarMsg && (
                             <Text size="sm" mt={5} c={verifyStatus.aadhaarVerified ? "green" : "red"}>

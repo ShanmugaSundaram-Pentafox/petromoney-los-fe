@@ -227,7 +227,7 @@ const Documents = () => {
 
   const onboardData = CustomerOnboardStorage.get();
 
-  const dealershipId = onboardData?.dealership_id || 30;
+  const dealershipId = onboardData?.dealership_id;
   const applicantId = onboardData?.applicant?.applicant_id ||  30;
 
   const { data, isLoading: documentChecklistLoading, refetch: refetchDocumentChecklist, isFetching: documentChecklistFetching } = useQuery(

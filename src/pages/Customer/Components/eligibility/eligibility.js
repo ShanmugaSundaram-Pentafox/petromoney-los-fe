@@ -12,6 +12,8 @@ import {
   TextInput,
   Select,
   NumberInput,
+  SegmentedControl,
+   Switch 
 } from '@mantine/core';
 import { useForm, yupResolver } from '@mantine/form';
 import * as yup from 'yup';
@@ -88,8 +90,10 @@ export const Eligibility = ({ viewMode = false }) => {
 
   const [remarks, setRemarks] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [tenureUnit, setTenureUnit] = useState('months');
+  const [localLoan, setLocalLoan] = useState(null);
 
-  const loanQuery = useLoan(formattedData?.dealershipId);
+  const loanQuery = useLoan(formattedData?.dealershipId, viewMode);
   const eligibilityMutation = useEligibility(
     formattedData?.dealershipId,
     formattedData?.primaryApplicant.applicant_id
@@ -108,27 +112,69 @@ export const Eligibility = ({ viewMode = false }) => {
     validate: yupResolver(schema),
   });
 
+  const convertTenureToMonths = (tenure, unit) => {
+    const numericTenure = Number(tenure);
+    if (!numericTenure) return 0;
+    return unit === 'years' ? numericTenure * 12 : numericTenure;
+  };
+
+  const normalizeLoanResponse = (response) => {
+    if (!response) return null;
+    return response?.data || response;
+  };
+
+  const handleTenureUnitChange = (nextUnit) => {
+    if (nextUnit === tenureUnit) return;
+
+    const currentTenure = Number(form.values.tenure);
+    if (currentTenure) {
+      const convertedTenure =
+        nextUnit === 'years'
+          ? Number((currentTenure / 12).toFixed(2))
+          : currentTenure * 12;
+      form.setFieldValue('tenure', convertedTenure);
+    }
+
+    setTenureUnit(nextUnit);
+  };
+
   const createLoan = async (values) => {
-    await createLoanMutation.mutateAsync({
+    const payload = {
       ...values,
       requested_amount: Number(values.requested_amount),
-      tenure: Number(values.tenure),
-    });
+      tenure: convertTenureToMonths(values.tenure, tenureUnit),
+    };
+
+    const createdLoan = await createLoanMutation.mutateAsync(payload);
+
+    if (!viewMode) {
+      setLocalLoan(normalizeLoanResponse(createdLoan) || payload);
+    }
 
     form.reset();
+    setTenureUnit('months');
   };
 
   const updateLoan = async (values) => {
-    await updateLoanMutation.mutateAsync({
+    const payload = {
       ...values,
       requested_amount: Number(values.requested_amount),
-      tenure: Number(values.tenure),
-    });
+      tenure: convertTenureToMonths(values.tenure, tenureUnit),
+    };
+
+    const updatedLoan = await updateLoanMutation.mutateAsync(payload);
+
+    if (!viewMode) {
+      setLocalLoan(normalizeLoanResponse(updatedLoan) || {
+        ...(localLoan || {}),
+        ...payload,
+      });
+    }
 
     setIsEditing(false);
   };
 
-  const loan = loanQuery.data;
+  const loan = viewMode ? loanQuery.data : localLoan;
   const data = eligibilityMutation.data;
   const metrics = data?.credit_metrics;
 
@@ -137,11 +183,14 @@ export const Eligibility = ({ viewMode = false }) => {
       form.setValues({
         loan_types: loan.loan_types,
         requested_amount: loan.requested_amount,
-        tenure: loan.tenure,
+        tenure:
+          tenureUnit === 'years'
+            ? Number((Number(loan.tenure || 0) / 12).toFixed(2))
+            : loan.tenure,
         loan_purpose: loan.loan_purpose,
       });
     }
-  }, [loan, isEditing]);
+  }, [loan, isEditing, tenureUnit]);
 
   const flags = data
     ? [
@@ -153,7 +202,7 @@ export const Eligibility = ({ viewMode = false }) => {
 
   return (
     <Stack pos="relative" mt="md">
-      <LoadingOverlay visible={loanQuery.isLoading} />
+      <LoadingOverlay visible={viewMode && loanQuery.isLoading} />
 
       {/* ================= Loan Form Card ================= */}
       {!loan && (
@@ -180,13 +229,41 @@ export const Eligibility = ({ viewMode = false }) => {
                 {...form.getInputProps('requested_amount')}
               />
 
-              <NumberInput
-                label="Tenure (Months)"
-                placeholder="24"
-                {...form.getInputProps('tenure')}
-              />
-            </SimpleGrid>
+<NumberInput
+  label={
+    <Group justify="space-between" align="center" w="100%">
+      <Text fw={500}>Tenure</Text>
 
+      <Switch
+        size="sm"
+        checked={tenureUnit === 'years'}
+        onChange={(event) => {
+          const checked = event.currentTarget.checked;
+          const nextUnit = checked ? 'years' : 'months';
+
+          const currentTenure = Number(form.values.tenure);
+
+          if (currentTenure) {
+            const converted =
+              nextUnit === 'years'
+                ? Number((currentTenure / 12).toFixed(2))
+                : currentTenure * 12;
+
+            form.setFieldValue('tenure', converted);
+          }
+
+          setTenureUnit(nextUnit);
+        }}
+        onLabel="Year"
+        offLabel="Month"
+      />
+    </Group>
+  }
+  placeholder="24"
+  {...form.getInputProps('tenure')}
+/>            </SimpleGrid>
+
+          
             <TextInput
               label="Purpose"
               placeholder="Fuel inventory purchase"
@@ -268,10 +345,24 @@ export const Eligibility = ({ viewMode = false }) => {
               />
 
               <NumberInput
-                label="Tenure (Months)"
+                label={`Tenure (${tenureUnit === 'years' ? 'Years' : 'Months'})`}
                 {...form.getInputProps('tenure')}
               />
             </SimpleGrid>
+
+            <Group gap="sm" align="end">
+              <Text size="sm" fw={500}>Tenure Unit</Text>
+              <SegmentedControl
+                value={tenureUnit}
+                onChange={handleTenureUnitChange}
+                color="blue"
+                data={[
+                  { label: 'Month', value: 'months' },
+                  { label: 'Year', value: 'years' },
+                ]}
+                w={180}
+              />
+            </Group>
 
             <TextInput
               label="Purpose"
@@ -370,7 +461,7 @@ export const Eligibility = ({ viewMode = false }) => {
       )}
 
       {/* Remarks */}
-      {data && (
+      {data && !viewMode && (
         <Textarea
           label="Remarks"
           placeholder="Add underwriting notes"
@@ -381,7 +472,7 @@ export const Eligibility = ({ viewMode = false }) => {
       )}
 
       {/* Footer */}
-      {data && (
+      {data && !viewMode && (
         <Group justify="flex-end">
           <Button
             rightSection={<IconSend size={16} />}

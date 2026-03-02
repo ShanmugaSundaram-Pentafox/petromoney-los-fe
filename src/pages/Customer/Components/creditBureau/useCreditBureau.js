@@ -24,24 +24,11 @@ export const useFetchCreditReport = () => {
   );
 };
 
-export const useGetCibiFile = (fileID) => {
-  return useMutation(() => getCibilFile(fileID), {
-    onSuccess: (res) => {
-      const fileUrl = res?.file_url;
-
-      if (fileUrl) {
-        // Trigger browser download
-        const link = document.createElement('a');
-        link.href = fileUrl;
-        link.target = '_blank'; // optional
-        link.download = 'CIBIL'; // let browser infer filename
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      }
-
+export const useGetCibiFile = () => {
+  return useMutation((fileId) => getCibilFile(fileId), {
+    onSuccess: () => {
       displayNotification({
-        message: 'CIBIL file downloaded successfully',
+        message: 'CIBIL file fetched successfully',
         variant: 'success',
       });
     },

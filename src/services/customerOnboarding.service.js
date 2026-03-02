@@ -186,6 +186,22 @@ export const getCustomerDetails = (applicant_id) => {
   });
 };
 
+export const deleteCustomerDetails = (applicant_id) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/customer-details/${applicant_id}`, {
+      method: 'DELETE',
+    })
+      .then((response) => {
+        if (response?.status === 'SUCCESS') {
+          resolve(response);
+        } else {
+          reject(response?.message || 'Failed to delete customer details');
+        }
+      })
+      .catch((e) => reject(e.message));
+  });
+};
+
 //Create Consent
 export const createConsent = (body) => {
   return new Promise((resolve, reject) => {

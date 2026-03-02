@@ -187,7 +187,7 @@ export default function BankStatementAnalysis({ viewMode = false }) {
     isFetching,
   } = useQuery({
     queryKey: ['consent-status', customerId],
-    queryFn: () => getConsentStatus(customerId),
+    queryFn: () => getConsentStatus(customerId.toString()),
     enabled: !!viewMode,
     retry: false,
     onSuccess: (data) => {
@@ -418,8 +418,8 @@ export default function BankStatementAnalysis({ viewMode = false }) {
 
   const handleCreateConsent = () => {
     createConsentMutation.mutate({
-      customer_id: customerId,
-      mobile: applicantNumber,
+      customer_id: customerId.toString(),
+      mobile: applicantNumber.toString(),
     });
   };
   const handleInitiateBsa = () => {

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Tabs, Loader, Button, Stack, Alert } from '@mantine/core';
+import { Tabs, Loader, Button, Stack, Alert, Group } from '@mantine/core';
 import CibilDashboard from './CIBIL';
 import {
   useFetchCreditReport,
   useGenerateCreditReport,
+  useGetCibiFile,
 } from './useCreditBureau';
 import CustomerOnboardStorage from '../../../../store/CustomerOnboardStorage';
 import { IconAlertCircle } from '@tabler/icons-react';
@@ -39,6 +40,7 @@ const buildApplicantTabs = (data) => {
 };
 
 const CreditBureau = () => {
+  const DEFAULT_CIBIL_FILE_ID = 2;
   const storageData = CustomerOnboardStorage.get();
 
   const formattedData = {
@@ -65,13 +67,58 @@ const CreditBureau = () => {
   const tabs = React.useMemo(() => buildApplicantTabs(formattedData), []);
   const [activeTabKey, setActiveTabKey] = React.useState(tabs[0]?.key);
   const [reports, setReports] = React.useState({});
+  const [cibilFiles, setCibilFiles] = React.useState({});
 
   const activeTab = tabs.find((t) => t.key === activeTabKey);
 
   /* Hooks */
   const fetchReportMutation = useFetchCreditReport();
   const generateReportMutation = useGenerateCreditReport();
-  // const getCibiFileMutation = useGetCibiFile(2);
+  const getCibiFileMutation = useGetCibiFile();
+
+  const getFileIdFromPayload = React.useCallback((payload) => {
+    if (!payload || typeof payload !== 'object') return null;
+
+    return (
+      payload?.[0]?.file_id ||
+      payload?.[0]?.cibil_file_id ||
+      payload?.cibil_file_id ||
+      payload?.cibilFileId ||
+      payload?.file_id ||
+      payload?.fileId ||
+      payload?.cibil_details?.file_id ||
+      payload?.cibil_details?.cibil_file_id ||
+      payload?.cibil_details?.[0]?.file_id ||
+      payload?.cibil_details?.[0]?.cibil_file_id ||
+      payload?.data?.cibil_file_id ||
+      payload?.data?.cibilFileId ||
+      payload?.data?.file_id ||
+      payload?.data?.fileId ||
+      payload?.data?.cibil_details?.file_id ||
+      payload?.data?.cibil_details?.cibil_file_id ||
+      payload?.data?.cibil_details?.[0]?.file_id ||
+      payload?.data?.cibil_details?.[0]?.cibil_file_id ||
+      payload?.credit_report?.[0]?.file_id ||
+      payload?.credit_report?.[0]?.cibil_file_id ||
+      payload?.data?.credit_report?.[0]?.file_id ||
+      payload?.data?.credit_report?.[0]?.cibil_file_id ||
+      null
+    );
+  }, []);
+
+  const getPresignedUrlFromPayload = React.useCallback((payload) => {
+    if (!payload || typeof payload !== 'object') return null;
+
+    return (
+      payload?.presigned_url ||
+      payload?.file_url ||
+      payload?.url ||
+      payload?.data?.presigned_url ||
+      payload?.data?.file_url ||
+      payload?.data?.url ||
+      null
+    );
+  }, []);
 
   /* Fetch report */
   const fetchReport = (applicantId) => {
@@ -79,28 +126,83 @@ const CreditBureau = () => {
       { dealershipId: formattedData.dealershipId, applicantId },
       {
         onSuccess: (data) => {
+          const reportData = data?.cibil_details ?? null;
+          const fileId =
+            getFileIdFromPayload(data) ||
+            getFileIdFromPayload(reportData) ||
+            cibilFiles?.[applicantId]?.fileId ||
+            Number(process.env.REACT_APP_DEFAULT_CIBIL_FILE_ID) ||
+            DEFAULT_CIBIL_FILE_ID;
+
           setReports((prev) => ({
             ...prev,
-            [applicantId]: data?.cibil_details ?? null,
+            [applicantId]: reportData,
           }));
+
+          setCibilFiles((prev) => ({
+            ...prev,
+            [applicantId]: {
+              ...(prev[applicantId] || {}),
+              fileId,
+            },
+          }));
+
+          fetchCibilFileAndStore(applicantId, fileId);
         },
       }
     );
   };
 
-  /* Generate report */
+  const fetchCibilFileAndStore = (applicantId, fileId) => {
+    const fallbackFileId = Number(process.env.REACT_APP_DEFAULT_CIBIL_FILE_ID) || DEFAULT_CIBIL_FILE_ID;
+    const effectiveFileId = fileId || fallbackFileId;
+
+    getCibiFileMutation.mutate(effectiveFileId, {
+      onSuccess: (fileResponse) => {
+        const presignedUrl = getPresignedUrlFromPayload(fileResponse);
+
+        setCibilFiles((prev) => ({
+          ...prev,
+          [applicantId]: {
+            ...(prev[applicantId] || {}),
+            fileId: effectiveFileId,
+            presignedUrl,
+          },
+        }));
+      },
+    });
+  };
+
+  /* Generate / Re-generate report */
   const generateReport = (applicantId) => {
     generateReportMutation.mutate(
       { dealershipId: formattedData.dealershipId, applicantId },
       {
         onSuccess: (data) => {
+          const reportData = data?.cibil_details ?? null;
+          const fileId =
+            getFileIdFromPayload(data) ||
+            getFileIdFromPayload(reportData) ||
+            cibilFiles?.[applicantId]?.fileId ||
+            Number(process.env.REACT_APP_DEFAULT_CIBIL_FILE_ID) ||
+            DEFAULT_CIBIL_FILE_ID;
+
           setReports((prev) => ({
             ...prev,
-            [applicantId]: data?.cibil_details ?? null,
+            [applicantId]: reportData,
           }));
+
+          fetchCibilFileAndStore(applicantId, fileId);
         },
       }
     );
+  };
+
+  const handleDownloadCibil = (applicantId) => {
+    const presignedUrl = cibilFiles?.[applicantId]?.presignedUrl;
+    if (presignedUrl) {
+      window.open(presignedUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   /* Auto fetch on tab change */
@@ -134,6 +236,10 @@ const CreditBureau = () => {
 
         {tabs.map((tab) => {
           const report = reports[tab.applicantId];
+          const tabFileInfo = cibilFiles[tab.applicantId] || {};
+          const hasDownloadUrl = Boolean(tabFileInfo.presignedUrl);
+          const isActionLoading =
+            generateReportMutation.isLoading || getCibiFileMutation.isLoading;
 
           return (
             <Tabs.Panel key={tab.key} value={tab.key} pt="md">
@@ -142,15 +248,33 @@ const CreditBureau = () => {
                   <Loader type="dots" />
                 </div>
               ) : report ? (
-                <CibilDashboard
-                  cibildData={report}
-                  applicantId={activeTab.applicantId}
-                  onRefetchCIBIL={generateReport}
-                />
+                <Stack>
+                  <Group>
+                    <Button
+                      loading={isActionLoading}
+                      onClick={() => generateReport(tab.applicantId)}
+                    >
+                      Regenerate Credit Report
+                    </Button>
+                    {hasDownloadUrl && (
+                      <Button
+                        variant="outline"
+                        onClick={() => handleDownloadCibil(tab.applicantId)}
+                      >
+                        Download Credit Report
+                      </Button>
+                    )}
+                  </Group>
+                  <CibilDashboard
+                    cibildData={report}
+                    applicantId={tab.applicantId}
+                    onRefetchCIBIL={generateReport}
+                  />
+                </Stack>
               ) : (
                 <Stack>
                   <Button
-                    loading={generateReportMutation.isLoading}
+                    loading={isActionLoading}
                     onClick={() => generateReport(tab.applicantId)}
                   >
                     Generate Credit Report

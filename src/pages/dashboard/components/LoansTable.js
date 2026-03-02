@@ -1,7 +1,27 @@
 import React from 'react';
 import { Box, Paper } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Badge, Loader } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Group,
+  Loader,
+  Modal,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  Textarea,
+  Title,
+} from '@mantine/core';
+import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import {
+  getLosLoanById,
+  updateLosLoanStatus,
+} from '../../../services/loans.service';
 
 const useStyles = makeStyles(() => ({
   tableWrapper: {
@@ -57,6 +77,51 @@ const useStyles = makeStyles(() => ({
 
 const LoansTable = ({ data = [], loading }) => {
   const classes = useStyles();
+  const [showPanel, setShowPanel] = React.useState({ status: false, data: '' });
+  const loanId = showPanel.data?.loan_id;
+
+  const queryClient = useQueryClient();
+
+  const [reasonModal, setReasonModal] = React.useState({
+    opened: false,
+    action: null,
+  });
+
+  const [remarks, setRemarks] = React.useState('');
+
+  const showLoanDetails = (loan) => {
+    setShowPanel({ status: true, data: loan });
+  };
+
+  const closeLoanDetails = () => {
+    setShowPanel({ status: false, data: '' });
+  };
+
+  const { mutate: changeStatus, isLoading: isUpdating } = useMutation(
+    ({ action, remarks }) => updateLosLoanStatus(loanId, { action, remarks }),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['los-loan-status-count']);
+        queryClient.invalidateQueries('los-loans-by-status');
+        setReasonModal({ opened: false, action: null });
+        setShowPanel({ status: false, data: '' });
+        setRemarks('');
+      },
+    }
+  );
+
+  const {
+    data: loanDetails,
+    isLoading,
+    isError,
+  } = useQuery(['los-loan-details', loanId], () => getLosLoanById(loanId), {
+    enabled: !!loanId && showPanel.status,
+    cacheTime: 0,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    keepPreviousData: false,
+  });
 
   return (
     <Box pt={2}>
@@ -88,9 +153,9 @@ const LoansTable = ({ data = [], loading }) => {
                   <tr
                     key={loan.loan_id}
                     className={classes.row}
-                    onClick={() => {}}
+                    onClick={() => showLoanDetails(loan)}
                   >
-                    <td className={classes.td}>#{loan.loan_id}</td>
+                    <td className={classes.td}>{loan.loan_id}</td>
 
                     <td className={classes.td}>{loan.applicant_name}</td>
 
@@ -121,22 +186,233 @@ const LoansTable = ({ data = [], loading }) => {
         </div>
       </Paper>
 
-      {/* <RightSideDrawer
-        size="70%"
+      <RightSideDrawer
+        size="50%"
         opened={showPanel.status}
-        onClose={() => setShowPanel({ status: false })}
+        onClose={closeLoanDetails}
         title={
-          showPanel.data?.loan_id
-            ? `Loan #${showPanel.data.loan_id}`
+          loanDetails?.loan?.loan_id
+            ? `Loan id: ${loanDetails.loan.loan_id}`
             : ''
         }
       >
-        <div style={{ padding: 24 }}>
-          <p><strong>Applicant:</strong> {showPanel.data?.applicant_name}</p>
-          <p><strong>Status:</strong> {showPanel.data?.status}</p>
-          <p><strong>Amount:</strong> ₹ {showPanel.data?.amount_requested}</p>
+        <div
+          style={{
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {/* 🔹 Scrollable Content */}
+          <div
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: 24,
+            }}
+          >
+            {isLoading ? (
+              <Stack spacing="md">
+                <Skeleton height={20} />
+                <Skeleton height={20} />
+                <Skeleton height={20} />
+                <Skeleton height={80} />
+              </Stack>
+            ) : isError ? (
+              <Text color="red">Failed to load loan details</Text>
+            ) : loanDetails ? (
+              <>
+                <Stack spacing="xl">
+                  {/* 🔹 Loan Information */}
+                  <Card shadow="sm" radius="md" withBorder>
+                    <Group position="apart" mb="sm">
+                      <Title order={4}>Loan Information</Title>
+                      <Badge color="blue" variant="light">
+                        {loanDetails.loan?.current_status}
+                      </Badge>
+                    </Group>
+
+                    <Divider mb="sm" />
+
+                    <SimpleGrid cols={2} spacing="sm">
+                      <Text size="sm">
+                        <strong>Loan ID:</strong> #{loanDetails.loan?.loan_id}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Amount:</strong> ₹{' '}
+                        {loanDetails.loan?.amount_requested?.toLocaleString()}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Purpose:</strong>{' '}
+                        {loanDetails.loan?.loan_purpose}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Type:</strong> {loanDetails.loan?.loan_types}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Tenure:</strong> {loanDetails.loan?.tenure}{' '}
+                        months
+                      </Text>
+                      <Text size="sm">
+                        <strong>Created:</strong>{' '}
+                        {new Date(
+                          loanDetails.loan?.created_date
+                        ).toLocaleDateString()}
+                      </Text>
+                    </SimpleGrid>
+                  </Card>
+
+                  {/* 🔹 Main Applicant */}
+                  <Card shadow="sm" radius="md" withBorder>
+                    <Title order={4} mb="sm">
+                      Main Applicant
+                    </Title>
+                    <Divider mb="sm" />
+
+                    <SimpleGrid cols={2} spacing="sm">
+                      <Text size="sm">
+                        <strong>Name:</strong>{' '}
+                        {loanDetails.main_applicant?.full_name}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Mobile:</strong>{' '}
+                        {loanDetails.main_applicant?.mobile}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Age:</strong> {loanDetails.main_applicant?.age}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Gender:</strong>{' '}
+                        {loanDetails.main_applicant?.gender}
+                      </Text>
+                      <Text size="sm">
+                        <strong>PAN:</strong> {loanDetails.main_applicant?.pan}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Aadhar:</strong>{' '}
+                        {loanDetails.main_applicant?.aadhar}
+                      </Text>
+                    </SimpleGrid>
+
+                    <Text size="sm" mt="sm">
+                      <strong>Address:</strong>{' '}
+                      {loanDetails.main_applicant?.address}
+                    </Text>
+                  </Card>
+
+                  {/* 🔹 Co-Applicants */}
+                  {loanDetails.coapplicants?.length > 0 && (
+                    <Card shadow="sm" radius="md" withBorder>
+                      <Title order={4} mb="sm">
+                        Co-Applicants
+                      </Title>
+                      <Divider mb="sm" />
+
+                      <Stack spacing="sm">
+                        {loanDetails.coapplicants.map((co, index) => (
+                          <Card key={index} radius="md" withBorder>
+                            <SimpleGrid cols={2}>
+                              <Text size="sm">
+                                <strong>Name:</strong> {co.full_name}
+                              </Text>
+                              <Text size="sm">
+                                <strong>Mobile:</strong> {co.mobile}
+                              </Text>
+                            </SimpleGrid>
+                          </Card>
+                        ))}
+                      </Stack>
+                    </Card>
+                  )}
+                </Stack>
+              </>
+            ) : (
+              <Text>No details found</Text>
+            )}
+          </div>
+
+          {loanDetails && (
+            <div
+              style={{
+                padding: 20,
+                borderTop: '1px solid #e9ecef',
+                background: '#fff',
+              }}
+            >
+              <Group position="right">
+                <Button
+                  color="red"
+                  variant="outline"
+                  onClick={() =>
+                    setReasonModal({ opened: true, action: 'pushback' })
+                  }
+                >
+                  Pushback
+                </Button>
+
+                <Button
+                  color="green"
+                  onClick={() =>
+                    setReasonModal({ opened: true, action: 'forward' })
+                  }
+                >
+                  Forward
+                </Button>
+              </Group>
+            </div>
+          )}
         </div>
-      </RightSideDrawer> */}
+      </RightSideDrawer>
+
+      <Modal
+        opened={reasonModal.opened}
+        onClose={() => {
+          setReasonModal({ opened: false, action: null });
+          setRemarks('');
+        }}
+        zIndex={999}
+        title={
+          reasonModal.action === 'pushback'
+            ? 'Pushback Reason'
+            : 'Forward to Next Status'
+        }
+        centered
+      >
+        <Stack>
+          <Textarea
+            placeholder="Enter remarks..."
+            minRows={4}
+            value={remarks}
+            onChange={(e) => setRemarks(e.currentTarget.value)}
+          />
+
+          <Group position="right">
+            <Button
+              variant="red"
+              onClick={() => {
+                setReasonModal({ opened: false, action: null });
+                setRemarks('');
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              loading={isUpdating}
+              disabled={!remarks.trim()}
+              color="green"
+              onClick={() =>
+                changeStatus({
+                  action: reasonModal.action,
+                  remarks,
+                })
+              }
+            >
+              Submit
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </Box>
   );
 };

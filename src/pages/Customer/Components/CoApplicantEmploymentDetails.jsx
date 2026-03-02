@@ -11,10 +11,10 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconBriefcase, IconCheck } from '@tabler/icons-react';
-import { saveEmploymentDetails } from '../../../services/customerOnboarding.service';
+import { saveEmploymentDetails, getEmploymentDetails } from '../../../services/customerOnboarding.service';
 import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
 
-function CoApplicantEmploymentDetails({ onEmploymentSaved }) {
+function CoApplicantEmploymentDetails({ onEmploymentSaved, applicantId: propApplicantId }) {
   const [loading, setLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
@@ -73,8 +73,7 @@ const employmentTypes = [
   const handleSubmit = async () => {
     try {
       setLoading(true);
-
-       const applicantId = onboardData?.applicant?.applicant_id || null;
+      const applicantId = propApplicantId || onboardData?.applicant?.applicant_id || null;
     
       if (!applicantId) {
         notifications.show({
@@ -116,6 +115,36 @@ onEmploymentSaved();
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!propApplicantId) return;
+
+    const fetchEmployment = async () => {
+      try {
+        const res = await getEmploymentDetails(propApplicantId);
+        if (res?.status === 'SUCCESS') {
+          const data = res.data || {};
+          setFormData({
+            employmentType:
+              data.employment_type?.includes('Professional')
+                ? 'Self Employed Professional (SEP)'
+                : 'Self Employed Non-Professional (SENP)',
+            businessName: data.business_name || '',
+            businessType: data.business_type || '',
+            yearsInBusiness: data.years_in_business?.toString() || '',
+            monthlyIncome: data.monthly_income?.toString() || '',
+            annualIncome: data.annual_income?.toString() || '',
+            itrFiled: data.itr_filed === 1
+          });
+          setIsSaved(true);
+        }
+      } catch (err) {
+        console.log('Employment fetch error', err);
+      }
+    };
+
+    fetchEmployment();
+  }, [propApplicantId]);
 
   return (
     <Card withBorder radius="md" mt="lg">

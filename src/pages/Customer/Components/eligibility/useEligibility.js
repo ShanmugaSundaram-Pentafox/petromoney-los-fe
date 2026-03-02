@@ -3,9 +3,9 @@ import { calculateEligibilityScore, createLoanInfo, forwardLoanForApproval, getL
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
 
 
-export const useLoan = (dealershipId) =>
+export const useLoan = (dealershipId, isEnabled = true) =>
   useQuery(['loan', dealershipId], () => getLoanInfo(dealershipId), {
-    enabled: !!dealershipId,
+    enabled: !!dealershipId && isEnabled,
     onSuccess: () => {
       displayNotification({
         message: 'Loan info fetched successfully',

@@ -23,6 +23,7 @@ import {
 import { notifications } from "@mantine/notifications";
 import {
     IconSearch,
+    IconRefresh,
     IconId,
     IconAlertCircle,
     IconMapPin,
@@ -67,6 +68,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
     });
 
     const [loading, setLoading] = useState(false);
+    const [buttonLoading, setButtonLoading] = useState(false);
     const [validationLoading, setValidationLoading] = useState(false);
     const [fetched, setFetched] = useState(false);
     const [hasApiError, setHasApiError] = useState(false);
@@ -775,9 +777,10 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
 
     const hasAnyData = mobileData || panData || aadhaarData;
 
-    const fetchCustomerById = async (id) => {
+    const fetchCustomerById = async (id, showFullLoading = true) => {
         try {
-            setLoading(true);
+            if (showFullLoading) setLoading(true);
+            else setButtonLoading(true);
 
             const result = await getCustomerDetails(id);
 
@@ -878,8 +881,11 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                     dealership_id: data.dealership_id,
                 });
 
+                // persist fetched applicant id locally and in storage so Refresh can use it
+                setApplicant_id(id);
+
                 CustomerOnboardStorage.updateApplicant({
-                    applicant_id: applicantId,
+                    applicant_id: id,
                     full_name: data.full_name,
                     mobile: data.mobile,
                     pan: data.pan,
@@ -898,7 +904,8 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
         } catch (err) {
             console.error("View Fetch Error:", err);
         } finally {
-            setLoading(false);
+            if (showFullLoading) setLoading(false);
+            else setButtonLoading(false);
         }
     };
 
@@ -931,9 +938,21 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                     : "Not Verified"}
                         </Badge>
                         {viewMode && !isPrimaryEditing && (
-                            <Button size="xs" variant="light" onClick={() => setIsPrimaryEditing(true)}>
-                                Edit
-                            </Button>
+                            <>
+                                <Button size="xs" variant="light" onClick={() => setIsPrimaryEditing(true)}>
+                                    Edit
+                                </Button>
+                                <Button
+                                    size="xs"
+                                    variant="light"
+                                    leftSection={<IconRefresh size={14} />}
+                                    onClick={() => fetchCustomerById(applicantId ?? applicant_id, false)}
+                                    loading={buttonLoading}
+                                    disabled={!(applicantId ?? applicant_id)}
+                                >
+                                    Refresh
+                                </Button>
+                            </>
                         )}
 
                         {isPrimaryEditing && (
@@ -1407,10 +1426,10 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                             onClick={handleValidateKYC}
                             loading={validationLoading}
                             disabled={
-    validationLoading ||
-    kycValidated ||
-    (viewMode && !isPrimaryEditing)
-}
+                                validationLoading ||
+                                kycValidated ||
+                                (viewMode && !isPrimaryEditing)
+                            }
                             styles={{
                                 root: {
                                     minWidth: '30px',
@@ -1463,7 +1482,16 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Mobile</Text>
-                            <Text fw={500}>{customerData.mobile || form.mobile}</Text>
+                            <TextInput
+                                value={form?.mobile || ""}
+                                onChange={(e) =>
+                                    setForm(prev => ({
+                                        ...prev,
+                                        mobile: e.target.value
+                                    }))
+                                }
+                                disabled={viewMode && !isCustomerEditing}
+                            />
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Date of Birth</Text>

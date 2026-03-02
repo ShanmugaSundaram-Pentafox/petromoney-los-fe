@@ -566,7 +566,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                 updated[index].showCustomerDetails = true;
                 updated[index].addressList = addresses;
                 updated[index].selectedAddresses = { permanent: null, communication: null };
-updated[index].kycValidated = true;   // optional
+                updated[index].kycValidated = true;   // optional
                 notifications.show({
                     title: "Success",
                     message: "KYC validation completed successfully",
@@ -668,7 +668,7 @@ updated[index].kycValidated = true;   // optional
             const response = await saveCoApplicantDetails(payload, dealershipId);
 
             if (response?.status === "SUCCESS") {
-                const applicantId = response?.data?.id || response?.data?.customer_id || response?.data?.applicant_id;
+const applicantId = response?.data?.coapplicant_id;
 
                 if (applicantId) {
                     CustomerOnboardStorage.updateCoApplicant(index, {
@@ -688,16 +688,20 @@ updated[index].kycValidated = true;   // optional
                 if (applicantId) {
                     updated[index].id = applicantId;
                 }
+                // Mark as saved but require employment details to be saved
                 updated[index].saved = true;
+                updated[index].employmentSaved = false; // force employment step
                 updated[index].showCustomerDetails = true;
-                updated[index].isEditing = false;
+                // keep in editing mode so summary does not open until employment is saved
+                updated[index].isEditing = true;
                 notifications.show({
                     title: "Success",
                     message: "Co-applicant saved successfully",
                     color: "green",
                 });
 
-                setExpandedIndex(null);
+                // keep expanded so user can save employment next
+                setExpandedIndex(index);
             } else {
                 notifications.show({
                     title: "Error",
@@ -727,8 +731,8 @@ updated[index].kycValidated = true;   // optional
 
     const handleDeleteCoApplicant = async (index) => {
         const applicant = coApplicants[index];
-       const applicantId = CustomerOnboardStorage.get()?.applicant?.applicant_id;
-     
+        const applicantId = CustomerOnboardStorage.get()?.applicant?.applicant_id;
+
         if (!applicantId) {
             notifications.show({
                 title: "Error",
@@ -865,10 +869,15 @@ updated[index].kycValidated = true;   // optional
     const handleEmploymentSaved = (index) => {
         setCoApplicants(prev => {
             const updated = [...prev];
+            if (!updated[index]) return prev;
             updated[index].employmentSaved = true;
             updated[index].showCustomerDetails = false;
+            // exit edit mode so summary can render
+            updated[index].isEditing = false;
             return updated;
         });
+        // collapse expanded view
+        setExpandedIndex(null);
     };
 
     const loadCoApplicants = async () => {
@@ -999,11 +1008,11 @@ updated[index].kycValidated = true;   // optional
             <Group justify="space-between" mb="lg">
                 {/* <Title order={3}>Co-Applicants ({coApplicants.length})</Title> */}
                 <Title order={3}>Co-Applicant Details</Title>
-             
-                    <Button leftSection={<IconPlus size={18} />} onClick={addCoApplicant}>
-                        {viewMode ? "Add Section" : "Add Co-Applicant"}
-                    </Button>
-                         </Group>
+
+                <Button leftSection={<IconPlus size={18} />} onClick={addCoApplicant}>
+                    {viewMode ? "Add Section" : "Add Co-Applicant"}
+                </Button>
+            </Group>
 
             {coApplicants.map((item, index) => (
                 <Paper key={item.id} withBorder radius="md" mb="md">
@@ -1032,7 +1041,7 @@ updated[index].kycValidated = true;   // optional
                     </Group>
 
                     {/* Content Section */}
-                    {!item.employmentSaved && (
+                    {(item.isEditing || !item.employmentSaved) && (
                         <Box p="md">
                             {/* Basic Details Section */}
                             <Card withBorder radius="md" mb="lg" p="lg">
@@ -1446,11 +1455,11 @@ updated[index].kycValidated = true;   // optional
                                         leftSection={<IconCheck size={20} />}
                                         onClick={() => handleValidateKYC(index)}
                                         loading={item.validationLoading}
- disabled={
-    item.validationLoading ||
-    !item.allVerified ||
-    item.kycValidated
-  }
+                                        disabled={
+                                            item.validationLoading ||
+                                            !item.allVerified ||
+                                            item.kycValidated
+                                        }
                                     >
                                         Validate KYC Linkage
                                     </Button>
@@ -1483,36 +1492,50 @@ updated[index].kycValidated = true;   // optional
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Date of Birth</Text>
-                                           <TextInput
-    value={item.customerData?.dob ?? ""}
-    onChange={(e) => {
-        const updated = [...coApplicants];
-        updated[index].customerData.dob = e.target.value;
-        setCoApplicants(updated);
-    }}
-/>
+                                            <TextInput
+                                                value={item.customerData?.dob ?? ""}
+                                                onChange={(e) => {
+                                                    const updated = [...coApplicants];
+                                                    updated[index].customerData.dob = e.target.value;
+                                                    setCoApplicants(updated);
+                                                }}
+                                            />
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Age</Text>
-                                           <TextInput
-    value={item.customerData?.age ?? ""}
-    onChange={(e) => {
-        const updated = [...coApplicants];
-        updated[index].customerData.age = e.target.value;
-        setCoApplicants(updated);
-    }}
-/>
+                                            <TextInput
+                                                value={item.customerData?.age ?? ""}
+                                                onChange={(e) => {
+                                                    const updated = [...coApplicants];
+                                                    updated[index].customerData.age = e.target.value;
+                                                    setCoApplicants(updated);
+                                                }}
+                                            />
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Gender</Text>
-                                           <TextInput
-    value={item.customerData?.gender ?? ""}
-    onChange={(e) => {
-        const updated = [...coApplicants];
-        updated[index].customerData.gender = e.target.value;
-        setCoApplicants(updated);
-    }}
-/>
+                                            <TextInput
+                                                value={
+                                                    item.customerData?.gender === "M"
+                                                        ? "Male"
+                                                        : item.customerData?.gender === "F"
+                                                            ? "Female"
+                                                            : item.customerData?.gender ?? ""
+                                                }
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+
+                                                    const updated = [...coApplicants];
+                                                    if (value.toLowerCase() === "male") {
+                                                        updated[index].customerData.gender = "M";
+                                                    } else if (value.toLowerCase() === "female") {
+                                                        updated[index].customerData.gender = "F";
+                                                    } else {
+                                                        updated[index].customerData.gender = value;
+                                                    }
+                                                    setCoApplicants(updated);
+                                                }}
+                                            />
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Aadhaar</Text>
@@ -1524,14 +1547,14 @@ updated[index].kycValidated = true;   // optional
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Email</Text>
-                                         <TextInput
-    value={item.customerData?.email ?? ""}
-    onChange={(e) => {
-        const updated = [...coApplicants];
-        updated[index].customerData.email = e.target.value;
-        setCoApplicants(updated);
-    }}
-/>
+                                            <TextInput
+                                                value={item.customerData?.email ?? ""}
+                                                onChange={(e) => {
+                                                    const updated = [...coApplicants];
+                                                    updated[index].customerData.email = e.target.value;
+                                                    setCoApplicants(updated);
+                                                }}
+                                            />
                                         </Grid.Col>
                                     </Grid>
 
@@ -1586,9 +1609,9 @@ updated[index].kycValidated = true;   // optional
                                     </Box>
                                 </Card>
                             )}
-                            {!item.employmentSaved && (
+                            {(item.isEditing || !item.employmentSaved) && (
                                 <CoApplicantEmploymentDetails
-                                    coApplicants={[item]}
+                                    applicantId={item.id}
                                     onEmploymentSaved={() => handleEmploymentSaved(index)}
                                 />
                             )}
@@ -1597,7 +1620,7 @@ updated[index].kycValidated = true;   // optional
 
 
                     {/* View Mode - Summary */}
-                    {item.saved && item.employmentSaved && (
+                    {item.saved && item.employmentSaved && !item.isEditing && (
                         <Box p="md">
                             <Card withBorder radius="md">
                                 <Group justify="space-between" mb="md">
@@ -1618,9 +1641,14 @@ updated[index].kycValidated = true;   // optional
                                                 size="xs"
                                                 variant="light"
                                                 onClick={() => {
-                                                    const updated = [...coApplicants];
-                                                    updated[index].isEditing = true;
-                                                    setCoApplicants(updated);
+                                                    setCoApplicants((prev) => {
+                                                        const updated = [...prev];
+                                                        if (!updated[index]) return prev;
+                                                        updated[index].isEditing = true;
+                                                        updated[index].showCustomerDetails = true;
+                                                        return updated;
+                                                    });
+                                                    setExpandedIndex(index);
                                                 }}
                                             >
                                                 Edit

@@ -47,6 +47,7 @@ import {
     mobileVerfiy,
     validateKYCLinkage,
     saveCoApplicantDetails,
+    deleteCustomerDetails,
     getCoapplicantDetails,
     getCoApplicantsByDealership
 } from "../../../services/customerOnboarding.service";
@@ -98,6 +99,8 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                 },
                 loading: false,
                 validationLoading: false,
+                saveLoading: false,
+                deleteLoading: false,
                 fetched: false,
                 hasApiError: false,
                 formEdited: false,
@@ -364,6 +367,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
 
                     updated[index].customerData = previewCustomer;
                     updated[index].addressList = deduped;
+                    updated[index].showCustomerDetails = true;
 
                 } catch (e) {
                     console.log("Preview error:", e);
@@ -397,9 +401,12 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                 color: "red",
             });
         } finally {
-            const updated = [...coApplicants];
-            updated[index].loading = false;
-            setCoApplicants(updated);
+            setCoApplicants((prev) => {
+                const updated = [...prev];
+                if (!updated[index]) return prev;
+                updated[index].loading = false;
+                return updated;
+            });
         }
     };
 
@@ -418,9 +425,15 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
         }
 
         try {
+            setCoApplicants((prev) => {
+                const updated = [...prev];
+                if (!updated[index]) return prev;
+                updated[index].validationLoading = true;
+                updated[index].showCustomerDetails = true;
+                return updated;
+            });
+
             const updated = [...coApplicants];
-            updated[index].validationLoading = true;
-            setCoApplicants(updated);
 
             const response = await validateKYCLinkage(
                 mobile,
@@ -553,7 +566,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                 updated[index].showCustomerDetails = true;
                 updated[index].addressList = addresses;
                 updated[index].selectedAddresses = { permanent: null, communication: null };
-
+updated[index].kycValidated = true;   // optional
                 notifications.show({
                     title: "Success",
                     message: "KYC validation completed successfully",
@@ -577,9 +590,12 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                 color: "red",
             });
         } finally {
-            const updated = [...coApplicants];
-            updated[index].validationLoading = false;
-            setCoApplicants(updated);
+            setCoApplicants((prev) => {
+                const updated = [...prev];
+                if (!updated[index]) return prev;
+                updated[index].validationLoading = false;
+                return updated;
+            });
         }
     };
 
@@ -598,7 +614,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
 
         try {
             const updated = [...coApplicants];
-            updated[index].validationLoading = true;
+            updated[index].saveLoading = true;
             setCoApplicants(updated);
 
             let selectedAddr = null;
@@ -648,7 +664,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
             };
 
             const dealershipId = CustomerOnboardStorage.get()?.dealership_id;
-
+            const applicantId = CustomerOnboardStorage.get()?.applicant?.applicant_id;
             const response = await saveCoApplicantDetails(payload, dealershipId);
 
             if (response?.status === "SUCCESS") {
@@ -669,8 +685,11 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                         state: payload.state,
                     });
                 }
+                if (applicantId) {
+                    updated[index].id = applicantId;
+                }
                 updated[index].saved = true;
-                updated[index].showCustomerDetails = false;
+                updated[index].showCustomerDetails = true;
                 updated[index].isEditing = false;
                 notifications.show({
                     title: "Success",
@@ -697,9 +716,57 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                 color: "red",
             });
         } finally {
-            const updated = [...coApplicants];
-            updated[index].validationLoading = false;
-            setCoApplicants(updated);
+            setCoApplicants((prev) => {
+                const updated = [...prev];
+                if (!updated[index]) return prev;
+                updated[index].saveLoading = false;
+                return updated;
+            });
+        }
+    };
+
+    const handleDeleteCoApplicant = async (index) => {
+        const applicant = coApplicants[index];
+       const applicantId = CustomerOnboardStorage.get()?.applicant?.applicant_id;
+     
+        if (!applicantId) {
+            notifications.show({
+                title: "Error",
+                message: "Applicant id not found",
+                color: "red",
+            });
+            return;
+        }
+
+        try {
+            setCoApplicants((prev) => {
+                const updated = [...prev];
+                if (!updated[index]) return prev;
+                updated[index].deleteLoading = true;
+                return updated;
+            });
+
+            await deleteCustomerDetails(applicantId);
+
+            setCoApplicants((prev) => prev.filter((_, i) => i !== index));
+            notifications.show({
+                title: "Success",
+                message: "Co-applicant deleted successfully",
+                color: "green",
+            });
+        } catch (err) {
+            notifications.show({
+                title: "Error",
+                message: err?.message || "Failed to delete co-applicant",
+                color: "red",
+            });
+        } finally {
+            setCoApplicants((prev) => {
+                const updated = [...prev];
+                if (!updated[index]) return prev;
+                updated[index].deleteLoading = false;
+                return updated;
+            });
         }
     };
 
@@ -932,12 +999,11 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
             <Group justify="space-between" mb="lg">
                 {/* <Title order={3}>Co-Applicants ({coApplicants.length})</Title> */}
                 <Title order={3}>Co-Applicant Details</Title>
-                {!viewMode && (
+             
                     <Button leftSection={<IconPlus size={18} />} onClick={addCoApplicant}>
-                        Add Co-Applicant
+                        {viewMode ? "Add Section" : "Add Co-Applicant"}
                     </Button>
-                )}
-            </Group>
+                         </Group>
 
             {coApplicants.map((item, index) => (
                 <Paper key={item.id} withBorder radius="md" mb="md">
@@ -957,7 +1023,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                 {item.allVerified ? "Fully Verified" :
                                     item.verifyStatus?.panVerified || item.verifyStatus?.aadhaarVerified || item.verifyStatus?.mobileVerified ? "Partially Verified" : "Not Verified"}
                             </Badge>
-                            {!item.saved && !viewMode && (
+                            {!item.saved && (
                                 <ActionIcon color="red" variant="subtle" onClick={() => removeCoApplicant(index)}>
                                     <IconTrash size={18} />
                                 </ActionIcon>
@@ -966,7 +1032,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                     </Group>
 
                     {/* Content Section */}
-                    {!item.employmentSaved && !viewMode && (
+                    {!item.employmentSaved && (
                         <Box p="md">
                             {/* Basic Details Section */}
                             <Card withBorder radius="md" mb="lg" p="lg">
@@ -1380,7 +1446,11 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                         leftSection={<IconCheck size={20} />}
                                         onClick={() => handleValidateKYC(index)}
                                         loading={item.validationLoading}
-                                        disabled={item.validationLoading}
+ disabled={
+    item.validationLoading ||
+    !item.allVerified ||
+    item.kycValidated
+  }
                                     >
                                         Validate KYC Linkage
                                     </Button>
@@ -1413,18 +1483,36 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Date of Birth</Text>
-                                            <Text fw={500}>{formatDate(item.customerData.dob) || '-'}</Text>
+                                           <TextInput
+    value={item.customerData?.dob ?? ""}
+    onChange={(e) => {
+        const updated = [...coApplicants];
+        updated[index].customerData.dob = e.target.value;
+        setCoApplicants(updated);
+    }}
+/>
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Age</Text>
-                                            <Text fw={500}>{item.customerData.age || '-'}</Text>
+                                           <TextInput
+    value={item.customerData?.age ?? ""}
+    onChange={(e) => {
+        const updated = [...coApplicants];
+        updated[index].customerData.age = e.target.value;
+        setCoApplicants(updated);
+    }}
+/>
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Gender</Text>
-                                            <Text fw={500}>
-                                                {item.customerData.gender === 'M' ? 'Male' :
-                                                    item.customerData.gender === 'F' ? 'Female' : item.customerData.gender || '-'}
-                                            </Text>
+                                           <TextInput
+    value={item.customerData?.gender ?? ""}
+    onChange={(e) => {
+        const updated = [...coApplicants];
+        updated[index].customerData.gender = e.target.value;
+        setCoApplicants(updated);
+    }}
+/>
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Aadhaar</Text>
@@ -1436,7 +1524,14 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                         </Grid.Col>
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Email</Text>
-                                            <Text fw={500}>{item.customerData.email || '-'}</Text>
+                                         <TextInput
+    value={item.customerData?.email ?? ""}
+    onChange={(e) => {
+        const updated = [...coApplicants];
+        updated[index].customerData.email = e.target.value;
+        setCoApplicants(updated);
+    }}
+/>
                                         </Grid.Col>
                                     </Grid>
 
@@ -1482,8 +1577,8 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                                 size="md"
                                                 color="blue"
                                                 onClick={() => handleSaveCoApplicant(index)}
-                                                loading={item.validationLoading}
-                                                disabled={item.validationLoading || (!item.selectedAddresses?.permanent && !item.selectedAddresses?.communication)}
+                                                loading={item.saveLoading}
+                                                disabled={item.saveLoading || (!item.selectedAddresses?.permanent && !item.selectedAddresses?.communication)}
                                             >
                                                 Save Co-Applicant Details
                                             </Button>
@@ -1491,7 +1586,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                     </Box>
                                 </Card>
                             )}
-                            {!viewMode && !item.employmentSaved && (
+                            {!item.employmentSaved && (
                                 <CoApplicantEmploymentDetails
                                     coApplicants={[item]}
                                     onEmploymentSaved={() => handleEmploymentSaved(index)}
@@ -1509,17 +1604,28 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                     <Text fw={700}>Co-applicant Details</Text>
 
                                     {!item.isEditing ? (
-                                        <Button
-                                            size="xs"
-                                            variant="light"
-                                            onClick={() => {
-                                                const updated = [...coApplicants];
-                                                updated[index].isEditing = true;
-                                                setCoApplicants(updated);
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
+                                        <Group gap="xs">
+                                            <Button
+                                                size="xs"
+                                                color="red"
+                                                variant="light"
+                                                onClick={() => handleDeleteCoApplicant(index)}
+                                                loading={item.deleteLoading}
+                                            >
+                                                Delete
+                                            </Button>
+                                            <Button
+                                                size="xs"
+                                                variant="light"
+                                                onClick={() => {
+                                                    const updated = [...coApplicants];
+                                                    updated[index].isEditing = true;
+                                                    setCoApplicants(updated);
+                                                }}
+                                            >
+                                                Edit
+                                            </Button>
+                                        </Group>
                                     ) : (
                                         <Button
                                             size="xs"

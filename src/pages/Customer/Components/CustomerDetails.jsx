@@ -59,7 +59,11 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
         name: "",
         mobile: "",
         aadhaar: "",
-        pan: ""
+        pan: "",
+        dob: "",
+        age: "",
+        gender: "",
+        email: ""
     });
 
     const [loading, setLoading] = useState(false);
@@ -87,8 +91,10 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
 
     // Track if form fields have been edited after fetch
     const [formEdited, setFormEdited] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
+    const [isPrimaryEditing, setIsPrimaryEditing] = useState(false);
+    const [isCustomerEditing, setIsCustomerEditing] = useState(false);
     const [editSnapshot, setEditSnapshot] = useState(null);
+    const [kycValidated, setKycValidated] = useState(false);
 
     useEffect(() => {
 
@@ -138,7 +144,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
         setFetched(false);
         setHasApiError(false);
         setFormEdited(true);
-
+        setKycValidated(false);
         if (field === 'pan') {
             setPanMsg("");
             setVerifyStatus(prev => ({ ...prev, panVerified: false }));
@@ -327,10 +333,21 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
             };
 
             setCustomerData({ ...previewCustomer, mobile_details: mobileRes, pan_details: panRes, aadhaar_details: aadhaarRes });
+            // populate editable fields (DOB/Age/Gender/Email) into form so Customer Basic Details are editable
+            setForm(prev => ({
+                ...prev,
+                dob: previewCustomer.dob || prev.dob,
+                age: previewCustomer.age || prev.age,
+                gender: previewCustomer.gender || prev.gender,
+                email: previewCustomer.email || prev.email
+            }));
             setAddressList(deduped);
             setFetched(true);
             setHasApiError(hasError);
-
+            setShowCustomerDetails(true);
+            setKycValidated(false);
+            // setIsPrimaryEditing(false);
+            setIsCustomerEditing(false);
             notifications.show({
                 title: "Success",
                 message: `${successfulCalls} verification(s) completed successfully`,
@@ -365,8 +382,8 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
         try {
             setValidationLoading(true);
 
-            setShowCustomerDetails(false);
-            setAddressList([]);
+            // setShowCustomerDetails(false);
+            // setAddressList([]);
 
             const response = await validateKYCLinkage(
                 form.mobile,
@@ -496,10 +513,21 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
 
                 // Set customer data directly (don't merge with possibly null prev)
                 setCustomerData(normalizedCustomer);
+                // also populate form editable fields from normalized customer so user can edit them
+                setForm(prev => ({
+                    ...prev,
+                    dob: normalizedCustomer.dob || prev.dob,
+                    age: normalizedCustomer.age || prev.age,
+                    gender: normalizedCustomer.gender || prev.gender,
+                    email: normalizedCustomer.email || prev.email
+                }));
                 setAddressList(addresses);
                 setSelectedAddresses({ permanent: null, communication: null });
                 setShowCustomerDetails(true);
-
+                setFetched(true);
+                setKycValidated(true);
+                setIsPrimaryEditing(false);
+                setIsCustomerEditing(false);
                 notifications.show({
                     title: "Success",
                     message: "KYC validation completed successfully",
@@ -573,27 +601,26 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
 
             // ================= FINAL PAYLOAD =================
             const payload = {
-                full_name: customerData?.full_name && form.name,
+                full_name: form.name,
                 mobile: form.mobile,
                 address: selectedAddr?.address || "",
                 city: selectedAddr?.city || "",
                 state: selectedAddr?.state || "",
                 district: selectedAddr?.city || "",
-                dob: customerData?.dob || "",
-                gender: customerData?.gender || "",
-                age: customerData?.age || "",
+                dob: form.dob || customerData?.dob || "",
+                gender: form.gender || customerData?.gender || "",
+                age: form.age || customerData?.age || "",
                 is_communication_address: isCommunication,
                 is_permanent_address: isPermanent,
                 aadhar: form.aadhaar,
                 pan: form.pan,
+                email: form.email || customerData?.email || "",
                 aadhar_details: aadhaarData?.data?.data?.details || aadhaarData?.data?.details || {},
                 pan_details: panData?.data?.data?.details || panData?.data?.details || {},
                 mobile_details: mobileData?.data?.data || mobileData?.data || {}
             };
 
             const response = await saveCustomerDetails(payload);
-
-
             if (response?.status === "SUCCESS") {
 
                 const applicantId = response?.data?.applicant_id;
@@ -620,12 +647,37 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                     email: form.email || "",
                 });
 
+                // reflect saved values in local state so UI shows edited data
+                setCustomerData(prev => ({
+                    ...prev,
+                    full_name: payload.full_name,
+                    mobile: payload.mobile,
+                    pan: payload.pan,
+                    aadhar: payload.aadhar,
+                    dob: payload.dob,
+                    gender: payload.gender,
+                    age: payload.age,
+                    email: payload.email || prev?.email || ""
+                }));
+
+                setForm(prev => ({
+                    ...prev,
+                    name: payload.full_name,
+                    mobile: payload.mobile,
+                    pan: payload.pan,
+                    aadhaar: payload.aadhar,
+                    dob: payload.dob,
+                    gender: payload.gender,
+                    age: payload.age,
+                    email: payload.email || prev.email
+                }));
+
                 notifications.show({
                     title: "Success",
                     message: "Customer saved successfully",
                     color: "green",
                 });
-                setIsEditing(false)
+                setIsCustomerEditing(false)
             } else {
                 notifications.show({
                     title: "Error",
@@ -645,7 +697,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
             selectedAddresses: { ...selectedAddresses },
             customerData: customerData ? { ...customerData } : null
         });
-        setIsEditing(true);
+        setIsCustomerEditing(true);
     };
 
     const handleCancelEdit = () => {
@@ -655,7 +707,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
             setSelectedAddresses(editSnapshot.selectedAddresses || { permanent: null, communication: null });
             setCustomerData(editSnapshot.customerData || null);
         }
-        setIsEditing(false);
+        setIsCustomerEditing(false);
         setEditSnapshot(null);
     };
 
@@ -736,7 +788,11 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                     name: data.full_name || "",
                     mobile: data.mobile?.toString() || "",
                     aadhaar: data.aadhar || "",
-                    pan: data.pan || ""
+                    pan: data.pan || "",
+                    dob: data.dob || "",
+                    age: data.age || "",
+                    gender: data.gender || "",
+                    email: data.mobile_details?.details?.email_details?.[0]?.email_address || ""
                 });
 
                 setVerifyStatus({
@@ -815,6 +871,8 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                 setFetched(true);
                 setHasApiError(false);
                 setShowCustomerDetails(true);
+                setIsPrimaryEditing(false);
+                setIsCustomerEditing(false);
 
                 CustomerOnboardStorage.update({
                     dealership_id: data.dealership_id,
@@ -849,36 +907,42 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
             fetchCustomerById(applicantId);
         }
     }, [viewMode, applicantId]);
-    if (viewMode && loading) {
-        return (
-            <Center style={{ height: "60vh" }}>
-                <Loader size="lg" />
-            </Center>
-        );
-    }
+
     return (
         <>
             <Card withBorder radius="md" mb="lg">
                 <Group justify="space-between" mb="md">
                     <Text fw={700} size="lg">Primary Applicant</Text>
-                    <Badge
-                        size="lg"
-                        color={
-                            allVerified
-                                ? "green"
+                    <Group>
+                        <Badge
+                            size="lg"
+                            color={
+                                allVerified
+                                    ? "green"
+                                    : verifyStatus.panVerified || verifyStatus.aadhaarVerified || verifyStatus.mobileVerified
+                                        ? "yellow"
+                                        : "red"
+                            }
+                        >
+                            {allVerified
+                                ? "Fully Verified"
                                 : verifyStatus.panVerified || verifyStatus.aadhaarVerified || verifyStatus.mobileVerified
-                                    ? "yellow"
-                                    : "red"
-                        }
-                    >
-                        {allVerified
-                            ? "Fully Verified"
-                            : verifyStatus.panVerified || verifyStatus.aadhaarVerified || verifyStatus.mobileVerified
-                                ? "Partially Verified"
-                                : "Not Verified"}
-                    </Badge>
-                </Group>
+                                    ? "Partially Verified"
+                                    : "Not Verified"}
+                        </Badge>
+                        {viewMode && !isPrimaryEditing && (
+                            <Button size="xs" variant="light" onClick={() => setIsPrimaryEditing(true)}>
+                                Edit
+                            </Button>
+                        )}
 
+                        {isPrimaryEditing && (
+                            <Button size="xs" color="red" variant="light" onClick={() => setIsPrimaryEditing(false)}>
+                                Cancel
+                            </Button>
+                        )}
+                    </Group>
+                </Group>
                 <Grid>
                     <Grid.Col span={6}>
                         <TextInput
@@ -900,7 +964,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                             onChange={(e) =>
                                 handleFieldChange("mobile", e.target.value.replace(/\D/g, ""))
                             }
-                            disabled={viewMode}
+                            disabled={viewMode && !isPrimaryEditing}
                             required
                         />
                         {mobileMsg && (
@@ -920,7 +984,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                             onChange={(e) =>
                                 handleFieldChange("pan", e.target.value.toUpperCase())
                             }
-                            disabled={viewMode}
+                            disabled={viewMode && !isPrimaryEditing}
                             required
                         />
                         {panMsg && (
@@ -940,7 +1004,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                             onChange={(e) =>
                                 handleFieldChange("aadhaar", e.target.value.replace(/\D/g, ""))
                             }
-                            disabled={viewMode}
+                            disabled={viewMode && !isPrimaryEditing}
                             required
                         />
                         {aadhaarMsg && (
@@ -957,7 +1021,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                         leftSection={<IconSearch size={16} />}
                         onClick={handleFetch}
                         loading={loading}
-                        disabled={!allFilled || loading || (fetched && !formEdited) || viewMode}
+                        disabled={!allFilled || loading || (fetched && !formEdited) || (viewMode && !isPrimaryEditing)}
                     >
                         {fetched && !formEdited ? "Fetched" : "Fetch Details"}
                     </Button>
@@ -1342,7 +1406,11 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                             leftSection={<IconCheck size={20} />}
                             onClick={handleValidateKYC}
                             loading={validationLoading}
-                            disabled={validationLoading || viewMode}
+                            disabled={
+    validationLoading ||
+    kycValidated ||
+    (viewMode && !isPrimaryEditing)
+}
                             styles={{
                                 root: {
                                     minWidth: '30px',
@@ -1363,13 +1431,14 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                         <Text fw={700} size="lg">Customer Basic Details</Text>
                         <Group>
                             <Badge color="blue" size="lg">Verified</Badge>
-                            {viewMode && !isEditing && (
-                                <Button size="xs" variant="light" onClick={handleStartEdit} style={{ marginLeft: 8 }}>
+                            {viewMode && !isCustomerEditing && (
+                                <Button size="xs" variant="light" onClick={() => setIsCustomerEditing(true)}>
                                     Edit
                                 </Button>
                             )}
-                            {isEditing && (
-                                <Button size="xs" color="red" variant="light" onClick={handleCancelEdit} style={{ marginLeft: 8 }}>
+
+                            {isCustomerEditing && (
+                                <Button size="xs" color="red" variant="light" onClick={() => setIsCustomerEditing(false)}>
                                     Cancel
                                 </Button>
                             )}
@@ -1388,7 +1457,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                             name: e.target.value
                                         }))
                                     }
-                                    disabled={viewMode && !isEditing}
+                                    disabled={viewMode && !isCustomerEditing}
                                 />
                             </Text>
                         </Grid.Col>
@@ -1398,18 +1467,27 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Date of Birth</Text>
-                            <Text fw={500}>{formatDate(customerData.dob) || '-'}</Text>
+                            <TextInput
+                                value={form?.dob || ""}
+                                onChange={(e) => handleFieldChange("dob", e.target.value)}
+                                disabled={viewMode && !isCustomerEditing}
+                            />
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Age</Text>
-                            <Text fw={500}>{customerData?.age || '-'}</Text>
+                            <TextInput
+                                value={form?.age || ""}
+                                onChange={(e) => handleFieldChange("age", e.target.value)}
+                                disabled={viewMode && !isCustomerEditing}
+                            />
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Gender</Text>
-                            <Text fw={500}>
-                                {customerData.gender === 'M' ? 'Male' :
-                                    customerData.gender === 'F' ? 'Female' : customerData.gender || '-'}
-                            </Text>
+                            <TextInput
+                                value={form?.gender || ""}
+                                onChange={(e) => handleFieldChange("gender", e.target.value)}
+                                disabled={viewMode && !isCustomerEditing}
+                            />
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Aadhaar Number</Text>
@@ -1421,7 +1499,16 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Email</Text>
-                            <Text fw={500}>{customerData.email || '-'}</Text>
+                            <TextInput
+                                value={customerData?.email || ""}
+                                onChange={(e) =>
+                                    setForm(prev => ({
+                                        ...prev,
+                                        email: e.target.value
+                                    }))
+                                }
+                                disabled={viewMode && !isCustomerEditing}
+                            />
                         </Grid.Col>
                     </Grid>
 
@@ -1447,7 +1534,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                         }
                                     ])
                                 }
-                                disabled={viewMode && !isEditing}
+                                disabled={viewMode && !isCustomerEditing}
                             >
                                 + Add Manual Address
                             </Button>
@@ -1462,20 +1549,22 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                     permanent: selectedAddresses.permanent === addr,
                                     communication: selectedAddresses.communication === addr
                                 }}
-                                onSelect={!viewMode || isEditing ? (type) => handleAddressSelect(type, index) : undefined}
-                                onDelete={!viewMode || isEditing ? () => {
+                                onSelect={!viewMode || isCustomerEditing ? (type) => handleAddressSelect(type, index) : undefined}
+
+                                onDelete={!viewMode || isCustomerEditing ? () => {
                                     setAddressList(prev => {
                                         const newList = prev.filter((_, i) => i !== index);
                                         setSelectedAddresses({
                                             permanent: null,
                                             communication: null
                                         });
-
                                         return newList;
                                     });
                                 } : undefined}
-                                onEdit={!viewMode || isEditing ? (editedAddr) => handleAddressEdit(index, editedAddr) : undefined}
-                                isEditable={(!viewMode || isEditing) && !addr.fromApi}
+
+                                onEdit={!viewMode || isCustomerEditing ? (editedAddr) => handleAddressEdit(index, editedAddr) : undefined}
+
+                                isEditable={(!viewMode || isCustomerEditing) && !addr.fromApi}
                             />
                         ))}
 
@@ -1493,7 +1582,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                         )}
 
                         <Group justify="flex-end">
-                            {isEditing && (
+                            {isCustomerEditing && (
                                 <Button size="sm" variant="outline" color="gray" onClick={handleCancelEdit} style={{ marginRight: 8 }}>
                                     Cancel
                                 </Button>
@@ -1503,7 +1592,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                 color="blue"
                                 onClick={handleSaveCustomerDetails}
                                 loading={validationLoading}
-                                disabled={validationLoading || (!selectedAddresses.permanent && !selectedAddresses.communication) || (viewMode && !isEditing)}
+                                disabled={validationLoading || (!selectedAddresses.permanent && !selectedAddresses.communication) || (viewMode && !isCustomerEditing)}
                             >
                                 Save Customer Details
                             </Button>

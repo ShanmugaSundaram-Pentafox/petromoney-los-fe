@@ -418,8 +418,8 @@ export default function BankStatementAnalysis({ viewMode = false }) {
 
   const handleCreateConsent = () => {
     createConsentMutation.mutate({
-      customer_id: customerId,
-      mobile: applicantNumber,
+      customer_id: customerId.toString(),
+      mobile: applicantNumber.toString(),
     });
   };
   const handleInitiateBsa = () => {

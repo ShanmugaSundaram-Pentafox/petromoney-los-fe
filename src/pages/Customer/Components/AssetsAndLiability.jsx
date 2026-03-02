@@ -15,6 +15,7 @@ import {
   ThemeIcon,
   Select,
   Loader,
+  Alert,
 } from '@mantine/core';
 import {
   IconWallet,
@@ -23,6 +24,7 @@ import {
   IconTrendingDown,
   IconCheck,
   IconRefresh,
+  IconAlertCircle,
 } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
@@ -47,8 +49,8 @@ const AssetsAndLiability = () => {
 
   const onboardData = CustomerOnboardStorage.get();
 
-  const dealershipId = onboardData?.dealership_id || 30;
-  const applicantId = onboardData?.applicant?.applicant_id || 30;
+  const dealershipId = onboardData?.dealership_id ;
+  const applicantId = onboardData?.applicant?.applicant_id;
 
   const [assets, setAssets] = useState([]);
   const [liabilities, setLiabilities] = useState([]);
@@ -68,6 +70,7 @@ const AssetsAndLiability = () => {
           message: e || 'Error fetching assets',
         });
       },
+      enabled: !!dealershipId && !!applicantId,
       cacheTime: 0,
     }
   );
@@ -77,7 +80,7 @@ const AssetsAndLiability = () => {
       ['applicant-assets', dealershipId, applicantId],
       () => getApplicantAssets({ dealershipId, applicantId }),
       {
-        enabled: !!assetsData, // only run if assetsData is available, as we need it to map asset types
+        enabled: !!assetsData &&  !!dealershipId && !!applicantId, // only run if assetsData is available, as we need it to map asset types
         cacheTime: 0, // disable cache to always get fresh data after mutations
         onError: (e) => {
           displayNotification({
@@ -286,6 +289,22 @@ const AssetsAndLiability = () => {
       });
     }
   };
+
+  if (!dealershipId || !applicantId) {
+    return (
+      <Container size="xl" py="lg">
+        <Alert
+          icon={<IconAlertCircle size={18} />}
+          title="No Applicants Found"
+          color="red"
+          radius="md"
+          variant="light"
+        >
+          Please add a primary applicant or co-applicant before proceeding.
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container size="xl" py="lg">

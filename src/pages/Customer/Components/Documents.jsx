@@ -14,6 +14,7 @@ import {
   ActionIcon,
   Loader,
   Image,
+  Alert,
 } from "@mantine/core";
 import {
   IconFileText,
@@ -29,6 +30,7 @@ import FormDialog from "../../../components/CommonComponents/FormDialog/FormDial
 import { displayNotification } from "../../../components/CommonComponents/Notification/displayNotification";
 import styled from 'styled-components';
 import CustomerOnboardStorage from "../../../store/CustomerOnboardStorage";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 /* -------------------- Allowed Types -------------------- */
 const allowedTypes = [
@@ -228,13 +230,14 @@ const Documents = () => {
   const onboardData = CustomerOnboardStorage.get();
 
   const dealershipId = onboardData?.dealership_id;
-  const applicantId = onboardData?.applicant?.applicant_id ||  30;
+  const applicantId = onboardData?.applicant?.applicant_id;
 
   const { data, isLoading: documentChecklistLoading, refetch: refetchDocumentChecklist, isFetching: documentChecklistFetching } = useQuery(
     ["document-checklist"],
     getDocumentChecklist,
     {
       cacheTime: 0,
+      enabled: !!dealershipId && !!applicantId,
       onError: (err) => {
         displayNotification({
           message: err || "Something went wrong",
@@ -248,7 +251,7 @@ const Documents = () => {
     ["uploaded-documents", dealershipId],
     () => getUploadedDocuments(dealershipId),
     {
-      enabled: !!data,
+      enabled: !!data && !!dealershipId && !!applicantId,
       cacheTime: 0,
       onError: (err) => {
         displayNotification({
@@ -294,6 +297,22 @@ const Documents = () => {
       });
     }
   };
+
+  if (!dealershipId || !applicantId) {
+    return (
+      <Container size="xl" py="lg">
+        <Alert
+          icon={<IconAlertCircle size={18} />}
+          title="No Applicants Found"
+          color="red"
+          radius="md"
+          variant="light"
+        >
+          Please add a primary applicant or co-applicant before proceeding.
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
     <Container size="xl" py="lg">

@@ -21,8 +21,11 @@ import {
   Paper,
   ScrollArea,
   Center,
+  Container,
+  Alert,
 } from '@mantine/core';
 import {
+  IconAlertCircle,
   IconBuildingBank,
   IconChartPie,
   IconCheck,
@@ -177,8 +180,8 @@ export default function BankStatementAnalysis({ viewMode = false }) {
   const [consentId, setConsentId] = useState('');
   const onboardData = CustomerOnboardStorage.get();
 
-  const applicantId = onboardData?.applicant?.applicant_id || 30;
-  const applicantNumber = onboardData?.applicant?.mobile || '7418121259';
+  const applicantId = onboardData?.applicant?.applicant_id;
+  const applicantNumber = onboardData?.applicant?.mobile;
   const customerId = applicantId;
 
   const {
@@ -535,6 +538,22 @@ export default function BankStatementAnalysis({ viewMode = false }) {
         <Loader size={'md'}/>
       </Center>
     )
+  }
+
+  if (!applicantId) {
+    return (
+      <Container size="xl" py="lg">
+        <Alert
+          icon={<IconAlertCircle size={18} />}
+          title="No Applicants Found"
+          color="red"
+          radius="md"
+          variant="light"
+        >
+          Please add a primary applicant or co-applicant before proceeding.
+        </Alert>
+      </Container>
+    );
   }
 
   return (

@@ -13,11 +13,12 @@ import {
   Select,
   NumberInput,
   SegmentedControl,
-   Switch 
+   Switch, 
+   Container
 } from '@mantine/core';
 import { useForm, yupResolver } from '@mantine/form';
 import * as yup from 'yup';
-import { IconCheck, IconSend } from '@tabler/icons-react';
+import { IconAlertCircle, IconCheck, IconSend } from '@tabler/icons-react';
 import React, { useEffect, useState } from 'react';
 import {
   useCreateLoan,
@@ -194,11 +195,27 @@ export const Eligibility = ({ viewMode = false }) => {
 
   const flags = data
     ? [
-      metrics?.overdue_accounts === 0 && 'No overdue accounts',
-      metrics?.highest_dpd === 0 && 'Perfect repayment history',
-      data.cibil_score > 750 && 'Strong credit score',
+        metrics?.overdue_accounts === 0 && 'No overdue accounts',
+        metrics?.highest_dpd === 0 && 'Perfect repayment history',
+        data.cibil_score > 750 && 'Strong credit score',
     ].filter(Boolean)
     : [];
+
+  if (!storageData?.dealership_id || !storageData?.applicant?.applicant_id) {
+    return (
+      <Container size="xl" py="lg">
+        <Alert
+          icon={<IconAlertCircle size={18} />}
+          title="No Applicants Found"
+          color="red"
+          radius="md"
+          variant="light"
+        >
+          Please add a primary applicant or co-applicant before proceeding.
+        </Alert>
+      </Container>
+    );
+  }
 
   return (
     <Stack pos="relative" mt="md">

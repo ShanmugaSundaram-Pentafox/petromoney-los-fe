@@ -308,3 +308,30 @@ export const getLoansByLosStatus = (status) => {
       });
   });
 };
+
+export const getLosLoanById = (loanId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/loans/${loanId}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const updateLosLoanStatus = async (loanId, body) => {
+  const { status, message } = await apiCall(`los-poc/loans/${loanId}/status`, {
+    method: 'PUT',
+    body,
+  });
+
+  if (status !== 'SUCCESS') throw new Error(message);
+
+  return message;
+};

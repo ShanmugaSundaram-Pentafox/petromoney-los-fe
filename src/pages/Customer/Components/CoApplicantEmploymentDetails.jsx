@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import React, { useState, useEffect } from 'react';
 import {
   Card,
@@ -13,6 +14,14 @@ import { notifications } from '@mantine/notifications';
 import { IconBriefcase, IconCheck } from '@tabler/icons-react';
 import { saveEmploymentDetails, getEmploymentDetails } from '../../../services/customerOnboarding.service';
 import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
+
+const formatToINR = (value) => {
+  if (value === null || value === undefined) return '';
+  // Remove everything except digits
+  const cleaned = value.toString().replace(/[^\d]/g, '');
+  if (!cleaned) return '';
+  return Number(cleaned).toLocaleString('en-IN');
+};
 
 function CoApplicantEmploymentDetails({ onEmploymentSaved, applicantId: propApplicantId }) {
   const [loading, setLoading] = useState(false);
@@ -31,7 +40,7 @@ function CoApplicantEmploymentDetails({ onEmploymentSaved, applicantId: propAppl
     itrFiled: false
   });
 
-const employmentTypes = [
+  const employmentTypes = [
     { value: "Self Employed Professional (SEP)", label: "Self Employed Professional (SEP)" },
     { value: "Self Employed Non-Professional (SENP)", label: "Self Employed Non-Professional (SENP)" }
   ];
@@ -104,7 +113,7 @@ const employmentTypes = [
         color: 'green',
         icon: <IconCheck size={18} />
       });
-onEmploymentSaved();
+      onEmploymentSaved();
     } catch (error) {
       notifications.show({
         title: 'Error',
@@ -209,8 +218,9 @@ onEmploymentSaved();
         <Grid.Col span={4}>
           <TextInput
             label="Monthly Income (₹)"
-            placeholder="e.g. 150000"
-            value={formData.monthlyIncome}
+            placeholder="e.g. 1,50,000"
+            leftSection="₹"
+            value={formatToINR(formData.monthlyIncome)}
             onChange={(e) =>
               handleChange('monthlyIncome', e.target.value)
             }
@@ -222,8 +232,9 @@ onEmploymentSaved();
         <Grid.Col span={4}>
           <TextInput
             label="Annual Income (₹)"
-            placeholder="e.g. 1800000"
-            value={formData.annualIncome}
+            placeholder="e.g. 18,00,000"
+            leftSection="₹"
+            value={formatToINR(formData.annualIncome)}
             onChange={(e) =>
               handleChange('annualIncome', e.target.value)
             }

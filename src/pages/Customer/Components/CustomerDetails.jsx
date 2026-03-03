@@ -18,7 +18,6 @@ import {
     Divider,
     Stack,
     Box,
-    Loader, Center
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import {
@@ -38,7 +37,8 @@ import {
     mobileVerfiy,
     validateKYCLinkage,
     saveCustomerDetails,
-    getCustomerDetails
+    getCustomerDetails,
+    getEmploymentDetails
 } from "../../../services/customerOnboarding.service";
 import AddressCard from "./AddressCard"
 import EmploymentDetails from "./EmploymentDetails";
@@ -49,6 +49,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
     const [customerData, setCustomerData] = useState(null);
     const [applicant_id, setApplicant_id] = useState();
     const [addressList, setAddressList] = useState([]);
+    const [employmentData, setEmploymentData] = useState(null);
 
     // LOCAL STATE for selected addresses (NOT in Redux)
     const [selectedAddresses, setSelectedAddresses] = useState({
@@ -66,6 +67,18 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
         gender: "",
         email: ""
     });
+
+    const fetchEmploymentById = async (id) => {
+        try {
+            const res = await getEmploymentDetails(id);
+
+            if (res?.status === "SUCCESS") {
+                setEmploymentData(res.data);
+            }
+        } catch (err) {
+            console.log("Employment fetch error", err);
+        }
+    };
 
     const [loading, setLoading] = useState(false);
     const [buttonLoading, setButtonLoading] = useState(false);
@@ -910,10 +923,22 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
     };
 
     useEffect(() => {
-        if (viewMode && applicantId) {
-            fetchCustomerById(applicantId);
-        }
-    }, [viewMode, applicantId]);
+        const id = applicantId ?? applicant_id;
+        if (!viewMode || !id) return;
+        const fetchAllData = async () => {
+            try {
+                setLoading(true);
+                await fetchCustomerById(id);
+                await fetchEmploymentById(id);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAllData();
+    }, [viewMode, applicantId, applicant_id]);
 
     return (
         <>
@@ -1481,17 +1506,9 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                             </Text>
                         </Grid.Col>
                         <Grid.Col span={3}>
-                            <Text size="sm" c="dimmed">Mobile</Text>
-                            <TextInput
-                                value={form?.mobile || ""}
-                                onChange={(e) =>
-                                    setForm(prev => ({
-                                        ...prev,
-                                        mobile: e.target.value
-                                    }))
-                                }
-                                disabled={viewMode && !isCustomerEditing}
-                            />
+                             <Text size="sm" c="dimmed">Mobile</Text>
+                            <Text fw={500}>{customerData.mobile || form.mobile}</Text>
+                        
                         </Grid.Col>
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Date of Birth</Text>
@@ -1628,9 +1645,11 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                     </Box>
                 </Card>
             )}
+
             <EmploymentDetails
                 viewMode={viewModeProp}
                 applicantId={applicantId ?? applicant_id}
+                employmentData={employmentData}
             />
         </>
     );

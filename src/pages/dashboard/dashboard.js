@@ -1,7 +1,6 @@
 import { Grid } from '@mantine/core';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useMount } from 'react-use';
-import { useQuery } from 'react-query';
 import LoanStats from './components/LoanStats';
 import LoansTable from './components/LoansTable';
 import {
@@ -13,18 +12,39 @@ const Dashboard = ({ currentUser }) => {
   const [chartData, setChartData] = useState([]);
   const [totalLoans, setTotalLoans] = useState(0);
   const [selectedStatsCard, setSelectedStatsCard] = useState('');
+  const [tableData, setTableData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // 🔹 1️⃣ Status Count Query
-  const { isLoading: statusLoading } = useQuery(
-    ['los-loan-status-count'],
-    getLoanStatusCount,
-    {
-      cacheTime: 0,
-      staleTime: 0,
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      keepPreviousData: false,
-      onSuccess: (res) => {
+  const requestIdRef = useRef(0);
+
+  const handleClick = async (name) => {
+    const newRequestId = Date.now();
+    requestIdRef.current = newRequestId;
+
+    setSelectedStatsCard(name);
+    setTableData([]);
+    setLoading(true);
+
+    try {
+      const data = await getLoansByLosStatus(name);
+
+      if (requestIdRef.current === newRequestId) {
+        setTableData(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (requestIdRef.current === newRequestId) {
+        setLoading(false);
+      }
+    }
+  };
+
+  useMount(() => {
+    setLoading(true);
+
+    getLoanStatusCount()
+      .then((res) => {
         const statusCounts = res?.status_counts || [];
         const total = res?.total_loans || 0;
 
@@ -36,38 +56,13 @@ const Dashboard = ({ currentUser }) => {
         setChartData(formattedData);
         setTotalLoans(total);
 
-        if (formattedData.length && !selectedStatsCard) {
-          const firstWithData = formattedData.find((item) => item.count > 0);
-
-          if (firstWithData) {
-            setSelectedStatsCard(firstWithData.name);
-          } else {
-            setSelectedStatsCard(formattedData[0].name);
-          }
+        // Auto-load first status
+        if (formattedData.length) {
+          handleClick(formattedData[0].name);
         }
-      },
-    }
-  );
-
-  // 🔹 2️⃣ Loans By Status Query
-  const { data: tableData = [], isLoading: tableLoading } = useQuery(
-    ['los-loans-by-status', selectedStatsCard],
-    () => getLoansByLosStatus(selectedStatsCard),
-    {
-      enabled: !!selectedStatsCard,
-      cacheTime: 0,
-      staleTime: 0,
-      refetchOnMount: true,
-      refetchOnWindowFocus: false,
-      keepPreviousData: false,
-    }
-  );
-
-  const handleClick = (name) => {
-    setSelectedStatsCard(name);
-  };
-
-  useMount(() => {});
+      })
+      .finally(() => setLoading(false));
+  });
 
   return (
     <>
@@ -78,7 +73,7 @@ const Dashboard = ({ currentUser }) => {
             handleClick={handleClick}
             chartData={chartData}
             totalLoans={totalLoans}
-            loading={statusLoading}
+            loading={loading}
           />
         </Grid.Col>
       </Grid>
@@ -86,7 +81,7 @@ const Dashboard = ({ currentUser }) => {
       <LoansTable
         currentUser={currentUser}
         value={selectedStatsCard}
-        loading={tableLoading}
+        loading={loading}
         data={tableData}
       />
     </>

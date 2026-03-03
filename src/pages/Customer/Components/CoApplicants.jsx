@@ -770,7 +770,8 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
 
     const handleDeleteCoApplicant = async (index) => {
         const applicant = coApplicants[index];
-        const applicantId = CustomerOnboardStorage.get()?.applicant?.applicant_id;
+
+        const applicantId = applicant?.id;
 
         if (!applicantId) {
             notifications.show({
@@ -1091,7 +1092,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                 <Title order={3}>Co-Applicant Details</Title>
 
                 <Button leftSection={<IconPlus size={18} />} onClick={addCoApplicant}>
-                    {viewMode ? "Add Section" : "Add Co-Applicant"}
+                    {"Add Co-Applicant"}
                 </Button>
             </Group>
 
@@ -1559,7 +1560,8 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Full Name</Text>
                                             <TextInput
-                                                value={item.customerData?.full_name ?? ""}
+                                                value={item.form.name}
+                                                placeholder="Full Name"
                                                 onChange={(e) => {
                                                     const updated = [...coApplicants];
                                                     updated[index].customerData.full_name = e.target.value;
@@ -1575,6 +1577,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                             <Text size="sm" c="dimmed">Date of Birth</Text>
                                             <TextInput
                                                 value={item.customerData?.dob ?? ""}
+                                                placeholder="YYYY-MM-DD"
                                                 onChange={(e) => {
                                                     const updated = [...coApplicants];
                                                     updated[index].customerData.dob = e.target.value;
@@ -1585,6 +1588,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                         <Grid.Col span={3}>
                                             <Text size="sm" c="dimmed">Age</Text>
                                             <TextInput
+                                                placeholder="Age"
                                                 value={item.customerData?.age ?? ""}
                                                 onChange={(e) => {
                                                     const updated = [...coApplicants];
@@ -1603,6 +1607,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                                             ? "Female"
                                                             : item.customerData?.gender ?? ""
                                                 }
+                                                placeholder="Gender"
                                                 onChange={(e) => {
                                                     const value = e.target.value;
 
@@ -1630,6 +1635,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                                             <Text size="sm" c="dimmed">Email</Text>
                                             <TextInput
                                                 value={item.customerData?.email ?? ""}
+                                                placeholder="Email"
                                                 onChange={(e) => {
                                                     const updated = [...coApplicants];
                                                     updated[index].customerData.email = e.target.value;

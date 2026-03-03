@@ -22,6 +22,7 @@ import {
   getLosLoanById,
   updateLosLoanStatus,
 } from '../../../services/loans.service';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
 const useStyles = makeStyles(() => ({
   tableWrapper: {
@@ -100,13 +101,23 @@ const LoansTable = ({ data = [], loading }) => {
   const { mutate: changeStatus, isLoading: isUpdating } = useMutation(
     ({ action, remarks }) => updateLosLoanStatus(loanId, { action, remarks }),
     {
-      onSuccess: () => {
+      onSuccess: (e) => {
+        displayNotification({
+          variant: 'success',
+          message: e || 'Loan status updated successfully'
+        })
         queryClient.invalidateQueries(['los-loan-status-count']);
         queryClient.invalidateQueries('los-loans-by-status');
         setReasonModal({ opened: false, action: null });
         setShowPanel({ status: false, data: '' });
         setRemarks('');
       },
+      onError: (e) => {
+        displayNotification({
+          variant: 'error',
+          message: e?.message || 'Failed to update loan status'
+        })
+      }
     }
   );
 
@@ -302,27 +313,69 @@ const LoansTable = ({ data = [], loading }) => {
 
                   {/* 🔹 Co-Applicants */}
                   {loanDetails.coapplicants?.length > 0 && (
-                    <Card shadow="sm" radius="md" withBorder>
-                      <Title order={4} mb="sm">
-                        Co-Applicants
-                      </Title>
-                      <Divider mb="sm" />
+                    <Stack spacing="lg">
+                      {loanDetails.coapplicants.map((co, index) => (
+                        <Card
+                          key={co.coapplicant_id || index}
+                          shadow="sm"
+                          radius="md"
+                          withBorder
+                        >
+                          {/* Header like Loan Info */}
+                          <Group position="apart" mb="sm">
+                            <Title order={4}>Co-Applicant {index + 1}</Title>
 
-                      <Stack spacing="sm">
-                        {loanDetails.coapplicants.map((co, index) => (
-                          <Card key={index} radius="md" withBorder>
-                            <SimpleGrid cols={2}>
-                              <Text size="sm">
-                                <strong>Name:</strong> {co.full_name}
-                              </Text>
-                              <Text size="sm">
-                                <strong>Mobile:</strong> {co.mobile}
-                              </Text>
-                            </SimpleGrid>
-                          </Card>
-                        ))}
-                      </Stack>
-                    </Card>
+                            <Badge color="grape" variant="light">
+                              {co.relationships || 'CO-APPLICANT'}
+                            </Badge>
+                          </Group>
+
+                          <Divider mb="sm" />
+
+                          {/* Details */}
+                          <SimpleGrid cols={2} spacing="sm">
+                            <Text size="sm">
+                              <strong>Name:</strong> {co.full_name}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>Mobile:</strong> {co.mobile}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>Age:</strong> {co.age}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>Gender:</strong> {co.gender}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>PAN:</strong> {co.pan}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>Aadhar:</strong> {co.aadhar}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>DOB:</strong>{' '}
+                              {co.dob
+                                ? new Date(co.dob).toLocaleDateString()
+                                : '-'}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>State:</strong> {co.state || '-'}
+                            </Text>
+                          </SimpleGrid>
+
+                          <Text size="sm" mt="sm">
+                            <strong>Address:</strong> {co.address || '-'}
+                          </Text>
+                        </Card>
+                      ))}
+                    </Stack>
                   )}
                 </Stack>
               </>
@@ -340,24 +393,28 @@ const LoansTable = ({ data = [], loading }) => {
               }}
             >
               <Group position="right">
-                <Button
-                  color="red"
-                  variant="outline"
-                  onClick={() =>
-                    setReasonModal({ opened: true, action: 'pushback' })
-                  }
-                >
-                  Pushback
-                </Button>
+                {loanDetails.loan?.current_status?.toLowerCase() !== 'draft' && (
+                  <Button
+                    color="red"
+                    variant="outline"
+                    onClick={() =>
+                      setReasonModal({ opened: true, action: 'pushback' })
+                    }
+                  >
+                    Pushback
+                  </Button>
+                )}
 
-                <Button
-                  color="green"
-                  onClick={() =>
-                    setReasonModal({ opened: true, action: 'forward' })
-                  }
-                >
-                  Forward
-                </Button>
+                {loanDetails.loan?.current_status?.toLowerCase() !== 'approved' && (
+                  <Button
+                    color="green"
+                    onClick={() =>
+                      setReasonModal({ opened: true, action: 'forward' })
+                    }
+                  >
+                    Forward
+                  </Button>
+                )}
               </Group>
             </div>
           )}

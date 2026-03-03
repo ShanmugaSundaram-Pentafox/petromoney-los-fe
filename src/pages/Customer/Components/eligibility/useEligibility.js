@@ -36,7 +36,7 @@ export const useEligibility = (dealershipId, applicantId) =>
     },
   });
 
-export const useForwardLoan = () => {
+export const useForwardLoan = ({navigate}) => {
   return useMutation(
     ({ loanId, remarks }) => forwardLoanForApproval(loanId, remarks),
     {
@@ -45,6 +45,7 @@ export const useForwardLoan = () => {
           message: 'Loan forwarded successfully',
           variant: 'success',
         });
+        navigate.replace('/customers');
       },
       onError: (message) => {
         displayNotification({

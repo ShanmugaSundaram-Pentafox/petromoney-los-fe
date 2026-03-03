@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -12,11 +13,18 @@ import {
 import { notifications } from "@mantine/notifications";
 import { IconBriefcase, IconCheck } from "@tabler/icons-react";
 import {
-  saveEmploymentDetails,
-  getEmploymentDetails
+  saveEmploymentDetails
 } from "../../../services/customerOnboarding.service";
 
-function EmploymentDetails({ viewMode = false, applicantId }) {
+const formatToINR = (value) => {
+  if (value === null || value === undefined) return '';
+  // Remove everything except digits
+  const cleaned = value.toString().replace(/[^\d]/g, '');
+  if (!cleaned) return '';
+  return Number(cleaned).toLocaleString('en-IN');
+};
+
+function EmploymentDetails({ viewMode = false, applicantId, employmentData }) {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
@@ -39,7 +47,7 @@ function EmploymentDetails({ viewMode = false, applicantId }) {
 
   // Handle Change
   const handleChange = (field, value) => {
-if (viewMode && !isEditing) return;
+    if (viewMode && !isEditing) return;
     let newValue = value;
 
     if (
@@ -71,45 +79,28 @@ if (viewMode && !isEditing) return;
       formData.annualIncome;
 
     setIsFormValid(isValid);
-  }, [formData, viewMode,isEditing]);
+  }, [formData, viewMode, isEditing]);
 
 
   // Fetch Employment (View Mode)
   useEffect(() => {
-    if (!applicantId) return;
+    if (!employmentData) return;
 
-    console.log("EMP fetching for:", applicantId);
+    setFormData({
+      employmentType:
+        employmentData.employment_type?.includes("Professional")
+          ? "Self Employed Professional (SEP)"
+          : "Self Employed Non-Professional (SENP)",
+      businessName: employmentData.business_name || "",
+      businessType: employmentData.business_type || "",
+      yearsInBusiness: employmentData.years_in_business?.toString() || "",
+      monthlyIncome: employmentData.monthly_income?.toString() || "",
+      annualIncome: employmentData.annual_income?.toString() || "",
+      itrFiled: employmentData.itr_filed === 1
+    });
 
-    const fetchEmployment = async () => {
-      try {
-        const res = await getEmploymentDetails(applicantId);
-
-        if (res?.status === "SUCCESS") {
-          const data = res.data;
-
-          setFormData({
-            employmentType:
-              data.employment_type?.includes("Professional")
-                ? "Self Employed Professional (SEP)"
-                : "Self Employed Non-Professional (SENP)",
-            businessName: data.business_name || "",
-            businessType: data.business_type || "",
-            yearsInBusiness: data.years_in_business?.toString() || "",
-            monthlyIncome: data.monthly_income?.toString() || "",
-            annualIncome: data.annual_income?.toString() || "",
-            itrFiled: data.itr_filed === 1
-          });
-
-          setIsSaved(true);
-        }
-      } catch (err) {
-        console.log("Employment fetch error", err);
-      }
-    };
-
-    fetchEmployment();
-  }, [applicantId]);
-
+    setIsSaved(true);
+  }, [employmentData]);
 
   // Save Employment
   const handleSubmit = async () => {
@@ -140,7 +131,7 @@ if (viewMode && !isEditing) return;
       const res = await saveEmploymentDetails(payload, id);
 
       setIsSaved(true);
-setIsEditing(false);
+      setIsEditing(false);
 
       notifications.show({
         title: "Success",
@@ -240,8 +231,9 @@ setIsEditing(false);
         <Grid.Col span={4}>
           <TextInput
             label="Monthly Income (₹)"
-            placeholder="e.g. 150000"
-            value={formData.monthlyIncome}
+            placeholder="e.g. 1,50,000"
+            leftSection="₹"
+            value={formatToINR(formData.monthlyIncome)}
             onChange={(e) =>
               handleChange("monthlyIncome", e.target.value)
             }
@@ -254,8 +246,9 @@ setIsEditing(false);
         <Grid.Col span={4}>
           <TextInput
             label="Annual Income (₹)"
-            placeholder="e.g. 10000"
-            value={formData.annualIncome}
+            placeholder="e.g. 10,000"
+            leftSection="₹"
+            value={formatToINR(formData.annualIncome)}
             onChange={(e) =>
               handleChange("annualIncome", e.target.value)
             }

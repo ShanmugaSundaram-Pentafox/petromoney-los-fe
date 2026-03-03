@@ -28,6 +28,7 @@ import {
   useUpdateLoan,
 } from './useEligibility';
 import CustomerOnboardStorage from '../../../../store/CustomerOnboardStorage';
+import { useHistory } from 'react-router-dom';
 
 const schema = yup.object({
   loan_types: yup.string().required('Loan type is required'),
@@ -70,6 +71,7 @@ const formatToINR = (value) => {
 
 export const Eligibility = ({ viewMode = false }) => {
   const storageData = CustomerOnboardStorage.get();
+  const history = useHistory();
 
   const formattedData = {
     dealershipId: storageData?.dealership_id || null,
@@ -107,7 +109,7 @@ export const Eligibility = ({ viewMode = false }) => {
     formattedData?.dealershipId,
     formattedData?.primaryApplicant.applicant_id
   );
-  const forwardMutation = useForwardLoan();
+  const forwardMutation = useForwardLoan({navigate: history});
   const createLoanMutation = useCreateLoan(formattedData?.dealershipId);
   const updateLoanMutation = useUpdateLoan(formattedData?.dealershipId);
 
@@ -517,7 +519,7 @@ export const Eligibility = ({ viewMode = false }) => {
             loading={forwardMutation.isLoading}
             disabled={viewMode}
           >
-            Submit for Approval
+            Submit Application
           </Button>
         </Group>
       )}

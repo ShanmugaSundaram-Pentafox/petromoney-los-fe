@@ -46,7 +46,7 @@ export const useUploadCibilFile = () => {
   return useMutation((payload) => uploadCibilFile(payload), {
     onError: (error) => {
       displayNotification({
-        message: `Error uploading CIBIL file: ${error}`,
+        message: error.message || 'Error uploading CIBIL file',
         variant: 'error',
       });
     },

@@ -152,7 +152,7 @@ export function CibilHeader({ data, report }) {
         ? 'orange'
         : 'red';
   const genderIcon =
-    (data.gender || person.gender || '').toLowerCase() === 'female' ? (
+    (data.gender || person.gender || '')?.toLowerCase() === 'female' ? (
       <IconGenderFemale size={14} />
     ) : (
       <IconGenderMale size={14} />
@@ -280,7 +280,7 @@ export function CibilHeader({ data, report }) {
                     key={i}
                     icon={<IconMail size={13} />}
                     label="Email"
-                    value={e.emailID.toLowerCase()}
+                    value={e?.emailID?.toLowerCase()}
                   />
                 ))}
               </Group>

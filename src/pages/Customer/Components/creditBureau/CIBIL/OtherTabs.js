@@ -784,11 +784,11 @@ export function LOSTab({ data, report }) {
       a.accountType ??
       '';
 
-    if (typeof raw === 'string') return raw.toLowerCase();
+    if (typeof raw === 'string') return raw?.toLowerCase();
     if (typeof raw === 'object' && raw !== null)
-      return (raw.description || raw.name || '').toLowerCase();
+      return (raw.description || raw.name || '')?.toLowerCase();
 
-    return String(raw).toLowerCase();
+    return String(raw)?.toLowerCase();
   };
 
   const accs = report.accounts || [];
@@ -801,11 +801,11 @@ export function LOSTab({ data, report }) {
   const accType = (a) => {
     const raw = a?.accountType;
     if (!raw) return '';
-    if (typeof raw === 'string') return raw.toLowerCase();
+    if (typeof raw === 'string') return raw?.toLowerCase();
     if (typeof raw === 'object') {
-      return (raw.description || raw.code || '').toLowerCase();
+      return (raw.description || raw.code || '')?.toLowerCase();
     }
-    return String(raw).toLowerCase();
+    return String(raw)?.toLowerCase();
   };
   const isCC = (a) => accType(a).includes('credit card');
   const secBal = activeAccs.filter((a) => !isCC(a)).reduce((s, a) => s + getBalance(a), 0);

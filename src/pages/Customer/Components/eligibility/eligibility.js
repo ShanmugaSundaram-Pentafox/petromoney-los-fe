@@ -13,12 +13,12 @@ import {
   Select,
   NumberInput,
   SegmentedControl,
-  Switch, 
-  Container
+  Container,
+  Flex,
 } from '@mantine/core';
 import { useForm, yupResolver } from '@mantine/form';
 import * as yup from 'yup';
-import { IconAlertCircle, IconCheck, IconSend } from '@tabler/icons-react';
+import { IconAlertCircle, IconCalendar, IconCheck, IconSend } from '@tabler/icons-react';
 import React, { useEffect, useState } from 'react';
 import {
   useCreateLoan,
@@ -59,6 +59,14 @@ const Info = ({ label, value }) => (
     <Text fw={600}>{value || '—'}</Text>
   </Stack>
 );
+
+const formatToINR = (value) => {
+  if (value === null || value === undefined) return '';
+  // Remove everything except digits
+  const cleaned = value.toString().replace(/[^\d]/g, '');
+  if (!cleaned) return '';
+  return Number(cleaned).toLocaleString('en-IN');
+};
 
 export const Eligibility = ({ viewMode = false }) => {
   const storageData = CustomerOnboardStorage.get();
@@ -166,10 +174,12 @@ export const Eligibility = ({ viewMode = false }) => {
     const updatedLoan = await updateLoanMutation.mutateAsync(payload);
 
     if (!viewMode) {
-      setLocalLoan(normalizeLoanResponse(updatedLoan) || {
-        ...(localLoan || {}),
-        ...payload,
-      });
+      setLocalLoan(
+        normalizeLoanResponse(updatedLoan) || {
+          ...(localLoan || {}),
+          ...payload,
+        }
+      );
     }
 
     setIsEditing(false);
@@ -227,7 +237,7 @@ export const Eligibility = ({ viewMode = false }) => {
           <Stack>
             <Text fw={700}>Loan Information</Text>
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={4}>
               <Select
                 label="Loan Type"
                 placeholder="Select loan type"
@@ -240,47 +250,46 @@ export const Eligibility = ({ viewMode = false }) => {
                 {...form.getInputProps('loan_types')}
               />
 
-              <NumberInput
+              <TextInput
                 label="Requested Amount (₹)"
-                placeholder="500000"
-                {...form.getInputProps('requested_amount')}
+                placeholder="5,00,000"
+                leftSection="₹"
+                value={formatToINR(form.values.requested_amount)}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^\d]/g, '');
+                  form.setFieldValue('requested_amount', raw);
+                }}
+                error={form.errors.requested_amount}
               />
 
-              <NumberInput
-                label={
-                  <Group justify="space-between" align="center" w="100%">
-                    <Text fw={500}>Tenure</Text>
+              <Flex direction={'column'}>
+                <Text size="md" fw={500}>
+                  Tenure Unit
+                </Text>
+                <SegmentedControl
+                  value={tenureUnit}
+                  onChange={handleTenureUnitChange}
+                  color="blue"
+                  data={[
+                    { label: 'Month', value: 'months' },
+                    { label: 'Year', value: 'years' },
+                  ]}
+                />
+              </Flex>
 
-                    <Switch
-                      size="sm"
-                      checked={tenureUnit === 'years'}
-                      onChange={(event) => {
-                        const checked = event.currentTarget.checked;
-                        const nextUnit = checked ? 'years' : 'months';
-
-                        const currentTenure = Number(form.values.tenure);
-
-                        if (currentTenure) {
-                          const converted =
-              nextUnit === 'years'
-                ? Number((currentTenure / 12).toFixed(2))
-                : currentTenure * 12;
-
-                          form.setFieldValue('tenure', converted);
-                        }
-
-                        setTenureUnit(nextUnit);
-                      }}
-                      onLabel="Year"
-                      offLabel="Month"
-                    />
-                  </Group>
-                }
+              <TextInput
+                label={`Tenure (${
+                  tenureUnit === 'years' ? 'Years' : 'Months'
+                })`}
                 placeholder="24"
+                type="number"
+                leftSection={<IconCalendar size={16} />}
+                min={0}
+                value={formatToINR(form.values.tenure)}
                 {...form.getInputProps('tenure')}
-              />            </SimpleGrid>
+              />
+            </SimpleGrid>
 
-          
             <TextInput
               label="Purpose"
               placeholder="Fuel inventory purchase"
@@ -344,7 +353,7 @@ export const Eligibility = ({ viewMode = false }) => {
               </Button>
             </Group>
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={4}>
               <Select
                 label="Loan Type"
                 data={[
@@ -356,30 +365,40 @@ export const Eligibility = ({ viewMode = false }) => {
                 {...form.getInputProps('loan_types')}
               />
 
-              <NumberInput
+              <TextInput
                 label="Requested Amount (₹)"
-                {...form.getInputProps('requested_amount')}
+                placeholder="5,00,000"
+                leftSection="₹"
+                value={formatToINR(form.values.requested_amount)}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^\d]/g, '');
+                  form.setFieldValue('requested_amount', raw);
+                }}
+                error={form.errors.requested_amount}
               />
 
+              <Flex direction={'column'}>
+                <Text size="md" fw={500}>
+                  Tenure Unit
+                </Text>
+                <SegmentedControl
+                  value={tenureUnit}
+                  onChange={handleTenureUnitChange}
+                  color="blue"
+                  data={[
+                    { label: 'Month', value: 'months' },
+                    { label: 'Year', value: 'years' },
+                  ]}
+                />
+              </Flex>
+
               <NumberInput
-                label={`Tenure (${tenureUnit === 'years' ? 'Years' : 'Months'})`}
+                label={`Tenure (${
+                  tenureUnit === 'years' ? 'Years' : 'Months'
+                })`}
                 {...form.getInputProps('tenure')}
               />
             </SimpleGrid>
-
-            <Group gap="sm" align="end">
-              <Text size="sm" fw={500}>Tenure Unit</Text>
-              <SegmentedControl
-                value={tenureUnit}
-                onChange={handleTenureUnitChange}
-                color="blue"
-                data={[
-                  { label: 'Month', value: 'months' },
-                  { label: 'Year', value: 'years' },
-                ]}
-                w={180}
-              />
-            </Group>
 
             <TextInput
               label="Purpose"

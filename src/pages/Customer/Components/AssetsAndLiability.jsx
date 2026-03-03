@@ -39,9 +39,14 @@ import { Modal } from '../../../components/Mantine/Modal/Modal';
 import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
 
 const formatToINR = (value) => {
-  if (!value) return '';
-  const number = value.toString().replace(/,/g, '');
-  return Number(number).toLocaleString('en-IN');
+  if (value === null || value === undefined) return '';
+
+  // Remove everything except digits
+  const cleaned = value.toString().replace(/[^\d]/g, '');
+
+  if (!cleaned) return '';
+
+  return Number(cleaned).toLocaleString('en-IN');
 };
 
 const AssetsAndLiability = () => {
@@ -434,6 +439,7 @@ const AssetsAndLiability = () => {
                       <TextInput
                         label="Asset Value"
                         size="sm"
+                        placeholder="₹ 50,000"
                         value={formatToINR(asset.asset_value)}
                         disabled={asset.isFromAPI}
                         onChange={(e) => {
@@ -448,6 +454,7 @@ const AssetsAndLiability = () => {
                       <TextInput
                         label="Market Value"
                         size="sm"
+                        placeholder="₹ 50,000"
                         value={formatToINR(asset.market_value)}
                         disabled={asset.isFromAPI}
                         onChange={(e) => {

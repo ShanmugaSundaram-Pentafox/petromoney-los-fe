@@ -60,6 +60,10 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
     const [expandedIndex, setExpandedIndex] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    const onboardData = CustomerOnboardStorage.get();
+
+    const dealershipId = onboardData?.dealership_id;
+
     const relationshipOptions = ["Father", "Mother", "Business Partner", "Friend", "Other"];
 
     const addCoApplicant = () => {
@@ -178,7 +182,30 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
         }
     };
 
+    const isDuplicateCoApplicant = (index) => {
+        const current = coApplicants[index]?.form;
+
+        return coApplicants.some((app, i) => {
+            if (i === index) return false; // skip self
+
+            return (
+                app.form.mobile === current.mobile ||
+                app.form.pan === current.pan ||
+                app.form.aadhaar === current.aadhaar
+            );
+        });
+    };
+
     const handleFetch = async (index) => {
+        if (isDuplicateCoApplicant(index)) {
+            notifications.show({
+                title: "Already Exists",
+                message: "Mobile, PAN or Aadhaar already exists for another co-applicant",
+                color: "red",
+            });
+            return;
+        }
+
         const applicant = coApplicants[index];
         const { mobile, aadhaar, pan, name } = applicant.form;
 
@@ -644,7 +671,7 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
                 verificationData.aadhaarData?.data?.details || {};
 
             const payload = {
-                full_name: customerData?.full_name || form.name,
+                full_name: form.name || customerData?.full_name,
                 mobile: form.mobile,
                 dob: customerData?.dob || "",
                 age: customerData?.age ? parseInt(customerData.age) : 0,
@@ -664,15 +691,21 @@ const CoApplicants = ({ viewMode = false, applicantId: parentApplicantId }) => {
             };
 
             const dealershipId = CustomerOnboardStorage.get()?.dealership_id;
-            const applicantId = CustomerOnboardStorage.get()?.applicant?.applicant_id;
             const response = await saveCoApplicantDetails(payload, dealershipId);
 
             if (response?.status === "SUCCESS") {
-const applicantId = response?.data?.coapplicant_id;
+                const applicantId = response?.data?.coapplicant_id;
 
                 if (applicantId) {
-                    CustomerOnboardStorage.updateCoApplicant(index, {
-                        applicant_id: response?.data?.coapplicant_id || null,
+                    const storageData = CustomerOnboardStorage.get();
+                    const existingCoApplicants = storageData?.co_applicants || [];
+
+                    const existingIndex = existingCoApplicants.findIndex(
+                        (item) => Number(item.applicant_id) === Number(applicantId)
+                    );
+
+                    const applicantData = {
+                        applicant_id: applicantId,
                         full_name: payload.full_name,
                         mobile: payload.mobile,
                         pan: payload.pan,
@@ -683,7 +716,13 @@ const applicantId = response?.data?.coapplicant_id;
                         address: payload.address,
                         city: payload.city,
                         state: payload.state,
-                    });
+                    };
+
+                    if (existingIndex !== -1) {
+                        CustomerOnboardStorage.updateCoApplicant(existingIndex, applicantData);
+                    } else {
+                        CustomerOnboardStorage.addCoApplicant(applicantData);
+                    }
                 }
                 if (applicantId) {
                     updated[index].id = applicantId;
@@ -881,12 +920,12 @@ const applicantId = response?.data?.coapplicant_id;
     };
 
     const loadCoApplicants = async () => {
-        if (!viewMode || !parentApplicantId) return;
+        if (!viewMode || !dealershipId) return;
 
         try {
             setLoading(true);
 
-            const response = await getCoApplicantsByDealership(parentApplicantId);
+            const response = await getCoApplicantsByDealership(dealershipId);
 
             // ✅ Extract correct array
             const applicants = response?.coapplicants || [];
@@ -983,6 +1022,48 @@ const applicantId = response?.data?.coapplicant_id;
             });
 
             setCoApplicants(formattedApplicants);
+
+            // 🔥 Sync with localStorage
+            const storageData = CustomerOnboardStorage.get();
+            const existingCoApplicants = storageData?.co_applicants || [];
+
+            let updatedCoApplicants = [...existingCoApplicants];
+
+            formattedApplicants.forEach((app) => {
+                const existingIndex = updatedCoApplicants.findIndex(
+                    (item) => Number(item.applicant_id) === Number(app.id)
+                );
+
+                const applicantData = {
+                    applicant_id: app.id,
+                    full_name: app.customerData.full_name,
+                    mobile: app.customerData.mobile,
+                    pan: app.customerData.pan,
+                    aadhaar: app.customerData.aadhar,
+                    dob: app.customerData.dob,
+                    age: app.customerData.age,
+                    gender: app.customerData.gender,
+                    address: app.addressList?.[0]?.address || "",
+                    city: app.addressList?.[0]?.city || "",
+                    state: app.addressList?.[0]?.state || "",
+                };
+
+                if (existingIndex !== -1) {
+                    // ✅ UPDATE existing
+                    updatedCoApplicants[existingIndex] = {
+                        ...updatedCoApplicants[existingIndex],
+                        ...applicantData,
+                    };
+                } else {
+                    // ✅ INSERT new
+                    updatedCoApplicants.push(applicantData);
+                }
+            });
+
+            // Save back to storage
+            CustomerOnboardStorage.update({
+                co_applicants: updatedCoApplicants,
+            });
         } catch (err) {
             console.error("Error loading co-applicants:", err);
             setCoApplicants([]);

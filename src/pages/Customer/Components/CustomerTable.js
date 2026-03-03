@@ -40,6 +40,7 @@ const CustomerTable = () => {
   const history = useHistory();
 
   const handleRowClick = (rowData) => {
+    console.log('Row clicked:', rowData);
     const { applicant_id, loan_id } = rowData || {};
 
     if (!applicant_id) return;

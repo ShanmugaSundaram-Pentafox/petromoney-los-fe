@@ -11,7 +11,6 @@ import { IconAlertCircle } from '@tabler/icons-react';
 
 /* Helpers */
 const buildApplicantTabs = (data) => {
-  console.log('formattedData:', data);
   if (!data) return [];
 
   const tabs = [];
@@ -57,12 +56,6 @@ const CreditBureau = () => {
         full_name: co?.full_name || '',
       })) || [],
   };
-
-  // const dummyData = {
-  //   dealershipId: 30,
-  //   primaryApplicant: { applicant_id: 35 },
-  //   coApplicant: [{ applicant_id: 30 }],
-  // };
 
   const tabs = React.useMemo(() => buildApplicantTabs(formattedData), []);
   const [activeTabKey, setActiveTabKey] = React.useState(tabs[0]?.key);
@@ -211,7 +204,7 @@ const CreditBureau = () => {
     fetchReport(activeTab.applicantId);
   }, [activeTab?.applicantId]);
   
-  if (tabs[0]?.applicantId === null) {
+  if (!storageData?.dealership_id || !storageData?.applicant?.applicant_id) {
     return (
       <Alert
         icon={<IconAlertCircle size={18} />}

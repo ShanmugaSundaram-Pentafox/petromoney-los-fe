@@ -1,6 +1,6 @@
 import { useMutation } from 'react-query';
 import { displayNotification } from '../../../../components/CommonComponents/Notification/displayNotification';
-import { generateCreditReport, getCibilFile, getCreditReport } from '../../../../services/customerOnboarding.service';
+import { generateCreditReport, getCibilFile, getCreditReport, uploadCibilFile } from '../../../../services/customerOnboarding.service';
 
 
 export const useFetchCreditReport = () => {
@@ -40,4 +40,15 @@ export const useGenerateCreditReport = () => {
       },
     }
   );
+};
+
+export const useUploadCibilFile = () => {
+  return useMutation((payload) => uploadCibilFile(payload), {
+    onError: (error) => {
+      displayNotification({
+        message: `Error uploading CIBIL file: ${error}`,
+        variant: 'error',
+      });
+    },
+  });
 };

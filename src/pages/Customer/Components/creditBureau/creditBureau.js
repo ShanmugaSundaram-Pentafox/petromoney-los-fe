@@ -4,7 +4,7 @@ import CibilDashboard from './CIBIL';
 import {
   useFetchCreditReport,
   useGenerateCreditReport,
-  useGetCibiFile,
+  useUploadCibilFile,
 } from './useCreditBureau';
 import CustomerOnboardStorage from '../../../../store/CustomerOnboardStorage';
 import { IconAlertCircle } from '@tabler/icons-react';
@@ -67,7 +67,35 @@ const CreditBureau = () => {
   /* Hooks */
   const fetchReportMutation = useFetchCreditReport();
   const generateReportMutation = useGenerateCreditReport();
-  const getCibiFileMutation = useGetCibiFile();
+  const uploadCibilMutation = useUploadCibilFile();
+
+  const buildUploadPayload = (applicantId) => {
+    const storageData = CustomerOnboardStorage.get();
+
+    const primary = storageData?.applicant;
+    const coApplicants = storageData?.co_applicants || [];
+
+    let applicantData = null;
+
+    if (primary?.applicant_id === applicantId) {
+      applicantData = primary;
+    } else {
+      applicantData = coApplicants.find(
+        (co) => co?.applicant_id === applicantId
+      );
+    }
+
+    if (!applicantData) return null;
+
+    return {
+      dealership_id: storageData?.dealership_id,
+      applicant_id: applicantData?.applicant_id,
+      name: applicantData?.full_name,
+      pan: applicantData?.pan,
+      mobile: applicantData?.mobile?.toString(),
+      gender: applicantData?.gender,
+    };
+  };
 
   const getFileIdFromPayload = React.useCallback((payload) => {
     if (!payload || typeof payload !== 'object') return null;
@@ -140,30 +168,29 @@ const CreditBureau = () => {
             },
           }));
 
-          fetchCibilFileAndStore(applicantId, fileId);
+          const payload = buildUploadPayload(applicantId);
+
+          if (!payload) return;
+
+          uploadCibilMutation.mutate(payload, {
+            onSuccess: (response) => {
+              const presignedUrl =
+                response?.presigned_url ||
+                response?.file_url ||
+                response?.data?.presigned_url ||
+                response?.data?.file_url;
+
+              setCibilFiles((prev) => ({
+                ...prev,
+                [applicantId]: {
+                  presignedUrl,
+                },
+              }));
+            },
+          });
         },
       }
     );
-  };
-
-  const fetchCibilFileAndStore = (applicantId, fileId) => {
-    const fallbackFileId = Number(process.env.REACT_APP_DEFAULT_CIBIL_FILE_ID) || DEFAULT_CIBIL_FILE_ID;
-    const effectiveFileId = fileId || fallbackFileId;
-
-    getCibiFileMutation.mutate(effectiveFileId, {
-      onSuccess: (fileResponse) => {
-        const presignedUrl = getPresignedUrlFromPayload(fileResponse);
-
-        setCibilFiles((prev) => ({
-          ...prev,
-          [applicantId]: {
-            ...(prev[applicantId] || {}),
-            fileId: effectiveFileId,
-            presignedUrl,
-          },
-        }));
-      },
-    });
   };
 
   /* Generate / Re-generate report */
@@ -185,7 +212,26 @@ const CreditBureau = () => {
             [applicantId]: reportData,
           }));
 
-          fetchCibilFileAndStore(applicantId, fileId);
+          const payload = buildUploadPayload(applicantId);
+
+          if (!payload) return;
+
+          uploadCibilMutation.mutate(payload, {
+            onSuccess: (response) => {
+              const presignedUrl =
+                response?.presigned_url ||
+                response?.file_url ||
+                response?.data?.presigned_url ||
+                response?.data?.file_url;
+
+              setCibilFiles((prev) => ({
+                ...prev,
+                [applicantId]: {
+                  presignedUrl,
+                },
+              }));
+            },
+          });
         },
       }
     );
@@ -232,7 +278,7 @@ const CreditBureau = () => {
           const tabFileInfo = cibilFiles[tab.applicantId] || {};
           const hasDownloadUrl = Boolean(tabFileInfo.presignedUrl);
           const isActionLoading =
-            generateReportMutation.isLoading || getCibiFileMutation.isLoading;
+            generateReportMutation.isLoading || uploadCibilMutation.isLoading;
 
           return (
             <Tabs.Panel key={tab.key} value={tab.key} pt="md">

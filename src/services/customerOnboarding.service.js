@@ -601,6 +601,23 @@ export const getCibilFile = (fileId) => {
   });
 };
 
+export const uploadCibilFile = (payload) => {
+  return new Promise((resolve, reject) => {
+    apiCall('los-poc/upload-cibil-file', {
+      method: 'POST',
+      body: payload,
+    })
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => reject(e.message));
+  });
+};
+
 export const getLoanInfo = (dealershipId) => {
   return new Promise((resolve, reject) => {
     apiCall(`los-poc/dealership/${dealershipId}/loans`)

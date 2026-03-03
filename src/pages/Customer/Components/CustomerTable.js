@@ -40,7 +40,6 @@ const CustomerTable = () => {
   const history = useHistory();
 
   const handleRowClick = (rowData) => {
-    console.log('Row clicked:', rowData);
     const { applicant_id, loan_id } = rowData || {};
 
     if (!applicant_id) return;
@@ -58,13 +57,13 @@ const CustomerTable = () => {
   const column = useMemo(
     () => [
       {
-        key: 'applicant_id',
-        header: 'Applicant ID',
+        key: 'loan_id',
+        header: 'Loan ID',
         sorting: true,
       },
       {
-        key: 'loan_id',
-        header: 'Loan ID',
+        key: 'applicant_id',
+        header: 'Applicant ID',
         sorting: true,
       },
       {

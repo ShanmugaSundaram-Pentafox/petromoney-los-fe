@@ -217,7 +217,7 @@ export default function BankStatementAnalysis({ viewMode = false }) {
       return data;
     },
   });
-  const { data: bsaStatus, refetch: refetchStatus } = useQuery({
+  const { data: bsaStatus, refetch: refetchStatus, isLoading: bsaStatusLoading } = useQuery({
     queryKey: ['bsa-statusss', consentId],
     queryFn: () => getBsaStatus(consentId),
     enabled: !!consentId && step === 'bank',
@@ -722,6 +722,19 @@ export default function BankStatementAnalysis({ viewMode = false }) {
                 ? 'In Progress'
                 : ' Analyze Bank Statements'}
             </Button>
+
+            {status === 'FETCH_PENDING' || status === 'PENDING' && (
+              <Alert
+                icon={<IconClock size={16} />}
+                title="Analysis in Progress"
+                color="yellow"
+                radius="md"
+                variant="light"
+                mt="md"
+              >
+                This process may take a few minutes. Please proceed to the next step.
+              </Alert>
+            )}
           </Box>
         )}
         {step === 'data' && (

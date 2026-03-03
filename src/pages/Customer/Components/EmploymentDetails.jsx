@@ -190,8 +190,8 @@ function EmploymentDetails({ viewMode = false, applicantId, employmentData }) {
 
         <Grid.Col span={4}>
           <TextInput
-            label="Business Name"
-            placeholder="Enter business name"
+            label="Company Name"
+            placeholder="Enter company name"
             value={formData.businessName}
             onChange={(e) =>
               handleChange("businessName", e.target.value)
@@ -203,7 +203,7 @@ function EmploymentDetails({ viewMode = false, applicantId, employmentData }) {
 
         <Grid.Col span={4}>
           <TextInput
-            label="Business Type"
+            label="Company Type"
             placeholder="e.g. Retail, Manufacturing"
             value={formData.businessType}
             onChange={(e) =>

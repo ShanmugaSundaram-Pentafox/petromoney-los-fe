@@ -116,7 +116,7 @@ const CustomerTable = () => {
           onClick={() => history.push('/customers/onboard')}
           color="blue"
         >
-          Onboard Customer
+          New Application
         </Button>
       </div>
       <DataTableViewer

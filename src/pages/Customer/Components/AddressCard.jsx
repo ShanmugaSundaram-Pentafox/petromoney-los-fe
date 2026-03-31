@@ -61,9 +61,9 @@ function AddressCard({
         <Group>
           <IconMapPin size={20} color="blue" />
           <Text fw={600}>Address {index + 1}</Text>
-          <Badge color={getSourceColor()}>
+          {/* <Badge color={getSourceColor()}>
             {source || 'Address'}
-          </Badge>
+          </Badge> */}
         </Group>
 
         <Group>

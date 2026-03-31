@@ -1244,11 +1244,11 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                                                     <IconMapPin size={16} />
                                                                     <Text size="sm">
                                                                         Address {index + 1}
-                                                                        {addr.type && (
+                                                                        {/* {addr.type && (
                                                                             <Badge size="sm" ml="xs" color={getAddressTypeColor(addr.type)}>
                                                                                 {addr.type}
                                                                             </Badge>
-                                                                        )}
+                                                                        )} */}
                                                                     </Text>
                                                                 </Group>
                                                             </Accordion.Control>
@@ -1582,9 +1582,9 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                                         }
                                     ])
                                 }
-                                disabled={viewMode && !isCustomerEditing}
+                                disabled={(viewMode && !isCustomerEditing)|| addressList.length >1}
                             >
-                                + Add Manual Address
+                                + Add Address
                             </Button>
                         </Group>
                         {addressList.map((addr, index) => (
@@ -1612,7 +1612,10 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
 
                                 onEdit={!viewMode || isCustomerEditing ? (editedAddr) => handleAddressEdit(index, editedAddr) : undefined}
 
-                                isEditable={(!viewMode || isCustomerEditing) && !addr.fromApi}
+                                isEditable={
+                                    true
+                                    // (!viewMode || isCustomerEditing) && !addr.fromApi
+                                }
                             />
                         ))}
 

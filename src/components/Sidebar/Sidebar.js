@@ -163,7 +163,7 @@ const Sidebar = props => {
     // },
     {
       id: action_id?.navigation.dealerships,
-      name: 'Customers',
+      name: 'Applications',
       href: '/customers',
       icon: <IconUserPlus strokeWidth="2px" size={18} />
     },

@@ -1,5 +1,5 @@
 /* eslint-disable no-duplicate-imports */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Box,
   Card,
@@ -23,6 +23,7 @@ import {
   Center,
   Container,
   Alert,
+  ThemeIcon
 } from '@mantine/core';
 import {
   IconAlertCircle,
@@ -34,7 +35,10 @@ import {
   IconCurrencyDollar,
   IconLink,
   IconTrendingDown,
-  IconTrendingUp
+  IconTrendingUp,
+  IconEye,
+  IconUpload,
+  IconFileText
 } from '@tabler/icons-react';
 import { IconCircleCheck } from '@tabler/icons-react';
 import {
@@ -52,6 +56,16 @@ import { IconWallet } from '@tabler/icons-react';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip } from 'recharts';
 import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
+import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog";
+import { Typography } from '@material-ui/core';
+
+/* -------------------- Allowed Types -------------------- */
+const allowedTypes = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "application/pdf",
+];
 
 const getStatusColor = (status) => {
   const value = status?.toLowerCase();
@@ -121,7 +135,6 @@ const DonutChart = ({
     }
     return null;
   };
-
   // Custom label for center
   const renderCenterLabel = () => {
     if (chartLabel) {
@@ -179,6 +192,7 @@ export default function BankStatementAnalysis({ viewMode = false }) {
   const [step, setStep] = useState('create');
   const [consentId, setConsentId] = useState('');
   const onboardData = CustomerOnboardStorage.get();
+  const fileInputRef = useRef(null);
 
   const applicantId = onboardData?.applicant?.applicant_id;
   const applicantNumber = onboardData?.applicant?.mobile;
@@ -262,7 +276,7 @@ export default function BankStatementAnalysis({ viewMode = false }) {
   const data = useQuery({
     queryKey: ['foir-data', consentId],
     queryFn: () => getFoirData(consentId),
-    enabled: !!consentId && status ==='COMPLETED',
+    enabled: !!consentId && status === 'COMPLETED',
     retry: false,
   });
   // Check if data is empty or invalid
@@ -431,6 +445,40 @@ export default function BankStatementAnalysis({ viewMode = false }) {
     });
   };
 
+
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!allowedTypes.includes(file.type)) {
+      alert("Only images & PDF allowed.");
+      return;
+    }
+  };
+ const handlePreview = () => {
+    // const url = uploadedDocument?.file_url;
+    // const fileUrl = uploadedDocument?.presigned_url;
+
+    // if (!fileUrl) return;
+
+    // const isPdf = url.toLowerCase().endsWith(".pdf");
+
+    // if (isPdf) {
+    //   window.open(fileUrl, "_blank", "noopener,noreferrer");
+    //   return;
+    // }
+
+  
+    // setImageModal({
+    //   open: true,
+    //   image: fileUrl,
+    // });
+  };
+
   const getIcon = (type) => {
     switch (type) {
       case 'pie':
@@ -532,10 +580,10 @@ export default function BankStatementAnalysis({ viewMode = false }) {
     },
   ];
 
-  if(isFetching || bankData?.isFetching || bsaData?.isFetching || data?.isFetching ) {
-    return(
+  if (isFetching || bankData?.isFetching || bsaData?.isFetching || data?.isFetching) {
+    return (
       <Center h={'70vh'}>
-        <Loader size={'md'}/>
+        <Loader size={'md'} />
       </Center>
     )
   }
@@ -858,7 +906,7 @@ export default function BankStatementAnalysis({ viewMode = false }) {
                       w={'240px'}
                       style={{ height: '100%' }}
                     >
-                      <Stack gap={foirData.foir_emi_percentage ?6 : 0}>
+                      <Stack gap={foirData.foir_emi_percentage ? 6 : 0}>
                         <Text size="sm" c="dimmed" mb={10}>
                           FOIR Progress{' '}
                           {foirData.foir_emi_percentage && (
@@ -1127,6 +1175,82 @@ export default function BankStatementAnalysis({ viewMode = false }) {
             )}
           </>
         )}
+      </Box>
+      <Box>
+          <>
+              <Card shadow="sm" radius="md" padding="lg" withBorder>
+                <Group justify="space-between" align="center">
+                  <Group>
+                    <ThemeIcon variant="light" size="lg" color="blue">
+                      <IconFileText size={18} />
+                    </ThemeIcon>
+        
+                    <Stack gap={2}>
+                      <Text fw={600}>Upload Bank Statement</Text>
+                    </Stack>
+                  </Group>
+        
+                  <Group>
+                    {/* Status Badge */}
+                    { (
+                      <Badge
+                        variant="light"
+                        color="gray"
+                        leftSection={<IconClock size={14} />}
+                      >
+                        Pending
+                      </Badge>
+                    )}
+        
+                    {/* 👁 Preview Button */}
+                    {false && (
+                      <ActionIcon
+                        color="green"
+                        variant="light"
+                        onClick={handlePreview}
+                      >
+                        <IconEye size={16} />
+                      </ActionIcon>
+                    )}
+        
+                    {/* Upload */}
+                    <Button
+                      variant="light"
+                      size="sm"
+                      leftSection={<IconUpload size={16} />}
+                      onClick={handleUploadClick}
+                      loading={false}
+                    >
+                      Upload
+                    </Button>
+        
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: "none" }}
+                      accept=".png,.jpg,.jpeg,.pdf"
+                      onChange={handleFileChange}
+                    />
+                  </Group>
+                </Group>
+              </Card>
+        
+              <FormDialog
+                title={document.description}
+                onDownload={null}
+                open={false}
+                onClose={() => {}}
+              >
+                {/* <PreviewWrapper>
+                  <Image
+                    src={imageModal.image}
+                    h={'auto'}
+                    maw={500}
+                    fallbackSrc={'https://placehold.co/600x400?text=Not%20%20Found!'}
+                  />
+                </PreviewWrapper> */}
+              </FormDialog>
+            </>
       </Box>
     </Box>
   );

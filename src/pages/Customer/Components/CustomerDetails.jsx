@@ -110,6 +110,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
     const [isCustomerEditing, setIsCustomerEditing] = useState(false);
     const [editSnapshot, setEditSnapshot] = useState(null);
     const [kycValidated, setKycValidated] = useState(false);
+    const [emailEdited, setEmailEdited] = useState(false);
 
     useEffect(() => {
 
@@ -356,6 +357,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                 gender: previewCustomer.gender || prev.gender,
                 email: previewCustomer.email || prev.email
             }));
+            setEmailEdited(false);
             setAddressList(deduped);
             setFetched(true);
             setHasApiError(hasError);
@@ -536,6 +538,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                     gender: normalizedCustomer.gender || prev.gender,
                     email: normalizedCustomer.email || prev.email
                 }));
+                setEmailEdited(false);
                 setAddressList(addresses);
                 setSelectedAddresses({ permanent: null, communication: null });
                 setShowCustomerDetails(true);
@@ -610,7 +613,8 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
             }
 
             if (selectedAddresses.communication) {
-                selectedAddr = selectedAddresses.communication;
+                // preserve communication flag but prefer permanent address as the address fields
+                if (!selectedAddr) selectedAddr = selectedAddresses.communication;
                 isCommunication = "1";
             }
 
@@ -629,7 +633,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                 is_permanent_address: isPermanent,
                 aadhar: form.aadhaar,
                 pan: form.pan,
-                email: form.email || customerData?.email || "",
+                email: emailEdited ? form.email : (customerData?.email || ""),
                 aadhar_details: aadhaarData?.data?.data?.details || aadhaarData?.data?.details || {},
                 pan_details: panData?.data?.data?.details || panData?.data?.details || {},
                 mobile_details: mobileData?.data?.data || mobileData?.data || {}
@@ -659,7 +663,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                     dob: payload.dob,
                     gender: payload.gender,
                     age: payload.age,
-                    email: form.email || "",
+                    email: emailEdited ? form.email : (customerData?.email || ""),
                 });
 
                 // reflect saved values in local state so UI shows edited data
@@ -672,7 +676,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                     dob: payload.dob,
                     gender: payload.gender,
                     age: payload.age,
-                    email: payload.email || prev?.email || ""
+                    email: payload.email
                 }));
 
                 setForm(prev => ({
@@ -684,8 +688,10 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                     dob: payload.dob,
                     gender: payload.gender,
                     age: payload.age,
-                    email: payload.email || prev.email
+                    email: payload.email
                 }));
+
+                setEmailEdited(false);
 
                 notifications.show({
                     title: "Success",
@@ -728,28 +734,23 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
 
     const handleAddressSelect = (type, index) => {
         const selectedAddress = addressList[index];
-
         setSelectedAddresses(prev => {
-            const newState = { permanent: null, communication: null };
-
+            // toggle only the clicked type and preserve the other type selection
             if (prev[type] === selectedAddress) {
+                const newState = { ...prev, [type]: null };
                 notifications.show({
                     title: "Info",
                     message: "Address deselected",
                     color: "blue",
                 });
-
                 return newState;
             } else {
-                // select
-                newState[type] = selectedAddress;
-
+                const newState = { ...prev, [type]: selectedAddress };
                 notifications.show({
                     title: "Success",
                     message: "Address selected",
                     color: "green",
                 });
-
                 return newState;
             }
         });
@@ -810,6 +811,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                     gender: data.gender || "",
                     email: data.mobile_details?.details?.email_details?.[0]?.email_address || ""
                 });
+                setEmailEdited(false);
 
                 setVerifyStatus({
                     panVerified: !!data.pan_details?.is_verified,
@@ -1545,13 +1547,14 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                         <Grid.Col span={3}>
                             <Text size="sm" c="dimmed">Email</Text>
                             <TextInput
-                                value={customerData?.email || ""}
-                                onChange={(e) =>
+                                value={emailEdited ? form.email : (form.email || customerData?.email || "")}
+                                onChange={(e) => {
+                                    setEmailEdited(true);
                                     setForm(prev => ({
                                         ...prev,
                                         email: e.target.value
-                                    }))
-                                }
+                                    }));
+                                }}
                                 disabled={viewMode && !isCustomerEditing}
                             />
                         </Grid.Col>

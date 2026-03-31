@@ -57,7 +57,15 @@ const CreditBureau = () => {
       })) || [],
   };
 
-  const tabs = React.useMemo(() => buildApplicantTabs(formattedData), []);
+  const tabs = React.useMemo(
+    () => buildApplicantTabs(formattedData),
+    [
+      formattedData?.dealershipId,
+      formattedData?.primaryApplicant?.applicant_id,
+      formattedData?.coApplicant?.length,
+    ]
+  );
+
   const [activeTabKey, setActiveTabKey] = React.useState(tabs[0]?.key);
   const [reports, setReports] = React.useState({});
   const [cibilFiles, setCibilFiles] = React.useState({});
@@ -143,6 +151,10 @@ const CreditBureau = () => {
 
   /* Fetch report */
   const fetchReport = (applicantId) => {
+    if (applicantId === null || applicantId === undefined) {
+      console.warn('fetchReport skipped: invalid applicantId', applicantId);
+      return;
+    }
     fetchReportMutation.mutate(
       { dealershipId: formattedData.dealershipId, applicantId },
       {
@@ -195,6 +207,10 @@ const CreditBureau = () => {
 
   /* Generate / Re-generate report */
   const generateReport = (applicantId) => {
+    if (applicantId === null || applicantId === undefined) {
+      console.warn('generateReport skipped: invalid applicantId', applicantId);
+      return;
+    }
     generateReportMutation.mutate(
       { dealershipId: formattedData.dealershipId, applicantId },
       {
@@ -244,11 +260,13 @@ const CreditBureau = () => {
     }
   };
 
-  /* Auto fetch on tab change */
+  /* Ensure active tab updates when available tabs change */
   React.useEffect(() => {
-    if (!activeTab) return;
-    fetchReport(activeTab.applicantId);
-  }, [activeTab?.applicantId]);
+    if (!tabs || tabs.length === 0) return;
+    if (!activeTabKey || !tabs.find((t) => t.key === activeTabKey)) {
+      setActiveTabKey(tabs[0].key);
+    }
+  }, [tabs]);
   
   if (!storageData?.dealership_id || !storageData?.applicant?.applicant_id) {
     return (

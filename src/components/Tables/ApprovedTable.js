@@ -2,7 +2,6 @@ import { makeStyles } from '@material-ui/styles';
 import React, { useState } from 'react';
 import { getLoansByStatus } from '../../services/loans.service';
 import SignRequestLayout from '../Leegality/SignRequestLayout';
-import DataTableViewer from '../ReactTable/DataTableViewer';
 import { permissionCheck } from '../UserCan/UserCan';
 import { rulesList } from '../../config/userRules';
 import Currency from '../Number/Currency';
@@ -216,15 +215,15 @@ const ApprovedTable = ({ title, onRowClick, filterQry, currentUser }) => {
 
   return (
     <div>
-      <DataTableViewer
-        column={column}
+      {/* <DataTableViewer
+        column={column || []}z
         rowData={getLoansDetailsQuery?.data}
         excelDownload={true}
         title={title}
         allowSorting={true}
         onRowClick={(i) => onRowClick(i.dealership_id, i, 'approved')}
         loading={getLoansDetailsQuery?.isLoading}
-      />
+      /> */}
       <SignRequestLayout
         dealershipId={dealershipId}
         loanId={loanId}

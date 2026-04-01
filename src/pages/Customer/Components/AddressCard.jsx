@@ -61,9 +61,9 @@ function AddressCard({
         <Group>
           <IconMapPin size={20} color="blue" />
           <Text fw={600}>Address {index + 1}</Text>
-          <Badge color={getSourceColor()}>
+          {/* <Badge color={getSourceColor()}>
             {source || 'Address'}
-          </Badge>
+          </Badge> */}
         </Group>
 
         <Group>
@@ -149,6 +149,8 @@ function AddressCard({
                 label="Postal Code"
                 value={editedAddress.postal || ''}
                 onChange={(e) => handleChange('postal', e.target.value)}
+                inputMode='numeric'
+
               />
             </Grid.Col>
             <Grid.Col span={6}>

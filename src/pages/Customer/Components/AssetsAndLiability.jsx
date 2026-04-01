@@ -15,6 +15,7 @@ import {
   ThemeIcon,
   Select,
   Loader,
+  Alert,
 } from '@mantine/core';
 import {
   IconWallet,
@@ -23,6 +24,7 @@ import {
   IconTrendingDown,
   IconCheck,
   IconRefresh,
+  IconAlertCircle,
 } from '@tabler/icons-react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
@@ -34,17 +36,27 @@ import {
 } from '../../../services/customerOnboarding.service';
 import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 import { Modal } from '../../../components/Mantine/Modal/Modal';
+import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
 
 const formatToINR = (value) => {
-  if (!value) return '';
-  const number = value.toString().replace(/,/g, '');
-  return Number(number).toLocaleString('en-IN');
+  if (value === null || value === undefined) return '';
+
+  // Remove everything except digits
+  const cleaned = value.toString().replace(/[^\d]/g, '');
+
+  if (!cleaned) return '';
+
+  return Number(cleaned).toLocaleString('en-IN');
 };
 
 const AssetsAndLiability = () => {
   const queryClient = useQueryClient();
-  const dealershipId = 30; // static for now
-  const applicantId = 35; // static for now
+
+  const onboardData = CustomerOnboardStorage.get();
+
+  const dealershipId = onboardData?.dealership_id ;
+  const applicantId = onboardData?.applicant?.applicant_id;
+
   const [assets, setAssets] = useState([]);
   const [liabilities, setLiabilities] = useState([]);
 
@@ -52,7 +64,7 @@ const AssetsAndLiability = () => {
   const [selectedAssetToDelete, setSelectedAssetToDelete] = useState(null);
   const [selectedIndexToDelete, setSelectedIndexToDelete] = useState(null);
 
-  const { data: assetsData, isLoading: assetsLoading, refetch: refetchAssets } = useQuery(
+  const { data: assetsData, isLoading: assetsLoading, refetch: refetchAssets, isFetching: assetsFetching } = useQuery(
     ['assets'],
     getAssets,
     {
@@ -63,16 +75,17 @@ const AssetsAndLiability = () => {
           message: e || 'Error fetching assets',
         });
       },
+      enabled: !!dealershipId && !!applicantId,
       cacheTime: 0,
     }
   );
 
-  const { data: applicantAssetsData, isLoading: applicantAssetsLoading, refetch: refetchApplicantAssets } =
+  const { data: applicantAssetsData, isLoading: applicantAssetsLoading, refetch: refetchApplicantAssets, isFetching: applicantAssetsFetching } =
     useQuery(
       ['applicant-assets', dealershipId, applicantId],
       () => getApplicantAssets({ dealershipId, applicantId }),
       {
-        enabled: !!assetsData, // only run if assetsData is available, as we need it to map asset types
+        enabled: !!assetsData &&  !!dealershipId && !!applicantId, // only run if assetsData is available, as we need it to map asset types
         cacheTime: 0, // disable cache to always get fresh data after mutations
         onError: (e) => {
           displayNotification({
@@ -87,7 +100,7 @@ const AssetsAndLiability = () => {
     return assetsData?.data || [];
   }, [assetsData]);
 
-  const { data: liabilitiesData, isLoading: liabilitiesLoading, refetch: refetchLiabilities } = useQuery(
+  const { data: liabilitiesData, isLoading: liabilitiesLoading, refetch: refetchLiabilities, isFetching: liabilitiesFetching } = useQuery(
     ['liabilities', dealershipId, applicantId],
     () => getLiabilities({ dealershipId, applicantId }),
     {
@@ -282,6 +295,22 @@ const AssetsAndLiability = () => {
     }
   };
 
+  if (!dealershipId || !applicantId) {
+    return (
+      <Container size="xl" py="lg">
+        <Alert
+          icon={<IconAlertCircle size={18} />}
+          title="No Applicants Found"
+          color="red"
+          radius="md"
+          variant="light"
+        >
+          Please add a primary applicant or co-applicant before proceeding.
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
     <Container size="xl" py="lg">
       {assetsLoading || applicantAssetsLoading || liabilitiesLoading ? (
@@ -303,7 +332,7 @@ const AssetsAndLiability = () => {
               color="blue"
               size="lg"
               onClick={handleReload}
-              loading={assetsLoading || applicantAssetsLoading || liabilitiesLoading}
+              loading={assetsFetching || applicantAssetsFetching || liabilitiesFetching}
             >
               <IconRefresh size={18} />
             </ActionIcon>
@@ -410,6 +439,7 @@ const AssetsAndLiability = () => {
                       <TextInput
                         label="Asset Value"
                         size="sm"
+                        placeholder="₹ 50,000"
                         value={formatToINR(asset.asset_value)}
                         disabled={asset.isFromAPI}
                         onChange={(e) => {
@@ -424,6 +454,7 @@ const AssetsAndLiability = () => {
                       <TextInput
                         label="Market Value"
                         size="sm"
+                        placeholder="₹ 50,000"
                         value={formatToINR(asset.market_value)}
                         disabled={asset.isFromAPI}
                         onChange={(e) => {

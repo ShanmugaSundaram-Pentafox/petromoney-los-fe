@@ -7,7 +7,8 @@ import {
   IconCreditCard,
   IconBuildingBank,
   IconHome,
-  IconChecklist
+  IconChecklist,
+  IconBusinessplan
 } from "@tabler/icons-react";
 import "./Onboard.css";
 import AssetsAndLiability from './AssetsAndLiability';
@@ -18,17 +19,16 @@ import { useLocation } from 'react-router-dom';
 import CreditBureau from './creditBureau/creditBureau';
 import { Eligibility } from './eligibility/eligibility';
 import CoApplicants from './CoApplicants';
+import LoanType from './LoanType';
 
 function CustomerOnBoardMain() {
   const location = useLocation();
-  const [activeTab, setActiveTab] = React.useState('basic');
-  const [loadedTabs, setLoadedTabs] = React.useState(['basic']);
+  const [activeTab, setActiveTab] = React.useState('loanType');
+  const [loadedTabs, setLoadedTabs] = React.useState(['loanType']);
 
-  const { applicant_id, loan_id, isExisting } = location.state || {};
+  const { applicant_id, isExisting } = location.state || {};
 
-  console.log('Applicant ID:', applicant_id);
-  console.log('Loan ID:', loan_id);
-  console.log('Is Existing:', isExisting);
+  console.log('--->',location.state)
 
   const handleTabChange = (value) => {
     setActiveTab(value);
@@ -42,6 +42,10 @@ function CustomerOnBoardMain() {
     <Box>
       <Tabs value={activeTab} onChange={handleTabChange}>
         <Tabs.List grow>
+          <Tabs.Tab value="loanType" leftSection={<IconBusinessplan size={16} />}>
+            Loan Type
+          </Tabs.Tab>
+
           <Tabs.Tab value="basic" leftSection={<IconUser size={16} />}>
             Basic Details
           </Tabs.Tab>
@@ -78,13 +82,17 @@ function CustomerOnBoardMain() {
         </Tabs.List>
 
         <Box mt="lg">
+           <Tabs.Panel value="loanType">
+            {loadedTabs.includes('loanType') && <LoanType />}
+          </Tabs.Panel>
+
           <Tabs.Panel value="basic">
-            {loadedTabs.includes('basic') && <CustomerDetails />}
+            {loadedTabs.includes('basic') && <CustomerDetails viewMode={isExisting} applicantId={applicant_id} />}
           </Tabs.Panel>
 
           <Tabs.Panel value="coapplicant">
             {loadedTabs.includes('coapplicant') && (
-              <CoApplicants viewMode={isExisting} />
+              <CoApplicants viewMode={isExisting} applicantId={applicant_id} />
             )}
           </Tabs.Panel>
 

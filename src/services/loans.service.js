@@ -276,3 +276,62 @@ export const updateDocumentChecklistById = ({ id, data }) => {
       })
   })
 }
+
+export const getLoanStatusCount = () => {
+  return new Promise((resolve, reject) => {
+    apiCall('los-poc/loans/status-count')
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const getLoansByLosStatus = (status) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/loans?status=${status.toLowerCase()}`)
+      .then(({ status: apiStatus, data, message }) => {
+        if (apiStatus === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const getLosLoanById = (loanId) => {
+  return new Promise((resolve, reject) => {
+    apiCall(`los-poc/loans/${loanId}`)
+      .then(({ status, data, message }) => {
+        if (status === 'SUCCESS') {
+          resolve(data);
+        } else {
+          reject(message);
+        }
+      })
+      .catch((e) => {
+        reject(e.message);
+      });
+  });
+};
+
+export const updateLosLoanStatus = async (loanId, body) => {
+  const { status, message } = await apiCall(`los-poc/loans/${loanId}/status`, {
+    method: 'PUT',
+    body,
+  });
+
+  if (status !== 'SUCCESS') throw new Error(message);
+
+  return message;
+};

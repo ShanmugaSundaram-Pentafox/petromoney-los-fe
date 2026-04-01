@@ -1,7 +1,7 @@
 import { Drawer } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import React, { useState } from 'react';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import AddNewTransportsForm from './components/AddNewTransportsForm';
 import { permissionCheck } from '../../components/UserCan/UserCan';
 import { rulesList } from '../../config/userRules';

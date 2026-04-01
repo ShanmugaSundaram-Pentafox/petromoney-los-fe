@@ -152,11 +152,26 @@ export function CibilHeader({ data, report }) {
         ? 'orange'
         : 'red';
   const genderIcon =
-    (data.gender || person.gender || '').toLowerCase() === 'female' ? (
+    (data.gender || person.gender || '')?.toLowerCase() === 'female' ? (
       <IconGenderFemale size={14} />
     ) : (
       <IconGenderMale size={14} />
     );
+
+  const rawGender = data.gender ?? person.gender;
+
+  let genderLabel = null;
+
+  if (typeof rawGender === 'string') {
+    genderLabel = rawGender.toUpperCase();
+  } else if (typeof rawGender === 'object' && rawGender !== null) {
+    genderLabel =
+      rawGender.description?.toUpperCase() ||
+      rawGender.code?.toUpperCase() ||
+      null;
+  } else if (rawGender != null) {
+    genderLabel = String(rawGender).toUpperCase();
+  }
 
   return (
     <Stack gap="md" mb="xl">
@@ -179,14 +194,14 @@ export function CibilHeader({ data, report }) {
                       DOB: {fmtDateLong(person.birthDate)}
                     </Badge>
                   )}
-                  {(data.gender || person.gender) && (
+                  {genderLabel && (
                     <Badge
                       variant="outline"
                       size="xs"
                       color="gray"
                       leftSection={genderIcon}
                     >
-                      {(data.gender || person.gender).toUpperCase()}
+                      {genderLabel}
                     </Badge>
                   )}
                   {scoreObj.scoreCardName && (
@@ -265,7 +280,7 @@ export function CibilHeader({ data, report }) {
                     key={i}
                     icon={<IconMail size={13} />}
                     label="Email"
-                    value={e.emailID.toLowerCase()}
+                    value={e?.emailID?.toLowerCase()}
                   />
                 ))}
               </Group>

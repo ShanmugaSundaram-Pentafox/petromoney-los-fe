@@ -33,6 +33,22 @@ const CustomerOnboardStorage = {
     }
   },
 
+  addCoApplicant(data) {
+    try {
+      const existing = this.get();
+
+      const updated = {
+        ...existing,
+        co_applicants: [...(existing.co_applicants || []), data],
+      };
+
+      this.set(updated);
+      return updated;
+    } catch (error) {
+      console.error('Error adding co-applicant:', error);
+    }
+  },
+
   // -----------------------------
   // 🔹 Update Applicant Object
   // -----------------------------
@@ -61,11 +77,12 @@ const CustomerOnboardStorage = {
   updateCoApplicant(index, data) {
     try {
       const existing = this.get();
+      const coApplicants = [...(existing.co_applicants || [])];
 
-      const coApplicants = existing.co_applicants || [];
+      if (!coApplicants[index]) return existing;
 
       coApplicants[index] = {
-        ...(coApplicants[index] || {}),
+        ...coApplicants[index],
         ...data,
       };
 

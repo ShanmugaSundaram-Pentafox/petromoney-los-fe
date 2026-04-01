@@ -12,10 +12,13 @@ import {
   TextInput,
   Select,
   NumberInput,
+  SegmentedControl,
+  Container,
+  Flex,
 } from '@mantine/core';
 import { useForm, yupResolver } from '@mantine/form';
 import * as yup from 'yup';
-import { IconCheck, IconSend } from '@tabler/icons-react';
+import { IconAlertCircle, IconCalendar, IconCheck, IconSend } from '@tabler/icons-react';
 import React, { useEffect, useState } from 'react';
 import {
   useCreateLoan,
@@ -25,6 +28,7 @@ import {
   useUpdateLoan,
 } from './useEligibility';
 import CustomerOnboardStorage from '../../../../store/CustomerOnboardStorage';
+import { useHistory } from 'react-router-dom';
 
 const schema = yup.object({
   loan_types: yup.string().required('Loan type is required'),
@@ -57,8 +61,17 @@ const Info = ({ label, value }) => (
   </Stack>
 );
 
-export const Eligibility = () => {
+const formatToINR = (value) => {
+  if (value === null || value === undefined) return '';
+  // Remove everything except digits
+  const cleaned = value.toString().replace(/[^\d]/g, '');
+  if (!cleaned) return '';
+  return Number(cleaned).toLocaleString('en-IN');
+};
+
+export const Eligibility = ({ viewMode = false }) => {
   const storageData = CustomerOnboardStorage.get();
+  const history = useHistory();
 
   const formattedData = {
     dealershipId: storageData?.dealership_id || null,
@@ -74,26 +87,29 @@ export const Eligibility = () => {
         full_name: co?.full_name || '',
       })) || [],
   };
-  const dummyData = {
-    dealershipId: 30,
-    primaryApplicant: {
-      name: 'Shaik',
-      applicant_id: 35,
-    },
-    coApplicant: [
-      { applicant_id: 30, name: 'John' },
-      { applicant_id: 41, name: 'Doe' },
-    ],
-  };
+  // const dummyData = {
+  //   dealershipId: 30,
+  //   primaryApplicant: {
+  //     name: 'Kannan',
+  //     applicant_id: 35,
+  //   },
+  //   coApplicant: [
+  //     { applicant_id: 30, name: 'John' },
+  //     { applicant_id: 41, name: 'Doe' },
+  //   ],
+  // };
+
   const [remarks, setRemarks] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [tenureUnit, setTenureUnit] = useState('months');
+  const [localLoan, setLocalLoan] = useState(null);
 
-  const loanQuery = useLoan(formattedData?.dealershipId);
+  const loanQuery = useLoan(formattedData?.dealershipId, viewMode);
   const eligibilityMutation = useEligibility(
     formattedData?.dealershipId,
     formattedData?.primaryApplicant.applicant_id
   );
-  const forwardMutation = useForwardLoan();
+  const forwardMutation = useForwardLoan({navigate: history});
   const createLoanMutation = useCreateLoan(formattedData?.dealershipId);
   const updateLoanMutation = useUpdateLoan(formattedData?.dealershipId);
 
@@ -107,27 +123,71 @@ export const Eligibility = () => {
     validate: yupResolver(schema),
   });
 
+  const convertTenureToMonths = (tenure, unit) => {
+    const numericTenure = Number(tenure);
+    if (!numericTenure) return 0;
+    return unit === 'years' ? numericTenure * 12 : numericTenure;
+  };
+
+  const normalizeLoanResponse = (response) => {
+    if (!response) return null;
+    return response?.data || response;
+  };
+
+  const handleTenureUnitChange = (nextUnit) => {
+    if (nextUnit === tenureUnit) return;
+
+    const currentTenure = Number(form.values.tenure);
+    if (currentTenure) {
+      const convertedTenure =
+        nextUnit === 'years'
+          ? Number((currentTenure / 12).toFixed(2))
+          : currentTenure * 12;
+      form.setFieldValue('tenure', convertedTenure);
+    }
+
+    setTenureUnit(nextUnit);
+  };
+
   const createLoan = async (values) => {
-    await createLoanMutation.mutateAsync({
+    const payload = {
       ...values,
       requested_amount: Number(values.requested_amount),
-      tenure: Number(values.tenure),
-    });
+      tenure: convertTenureToMonths(values.tenure, tenureUnit),
+    };
+
+    const createdLoan = await createLoanMutation.mutateAsync(payload);
+
+    if (!viewMode) {
+      setLocalLoan(normalizeLoanResponse(createdLoan) || payload);
+    }
 
     form.reset();
+    setTenureUnit('months');
   };
 
   const updateLoan = async (values) => {
-    await updateLoanMutation.mutateAsync({
+    const payload = {
       ...values,
       requested_amount: Number(values.requested_amount),
-      tenure: Number(values.tenure),
-    });
+      tenure: convertTenureToMonths(values.tenure, tenureUnit),
+    };
+
+    const updatedLoan = await updateLoanMutation.mutateAsync(payload);
+
+    if (!viewMode) {
+      setLocalLoan(
+        normalizeLoanResponse(updatedLoan) || {
+          ...(localLoan || {}),
+          ...payload,
+        }
+      );
+    }
 
     setIsEditing(false);
   };
 
-  const loan = loanQuery.data;
+  const loan = viewMode ? loanQuery.data : localLoan;
   const data = eligibilityMutation.data;
   const metrics = data?.credit_metrics;
 
@@ -136,11 +196,14 @@ export const Eligibility = () => {
       form.setValues({
         loan_types: loan.loan_types,
         requested_amount: loan.requested_amount,
-        tenure: loan.tenure,
+        tenure:
+          tenureUnit === 'years'
+            ? Number((Number(loan.tenure || 0) / 12).toFixed(2))
+            : loan.tenure,
         loan_purpose: loan.loan_purpose,
       });
     }
-  }, [loan, isEditing]);
+  }, [loan, isEditing, tenureUnit]);
 
   const flags = data
     ? [
@@ -150,9 +213,25 @@ export const Eligibility = () => {
     ].filter(Boolean)
     : [];
 
+  if (!storageData?.dealership_id || !storageData?.applicant?.applicant_id) {
+    return (
+      <Container size="xl" py="lg">
+        <Alert
+          icon={<IconAlertCircle size={18} />}
+          title="No Applicants Found"
+          color="red"
+          radius="md"
+          variant="light"
+        >
+          Please add a primary applicant or co-applicant before proceeding.
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
     <Stack pos="relative" mt="md">
-      <LoadingOverlay visible={loanQuery.isLoading} />
+      <LoadingOverlay visible={viewMode && loanQuery.isLoading} />
 
       {/* ================= Loan Form Card ================= */}
       {!loan && (
@@ -160,7 +239,7 @@ export const Eligibility = () => {
           <Stack>
             <Text fw={700}>Loan Information</Text>
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={4}>
               <Select
                 label="Loan Type"
                 placeholder="Select loan type"
@@ -173,15 +252,42 @@ export const Eligibility = () => {
                 {...form.getInputProps('loan_types')}
               />
 
-              <NumberInput
+              <TextInput
                 label="Requested Amount (₹)"
-                placeholder="500000"
-                {...form.getInputProps('requested_amount')}
+                placeholder="5,00,000"
+                leftSection="₹"
+                value={formatToINR(form.values.requested_amount)}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^\d]/g, '');
+                  form.setFieldValue('requested_amount', raw);
+                }}
+                error={form.errors.requested_amount}
               />
 
-              <NumberInput
-                label="Tenure (Months)"
+              <Flex direction={'column'}>
+                <Text size="md" fw={500}>
+                  Tenure Unit
+                </Text>
+                <SegmentedControl
+                  value={tenureUnit}
+                  onChange={handleTenureUnitChange}
+                  color="blue"
+                  data={[
+                    { label: 'Month', value: 'months' },
+                    { label: 'Year', value: 'years' },
+                  ]}
+                />
+              </Flex>
+
+              <TextInput
+                label={`Tenure (${
+                  tenureUnit === 'years' ? 'Years' : 'Months'
+                })`}
                 placeholder="24"
+                type="number"
+                leftSection={<IconCalendar size={16} />}
+                min={0}
+                value={formatToINR(form.values.tenure)}
                 {...form.getInputProps('tenure')}
               />
             </SimpleGrid>
@@ -249,7 +355,7 @@ export const Eligibility = () => {
               </Button>
             </Group>
 
-            <SimpleGrid cols={3}>
+            <SimpleGrid cols={4}>
               <Select
                 label="Loan Type"
                 data={[
@@ -261,13 +367,37 @@ export const Eligibility = () => {
                 {...form.getInputProps('loan_types')}
               />
 
-              <NumberInput
+              <TextInput
                 label="Requested Amount (₹)"
-                {...form.getInputProps('requested_amount')}
+                placeholder="5,00,000"
+                leftSection="₹"
+                value={formatToINR(form.values.requested_amount)}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(/[^\d]/g, '');
+                  form.setFieldValue('requested_amount', raw);
+                }}
+                error={form.errors.requested_amount}
               />
 
+              <Flex direction={'column'}>
+                <Text size="md" fw={500}>
+                  Tenure Unit
+                </Text>
+                <SegmentedControl
+                  value={tenureUnit}
+                  onChange={handleTenureUnitChange}
+                  color="blue"
+                  data={[
+                    { label: 'Month', value: 'months' },
+                    { label: 'Year', value: 'years' },
+                  ]}
+                />
+              </Flex>
+
               <NumberInput
-                label="Tenure (Months)"
+                label={`Tenure (${
+                  tenureUnit === 'years' ? 'Years' : 'Months'
+                })`}
                 {...form.getInputProps('tenure')}
               />
             </SimpleGrid>
@@ -369,7 +499,7 @@ export const Eligibility = () => {
       )}
 
       {/* Remarks */}
-      {data && (
+      {data && !viewMode && (
         <Textarea
           label="Remarks"
           placeholder="Add underwriting notes"
@@ -380,15 +510,16 @@ export const Eligibility = () => {
       )}
 
       {/* Footer */}
-      {data && (
+      {data && !viewMode && (
         <Group justify="flex-end">
           <Button
             rightSection={<IconSend size={16} />}
             color={getStatusColor(data.eligibility.status)}
             onClick={() => forwardMutation.mutate({ loanId: loan.id, remarks })}
             loading={forwardMutation.isLoading}
+            disabled={viewMode}
           >
-            Submit for Approval
+            Submit Application
           </Button>
         </Group>
       )}

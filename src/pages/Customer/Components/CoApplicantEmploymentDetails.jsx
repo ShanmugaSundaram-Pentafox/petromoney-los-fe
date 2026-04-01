@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 import React, { useState, useEffect } from 'react';
 import {
   Card,
@@ -11,15 +12,26 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconBriefcase, IconCheck } from '@tabler/icons-react';
-import { saveEmploymentDetails } from '../../../services/customerOnboarding.service';
+import { saveEmploymentDetails, getEmploymentDetails } from '../../../services/customerOnboarding.service';
+import CustomerOnboardStorage from '../../../store/CustomerOnboardStorage';
 
-function CoEmploymentDetails({ onEmploymentSaved }) {
+const formatToINR = (value) => {
+  if (value === null || value === undefined) return '';
+  // Remove everything except digits
+  const cleaned = value.toString().replace(/[^\d]/g, '');
+  if (!cleaned) return '';
+  return Number(cleaned).toLocaleString('en-IN');
+};
+
+function CoApplicantEmploymentDetails({ onEmploymentSaved, applicantId: propApplicantId }) {
   const [loading, setLoading] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+ 
+  const onboardData = CustomerOnboardStorage.get();
 
   const [formData, setFormData] = useState({
-    employmentType: 'SENP',
+    employmentType: '',
     yearsInBusiness: '',
     businessName: '',
     monthlyIncome: '',
@@ -29,8 +41,8 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
   });
 
   const employmentTypes = [
-    { value: 'SEP', label: 'Self Employed Professional (SEP)' },
-    { value: 'SENP', label: 'Self Employed Non-Professional (SENP)' }
+    { value: "Self Employed Professional (SEP)", label: "Self Employed Professional (SEP)" },
+    { value: "Self Employed Non-Professional (SENP)", label: "Self Employed Non-Professional (SENP)" }
   ];
 
   // Handle Input Change
@@ -70,8 +82,8 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-
-      const applicantId = localStorage.getItem('applicant_id');
+      const applicantId = propApplicantId || onboardData?.applicant?.applicant_id || null;
+    
       if (!applicantId) {
         notifications.show({
           title: 'Error',
@@ -113,6 +125,36 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
     }
   };
 
+  useEffect(() => {
+    if (!propApplicantId) return;
+
+    const fetchEmployment = async () => {
+      try {
+        const res = await getEmploymentDetails(propApplicantId);
+        if (res?.status === 'SUCCESS') {
+          const data = res.data || {};
+          setFormData({
+            employmentType:
+              data.employment_type?.includes('Professional')
+                ? 'Self Employed Professional (SEP)'
+                : 'Self Employed Non-Professional (SENP)',
+            businessName: data.business_name || '',
+            businessType: data.business_type || '',
+            yearsInBusiness: data.years_in_business?.toString() || '',
+            monthlyIncome: data.monthly_income?.toString() || '',
+            annualIncome: data.annual_income?.toString() || '',
+            itrFiled: data.itr_filed === 1
+          });
+          setIsSaved(true);
+        }
+      } catch (err) {
+        console.log('Employment fetch error', err);
+      }
+    };
+
+    fetchEmployment();
+  }, [propApplicantId]);
+
   return (
     <Card withBorder radius="md" mt="lg">
       <Group justify="space-between" mb="md">
@@ -128,31 +170,35 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
         <Grid.Col span={4}>
           <Select
             label="Employment Type"
+            placeholder='Select type'
             data={employmentTypes}
             value={formData.employmentType}
             onChange={(value) => handleChange('employmentType', value)}
+            required
           />
         </Grid.Col>
 
         <Grid.Col span={4}>
           <TextInput
-            label="Business Name"
-            placeholder="Enter business name"
+            label="Company Name"
+            placeholder="Enter company name"
             value={formData.businessName}
             onChange={(e) =>
               handleChange('businessName', e.target.value)
             }
+            required
           />
         </Grid.Col>
 
         <Grid.Col span={4}>
           <TextInput
-            label="Business Type"
+            label="Company Type"
             placeholder="e.g. Retail, Manufacturing"
             value={formData.businessType}
             onChange={(e) =>
               handleChange('businessType', e.target.value)
             }
+            required
           />
         </Grid.Col>
 
@@ -165,30 +211,35 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
               handleChange('yearsInBusiness', e.target.value)
             }
             inputMode="numeric"
+            required
           />
         </Grid.Col>
 
         <Grid.Col span={4}>
           <TextInput
             label="Monthly Income (₹)"
-            placeholder="e.g. 150000"
-            value={formData.monthlyIncome}
+            placeholder="e.g. 1,50,000"
+            leftSection="₹"
+            value={formatToINR(formData.monthlyIncome)}
             onChange={(e) =>
               handleChange('monthlyIncome', e.target.value)
             }
             inputMode="numeric"
+            required
           />
         </Grid.Col>
 
         <Grid.Col span={4}>
           <TextInput
             label="Annual Income (₹)"
-            placeholder="e.g. 1800000"
-            value={formData.annualIncome}
+            placeholder="e.g. 18,00,000"
+            leftSection="₹"
+            value={formatToINR(formData.annualIncome)}
             onChange={(e) =>
               handleChange('annualIncome', e.target.value)
             }
             inputMode="numeric"
+            required
           />
         </Grid.Col>
       </Grid>
@@ -218,4 +269,4 @@ function CoEmploymentDetails({ onEmploymentSaved }) {
   );
 }
 
-export default CoEmploymentDetails;
+export default CoApplicantEmploymentDetails;

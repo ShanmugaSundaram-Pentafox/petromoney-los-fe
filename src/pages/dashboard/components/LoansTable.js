@@ -1,284 +1,477 @@
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import { makeStyles } from '@material-ui/styles';
-import React, { useState } from 'react';
+import React from 'react';
+import { Box, Paper } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import {
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Group,
+  Loader,
+  Modal,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  Textarea,
+  Title,
+} from '@mantine/core';
 import { RightSideDrawer } from '../../../components/Mantine/RightSideDrawer/RightSideDrawer';
-import ApprovalReqestTable from '../../../components/Tables/ApprovalReqestTable';
-import ApprovedTable from '../../../components/Tables/ApprovedTable';
-import DisbursedTable from '../../../components/Tables/DisbursedTable';
-import DisbursementApprovedTable from '../../../components/Tables/DisbursementApprovedTable';
-import DisbursementReqestTable from '../../../components/Tables/DisbursementReqestTable';
-import DueTable from '../../../components/Tables/DueTable';
-import OverDueTable from '../../../components/Tables/OverDueTable';
-import RejectedTable from '../../../components/Tables/RejectedTable';
-import ReviewerTable from '../../../components/Tables/ReviewTable';
-import SubmittedTable from '../../../components/Tables/SubmittedTable';
-import UserCan, { permissionCheck } from '../../../components/UserCan/UserCan';
-import { rulesList } from '../../../config/userRules';
-import { getDealershipById } from '../../../services/dealerships.service';
-import ApprovedDrawer from '../RightDrawer/ApprovedDrawer';
-import DisbApprovedDrawer from '../RightDrawer/DisbApprovedDrawer';
-import DisbursedDrawer from '../RightDrawer/DisbursedDrawer';
-import PendingApprovalDrawer from '../RightDrawer/PendingApprovalDrawer';
-import PendingDisbApprovedDrawer from '../RightDrawer/PendingDisbApprovalDrawer';
-import PendingReviewDrawer from '../RightDrawer/PendingReviewDrawer';
-import RejectedDrawer from '../RightDrawer/RejectedDrawer';
-import SubmittedDrawer from '../RightDrawer/SubmittedDrawer';
-import { Badge } from '@mantine/core';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import {
+  getLosLoanById,
+  updateLosLoanStatus,
+} from '../../../services/loans.service';
+import { displayNotification } from '../../../components/CommonComponents/Notification/displayNotification';
 
-const useStyles = makeStyles(theme => ({
-  tableContainer: {
-    borderRadius: 6,
-    // boxShadow: '0 8px 6px -6px rgba(0,0,0,0.12)',
-    // marginBottom: theme.spacing(3)
+const useStyles = makeStyles(() => ({
+  tableWrapper: {
+    overflowX: 'auto',
   },
-  categoryContainer: {
-    display: 'flex',
+  table: {
+    width: '100%',
+    borderCollapse: 'separate',
+    borderSpacing: 0,
+    fontSize: 14,
   },
-  categoryCard: {
-    flex: 1,
-    marginRight: theme.spacing(3),
-    '&:last-child': {
-      marginRight: 0
-    }
+  thead: {
+    backgroundColor: '#f8fafc',
   },
-  title: {
-    fontWeight: 400,
-    fontSize: 18,
-    padding: 8,
-    backgroundColor: '#a6b1e1'
-  },
-  cardItem: {
-    padding: '14px 12px',
-    backgroundColor: '#fff',
-    borderBottom: '1px solid #f2f2f2',
-    display: 'block',
-    position: 'relative',
-    transition: 'all .3s ease-in-out',
-    '&:nth-child(even)': {
-      backgroundColor: 'rgba(245, 245, 245, 0.33)'
-    },
-    '&:hover': {
-      backgroundColor: 'rgba(235, 235, 235, 0.66)',
-      cursor: 'pointer'
-    },
-  },
-  invalid: {
-    backgroundColor: '#faf2f2'
-  },
-  cardTitle: {
-    paddingBottom: 12,
-    fontSize: 16,
-  },
-  infoSection: {
-    display: 'flex',
+  th: {
+    textAlign: 'left',
+    padding: '14px 16px',
+    fontWeight: 600,
     fontSize: 13,
-    color: '#767676',
-    justifyContent: 'space-between',
-    paddingRight: 8
+    color: '#475569',
+    borderBottom: '2px solid #e2e8f0',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
   },
-  money: {
-    color: '#333'
+  td: {
+    padding: '14px 16px',
+    borderBottom: '1px solid #f1f5f9',
+    color: '#334155',
   },
-  sidePanelWrapper: {
-    width: '70vw',
-    maxWidth: '80vw'
+  row: {
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      backgroundColor: '#f1f5f9',
+    },
+    '&:nth-child(even)': {
+      backgroundColor: '#fafafa',
+    },
   },
-  modal: {
+  emptyState: {
+    textAlign: 'center',
+    padding: 30,
+    color: '#94a3b8',
+    fontWeight: 500,
+  },
+  loaderWrapper: {
+    height: 100, // controls vertical space
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  paper: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(4),
-    fontSize: 14,
-    textAlign: 'left',
-    maxWidth: 600
-  },
-  box: {
-    padding: 2,
-    borderColor: 'grey'
-
-  },
-  list: {
-    padding: 2,
-    marginBottom: 20,
-  },
-  details: {
-    padding: 4,
-    borderColor: 'grey',
-    minWidth: 150,
-    height: 100,
-    display: 'flex',
-    textAlign: 'center',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
 }));
 
-// const convertToCurrency = value => <Currency value={value} />;
-
-const LoansTable = ({ currentUser, value, filterQry }) => {
+const LoansTable = ({ data = [], loading }) => {
   const classes = useStyles();
-  const [showPanel, setShowPanel] = useState({
-    status: false,
-    data: ''
+  const [showPanel, setShowPanel] = React.useState({ status: false, data: '' });
+  const loanId = showPanel.data?.loan_id;
+
+  const queryClient = useQueryClient();
+
+  const [reasonModal, setReasonModal] = React.useState({
+    opened: false,
+    action: null,
   });
-  const [dealershipData, setDealershipData] = useState();
-  // const [modalData, setModalData] = useState({});
-  const [loansData, setLoansData] = useState();
-  const [reportDetails, setReportDetails] = useState({});
 
-  const showDealershipInfo = (id, selectedLoanData, status) => {
-    setLoansData(selectedLoanData);
-    getDealershipById(id)
-      .then(data => {
-        setDealershipData(data)
-      })
-      .catch(e => null);
-    // getDealershipLoansById(id)
-    //   .then(data => setLoansData(data))
-    //   .catch(e => null)
+  const [remarks, setRemarks] = React.useState('');
 
-    // getDealersByDealershipId(id)
-    //   .then(data => setDealersData(data))
-    //   .catch(e => null)
+  const showLoanDetails = (loan) => {
+    setShowPanel({ status: true, data: loan });
+  };
 
-    setShowPanel({ status: true, data: status, id: id, editable: permissionCheck(currentUser.role_name, rulesList.loan_approval) });
-  }
-  const showReportsInfo = (id, selectedLoanData, status) => {
-    setReportDetails(selectedLoanData)
-    // setModalData({ open: true })
-  }
-  const compProps = {
-    id: showPanel?.id,
-    status: showPanel?.data,
-    editable: showPanel?.editable,
-    currentUser: currentUser,
-    data: dealershipData,
-    onClose: () => { setShowPanel({ status: false }) },
-    selectedLoanData: loansData,
-    // updateLoanStatus: updateLoanStatus
-  }
+  const closeLoanDetails = () => {
+    setShowPanel({ status: false, data: '' });
+  };
+
+  const { mutate: changeStatus, isLoading: isUpdating } = useMutation(
+    ({ action, remarks }) => updateLosLoanStatus(loanId, { action, remarks }),
+    {
+      onSuccess: (e) => {
+        displayNotification({
+          variant: 'success',
+          message: e || 'Loan status updated successfully'
+        })
+        queryClient.invalidateQueries(['los-loan-status-count']);
+        queryClient.invalidateQueries('los-loans-by-status');
+        setReasonModal({ opened: false, action: null });
+        setShowPanel({ status: false, data: '' });
+        setRemarks('');
+      },
+      onError: (e) => {
+        displayNotification({
+          variant: 'error',
+          message: e?.message || 'Failed to update loan status'
+        })
+      }
+    }
+  );
+
+  const {
+    data: loanDetails,
+    isLoading,
+    isError,
+  } = useQuery(['los-loan-details', loanId], () => getLosLoanById(loanId), {
+    enabled: !!loanId && showPanel.status,
+    cacheTime: 0,
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
+    keepPreviousData: false,
+  });
 
   return (
     <Box pt={2}>
-      <UserCan
-        role={currentUser.role_name}
-        perform={rulesList.dashboard}
-        yes={() => (
-          <Grid container spacing={2}>
-            {
-              value === 'Pending Approval' ? (
-                <Grid item md={12}>
-                  <Paper className={classes.tableContainer}>
-                    <ApprovalReqestTable title={'Pending for Initial Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                  </Paper>
-                </Grid>
-              ) : null
-            }
-            {
-              value === 'Pending Review' ? (
-                <Grid item md={12}>
-                  <Paper className={classes.tableContainer}>
-                    <ReviewerTable title={'Pending for Review'} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                  </Paper>
-                </Grid>
-              ) : null
-            }
-            {
-              value === 'Disb. Approval' ? (
-                <Grid item md={12}>
-                  <Paper className={classes.tableContainer}>
-                    <DisbursementReqestTable title={'Pending for Disbursement Approval'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                  </Paper>
-                </Grid>
-              ) : null
-            }
-            {
-              value === 'Submitted' ? (
-                <Grid item xs={12}>
-                  <Paper className={classes.tableContainer}>
-                    <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                  </Paper>
-                </Grid>
-              ) : null
-            }
-            {
-              value === 'Approved' ? (
-                <Grid item xs={12}>
-                  <Paper className={classes.tableContainer}>
-                    <ApprovedTable title={'Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                  </Paper>
-                </Grid>
+      <Paper elevation={2} style={{ borderRadius: 12 }}>
+        <div className={classes.tableWrapper}>
+          <table className={classes.table}>
+            <thead className={classes.thead}>
+              <tr>
+                <th className={classes.th}>Loan ID</th>
+                <th className={classes.th}>Applicant</th>
+                <th className={classes.th}>Status</th>
+                <th className={classes.th}>Amount</th>
+                <th className={classes.th}>City</th>
+                <th className={classes.th}>Purpose</th>
+              </tr>
+            </thead>
 
-              ) : null
-            }
-            {
-              value === 'Rejected' ? (
-                <Grid item xs={12}>
-                  <Paper className={classes.tableContainer}>
-                    <RejectedTable title={'Rejected Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                  </Paper>
-                </Grid>
-              ) : null
-            }
-            {
-              value === 'Disbursed' ? (
-                <Grid item xs={12}>
-                  <Paper className={classes.tableContainer}>
-                    <DisbursedTable title={'Disbursed Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                  </Paper>
-                </Grid>
-              ) : null
-            }
-            {
-              value === 'Disb. Approved' ? (
-                <Grid item xs={12}>
-                  <Paper className={classes.tableContainer}>
-                    <DisbursementApprovedTable title={'Disbursement Approved Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} filterQry={filterQry} />
-                  </Paper>
-                </Grid>
-              ) : null
-            }
-          </Grid>
-        )}
-        no={() => (
-          currentUser.role_name === 'DEALER' ? (
-            <>
-              <DueTable onRowClick={showReportsInfo} />
-              <OverDueTable onRowClick={showReportsInfo} />
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="6" style={{ padding: 0 }}>
+                    <div className={classes.loaderWrapper}>
+                      <Loader size="lg" type="dots" />
+                    </div>
+                  </td>
+                </tr>
+              ) : data.length ? (
+                data.map((loan) => (
+                  <tr
+                    key={loan.loan_id}
+                    className={classes.row}
+                    onClick={() => showLoanDetails(loan)}
+                  >
+                    <td className={classes.td}>{loan.loan_id}</td>
 
-            </>
-          ) : (
-            <>
-              <Paper className={classes.tableContainer}>
-                <SubmittedTable title={'Submitted Applications'} currentUser={currentUser} onRowClick={showDealershipInfo} />
-              </Paper>
-            </>)
-        )}
-      />
+                    <td className={classes.td}>{loan.applicant_name}</td>
+
+                    <td className={classes.td}>
+                      <Badge color="blue" variant="light" size="sm">
+                        {loan.status}
+                      </Badge>
+                    </td>
+
+                    <td className={classes.td}>
+                      ₹ {loan.amount_requested?.toLocaleString()}
+                    </td>
+
+                    <td className={classes.td}>{loan.city}</td>
+
+                    <td className={classes.td}>{loan.loan_purpose}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className={classes.emptyState}>
+                    No data found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Paper>
+
       <RightSideDrawer
-        size="70%"
+        size="50%"
         opened={showPanel.status}
-        onClose={() => setShowPanel({ status: false })}
-        title={<Badge color="blue" size='lg' variant='light'>{compProps.data?.id} - {compProps.data?.name}</Badge>}
-      >
-        {
-          showPanel.data === 'submitted' ? <SubmittedDrawer {...compProps} />
-            : showPanel.data === 'loan_review' ? <PendingReviewDrawer {...compProps} />
-              : showPanel.data === 'loan_approval' ? <PendingApprovalDrawer {...compProps} />
-                : showPanel.data === 'approved' ? <ApprovedDrawer {...compProps} />
-                  : showPanel?.data === 'disbursement_approval' ? <PendingDisbApprovedDrawer {...compProps} />
-                    : showPanel?.data === 'disbursement_approved' ? <DisbApprovedDrawer {...compProps} />
-                      : showPanel?.data === 'disbursed' ? <DisbursedDrawer {...compProps} />
-                        : showPanel?.data === 'rejected' ? <RejectedDrawer {...compProps} /> : null
+        onClose={closeLoanDetails}
+        title={
+          loanDetails?.loan?.loan_id
+            ? `Loan id: ${loanDetails.loan.loan_id}`
+            : ''
         }
+      >
+        <div
+          style={{
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {/* 🔹 Scrollable Content */}
+          <div
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: 24,
+            }}
+          >
+            {isLoading ? (
+              <Stack spacing="md">
+                <Skeleton height={20} />
+                <Skeleton height={20} />
+                <Skeleton height={20} />
+                <Skeleton height={80} />
+              </Stack>
+            ) : isError ? (
+              <Text color="red">Failed to load loan details</Text>
+            ) : loanDetails ? (
+              <>
+                <Stack spacing="xl">
+                  {/* 🔹 Loan Information */}
+                  <Card shadow="sm" radius="md" withBorder>
+                    <Group position="apart" mb="sm">
+                      <Title order={4}>Loan Information</Title>
+                      <Badge color="blue" variant="light">
+                        {loanDetails.loan?.current_status}
+                      </Badge>
+                    </Group>
+
+                    <Divider mb="sm" />
+
+                    <SimpleGrid cols={2} spacing="sm">
+                      <Text size="sm">
+                        <strong>Loan ID:</strong> #{loanDetails.loan?.loan_id}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Amount:</strong> ₹{' '}
+                        {loanDetails.loan?.amount_requested?.toLocaleString()}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Purpose:</strong>{' '}
+                        {loanDetails.loan?.loan_purpose}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Type:</strong> {loanDetails.loan?.loan_types}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Tenure:</strong> {loanDetails.loan?.tenure}{' '}
+                        months
+                      </Text>
+                      <Text size="sm">
+                        <strong>Created:</strong>{' '}
+                        {new Date(
+                          loanDetails.loan?.created_date
+                        ).toLocaleDateString()}
+                      </Text>
+                    </SimpleGrid>
+                  </Card>
+
+                  {/* 🔹 Main Applicant */}
+                  <Card shadow="sm" radius="md" withBorder>
+                    <Title order={4} mb="sm">
+                      Main Applicant
+                    </Title>
+                    <Divider mb="sm" />
+
+                    <SimpleGrid cols={2} spacing="sm">
+                      <Text size="sm">
+                        <strong>Name:</strong>{' '}
+                        {loanDetails.main_applicant?.full_name}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Mobile:</strong>{' '}
+                        {loanDetails.main_applicant?.mobile}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Age:</strong> {loanDetails.main_applicant?.age}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Gender:</strong>{' '}
+                        {loanDetails.main_applicant?.gender}
+                      </Text>
+                      <Text size="sm">
+                        <strong>PAN:</strong> {loanDetails.main_applicant?.pan}
+                      </Text>
+                      <Text size="sm">
+                        <strong>Aadhar:</strong>{' '}
+                        {loanDetails.main_applicant?.aadhar}
+                      </Text>
+                    </SimpleGrid>
+
+                    <Text size="sm" mt="sm">
+                      <strong>Address:</strong>{' '}
+                      {loanDetails.main_applicant?.address}
+                    </Text>
+                  </Card>
+
+                  {/* 🔹 Co-Applicants */}
+                  {loanDetails.coapplicants?.length > 0 && (
+                    <Stack spacing="lg">
+                      {loanDetails.coapplicants.map((co, index) => (
+                        <Card
+                          key={co.coapplicant_id || index}
+                          shadow="sm"
+                          radius="md"
+                          withBorder
+                        >
+                          {/* Header like Loan Info */}
+                          <Group position="apart" mb="sm">
+                            <Title order={4}>Co-Applicant {index + 1}</Title>
+
+                            <Badge color="grape" variant="light">
+                              {co.relationships || 'CO-APPLICANT'}
+                            </Badge>
+                          </Group>
+
+                          <Divider mb="sm" />
+
+                          {/* Details */}
+                          <SimpleGrid cols={2} spacing="sm">
+                            <Text size="sm">
+                              <strong>Name:</strong> {co.full_name}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>Mobile:</strong> {co.mobile}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>Age:</strong> {co.age}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>Gender:</strong> {co.gender}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>PAN:</strong> {co.pan}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>Aadhar:</strong> {co.aadhar}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>DOB:</strong>{' '}
+                              {co.dob
+                                ? new Date(co.dob).toLocaleDateString()
+                                : '-'}
+                            </Text>
+
+                            <Text size="sm">
+                              <strong>State:</strong> {co.state || '-'}
+                            </Text>
+                          </SimpleGrid>
+
+                          <Text size="sm" mt="sm">
+                            <strong>Address:</strong> {co.address || '-'}
+                          </Text>
+                        </Card>
+                      ))}
+                    </Stack>
+                  )}
+                </Stack>
+              </>
+            ) : (
+              <Text>No details found</Text>
+            )}
+          </div>
+
+          {loanDetails && (
+            <div
+              style={{
+                padding: 20,
+                borderTop: '1px solid #e9ecef',
+                background: '#fff',
+              }}
+            >
+              <Group position="right">
+                {loanDetails.loan?.current_status?.toLowerCase() !== 'draft' && (
+                  <Button
+                    color="red"
+                    variant="outline"
+                    onClick={() =>
+                      setReasonModal({ opened: true, action: 'pushback' })
+                    }
+                  >
+                    Pushback
+                  </Button>
+                )}
+
+                {loanDetails.loan?.current_status?.toLowerCase() !== 'approved' && (
+                  <Button
+                    color="green"
+                    onClick={() =>
+                      setReasonModal({ opened: true, action: 'forward' })
+                    }
+                  >
+                    Forward
+                  </Button>
+                )}
+              </Group>
+            </div>
+          )}
+        </div>
       </RightSideDrawer>
+
+      <Modal
+        opened={reasonModal.opened}
+        onClose={() => {
+          setReasonModal({ opened: false, action: null });
+          setRemarks('');
+        }}
+        zIndex={999}
+        title={
+          reasonModal.action === 'pushback'
+            ? 'Pushback Reason'
+            : 'Forward to Next Status'
+        }
+        centered
+      >
+        <Stack>
+          <Textarea
+            placeholder="Enter remarks..."
+            minRows={4}
+            value={remarks}
+            onChange={(e) => setRemarks(e.currentTarget.value)}
+          />
+
+          <Group position="right">
+            <Button
+              variant="red"
+              onClick={() => {
+                setReasonModal({ opened: false, action: null });
+                setRemarks('');
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              loading={isUpdating}
+              disabled={!remarks.trim()}
+              color="green"
+              onClick={() =>
+                changeStatus({
+                  action: reasonModal.action,
+                  remarks,
+                })
+              }
+            >
+              Submit
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </Box>
-  )
-}
+  );
+};
 
 export default LoansTable;

@@ -79,7 +79,8 @@ const Profile = (props) => {
   };
 
   function capitalizeFirstLetter(text) {
-    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    if (!text) return '';
+    return text?.charAt(0).toUpperCase() + text?.slice(1).toLowerCase();
   }
 
   return (
@@ -155,7 +156,7 @@ const Profile = (props) => {
                 name="city"
                 error={errors.city}
                 disabled={disabledInput}
-                value={capitalizeFirstLetter(currentUser.region_name)}
+                value={capitalizeFirstLetter(currentUser?.region_name)}
                 onChange={handleChange}
               />
             </div>

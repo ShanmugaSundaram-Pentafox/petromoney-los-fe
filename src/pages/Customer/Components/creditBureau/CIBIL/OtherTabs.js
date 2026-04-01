@@ -406,6 +406,21 @@ export function IdentityTab({ report }) {
     '06': IconMapPin, // Generic location
   };
 
+  const rawGender = person.gender;
+
+  let genderValue = '—';
+
+  if (typeof rawGender === 'string') {
+    genderValue = rawGender.toUpperCase();
+  } else if (typeof rawGender === 'object' && rawGender !== null) {
+    genderValue =
+      rawGender.description?.toUpperCase() ||
+      rawGender.code?.toUpperCase() ||
+      '—';
+  } else if (rawGender != null) {
+    genderValue = String(rawGender).toUpperCase();
+  }
+
   return (
     <Stack gap="lg">
       {/* Personal Info */}
@@ -762,6 +777,20 @@ function Pillar({ icon, label, status }) {
 }
 
 export function LOSTab({ data, report }) {
+  const getAccountTypeString = (a) => {
+    const raw =
+      a.accountTypeNormalized?.description ??
+      a.accountTypeNormalized ??
+      a.accountType ??
+      '';
+
+    if (typeof raw === 'string') return raw?.toLowerCase();
+    if (typeof raw === 'object' && raw !== null)
+      return (raw.description || raw.name || '')?.toLowerCase();
+
+    return String(raw)?.toLowerCase();
+  };
+
   const accs = report.accounts || [];
   const score = data.cibil_score ?? (report.scores || [])[0]?.score ?? 0;
   const los = computeLOS(score, accs, report.enquiries || []);
@@ -772,11 +801,11 @@ export function LOSTab({ data, report }) {
   const accType = (a) => {
     const raw = a?.accountType;
     if (!raw) return '';
-    if (typeof raw === 'string') return raw.toLowerCase();
+    if (typeof raw === 'string') return raw?.toLowerCase();
     if (typeof raw === 'object') {
-      return (raw.description || raw.code || '').toLowerCase();
+      return (raw.description || raw.code || '')?.toLowerCase();
     }
-    return String(raw).toLowerCase();
+    return String(raw)?.toLowerCase();
   };
   const isCC = (a) => accType(a).includes('credit card');
   const secBal = activeAccs.filter((a) => !isCC(a)).reduce((s, a) => s + getBalance(a), 0);

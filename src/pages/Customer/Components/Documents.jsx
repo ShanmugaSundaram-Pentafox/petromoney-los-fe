@@ -14,6 +14,7 @@ import {
   ActionIcon,
   Loader,
   Image,
+  Alert,
 } from "@mantine/core";
 import {
   IconFileText,
@@ -21,12 +22,15 @@ import {
   IconUpload,
   IconCheck,
   IconEye,
+  IconRefresh,
 } from "@tabler/icons-react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { getDocumentChecklist, getUploadedDocuments, uploadDocument } from "../../../services/customerOnboarding.service";
 import FormDialog from "../../../components/CommonComponents/FormDialog/FormDialog";
 import { displayNotification } from "../../../components/CommonComponents/Notification/displayNotification";
 import styled from 'styled-components';
+import CustomerOnboardStorage from "../../../store/CustomerOnboardStorage";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 /* -------------------- Allowed Types -------------------- */
 const allowedTypes = [
@@ -223,14 +227,17 @@ const DocumentCard = ({
 const Documents = () => {
   const [documents, setDocuments] = useState([]);
 
-  const dealershipId = 30; // static for now
-  const applicantId = 35; // static for now
+  const onboardData = CustomerOnboardStorage.get();
 
-  const { data, isLoading: documentChecklistLoading } = useQuery(
+  const dealershipId = onboardData?.dealership_id;
+  const applicantId = onboardData?.applicant?.applicant_id;
+
+  const { data, isLoading: documentChecklistLoading, refetch: refetchDocumentChecklist, isFetching: documentChecklistFetching } = useQuery(
     ["document-checklist"],
     getDocumentChecklist,
     {
       cacheTime: 0,
+      enabled: !!dealershipId && !!applicantId,
       onError: (err) => {
         displayNotification({
           message: err || "Something went wrong",
@@ -240,11 +247,11 @@ const Documents = () => {
     }
   );
 
-  const { data: uploadedDocsData, isLoading: uploadedDocsLoading } = useQuery(
+  const { data: uploadedDocsData, isLoading: uploadedDocsLoading, refetch: refetchUploadedDocs, isFetching: uploadedDocsFetching } = useQuery(
     ["uploaded-documents", dealershipId],
     () => getUploadedDocuments(dealershipId),
     {
-      enabled: !!data,
+      enabled: !!data && !!dealershipId && !!applicantId,
       cacheTime: 0,
       onError: (err) => {
         displayNotification({
@@ -279,6 +286,34 @@ const Documents = () => {
     { label: "Pending", value: pendingCount, color: "gray" },
   ];
 
+  const handleReload = async () => {
+    try {
+      await refetchDocumentChecklist();
+      await refetchUploadedDocs();
+    } catch (err) {
+      displayNotification({
+        variant: 'error',
+        message: 'Failed to refresh data',
+      });
+    }
+  };
+
+  if (!dealershipId || !applicantId) {
+    return (
+      <Container size="xl" py="lg">
+        <Alert
+          icon={<IconAlertCircle size={18} />}
+          title="No Applicants Found"
+          color="red"
+          radius="md"
+          variant="light"
+        >
+          Please add a primary applicant or co-applicant before proceeding.
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
     <Container size="xl" py="lg">
       {documentChecklistLoading || uploadedDocsLoading ? (
@@ -294,6 +329,19 @@ const Documents = () => {
         </div>
       ) : (
         <>
+
+          <Group justify="flex-end" mb="md">
+            <ActionIcon
+              variant="light"
+              color="blue"
+              size="lg"
+              onClick={handleReload}
+              loading={uploadedDocsFetching || documentChecklistFetching}
+            >
+              <IconRefresh size={18} />
+            </ActionIcon>
+          </Group>
+
           <Group mb="lg">
             <ThemeIcon size="lg" variant="light" color="blue">
               <IconFileText size={20} />

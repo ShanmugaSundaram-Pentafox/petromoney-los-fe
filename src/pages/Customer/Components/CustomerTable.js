@@ -57,13 +57,13 @@ const CustomerTable = () => {
   const column = useMemo(
     () => [
       {
-        key: 'applicant_id',
-        header: 'Applicant ID',
+        key: 'loan_id',
+        header: 'Loan ID',
         sorting: true,
       },
       {
-        key: 'loan_id',
-        header: 'Loan ID',
+        key: 'applicant_id',
+        header: 'Applicant ID',
         sorting: true,
       },
       {
@@ -116,7 +116,7 @@ const CustomerTable = () => {
           onClick={() => history.push('/customers/onboard')}
           color="blue"
         >
-          Onboard Customer
+          New Application
         </Button>
       </div>
       <DataTableViewer

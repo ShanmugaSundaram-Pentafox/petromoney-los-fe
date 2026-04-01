@@ -11,33 +11,31 @@ const LoanStats = ({ selectedStatsCard, handleClick, chartData, totalLoans, load
         </Text>
         {loading ? (
           <div className="flex justify-center items-center">
-            <Loader size="lg" type="dots"  />
+            <Loader size="lg" type="dots" />
           </div>
-        ) : (
-          chartData.length ? (
-            <dl className="grid grid-cols-3 gap-0.5 overflow-hidden rounded-2xl text-center sm:grid-cols-4 lg:grid-cols-8">
-              {chartData?.map((item, i) => {
-                return (
-                  <>
-                    {item.name || item.count ? (
-                      <DashCard
-                        key={item.name + i}
-                        selected={item.name === selectedStatsCard}
-                        text={item.name}
-                        value={item.count || 0}
-                        amount={item.amount}
-                        action={() => handleClick(item.name)}
-                      />
-                    ) : null}
-                  </>
-                )
-              })}
-            </dl>
-          ) : null
-        )}
+        ) : chartData.length ? (
+          <dl className="grid gap-2 rounded-2xl text-center grid-cols-[repeat(auto-fit,minmax(180px,1fr))]">
+            {chartData?.map((item, i) => {
+              return (
+                <>
+                  {item.name || item.count ? (
+                    <DashCard
+                      key={item.name + i}
+                      selected={item.name === selectedStatsCard}
+                      text={item.name}
+                      value={item.count || 0}
+                      amount={item.amount}
+                      action={() => handleClick(item.name)}
+                    />
+                  ) : null}
+                </>
+              );
+            })}
+          </dl>
+        ) : null}
       </>
     </Paper>
-  )
+  );
 }
 
 export default LoanStats;

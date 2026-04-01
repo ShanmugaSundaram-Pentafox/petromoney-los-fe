@@ -626,6 +626,7 @@ function CustomerDetails({ viewMode: viewModeProp = false, applicantId }) {
                 city: selectedAddr?.city || "",
                 state: selectedAddr?.state || "",
                 district: selectedAddr?.city || "",
+                pincode: selectedAddr?.postal || "",
                 dob: form.dob || customerData?.dob || "",
                 gender: form.gender || customerData?.gender || "",
                 age: form.age || customerData?.age || "",

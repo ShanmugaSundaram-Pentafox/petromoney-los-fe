@@ -191,6 +191,13 @@ export default function BankStatementAnalysis({ viewMode = false }) {
   const [url, setUrl] = useState('');
   const [step, setStep] = useState('create');
   const [consentId, setConsentId] = useState('');
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [imageModal, setImageModal] = useState({
+    open: false,
+    image: "",
+  });
   const onboardData = CustomerOnboardStorage.get();
   const fileInputRef = useRef(null);
 
@@ -450,7 +457,7 @@ export default function BankStatementAnalysis({ viewMode = false }) {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -458,27 +465,54 @@ export default function BankStatementAnalysis({ viewMode = false }) {
       alert("Only images & PDF allowed.");
       return;
     }
+
+    setUploadedFile(file);
+console.log("file",file)
+    const localUrl = URL.createObjectURL(file);
+    setPreviewUrl(localUrl);
+
+    // 🔥 API Call
+    try {
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/your-upload-api", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      console.log("Uploaded response:", data);
+
+      // If backend gives URL (recommended)
+      if (data?.fileUrl) {
+        setPreviewUrl(data.fileUrl); // override local preview with server URL
+      }
+
+    } catch (err) {
+      console.error("Upload failed:", err);
+    } finally {
+      setLoading(false);
+    }
   };
- const handlePreview = () => {
-    // const url = uploadedDocument?.file_url;
-    // const fileUrl = uploadedDocument?.presigned_url;
 
-    // if (!fileUrl) return;
+  const handlePreview = () => {
+    if (!previewUrl) return;
+console.log("previewUrl",previewUrl)
+    const isPdf = previewUrl.toLowerCase().includes(".pdf");
 
-    // const isPdf = url.toLowerCase().endsWith(".pdf");
-
-    // if (isPdf) {
-    //   window.open(fileUrl, "_blank", "noopener,noreferrer");
-    //   return;
-    // }
-
-  
-    // setImageModal({
-    //   open: true,
-    //   image: fileUrl,
-    // });
+    if (isPdf) {
+      window.open(previewUrl, "_blank");
+    } else {
+      setImageModal({
+        open: true,
+        image: previewUrl,
+      });
+    }
   };
-
   const getIcon = (type) => {
     switch (type) {
       case 'pie':
@@ -1177,80 +1211,99 @@ export default function BankStatementAnalysis({ viewMode = false }) {
         )}
       </Box>
       <Box>
-          <>
-              <Card shadow="sm" radius="md" padding="lg" withBorder>
-                <Group justify="space-between" align="center">
-                  <Group>
-                    <ThemeIcon variant="light" size="lg" color="blue">
-                      <IconFileText size={18} />
-                    </ThemeIcon>
-        
-                    <Stack gap={2}>
-                      <Text fw={600}>Upload Bank Statement</Text>
-                    </Stack>
-                  </Group>
-        
-                  <Group>
-                    {/* Status Badge */}
-                    { (
-                      <Badge
-                        variant="light"
-                        color="gray"
-                        leftSection={<IconClock size={14} />}
-                      >
-                        Pending
-                      </Badge>
-                    )}
-        
-                    {/* 👁 Preview Button */}
-                    {false && (
-                      <ActionIcon
-                        color="green"
-                        variant="light"
-                        onClick={handlePreview}
-                      >
-                        <IconEye size={16} />
-                      </ActionIcon>
-                    )}
-        
-                    {/* Upload */}
-                    <Button
-                      variant="light"
-                      size="sm"
-                      leftSection={<IconUpload size={16} />}
-                      onClick={handleUploadClick}
-                      loading={false}
-                    >
-                      Upload
-                    </Button>
-        
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      style={{ display: "none" }}
-                      accept=".png,.jpg,.jpeg,.pdf"
-                      onChange={handleFileChange}
-                    />
-                  </Group>
-                </Group>
-              </Card>
-        
-              <FormDialog
-                title={document.description}
-                onDownload={null}
-                open={false}
-                onClose={() => {}}
-              >
-                {/* <PreviewWrapper>
-                  <Image
-                    src={imageModal.image}
-                    h={'auto'}
-                    maw={500}
-                    fallbackSrc={'https://placehold.co/600x400?text=Not%20%20Found!'}
-                  />
-                </PreviewWrapper> */}
-              </FormDialog>
-            </>
+        <>
+          <Card radius="md" padding="lg" withBorder style={{marginTop:30}}>
+            <Group justify="space-between" align="center">
+              <Group>
+                <ThemeIcon variant="light" size="lg" color="blue">
+                  <IconFileText size={18} />
+                </ThemeIcon>
+
+                <Stack gap={2}>
+                  <Text fw={600}>Upload Bank Statement</Text>
+                </Stack>
+              </Group>
+
+              <Group>
+                {/* Status Badge */}
+                {(
+                  <Badge
+                    variant="light"
+                    color="gray"
+                    leftSection={<IconClock size={14} />}
+                  >
+                    Pending
+                  </Badge>
+                )}
+
+                {/* 👁 Preview Button */}
+                {previewUrl && (
+                  <ActionIcon
+                    color="green"
+                    variant="light"
+                    onClick={handlePreview}
+                  >
+                    <IconEye size={16} />
+                  </ActionIcon>
+                )}
+
+                {/* Upload */}
+                <Button
+                  variant="light"
+                  size="sm"
+                  leftSection={<IconUpload size={16} />}
+                  onClick={handleUploadClick}
+                  loading={false}
+                >
+                  Upload
+                </Button>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: "none" }}
+                  accept=".png,.jpg,.jpeg,.pdf"
+                  onChange={handleFileChange}
+                />
+              </Group>
+            </Group>
+          </Card>
+
+          <FormDialog
+            title="Preview Document"
+            onDownload={() => {
+              if (!previewUrl) return;
+
+              const link = document.createElement("a");
+              link.href = previewUrl;
+              link.download = "document";
+              link.click();
+            }}
+            open={imageModal.open}
+            onClose={() =>
+              setImageModal({
+                open: false,
+                image: "",
+              })
+            }
+          >
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <img
+                src={imageModal.image}
+                alt="preview"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "70vh",
+                  objectFit: "contain",
+                  borderRadius: "8px",
+                }}
+                onError={(e) => {
+                  e.target.src = "https://placehold.co/600x400?text=Not+Found";
+                }}
+              />
+            </div>
+          </FormDialog>
+        </>
       </Box>
     </Box>
   );
